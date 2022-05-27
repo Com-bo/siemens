@@ -1,0 +1,24 @@
+{
+  "name": "umi-plugin-sharepoint",
+  "version": "1.0.0",
+  "description": "sharepoint support for medalsoft",
+  "main": "dist/index.js",
+  "author": "licheng.dai",
+  "license": "MIT",
+  "scripts": {
+    "build": "father build --cjs"
+  },
+  "typings": "dist/index.d.ts",
+  "devDependencies": {
+    "@umijs/types": "^3.2.3",
+    "webpack": "^4.43.0"
+  },
+  "dependencies": {
+    "sp-rest-proxy": "^2.11.1",
+    "html-webpack-harddisk-plugin": "^1.0.1",
+    "html-webpack-plugin": "^4.3.0"
+  },
+  "peerDependencies": {
+    
+  }
+}

@@ -1,0 +1,55 @@
+@font-face {
+  font-family: "gbs"; /* Project id 3432242 */
+  src: url('iconfont.woff2?t=1653633044369') format('woff2'),
+       url('iconfont.woff?t=1653633044369') format('woff'),
+       url('iconfont.ttf?t=1653633044369') format('truetype');
+}
+
+.gbs {
+  font-family: "gbs" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.gbs-home:before {
+  content: "\e600";
+}
+
+.gbs-GBS:before {
+  content: "\e601";
+}
+
+.gbs-report:before {
+  content: "\e902";
+}
+
+.gbs-masterData:before {
+  content: "\e644";
+}
+
+.gbs-sysSetting:before {
+  content: "\e648";
+}
+
+.gbs-setting:before {
+  content: "\e62d";
+}
+
+.gbs-search:before {
+  content: "\e62f";
+}
+
+.gbs-confirm:before {
+  content: "\e6f8";
+}
+
+.gbs-delete:before {
+  content: "\e718";
+}
+
+.gbs-export:before {
+  content: "\e610";
+}
+

@@ -1,0 +1,79 @@
+{
+  "id": "3432242",
+  "name": "GBS",
+  "font_family": "gbs",
+  "css_prefix_text": "gbs-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1228",
+      "name": "首页",
+      "font_class": "home",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1333",
+      "name": "打开信息",
+      "font_class": "GBS",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "1727589",
+      "name": "406报表",
+      "font_class": "report",
+      "unicode": "e902",
+      "unicode_decimal": 59650
+    },
+    {
+      "icon_id": "8802623",
+      "name": "数据库1",
+      "font_class": "masterData",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    },
+    {
+      "icon_id": "8802631",
+      "name": "系统",
+      "font_class": "sysSetting",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "12820167",
+      "name": "基础配置",
+      "font_class": "setting",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "145438",
+      "name": "搜索",
+      "font_class": "search",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "680694",
+      "name": "确认",
+      "font_class": "confirm",
+      "unicode": "e6f8",
+      "unicode_decimal": 59128
+    },
+    {
+      "icon_id": "3538379",
+      "name": "删除",
+      "font_class": "delete",
+      "unicode": "e718",
+      "unicode_decimal": 59160
+    },
+    {
+      "icon_id": "21500988",
+      "name": "导出",
+      "font_class": "export",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    }
+  ]
+}
