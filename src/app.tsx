@@ -68,22 +68,21 @@ export function patchRoutes({ routes }) {
 let modalPrivacy: any;
 
 export async function render(oldRender) {
-  oldRender();
-  // const Mgrs = new Mgr();
-  // const result = await Mgrs.getSignedIn();
-
-  // if (!result) {
-  //   //存一下当前的路由
-  //   if (location.hash) {
-  //     sessionStorage.setItem('re', window.btoa(location.hash));
-  //   }
-  //   return;
-  // }
-  // const infos = await Mgrs.getProfile();
-  // if (!infos) {
-  //   return;
-  // }
   // oldRender();
+  const Mgrs = new Mgr();
+  const result = await Mgrs.getSignedIn();
+  if (!result) {
+    //存一下当前的路由
+    if (location.hash) {
+      sessionStorage.setItem('re', window.btoa(location.hash));
+    }
+    return;
+  }
+  const infos = await Mgrs.getProfile();
+  if (!infos) {
+    return;
+  }
+  oldRender();
 
 //   hideModalAction(oldRender);
 //   // const usersInfo = await getUserInfo(homeIndex[useType]);
@@ -161,11 +160,11 @@ export function onRouteChange({ location, routes, action }) {
   // if (!useType) {
   //   return;
   // }
-  // if (location.pathname == '/logout') {
-  //   const Mgrs = new Mgr();
-  //   Mgrs.signOut();
-  //   return;
-  // }
+  if (location.pathname == '/logout') {
+    const Mgrs = new Mgr();
+    Mgrs.signOut();
+    return;
+  }
 
   if (location.pathname == '/') {
     history.replace('/home');

@@ -106,7 +106,6 @@ export default (props: any) => {
       BVI: 38,
       bviFlag: true
     }])
-
   }, [])
 
   const savefilterGroup = () => {

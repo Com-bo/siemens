@@ -182,6 +182,7 @@ export default (props: any) => {
             ErrorMessage: '不能匹配到Unit Price'
         }])
     }, [])
+   
     return <>
         <TableTopDiv>
             <TableTitleDiv style={{ float: 'left' }}>
@@ -192,7 +193,7 @@ export default (props: any) => {
             </TableTitleDiv>
         </TableTopDiv>
         <TableWrapDiv>
-            <Table columns={columns} rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')} dataSource={data} rowKey="id" pagination={false} />
+            <Table columns={columns} rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')} dataSource={data} rowKey="id" pagination={false} scroll={{y:300}}  />
         </TableWrapDiv>
 
         <div style={{margin:"20px auto 40px",textAlign:'center'}}>

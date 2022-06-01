@@ -5,7 +5,6 @@ import { DownOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-desi
 import { BtnTextRedWrap, BtnBlueWrap, BtnGreenWrap, BtnOrangeWrap, BtnThemeWrap } from '@/assets/style';
 import search from '@/assets/images/search.png'
 import FilterGroup from '@/modules/FilterGroup'
-import { history } from 'umi'
 export default (props: any) => {
   const [tableData, setTableData] = useState([])
   const [isSearch, setIsSearch] = useState(true)
