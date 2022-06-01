@@ -4,33 +4,25 @@ const green = "#87962a";
 const blue = "#2a8dc6";
 const orange = "#e4751f";
 const filterBg = "#f6f8f9";
+const colors={
+  grass:'#85904f',
+  theme:'#00807d',
+  blue:'#2a8dc6'
+}
 
-export const SearchDiv = styled.div`
-  border-radius: 10px;
-  background-color: #fff;
-  padding: 20px 0px 10px 20px;
-  margin-right: 20px;
-  margin-left: 20px;
-  .searchBtn {
-    position: absolute;
-    right: 10px;
-    top: 0;
-  }
-  .keywordInput {
-    width: calc(100% - 85px);
-  }
-`;
+
 export const TableWrapDiv = styled.div`
-  margin-top: 20px;
+.ant-table-thead th{
+  background-color:#dfdfdf;
+}
   margin-left: 20px;
   border-radius: 10px;
-  padding: 15px 20px;
-  background: #fff;
+  // padding: 15px 20px;
   margin-right: 20px;
   .stripe,
   .stripe .ant-table-cell-fix-right,
   .stripe .ant-table-cell-fix-left {
-    background-color: #f9f9f9;
+    background-color: #f8f8f8;
   }
 
   .ant-table {
@@ -85,13 +77,13 @@ export const TableBtnDiv = styled.div`
 export const BtnThemeWrap = styled.span`
   .ant-btn {
     color: #fff;
-    border-color: ${colorTheme};
-    color:${colorTheme}
+    border-color: ${prop=>colors[prop.color]??colorTheme};
+    color:${prop=>colors[prop.color]??colorTheme};
   }
   .ant-btn:hover,
   .ant-btn:focus {
-    border-color:${colorTheme};
-  }
+    border-color:${prop=>colors[prop.color]??colorTheme};
+  } 
 `;
 export const BtnGreenWrap = styled.span`
   .ant-btn {
@@ -104,37 +96,37 @@ export const BtnGreenWrap = styled.span`
     border-color:${green};
   }
 `;
-export const BtnBlueWrap = styled.span`
+export const BtnTextRedWrap = styled.span`
 .ant-btn {
+  color:${props => props.color ?? colorTheme};
+  cursor: pointer;
+  text-decoration: underline;
+  .anticon{
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+  }
+`;
+export const BtnBlueWrap = styled.span`
+  .ant-btn {
   color: #fff;
   border-color: ${blue};
   color:${blue}
 }
-.ant-btn:hover,
+.ant-btn: hover,
 .ant-btn:focus {
   border-color:${blue};
 }
 `;
 export const BtnOrangeWrap = styled.span`
-.ant-btn {
+  .ant-btn {
   color: #fff;
   border-color: ${orange};
   color:${orange}
 }
-.ant-btn:hover,
+.ant-btn: hover,
 .ant-btn:focus {
   border-color:${orange};
 }
 `;
-export const OperDiv = styled.div`
-  text-align: center;
-  .ant-btn-link {
-    color: #009999;
-  }
-  .ant-btn-link span {
-    text-decoration: underline;
-  }
-  .ant-btn-dangerous.ant-btn-link {
-    color: #ff4d4f;
-  }
-`;
+

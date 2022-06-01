@@ -101,7 +101,7 @@ export const FormTableDiv = styled.div`
   .stripe,
   .stripe .ant-table-cell-fix-right,
   .stripe .ant-table-cell-fix-left {
-    background-color: #f9f9f9;
+    background-color: #f8f8f8;
   }
   .ant-table-tbody > tr > td {
     border: none;

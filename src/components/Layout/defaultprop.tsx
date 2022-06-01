@@ -9,12 +9,13 @@ export const defaultRoute =
     {
       name: 'Home',
       path: '/home',
+      icon: 'home'
     },
     {
       name: 'GBS',
-      key:"GBS",
+      key: "GBS",
       path: '/GBS',
-   
+      icon:'GBS',
       routes: [
         {
           name: 'Flat Charge',
@@ -22,29 +23,29 @@ export const defaultRoute =
         },
         {
           name: 'BVI Data',
-          path: '/GBS/BVIData' ,
+          path: '/GBS/BVIData',
           routes: [{
             name: 'Data Management',
-            path: '/GBS/BVIData/DataManagement', 
-          },{
+            path: '/GBS/BVIData/DataManagement',
+          }, {
             name: 'Validation Report',
-            path: '/GBS/BVIData/ValidationReport', 
-          },{
+            path: '/GBS/BVIData/ValidationReport',
+          }, {
             name: 'Import Logs',
-            path: '/GBS/BVIData/ImportLogs', 
-          }]      
+            path: '/GBS/BVIData/ImportLogs',
+          }]
         },
         {
           name: 'Billing Data',
           path: '/GBS/BillingData',
-          routes:[
+          routes: [
             {
               name: 'Data Management',
-              path: '/GBS/BillingData/DataManagement', 
-            },{
+              path: '/GBS/BillingData/DataManagement',
+            }, {
               name: 'Validation Report',
-              path: '/GBS/BillingData/ValidationReport', 
-            } 
+              path: '/GBS/BillingData/ValidationReport',
+            }
           ]
         },
 
@@ -52,23 +53,25 @@ export const defaultRoute =
     },
     {
       name: 'Report',
-      key:"Report",
+      key: "Report",
       path: '/Report',
+      icon:'report',
       routes: [{
-        name:'Customer Report',
-        key:"CustomerReport",
-        path: '/Report/CustomerReport', 
+        name: 'Customer Report',
+        key: "CustomerReport",
+        path: '/Report/CustomerReport',
       }]
     },
     {
       name: 'Master Data',
-      key:'MasterData',
+      key: 'MasterData',
       path: '/MasterData',
-      routes: []
+      icon:'masterData',
     },
     {
       name: 'System Setting',
       path: '/sysConfig',
+      icon:'sysSetting',
       redirect: '/sysConfig/user/dealer/list',
       routes: [
         {

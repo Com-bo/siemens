@@ -10,9 +10,7 @@ import { defaultRoute } from './defaultprop';
 import logo from '@/assets/images/logo.png';
 import MedalsoftMenuItem, { IMenuItemNotice } from './MenuItem';
 import { RightContentDiv, RightIcon, LayoutDiv, LogoImgWrap } from './style';
-import EventBus from '@/tools/eventEmitter';
 import { MenuFoldOutlined, MenuUnfoldOutlined, RightOutlined } from '@ant-design/icons';
-import { Badge, Button, Divider } from 'antd';
 import '@/assets/iconfont/iconfont.css';
 import Footer from '@/components/content/footer'
 import HeaderTitle from '@/assets/images/title.png'
@@ -48,9 +46,9 @@ const IconMenu = (icon: {}, name: {}) => {
     return (
       <>
         <span role="img" className="anticon">
-          <span className={'iconfont  icon-' + icon}></span>
+          <span className={'gbs  gbs-' + icon}></span>
         </span>
-        <span>{name}</span>
+        <span style={{ fontSize: '16px' }}>{name}</span>
       </>
     );
   } else {
@@ -160,25 +158,28 @@ export const MedalsoftLayout = (props: any) => {
             ) {
               return false;
             }
-            if(key){
+            if (key) {
               history.replace(key as string);
             }
           },
         }}
         subMenuItemRender={(subMenuProps) => (
-          <div>
-            {subMenuProps.icon ? (
+          subMenuProps.icon ? (
+            <div>
               <span className="anticon">
                 <span
                   style={{ fontWeight: 'normal' }}
-                  className={`iconfont   icon-${subMenuProps.icon as string}`}
+                  className={`gbs   gbs-${subMenuProps.icon as string}`}
                 ></span>
               </span>
-            ) : (
-              ''
-            )}
-            <span>{subMenuProps.name}</span>
-          </div>
+              <span style={{ fontSize: "16px" }}>{subMenuProps.name}</span>
+            </div>
+          ) : (
+            <div>
+              <span >{subMenuProps.name}</span>
+            </div>
+          )
+
         )}
         onCollapse={setCollapsed}
         headerContentRender={() => {
@@ -199,41 +200,41 @@ export const MedalsoftLayout = (props: any) => {
             </div>
           );
         }}
-      // menuItemRender={(menuItemProps, defaultDom) => {
-      //   /** 支持多级菜单附增icon的dom */
-      //   // console.log(menuItemProps.name)
+        menuItemRender={(menuItemProps, defaultDom) => {
+          /** 支持多级菜单附增icon的dom */
+          // console.log(menuItemProps.name)
 
-      //   const iconMenu = IconMenu(
-      //     menuItemProps.icon,
-      //     menuItemProps.name,
-      //   );
-      //   /** 绑定外链进行跳转 */
-      //   if (
-      //     menuItemProps.path?.startsWith('http://') ||
-      //     menuItemProps.path?.startsWith('https://s')
-      //   ) {
-      //     return (
-      //       <a href={menuItemProps.path} target="_blank">
-      //         {menuItemProps.name}
-      //       </a>
-      //     );
-      //   }
-      //   /** 使用path，视为使用本地路由进行跳转，path使用优先级大于component */
-      //   if (
-      //     menuItemProps.path &&
-      //     location.pathname !== menuItemProps.path &&
-      //     menuItemProps.priType != 0
-      //   ) {
-      //     // console.log(menuItemProps)
-      //     return (
-      //       <Link to={menuItemProps.path} target={menuItemProps.target}>
-      //         {iconMenu}
-      //       </Link>
-      //     );
-      //   }
-      //   /** 使用component进行跳转，path使用优先级大于component */
-      //   return iconMenu;
-      // }}
+          const iconMenu = IconMenu(
+            menuItemProps.icon,
+            menuItemProps.name,
+          );
+          /** 绑定外链进行跳转 */
+          if (
+            menuItemProps.path?.startsWith('http://') ||
+            menuItemProps.path?.startsWith('https://')
+          ) {
+            return (
+              <a href={menuItemProps.path} target="_blank">
+                {menuItemProps.name}
+              </a>
+            );
+          }
+          /** 使用path，视为使用本地路由进行跳转，path使用优先级大于component */
+          if (
+            menuItemProps.path &&
+            location.pathname !== menuItemProps.path &&
+            menuItemProps.priType != 0
+          ) {
+            // console.log(menuItemProps)
+            return (
+              <Link to={menuItemProps.path} target={menuItemProps.target}>
+                {iconMenu}
+              </Link>
+            );
+          }
+          /** 使用component进行跳转，path使用优先级大于component */
+          return iconMenu;
+        }}
 
       >
         <PageContainer header={{ title: '' }} style={{ margin: '0' }}>

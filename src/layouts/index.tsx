@@ -11,15 +11,14 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { IRouteComponentProps } from 'umi';
 import React, { useEffect, useRef, useState, createContext } from 'react';
 import { useLocalStorageState } from 'ahooks';
+import font from './YouSheBiaoTiHei.ttf'
+import siemens from './SiemensSans_Global_Bold.ttf'
+import Roman from './SiemensSans_Global_Roman.ttf'
 const GlobalStyle = createGlobalStyle`
  /**
     全局样式
    */
-    @font-face
-    {
-    font-family: logofont;
-    src: url('./FZXKJW.TTF');
-    }
+   
   ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -40,8 +39,19 @@ const GlobalStyle = createGlobalStyle`
   .ant-dropdown{
     z-index: 9999;
   }
+  @font-face
+  {
+  font-family: 'youshe';
+  src: url(${font});
+  }
+  @font-face
+  {
+  font-family: 'siemens';
+  src: url(${Roman});
+  }
+ 
   body{
-    font-family: Microsoft Yahei;
+    font-family:siemens,  Arail;
     background-color:#e6e6e6;
   }
   .ant-input-affix-wrapper{
@@ -68,6 +78,7 @@ const GlobalStyle = createGlobalStyle`
   .ant-pagination-total-text{
     position:absolute;
     left:0;
+    bottom:-3px;
   }
   .ant-pagination-item{
     border-color:transparent;
@@ -228,6 +239,12 @@ const GlobalStyle = createGlobalStyle`
   color: #001529;
   cursor: default;
 }
+.ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover{
+  color:#00807d;
+}
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled){
+  background-color:#f5f5f5;
+}
 `;
 import noData from '@/assets/images/noData.png';
 import MedalsoftLayout from '@/components/Layout';
@@ -248,12 +265,12 @@ export default function Layout({
 
   const [userName, setUserName] = useState('Melody');
   useEffect(() => {
-  //   const Mgrs = new Mgr();
-  //   Mgrs.getProfile().then((res) => {
-  //     if (res) {
-  //       setUserName(res.UserName);
-  //     }
-  //   });
+    //   const Mgrs = new Mgr();
+    //   Mgrs.getProfile().then((res) => {
+    //     if (res) {
+    //       setUserName(res.UserName);
+    //     }
+    //   });
   }, []);
 
   // const authService = useAuthService({ mode: 'normal', formatLanguageService });

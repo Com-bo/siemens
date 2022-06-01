@@ -1,38 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import TableMix from '@/components/Table'
-import { Button, Divider, Form, Input, Select, Space } from 'antd';
-import { FilterGroupDiv, TableBtnDiv, TableTitleDiv, TableTopDiv, TaleTitleIconDiv } from '@/assets/style';
-import { SettingOutlined } from '@ant-design/icons';
+import { Button, Divider, Form, Input, InputNumber, Select, Space } from 'antd';
+import { TableBtnDiv, TableTitleDiv, TableTopDiv, TaleTitleIconDiv } from '@/assets/style';
+import { TableMixDiv } from './tablemix'
+import { TrademarkOutlined } from '@ant-design/icons';
 export default (props: any) => {
     const [columns, setColumns] = useState([])
     const [form] = Form.useForm();
     const getcolumnItem = (col: any) => {
-        if (col.name == "Operate") {
-            return {
-                title: <>
-                    <div className="title">{col.title}</div>
-                    <Form.Item>
-                    </Form.Item>
-                </>,
-                align: 'center',
-                dataIndex: col.name,
-                key: col.name,
-                width: col.width,
-                render: props.renderOper,
-                fixed: "right"
-            }
-        }
+
         return {
-            title: <>
+            title: <div className={props.search ? "listSearch" : 'hiddenlistSearch'}>
                 <div className="title">{col.title}</div>
-                <Form.Item name={col.name}>
-                    <Input />
+                <Form.Item>
+                    {getSearchInputType(col.titleRender)}
                 </Form.Item>
-            </>,
+            </div>,
             align: 'center',
-            width: col.width,
             dataIndex: col.name,
-            key: col.name
+            key: col.name,
+            width: col.width,
+            render: col.render,
+            fixed: col.fixed
+        }
+
+    }
+
+    const getSearchInputType = (text?: string) => {
+        switch (text) {
+            case "input":
+                return <Input />
+            case "number":
+                return <InputNumber />
+            default:
+                return ''
         }
     }
     // orignalColsObject{name:'',title:''}
@@ -48,9 +49,9 @@ export default (props: any) => {
     }
     useEffect(() => {
         setColumns(generateColumns(props.columns))
-    }, [])
+    }, [props.search])
     return (
-        <>
+        <TableMixDiv status={props.search}>
             {/* table 过滤组 */}
             {props.renderFilterGroup}
             {/* table 按钮组 */}
@@ -67,8 +68,8 @@ export default (props: any) => {
             </TableTopDiv>
             {/* table 数据组 */}
             <Form form={form}>
-                <TableMix data={props.data} columns={columns} handlePageSize={changeSize} total={0} current={1} rowKey={props.rowKey} />
+                <TableMix onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} handlePageSize={changeSize} total={0} current={1} rowKey={props.rowKey} selection={true} pagination={true}/>
             </Form>
-        </>);
+        </TableMixDiv>);
 
 };

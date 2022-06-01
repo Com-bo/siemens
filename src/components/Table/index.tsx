@@ -5,14 +5,17 @@ import { TableMixDiv } from './style';
 interface TableOptions {
   columns: Array<any>; //列
   data: Array<any>; //table 数据
-  total: number;
-  current: number;
+  total?: number;
+  selection?: boolean;
+  current?: number;
   rowKey?: string;
   onPageChange?: (
     pagination: TablePaginationConfig,
   ) => void;
-  handlePageSize: (val: number) => void
+  handlePageSize?: (val: number) => void
   tableHeight?: any; //table高度
+  onChange?: (selectedRowKeys, selectedRows) => void,
+  pagination?:boolean;
 }
 
 export default (_props: TableOptions) => {
@@ -24,12 +27,17 @@ export default (_props: TableOptions) => {
 
   }, [])
   return (
-    <TableMixDiv >
+    <TableMixDiv>
       <Table
         dataSource={_props.data}
+        rowSelection={_props.selection ? {
+          onChange: (selectedRowKeys, selectedRows) => {
+            _props.onChange(selectedRowKeys, selectedRows)
+          }
+        } : null}
         columns={_props.columns}
         rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
-        pagination={{
+        pagination={_props.pagination?{
           total: _props.total,
           current: _props.current,
           showTotal: (total) => {
@@ -49,7 +57,7 @@ export default (_props: TableOptions) => {
               </Select>
             </>
           },
-        }}
+        }:false}
         rowKey={_props.rowKey}
         scroll={{ x: 1000 }}
         onChange={_props.onPageChange}

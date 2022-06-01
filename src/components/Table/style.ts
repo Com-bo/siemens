@@ -2,7 +2,7 @@ import styled from 'styled-components';
 export const TableMixDiv = styled.div`
 margin:0 24px 24px;
   .stripe {
-    background-color: #f9f9f9;
+    background-color: #f8f8f8;
   }
   .ant-table {
     color: #666;
@@ -18,7 +18,7 @@ margin:0 24px 24px;
   }
   .ant-table-thead th{
     background-color:#dfdfdf;
-    padding-bottom:50px; 
+    // padding-bottom:50px; 
     position:relative;  
   }
   .ant-table-thead th .title{
@@ -36,7 +36,7 @@ margin:0 24px 24px;
   .stripe,
   .stripe .ant-table-cell-fix-right,
   .stripe .ant-table-cell-fix-left {
-    background-color: #f9f9f9;
+    background-color: #f8f8f8;
   }
   .total{
     strong{
@@ -49,4 +49,21 @@ margin:0 24px 24px;
   .ant-select{
     width:80px;
   }
+  th.ant-table-cell.ant-table-selection-column::after{
+    background-color: #f8f8f8;
+    margin-bottom: 0;
+    padding: 0 5px;
+    line-height: 50px;
+    width: 100%;
+    display: block;
+    content: '';
+  }
+ th .ant-table-selection{
+  top: 17px;
+  left: 5px;
+  height: 50px;
+ }
+ .ant-table-tbody > tr.ant-table-row-selected > td{
+  background: unset;
+ }
 `;

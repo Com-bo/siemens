@@ -14,25 +14,7 @@ export const LayoutDiv = styled.div`
   .ant-menu-sub {
     background-color: rgba(0, 0, 0, 0.05);
   }
-  .ant-menu-inline {
-    border: 0;
-  }
-  .ant-menu-horizontal .ant-menu-item {
-    border-bottom: 4px solid transparent;
-  }
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected {
-    border-bottom: 4px solid #ec6602;
-  }
-  .ant-menu-horizontal > .ant-menu-item a:hover {
-    color: #ec6602;
-  }
+  
 
   .ant-design-pro {
     background: url(${banner}) no-repeat ;
@@ -101,23 +83,35 @@ export const LayoutDiv = styled.div`
     border-radius:0 10px 10px 0;
     background-image:url(${siderbg});
     background-position:0 -10px;
+    font-size:14px;
   }
 
   .ant-menu-item:active,
   .ant-menu-submenu-title:active {
     background-color: #fef3eb;
   }
-  .ant-menu-submenu-title {
+  .ant-menu-submenu-title,.ant-menu-item {
     font-weight: bold;
     color: #333;
   }
-  .ant-pro-sider.ant-layout-sider-light .ant-menu-item a {
+  .ant-menu-submenu,.ant-menu-item {
+    border-bottom:1px solid #eaeaea; 
+  }
+  .ant-menu-submenu .ant-menu-item-only-child{
+    border-bottom:0;
+    font-weight:normal;
+  }
+  .ant-menu-submenu  .ant-menu-submenu{
+    border-bottom:0;
+  }
+  .ant-pro-sider.ant-layout-sider-light  .ant-menu-submenu .ant-menu-item  {
     color: #666;
   }
  
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected,.ant-menu-item-selected:hover {
     background-color: #f2f9f8;
     font-weight:bold;
+    color:#00807d;
   }
   .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after{
     border-right-width:4px;
@@ -137,7 +131,6 @@ export const LayoutDiv = styled.div`
     cursor: pointer;
   }
   .ant-menu-submenu-title .anticon {
-    margin-left: -12px;
     .iconfont {
       font-size: 18px;
       -webkit-text-stroke-width: 0.2px;
@@ -145,12 +138,6 @@ export const LayoutDiv = styled.div`
   }
   .ant-menu-item a .ant-badge {
     color: inherit;
-  }
-  .ant-pro-top-nav-header-main {
-    padding-left: 0;
-  }
-  .ant-pro-top-nav-header-main-left {
-    padding-left: 16px;
   }
   .ant-pro-top-nav-header-menu {
     display: flex;
@@ -177,7 +164,7 @@ export const LayoutDiv = styled.div`
   .ant-pro-top-nav-header-menu .ant-menu.ant-menu-horizontal {
     width: 100%;
     text-align: center;
-  }
+  }  
 `;
 export const RightContentDiv = styled.div`
   display: flex;

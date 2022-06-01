@@ -61,7 +61,7 @@ export default (props: any) => {
                                                 <Col span={6}>
                                                     <Form.Item name={[name, "name"]} >
                                                         <Select style={{ width: "100%" }} allowClear>
-                                                         {props.fields.map((item,index)=><Option key={index} value={item.name}>{item.title}</Option>)}   
+                                                            {props.fields.map((item, index) => <Option key={index} value={item.name}>{item.title}</Option>)}
                                                         </Select>
                                                     </Form.Item>
                                                 </Col>
@@ -117,6 +117,7 @@ export default (props: any) => {
                     <Option value="">Default</Option>
                 </Select>
                 <Space size={10}>
+                    {props?.customComponet}
                     <Button type="primary" icon={<i className="gbs gbs-search"></i>} ></Button>
                     <Button icon={<i className="gbs gbs-setting"></i>} onClick={() => setSetting(true)}></Button>
                     <Button icon={<i className="gbs gbs-export"></i>}></Button>

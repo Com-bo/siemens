@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "4520330",
+      "name": "日志",
+      "font_class": "logs",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "7069095",
+      "name": "提交",
+      "font_class": "submit",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "691683",
+      "name": "标签搜索",
+      "font_class": "listSearch",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "8308096",
+      "name": "12-收起",
+      "font_class": "collapse",
+      "unicode": "e68e",
+      "unicode_decimal": 59022
+    },
+    {
+      "icon_id": "15272276",
+      "name": "添加",
+      "font_class": "add",
+      "unicode": "e6ff",
+      "unicode_decimal": 59135
+    },
+    {
+      "icon_id": "19672630",
+      "name": "导入",
+      "font_class": "import",
+      "unicode": "eb0a",
+      "unicode_decimal": 60170
+    },
+    {
+      "icon_id": "24859939",
+      "name": "下载-文件下载-06",
+      "font_class": "download",
+      "unicode": "e855",
+      "unicode_decimal": 59477
+    },
+    {
       "icon_id": "1228",
       "name": "首页",
       "font_class": "home",
