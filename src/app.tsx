@@ -9,7 +9,7 @@ const parseTree = (datas) => {
   //遍历树  获取id数组
   for (var i in datas) {
     datas[i].path = '/' + datas[i].path;
-  
+
     if (!datas[i].routes || !datas[i].routes.length) {
       sysroutes.push(datas[i].path);
     } else {
@@ -84,43 +84,43 @@ export async function render(oldRender) {
   }
   oldRender();
 
-//   hideModalAction(oldRender);
-//   // const usersInfo = await getUserInfo(homeIndex[useType]);
-//   // if (usersInfo.isSuccess) {
-//   //   if (usersInfo.data.acceptLicenseAgreement) {
-//   //     sessionStorage.setItem('userInfo', JSON.stringify(usersInfo.data));
-//   //     hideModalAction(oldRender);
-//   //   } else {
-//   //     modalPrivacy = Modal.warning({
-//   //       title: null,
-//   //       icon: null,
-//   //       width: '1000px',
-//   //       okText: '确认',
-//   //       okButtonProps: { disabled: true },
-//   //       content: (
-//   //         <>  
-//   //         </>
-//   //       ),
-//   //     });
-//   //     return;
-//   //   }
-//   // } else {
-//   //   Modal.warning({
-//   //     title: 'Tips',
-//   //     content: usersInfo.msg,
-//   //     okText: '确定登出',
-//   //     onOk: () => {
-//   //       const Mgrs = new Mgr();
-//   //       if (useType == 'Inner') {
-//   //         authProvider.logout();
-//   //       } else {
-//   //         Mgrs.signOut();
-//   //       }
-//   //     },
-//   //     centered: true,
-//   //   });
-//   //   return;
-//   // }
+  // hideModalAction(oldRender);
+  // const usersInfo = await getUserInfo(homeIndex[useType]);
+  // if (usersInfo.isSuccess) {
+  //   if (usersInfo.data.acceptLicenseAgreement) {
+  //     sessionStorage.setItem('userInfo', JSON.stringify(usersInfo.data));
+  //     hideModalAction(oldRender);
+  //   } else {
+  //     modalPrivacy = Modal.warning({
+  //       title: null,
+  //       icon: null,
+  //       width: '1000px',
+  //       okText: '确认',
+  //       okButtonProps: { disabled: true },
+  //       content: (
+  //         <>  
+  //         </>
+  //       ),
+  //     });
+  //     return;
+  //   }
+  // } else {
+  //   Modal.warning({
+  //     title: 'Tips',
+  //     content: usersInfo.msg,
+  //     okText: '确定登出',
+  //     onOk: () => {
+  //       const Mgrs = new Mgr();
+  //       if (useType == 'Inner') {
+  //         authProvider.logout();
+  //       } else {
+  //         Mgrs.signOut();
+  //       }
+  //     },
+  //     centered: true,
+  //   });
+  //   return;
+  // }
 }
 const hideModalAction = async (oldRender: any) => {
   modalPrivacy?.destroy();
@@ -140,8 +140,8 @@ const hideModalAction = async (oldRender: any) => {
   //     routes: [],
   //   });
   //   sessionStorage.setItem('routes', JSON.stringify(data));
-    oldRender();
-    // 此处判断路由跳转
+  oldRender();
+  // 此处判断路由跳转
   // } else {
   //   Modal.warning({
   //     title: 'Tips',
@@ -168,15 +168,15 @@ export function onRouteChange({ location, routes, action }) {
 
   if (location.pathname == '/') {
     history.replace('/home');
-  // } else {
+    // } else {
     // 如果页面没有权限
-  //   if (
-  //     sysroutes.indexOf(location.pathname) == -1 &&
-  //     location.pathname != '/404' &&
-  //     location.pathname != '/logout' 
-  //   ) {
-  //     history.replace('/404');
-  //   }
+    //   if (
+    //     sysroutes.indexOf(location.pathname) == -1 &&
+    //     location.pathname != '/404' &&
+    //     location.pathname != '/logout' 
+    //   ) {
+    //     history.replace('/404');
+    //   }
   }
 }
 

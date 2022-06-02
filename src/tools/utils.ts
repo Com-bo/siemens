@@ -59,34 +59,31 @@ export function decodeHtml(text) {
  * @param {*} extraHeight 额外的高度(表格底部的内容高度 Number类型,默认为74)
  * @param {*} id 当前页面中有多个table时需要制定table的id
  */
-export function getTableScroll(extraHeight?, id?) {
-  if (typeof extraHeight == 'undefined') {
-    //  默认底部分页72 + 边距20
-    extraHeight = 92;
-  }
+export function getTableInlineScroll(id) {
   let tHeader = null;
-  if (id) {
-    tHeader = document.getElementById(id)
-      ? document.getElementById(id).getElementsByClassName('ant-table-thead')[0]
-      : null;
-  } else {
-    tHeader = document.getElementsByClassName('ant-table-thead')[0];
-  }
+  // debugger
+  // if (id) {
+  //   tHeader = document.getElementById(id)
+  //     ? document.getElementById(id).getElementsByClassName('ant-table-thead')[0]
+  //     : null;
+  // } else {
+  //   tHeader = document.getElementsByClassName('ant-table-thead')[0];
+  // }
   //表格内容距离顶部的距离
-  let tHeaderBottom = 0;
-  let tHeaderTop = 0;
-  if (tHeader) {
-    tHeaderBottom = tHeader.getBoundingClientRect().bottom;
-    tHeaderTop = tHeader.getBoundingClientRect().top;
-  }
+  // let tHeaderBottom = 0;
+  // let tHeaderTop = 0;
+  // if (tHeader) {
+  //   tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+  //   tHeaderTop = tHeader.getBoundingClientRect().top;
+  // }
   //窗体高度-表格内容顶部的高度-表格内容底部的高度
-  let height = getClientHeight() - tHeaderBottom - extraHeight;
+  let height = document.querySelector(".ant-pro-grid-content").clientHeight -document.getElementById("filterGroup").clientHeight;
   // let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
-  let _table: any = document.getElementsByClassName('ant-table')[0];
-  if (_table) {
-    _table.style.minHeight =
-      getClientHeight() - tHeaderTop - extraHeight + 'px';
-  }
+  // let _table: any = document.getElementsByClassName('ant-table')[0];
+  // if (_table) {
+  //   _table.style.minHeight =
+  //     getClientHeight() - tHeaderTop + 'px';
+  // }
   let _tables: any = document.querySelector('.ant-table .ant-table-body');
   if (_tables) {
     if (height < 100) {
@@ -95,7 +92,7 @@ export function getTableScroll(extraHeight?, id?) {
     _tables.style.height = height + 'px';
     //     getClientHeight() - tHeaderBottom - extraHeight + 'px';
   }
-  checkScrollBar(height);
+  // checkScrollBar(height);
   return height;
 }
 export const checkScrollBar = (height: any) => {

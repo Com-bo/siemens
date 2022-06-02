@@ -3,8 +3,9 @@ import TableMix from '@/components/Table'
 import { Button, Divider, Form, Input, InputNumber, Select, Space } from 'antd';
 import { TableBtnDiv, TableTitleDiv, TableTopDiv, TaleTitleIconDiv } from '@/assets/style';
 import { TableMixDiv } from './tablemix'
-import { TrademarkOutlined } from '@ant-design/icons';
+import { getTableInlineScroll } from '@/tools/utils';
 export default (props: any) => {
+    const [scrollY, setScrollY] = useState<any>(0);
     const [columns, setColumns] = useState([])
     const [form] = Form.useForm();
     const getcolumnItem = (col: any) => {
@@ -44,14 +45,28 @@ export default (props: any) => {
         });
         return arr
     }
+    // 翻页
     const changeSize = (pageSize: number) => {
         console.log(pageSize)
     }
+    // resize table的高度
+    const resize = (id) => {
+        // setScrollY(getTableInlineScroll("tableWrap"))
+    }
+
+    useEffect(() => {
+        window.addEventListener('resize', resize);
+        // resize("tableWrap")
+        return () => {
+            // 清除订阅
+            window.removeEventListener('resize', resize);
+        };
+    }, [])
     useEffect(() => {
         setColumns(generateColumns(props.columns))
     }, [props.search])
     return (
-        <TableMixDiv status={props.search}>
+        <TableMixDiv status={props.search}  >
             {/* table 过滤组 */}
             {props.renderFilterGroup}
             {/* table 按钮组 */}
@@ -68,7 +83,7 @@ export default (props: any) => {
             </TableTopDiv>
             {/* table 数据组 */}
             <Form form={form}>
-                <TableMix onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} handlePageSize={changeSize} total={0} current={1} rowKey={props.rowKey} selection={true} pagination={true}/>
+                <TableMix onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} handlePageSize={changeSize} total={0} current={1} rowKey={props.rowKey} selection={true} pagination={true}  scrollY={scrollY}/>
             </Form>
         </TableMixDiv>);
 

@@ -134,7 +134,7 @@ export const MedalsoftPersonDropdown = (
                 {/* <Menu.Divider /> */}
                 <Menu.Item key="SignOut" onClick={() => onItemClick('SignOut')}>
                   <LogoutOutlined />
-                  {formatMessage('退出登录')}
+                  Login Out
                 </Menu.Item>
               </>
             )}

@@ -9,13 +9,14 @@ interface TableOptions {
   selection?: boolean;
   current?: number;
   rowKey?: string;
+  scrollY?: string | number;
   onPageChange?: (
     pagination: TablePaginationConfig,
   ) => void;
   handlePageSize?: (val: number) => void
   tableHeight?: any; //table高度
   onChange?: (selectedRowKeys, selectedRows) => void,
-  pagination?:boolean;
+  pagination?: boolean;
 }
 
 export default (_props: TableOptions) => {
@@ -37,7 +38,7 @@ export default (_props: TableOptions) => {
         } : null}
         columns={_props.columns}
         rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
-        pagination={_props.pagination?{
+        pagination={_props.pagination ? {
           total: _props.total,
           current: _props.current,
           showTotal: (total) => {
@@ -57,9 +58,9 @@ export default (_props: TableOptions) => {
               </Select>
             </>
           },
-        }:false}
+        } : false}
         rowKey={_props.rowKey}
-        scroll={{ x: 1000 }}
+        scroll={{ x: 1000, y: _props.scrollY||'auto' }}
         onChange={_props.onPageChange}
 
       />

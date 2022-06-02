@@ -14,6 +14,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, RightOutlined } from '@ant-design
 import '@/assets/iconfont/iconfont.css';
 import Footer from '@/components/content/footer'
 import HeaderTitle from '@/assets/images/title.png'
+import {getLoginUser} from '@/app/request/apiUser'
 export type IMedalsoftLayoutProps = {
   component?: string;
   /** 菜单数据 */
@@ -99,7 +100,9 @@ export const MedalsoftLayout = (props: any) => {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-
+    getLoginUser().then(res=>{
+// debugger
+    })
     setRoutes(defaultRoute);
   }, []);
 

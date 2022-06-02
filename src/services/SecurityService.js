@@ -13,6 +13,7 @@ var mgr = new Oidc.UserManager({
   // authority: process.env.IDENTITY,
   authority: process.env.IDENTITY,
   client_id: 'mvc',
+  client_secret:"secret",
   redirect_uri: process.env.REDIRECT_URL,
   // redirect_uri:  'http://localhost:8005/callback.html',
   // redirect_uri: process.env.REDIRECT_URL,

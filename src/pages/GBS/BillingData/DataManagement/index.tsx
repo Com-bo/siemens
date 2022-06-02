@@ -118,6 +118,9 @@ export default (props: any) => {
       pageSize={10}
       total={0}
       current={1}
+      onChange={()=>{
+        
+      }}
       search={isSearch}
       rowKey="BusinessLine"
       listName="Data Management"

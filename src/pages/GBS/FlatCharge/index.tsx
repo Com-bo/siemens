@@ -105,6 +105,9 @@ export default (props: any) => {
       columns={orignalCols}
       pageSize={10}
       total={0}
+      onChange={()=>{
+        
+      }}
       current={1}
       search={isSearch}
       rowKey="BusinessLine"

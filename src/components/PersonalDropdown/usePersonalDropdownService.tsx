@@ -5,11 +5,11 @@ import { history } from 'umi';
 import { Action, IMedalsoftPersonDropdownProps } from '.';
 import Mgr from '@/services/SecurityService';
 import { encryptByRSA } from '@/tools/jsencrypt';
-import {
-  getPublicKey,
-  resetSelfPassword,
-  loginUpdate,
-} from '@/app/request/requestApi';
+// import {
+//   getPublicKey,
+//   resetSelfPassword,
+//   loginUpdate,
+// } from '@/app/request/requestApi';
 import moment from 'moment';
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 
@@ -88,53 +88,54 @@ const usePersonalDropdownService = (props: IMedalsoftPersonDropdownProps) => {
   };
 
   const handleOk = () => {
-    passwordForm.validateFields().then(() => {
-      getPublicKey().then((res) => {
-        if (res.code != 200 || !res.isSuccess) {
-          message.error(res.msg);
-        } else {
-          let oldPassword = encryptByRSA(
-            res.data,
-            passwordForm.getFieldValue('oldPassword'),
-          );
-          let newPassword = encryptByRSA(
-            res.data,
-            passwordForm.getFieldValue('newPassword'),
-          );
-          resetSelfPassword({
-            oldPassword: oldPassword,
-            newPassword: newPassword,
-          }).then((res) => {
-            // 登录成功，需要重置登录时间
-            let homePage: string;
-            if (res.isSuccess) {
-              let infos = sessionStorage.getItem('userInfo');
-              let userInfo: any;
-              if (infos !== 'undefined') {
-                userInfo = JSON.parse(infos);
-                homePage = userInfo.pageRouter;
-              }
-              loginUpdate(
-                { lastLoginTime: moment(new Date()).format('YYYY-MM-DD') },
-                homePage,
-              ).then((loginRes) => {
-                if (loginRes.code == 200 && loginRes.isSuccess) {
-                  message.success('修改密码成功，请重新登录！');
-                  setIsModalVisible(false);
-                  passwordForm.resetFields();
-                  const Mgrs = new Mgr();
-                  Mgrs.signOut();
-                } else {
-                  message.error(res.msg);
-                }
-              });
-            } else {
-              message.error(res.msg);
-            }
-          });
-        }
-      });
-    });
+    message.warning("开发中");
+    // passwordForm.validateFields().then(() => {
+    //   getPublicKey().then((res) => {
+    //     if (res.code != 200 || !res.isSuccess) {
+    //       message.error(res.msg);
+    //     } else {
+    //       let oldPassword = encryptByRSA(
+    //         res.data,
+    //         passwordForm.getFieldValue('oldPassword'),
+    //       );
+    //       let newPassword = encryptByRSA(
+    //         res.data,
+    //         passwordForm.getFieldValue('newPassword'),
+    //       );
+    //       resetSelfPassword({
+    //         oldPassword: oldPassword,
+    //         newPassword: newPassword,
+    //       }).then((res) => {
+    //         // 登录成功，需要重置登录时间
+    //         let homePage: string;
+    //         if (res.isSuccess) {
+    //           let infos = sessionStorage.getItem('userInfo');
+    //           let userInfo: any;
+    //           if (infos !== 'undefined') {
+    //             userInfo = JSON.parse(infos);
+    //             homePage = userInfo.pageRouter;
+    //           }
+    //           loginUpdate(
+    //             { lastLoginTime: moment(new Date()).format('YYYY-MM-DD') },
+    //             homePage,
+    //           ).then((loginRes) => {
+    //             if (loginRes.code == 200 && loginRes.isSuccess) {
+    //               message.success('修改密码成功，请重新登录！');
+    //               setIsModalVisible(false);
+    //               passwordForm.resetFields();
+    //               const Mgrs = new Mgr();
+    //               Mgrs.signOut();
+    //             } else {
+    //               message.error(res.msg);
+    //             }
+    //           });
+    //         } else {
+    //           message.error(res.msg);
+    //         }
+    //       });
+    //     }
+    //   });
+    // });
   };
 
   const handleCancel = () => {
@@ -163,19 +164,15 @@ const usePersonalDropdownService = (props: IMedalsoftPersonDropdownProps) => {
         break;
       case 'SignOut':
         Modal.confirm({
-          title: formatMessage('登出'),
+          title:"Login Out",
           icon: <ExclamationCircleOutlined />,
-          content: formatMessage('确定退出登录?'),
-          okText: formatMessage('确定'),
-          cancelText: formatMessage('取消'),
+          content: "Login Out?",
+          okText: "OK",
+          cancelText: "Cancel",
           onOk: () => {
             const Mgrs = new Mgr();
             Mgrs.getUser().then((res) => {
-              if (res.profile.UserType == 'Inner') {
-                authProvider.logout();
-              } else {
-                Mgrs.signOut();
-              }
+              authProvider.logout();
             });
           },
           centered: true,

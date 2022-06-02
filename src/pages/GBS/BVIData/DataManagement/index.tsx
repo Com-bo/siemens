@@ -118,6 +118,9 @@ export default (props: any) => {
       columns={orignalCols}
       pageSize={10}
       total={0}
+      onChange={()=>{
+        
+      }}
       current={1}
       search={isSearch}
       rowKey="BusinessLine"
@@ -126,7 +129,7 @@ export default (props: any) => {
         <FilterGroup onSaveFilterGroup={savefilterGroup} fields={orignalCols} />
       }
       renderBtns={<Space>
-        <BtnOrangeWrap><Button >Recheck</Button></BtnOrangeWrap>
+        <BtnOrangeWrap><Button onClick={()=>{}}>Recheck</Button></BtnOrangeWrap>
         <BtnGreenWrap><Button>Confirm</Button></BtnGreenWrap>
         <BtnBlueWrap><Button>Unconfirm</Button></BtnBlueWrap>
         <Divider type="vertical" style={{ height: '20px', borderColor: "#999" }} />

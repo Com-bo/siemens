@@ -49,6 +49,7 @@ export default (props: any) => {
     const [data, setData] = useState([])
 
     useEffect(() => {
+        
         setData([{
             id: 1,
             BusinessLine: 'R2R',
@@ -193,7 +194,7 @@ export default (props: any) => {
             </TableTitleDiv>
         </TableTopDiv>
         <TableWrapDiv>
-            <Table columns={columns} rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')} dataSource={data} rowKey="id" pagination={false} scroll={{y:300}}  />
+            <Table  columns={columns} rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')} dataSource={data} rowKey="id" pagination={false} scroll={{y:500}} />
         </TableWrapDiv>
 
         <div style={{margin:"20px auto 40px",textAlign:'center'}}>

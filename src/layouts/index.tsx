@@ -263,14 +263,14 @@ export default function Layout({
     'side',
   );
 
-  const [userName, setUserName] = useState('Melody');
+  const [userName, setUserName] = useState('');
   useEffect(() => {
-    //   const Mgrs = new Mgr();
-    //   Mgrs.getProfile().then((res) => {
-    //     if (res) {
-    //       setUserName(res.UserName);
-    //     }
-    //   });
+      const Mgrs = new Mgr();
+      Mgrs.getProfile().then((res) => {
+        if (res) {
+          setUserName(res.name);
+        }
+      });
   }, []);
 
   // const authService = useAuthService({ mode: 'normal', formatLanguageService });
