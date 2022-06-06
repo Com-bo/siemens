@@ -8,13 +8,13 @@ export default (props: any) => {
     // const [scrollY, setScrollY] = useState<any>(0);
     const [columns, setColumns] = useState([])
     const [pageSize, setPageSize] = useState(20)
-    const [form] = Form.useForm();
+
     const getcolumnItem = (col: any) => {
 
         return {
             title: <div className={props.search ? "listSearch" : 'hiddenlistSearch'}>
                 <div className="title">{col.title}</div>
-                <Form.Item>
+                <Form.Item name={col.name}>
                     {getSearchInputType(col.titleRender)}
                 </Form.Item>
             </div>,
@@ -68,8 +68,8 @@ export default (props: any) => {
                 </TableBtnDiv>
             </TableTopDiv>
             {/* table 数据组 */}
-            <Form form={form}>
-                <TableMix scrollY={'calc(100vh - 500px)'} handlePageSize={props.changePageSize}  onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} total={props.total} current={props.current} pageSize={pageSize} rowKey={props.rowKey} selection={true} pagination={true} />
+            <Form form={props.form}>
+                <TableMix scrollY={'calc(100vh - 500px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} total={props.total} current={props.current} pageSize={pageSize} rowKey={props.rowKey} selection={true} pagination={true} />
             </Form>
         </TableMixDiv>);
 

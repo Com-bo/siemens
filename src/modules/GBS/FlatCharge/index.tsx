@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/TableMixInline'
-import { Button, Divider, Dropdown, Menu, message, Popconfirm, Radio, Space } from 'antd';
-import { DownOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { BtnTextRedWrap, BtnBlueWrap, BtnGreenWrap, BtnOrangeWrap, BtnThemeWrap } from '@/assets/style';
+import { Button, Divider, Dropdown, Form, Menu, message, Popconfirm, Radio, Space } from 'antd';
+import { DownOutlined, EditOutlined } from '@ant-design/icons';
+import { BtnThemeWrap } from '@/assets/style';
 import search from '@/assets/images/search.png'
 import FilterGroup from '@/modules/components/FilterGroup'
 export default (props: any) => {
@@ -12,6 +12,8 @@ export default (props: any) => {
   const [current, setCurrent] = useState(1)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [selectedRows, setSelectedRows] = useState([])
+  const [pageSize, setPageSize] = useState(20)
+  const [form] = Form.useForm();
   const orignalCols = [{
     name: 'BusinessLine',
     title: 'Business Line',
@@ -92,13 +94,15 @@ export default (props: any) => {
   }, [current])
 
   // 用于获取table接口方法
-  const _getData = (pageSize?: number) => {
+  const _getData = (_pageSize?: number) => {
+
     const params = {
       current,
-      pageSize: pageSize ?? 20,
-
+      pageSize: _pageSize ?? pageSize,
+      ...form.getFieldsValue()
 
     }
+    console.log(params)
     setTableData([{
       BusinessLine: "1",
       BVI: 3,
@@ -192,6 +196,7 @@ export default (props: any) => {
     }
   }
   const changePageSize = (val: number) => {
+    setPageSize(val)
     _getData(val)
   }
   // 删除接口
@@ -203,6 +208,7 @@ export default (props: any) => {
 
   return <div>
     <TableList
+      form={form}
       data={tableData}
       columns={orignalCols}
       total={total}
@@ -217,7 +223,7 @@ export default (props: any) => {
       rowKey="BusinessLine"
       listName="Flat Charge"
       renderFilterGroup={
-        <FilterGroup onSaveFilterGroup={savefilterGroup} fields={orignalCols} />
+        <FilterGroup     onSearch={()=>_getData()} onSaveFilterGroup={savefilterGroup} fields={orignalCols} />
       }
       renderBtns={<Space>
         {/* <BtnThemeWrap><Button>Export Original</Button></BtnThemeWrap> */}

@@ -118,7 +118,7 @@ export default (props: any) => {
                 </Select>
                 <Space size={10}>
                     {props?.customComponet}
-                    <Button type="primary" icon={<i className="gbs gbs-search"></i>} ></Button>
+                    <Button type="primary" icon={<i className="gbs gbs-search"></i>} onClick={props.onSearch} ></Button>
                     <Button icon={<i className="gbs gbs-setting"></i>} onClick={() => setSetting(true)}></Button>
                     <Button icon={<i className="gbs gbs-export"></i>}></Button>
                 </Space>
