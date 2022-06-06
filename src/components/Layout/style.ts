@@ -35,7 +35,7 @@ export const LayoutDiv = styled.div`
   .ant-pro-grid-content{
     overflow-y: auto;
     margin-top:5px;
-    height: calc(100vh - 160px);
+    height: calc(100vh - 158px);
     box-shadow: -3px 0px 20px 0px 
 		rgba(0, 0, 0, 0.1);
     border-radius: 10px;

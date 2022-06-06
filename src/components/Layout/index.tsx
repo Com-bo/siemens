@@ -14,7 +14,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, RightOutlined } from '@ant-design
 import '@/assets/iconfont/iconfont.css';
 import Footer from '@/components/content/footer'
 import HeaderTitle from '@/assets/images/title.png'
-import {getLoginUser} from '@/app/request/apiUser'
+import { getLoginUser } from '@/app/request/apiUser'
 export type IMedalsoftLayoutProps = {
   component?: string;
   /** 菜单数据 */
@@ -100,10 +100,10 @@ export const MedalsoftLayout = (props: any) => {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    getLoginUser().then(res=>{
-// debugger
-    })
-    setRoutes(defaultRoute);
+    let res = sessionStorage.getItem('routes');
+    setRoutes(JSON.parse(res));
+    // setRoutes(defaultRoute);
+
   }, []);
 
 
@@ -113,6 +113,7 @@ export const MedalsoftLayout = (props: any) => {
         collapsedButtonRender={false}
         collapsed={collapsed}
         headerTheme="light"
+
         breadcrumbProps={{
           separator: <RightOutlined />,
           itemRender: (route, params, routes, paths) => {
@@ -130,7 +131,10 @@ export const MedalsoftLayout = (props: any) => {
         title={null}
         pageTitleRender={() => 'B&B System'}
         siderWidth={240}
-        route={routes}
+        route={{
+          path: '/',
+          routes: routes,
+        }}
         location={{ pathname: history.location.pathname }}
         // disableMobile={true}
         fixSiderbar={true}
@@ -175,7 +179,7 @@ export const MedalsoftLayout = (props: any) => {
                   className={`gbs   gbs-${subMenuProps.icon as string}`}
                 ></span>
               </span>
-              <span style={{ fontSize: "16px" }}>{subMenuProps.name}</span>
+              <span style={{ fontSize: "16px",verticalAlign:'middle' }}>{subMenuProps.name}</span>
             </div>
           ) : (
             <div>

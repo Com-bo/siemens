@@ -5,7 +5,8 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Menu, Space, Tooltip, Modal, Form, Input, Divider } from 'antd';
+// import Dropdown from '@ant-design/pro-table/lib/components/Dropdown';
+import { Menu, Space, Dropdown, Modal, Form, Input, Divider } from 'antd';
 // import 'antd/dist/antd.css';
 import { DropDownProps } from 'antd/lib/dropdown/index';
 import * as React from 'react';
@@ -117,47 +118,47 @@ export const MedalsoftPersonDropdown = (
 
 
   return (
-    <div>
-      <DropdownWrapper
-        trigger={['hover']}
-        {...props}
-        overlay={
-          <Menu>
-            {/* {contentRender?.({ UserCenter, UserSetting }).map((item) => (
+    <DropdownWrapper>
+      <Space size={'small'}>
+        <span >Welcome！</span>
+        <Divider type="vertical" />
+        <QuestionCircleOutlined />
+        <Divider type="vertical" />
+        <Dropdown
+          trigger={['hover']}
+          {...props}
+          overlay={
+            <Menu>
+              {/* {contentRender?.({ UserCenter, UserSetting }).map((item) => (
               <MenuItemWrapper>{item}</MenuItemWrapper>
             )) ?? [UserCenter, UserSetting]} */}
-            {contentRender?.({ ChangePassword }).map((item) => (
+              {/* {contentRender?.({ ChangePassword }).map((item) => (
               <MenuItemWrapper>{item}</MenuItemWrapper>
-            )) ?? [ChangePassword]}
-            {showSignOut && (
-              <>
-                {/* <Menu.Divider /> */}
-                <Menu.Item key="SignOut" onClick={() => onItemClick('SignOut')}>
-                  <LogoutOutlined />
-                  Login Out
-                </Menu.Item>
-              </>
-            )}
-          </Menu>
-        }
-      >
-        <span className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-          {/* <Tooltip placement="bottom" title={userName}> */}
-          <Space size={'small'}>
-            <span>Welcome!</span>
-            <Divider type="vertical" />
-            <QuestionCircleOutlined />
-            <Divider type="vertical" />
-            <span>
-              {formatUserName(userName)}{' '}
-              <DownOutlined style={{ fontSize: '10px' }} />
-            </span>
-          </Space>
-        </span>
-        {/* </Tooltip> */}
-      </DropdownWrapper>
+            )) ?? [ChangePassword]} */}
+              {showSignOut && (
+                <>
+                  {/* <Menu.Divider /> */}
+                  <Menu.Item key="SignOut" onClick={() => onItemClick('SignOut')}>
+                    <LogoutOutlined />
+                    Login Out
+                  </Menu.Item>
+                </>
+              )}
+            </Menu>
+          }
+        >
+          <span className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+            {/* <Tooltip placement="bottom" title={userName}> */}
+              <span>
+                {formatUserName(userName)}{' '}
+                <DownOutlined style={{ fontSize: '10px' }} />
+              </span>
+          </span>
+          {/* </Tooltip> */}
+        </Dropdown>
+      </Space>
       <Modal
-        title="修改密码"
+        title="Change Password"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -207,7 +208,7 @@ export const MedalsoftPersonDropdown = (
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </DropdownWrapper>
   );
 };
 export default MedalsoftPersonDropdown;

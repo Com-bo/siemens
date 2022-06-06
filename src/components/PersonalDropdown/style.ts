@@ -1,11 +1,15 @@
 import { Dropdown, Menu } from 'antd';
 import styled from 'styled-components';
-export const DropdownWrapper = styled(Dropdown)`
+export const DropdownWrapper = styled.div`
+padding:0 10px; 
+.ant-dropdown{
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
  margin:0 20px;
+}
+ 
   img {
     height: 24px;
     margin-right: 9px;

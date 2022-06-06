@@ -6,12 +6,13 @@ interface TableOptions {
   columns: Array<any>; //列
   data: Array<any>; //table 数据
   total?: number;
+  pageSize?: number;
   selection?: boolean;
   current?: number;
   rowKey?: string;
   scrollY?: string | number;
   onPageChange?: (
-    pagination: TablePaginationConfig,
+    pagination: any, filters: any, sorter: any, extra: any
   ) => void;
   handlePageSize?: (val: number) => void
   tableHeight?: any; //table高度
@@ -20,13 +21,9 @@ interface TableOptions {
 }
 
 export default (_props: TableOptions) => {
-  const [pageSize, setPageSize] = useState(20);
-
-  // 获取元素的thead
-  useEffect(() => {
+  const [_pageSize, setPageSize] = useState(20);
 
 
-  }, [])
   return (
     <TableMixDiv>
       <Table
@@ -41,11 +38,12 @@ export default (_props: TableOptions) => {
         pagination={_props.pagination ? {
           total: _props.total,
           current: _props.current,
+          pageSize:_pageSize,
           showTotal: (total) => {
             return <>
               <span className="total">Total: <strong>{total}</strong></span>
               <label>Items</label>
-              <Select value={pageSize} onChange={(val) => {
+              <Select value={_pageSize} onChange={(val) => {
                 setPageSize(val)
                 _props.handlePageSize(val)
               }}>
@@ -60,7 +58,7 @@ export default (_props: TableOptions) => {
           },
         } : false}
         rowKey={_props.rowKey}
-        scroll={{ x: 1000, y: _props.scrollY||'auto' }}
+        scroll={{ x: 1000, y: _props.scrollY ?? null }}
         onChange={_props.onPageChange}
 
       />

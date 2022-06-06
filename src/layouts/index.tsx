@@ -265,12 +265,7 @@ export default function Layout({
 
   const [userName, setUserName] = useState('');
   useEffect(() => {
-      const Mgrs = new Mgr();
-      Mgrs.getProfile().then((res) => {
-        if (res) {
-          setUserName(res.name);
-        }
-      });
+    setUserName(sessionStorage.getItem('user'));
   }, []);
 
   // const authService = useAuthService({ mode: 'normal', formatLanguageService });

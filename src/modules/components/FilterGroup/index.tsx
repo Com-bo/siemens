@@ -111,7 +111,7 @@ export default (props: any) => {
                     </Form.Item>
                 </Form>
             </Modal>
-            <FilterGroupDiv>
+            <FilterGroupDiv id="filterGroup">
                 <label>Filter Group:</label>
                 <Select value={filterGroup} onChange={changeFilterGroup}>
                     <Option value="">Default</Option>

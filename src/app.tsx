@@ -3,17 +3,59 @@ import Mgr from '@/services/SecurityService';
 import { message, notification, Modal } from 'antd';
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 import '@/app/framework';
-import React from 'react';
-let sysroutes = [];
-const parseTree = (datas) => {
-  //遍历树  获取id数组
+import { getLoginUser } from '@/app/request/apiUser'
+let authBtnCodes = {};
+let sysRoutes = [];
+const parseTree = (datas, resultData) => {
   for (var i in datas) {
-    datas[i].path = '/' + datas[i].path;
-
-    if (!datas[i].routes || !datas[i].routes.length) {
-      sysroutes.push(datas[i].path);
-    } else {
-      parseTree(datas[i].routes);
+    // 路由层
+    if (datas[i].path) {
+      resultData.push({
+        authCode: datas[i].authCode,
+        name: datas[i].authName,
+        path: datas[i].path,
+        icon: datas[i].icon,
+      });
+      // if (resultData[0].redirect) {
+      //   k = k + 1;
+      // }
+      // 存在子路由
+      if (
+        datas[i].subTree &&
+        datas[i].subTree.length &&
+        datas[i].subTree[0].path
+      ) {
+        // 路由层 ，设置redirect
+        // resultData[k].routes = [{
+        //   path: datas[i].path,
+        //   redirect: datas[i].subTree[0].path
+        // }]
+        sysRoutes.push(datas[i].path);
+        resultData[i].routes = [];
+        parseTree(datas[i].subTree, resultData[i].routes);
+      } else {
+        // 按钮层
+        if (
+          datas[i].subTree &&
+          datas[i].subTree.length &&
+          !datas[i].subTree[0].path 
+        ) {
+          sysRoutes.push(datas[i].path);
+          resultData[i].routes = [];
+        }
+      }
+      // 不存在子路由
+    }
+    if (
+      datas[i].subTree &&
+      datas[i].subTree.length &&
+      !datas[i].subTree[0].path
+    ) {
+      // 按钮层
+      if (!authBtnCodes[datas[i].authCode]) {
+        authBtnCodes[datas[i].authCode] = datas[i].subTree;
+        parseTree(datas[i].subTree, []);
+      }
     }
   }
 };
@@ -66,7 +108,7 @@ export function patchRoutes({ routes }) {
 
 
 let modalPrivacy: any;
-
+let _routes = [];
 export async function render(oldRender) {
   // oldRender();
   const Mgrs = new Mgr();
@@ -82,79 +124,31 @@ export async function render(oldRender) {
   if (!infos) {
     return;
   }
-  oldRender();
+  getLoginUser().then((res: any) => {
+    if (res.isSuccess) {
+      sessionStorage.setItem('user', res.data?.realName);
+      parseTree(res.data.auhtList, _routes);
+      console.log(authBtnCodes);
+      console.log(_routes);
+      // _routes[1].routes[0].path="/CertificateList/list"
+      sessionStorage.setItem('authCodes', JSON.stringify(authBtnCodes));
+      sessionStorage.setItem('routes', JSON.stringify(_routes));
+      oldRender();
+    } else {
+      Modal.error({
+        title: 'Tips',
+        content: res?.Value?.msg,
+        okText: () => {},
+        cancelText: '',
+        centered: true,
+        keyboard: false,
+      });
+    }
+  });
 
-  // hideModalAction(oldRender);
-  // const usersInfo = await getUserInfo(homeIndex[useType]);
-  // if (usersInfo.isSuccess) {
-  //   if (usersInfo.data.acceptLicenseAgreement) {
-  //     sessionStorage.setItem('userInfo', JSON.stringify(usersInfo.data));
-  //     hideModalAction(oldRender);
-  //   } else {
-  //     modalPrivacy = Modal.warning({
-  //       title: null,
-  //       icon: null,
-  //       width: '1000px',
-  //       okText: '确认',
-  //       okButtonProps: { disabled: true },
-  //       content: (
-  //         <>  
-  //         </>
-  //       ),
-  //     });
-  //     return;
-  //   }
-  // } else {
-  //   Modal.warning({
-  //     title: 'Tips',
-  //     content: usersInfo.msg,
-  //     okText: '确定登出',
-  //     onOk: () => {
-  //       const Mgrs = new Mgr();
-  //       if (useType == 'Inner') {
-  //         authProvider.logout();
-  //       } else {
-  //         Mgrs.signOut();
-  //       }
-  //     },
-  //     centered: true,
-  //   });
-  //   return;
-  // }
+  
 }
-const hideModalAction = async (oldRender: any) => {
-  modalPrivacy?.destroy();
 
-  // const res = await apiMenuTree(homeIndex[useType]);
-  // if (res.isSuccess) {
-  //   parseTree(res.data);
-  //   let data = res.data || [];
-  //   data.push({
-  //     icon: '',
-  //     name: '帮助',
-  //     // path:
-  //     //   process.env.WEB_URL +
-  //     //   '/template/西门子医学诊断全国经销商采购和库存管理系统培训操作手册V1.pdf',
-  //     path: helpIndex[useType],
-  //     priType: 0,
-  //     routes: [],
-  //   });
-  //   sessionStorage.setItem('routes', JSON.stringify(data));
-  oldRender();
-  // 此处判断路由跳转
-  // } else {
-  //   Modal.warning({
-  //     title: 'Tips',
-  //     content: res.msg,
-  //     okText: '确定登出',
-  //     onOk: () => {
-  //       const Mgrs = new Mgr();
-  //       Mgrs.signOut();
-  //     },
-  //     centered: true,
-  //   });
-  // }
-};
 // 路由变化
 export function onRouteChange({ location, routes, action }) {
   // if (!useType) {
@@ -167,7 +161,7 @@ export function onRouteChange({ location, routes, action }) {
   }
 
   if (location.pathname == '/') {
-    history.replace('/home');
+    history.replace(_routes[0].path);
     // } else {
     // 如果页面没有权限
     //   if (
