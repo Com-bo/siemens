@@ -25,7 +25,10 @@ export default (props: any) => {
                     <span></span>
                 </TaleTitleIconDiv>
                 <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>Filter Group</span>
-            </div>} footer={null} visible={isSetting} onCancel={() => setSetting(false)} width={1000}>
+            </div>} 
+            footer={null} visible={isSetting} onCancel={() => setSetting(false)} width={1000}>
+
+                
                 <Form labelCol={{ span: 4 }} form={form}>
                     <Form.Item
                         label="Filter Group"
