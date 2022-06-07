@@ -6,13 +6,13 @@ import useFormatLanguageService, {
 import { UseRequestProvider } from 'ahooks';
 import 'antd/dist/antd.less';
 import axios from 'axios';
-import Mgr from '@/services/SecurityService';
+// import Mgr from '@/services/SecurityService';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { IRouteComponentProps } from 'umi';
 import React, { useEffect, useRef, useState, createContext } from 'react';
 import { useLocalStorageState } from 'ahooks';
 import font from './YouSheBiaoTiHei.ttf'
-import siemens from './SiemensSans_Global_Bold.ttf'
+// import siemens from './SiemensSans_Global_Bold.ttf'
 import Roman from './SiemensSans_Global_Roman.ttf'
 const GlobalStyle = createGlobalStyle`
  /**
@@ -209,10 +209,6 @@ const GlobalStyle = createGlobalStyle`
  .ant-btn .iconfont+span{
    padding-left:15px;
  }
- .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
-   position:absolute;
-   right:-5px;
- }
  .ant-pagination-options .ant-select-single .ant-select-selector .ant-select-selection-item{
   line-height: 22px;
  }
@@ -273,7 +269,7 @@ export default function Layout({
     <ThemeProvider theme={theme}>
       {/* 全局样式 */}
       <GlobalStyle />
-      <FormatLanguageService.Provider value={formatLanguageService}>
+      {/* <FormatLanguageService.Provider value={formatLanguageService}> */}
         <UseRequestProvider
           value={{
             requestMethod: (param) =>
@@ -291,7 +287,7 @@ export default function Layout({
             {children}
           </MedalsoftLayout>
         </UseRequestProvider>
-      </FormatLanguageService.Provider>
+      {/* </FormatLanguageService.Provider> */}
     </ThemeProvider>
   );
 }

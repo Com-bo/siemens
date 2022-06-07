@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/TableMixInline'
-import { Button, Divider, Dropdown, Menu, Radio, Space } from 'antd';
+import { Button, Divider, Dropdown, Menu, Radio, Space, Form } from 'antd';
 import { DownOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { BtnTextRedWrap, BtnBlueWrap, BtnGreenWrap, BtnOrangeWrap, BtnThemeWrap } from '@/assets/style';
 import search from '@/assets/images/search.png'
@@ -11,7 +11,7 @@ export default (props: any) => {
 
   const [tableData, setTableData] = useState([])
   const [isSearch, setIsSearch] = useState(true)
-
+  const [form] = Form.useForm();
 
   const orignalCols = [{
     name: 'BusinessLine',
@@ -110,10 +110,11 @@ export default (props: any) => {
       data={tableData}
       columns={orignalCols}
       pageSize={10}
+      form={form}
       total={0}
       current={1}
-      onChange={()=>{
-        
+      onChange={() => {
+
       }}
       search={isSearch}
       rowKey="BusinessLine"

@@ -118,7 +118,7 @@ export const MedalsoftPersonDropdown = (
 
 
   return (
-    <DropdownWrapper>
+    <DropdownWrapper>               
       <Space size={'small'}>
         <span >Welcome！</span>
         <Divider type="vertical" />

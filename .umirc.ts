@@ -21,7 +21,7 @@ export default defineConfig({
   },
   title: 'B&B System',
   locale: {
-    default: 'zh-CN',
+    default: 'en-US',
     antd: true,
     baseSeparator: '-',
     baseNavigator: true,

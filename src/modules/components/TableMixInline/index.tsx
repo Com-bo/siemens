@@ -69,7 +69,7 @@ export default (props: any) => {
             </TableTopDiv>
             {/* table 数据组 */}
             <Form form={props.form}>
-                <TableMix scrollY={'calc(100vh - 500px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} total={props.total} current={props.current} pageSize={pageSize} rowKey={props.rowKey} selection={true} pagination={true} />
+                <TableMix rowClick={(record=>props.rowClick && props.rowClick(record))} scrollY={'calc(100vh - 500px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} total={props.total} current={props.current} pageSize={pageSize} rowKey={props.rowKey} selection={true} pagination={true} />
             </Form>
         </TableMixDiv>);
 

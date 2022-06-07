@@ -18,6 +18,7 @@ interface TableOptions {
   tableHeight?: any; //table高度
   onChange?: (selectedRowKeys, selectedRows) => void,
   pagination?: boolean;
+  rowClick?: (record: Object) => void;
 }
 
 export default (_props: TableOptions) => {
@@ -34,11 +35,17 @@ export default (_props: TableOptions) => {
           }
         } : null}
         columns={_props.columns}
+        onRow={record => {
+          return {
+            onClick: event => { 
+              _props.rowClick && _props.rowClick(record) }, // 点击行
+          };
+        }}
         rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
         pagination={_props.pagination ? {
           total: _props.total,
           current: _props.current,
-          pageSize:_pageSize,
+          pageSize: _pageSize,
           showTotal: (total) => {
             return <>
               <span className="total">Total: <strong>{total}</strong></span>

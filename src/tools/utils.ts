@@ -41,7 +41,7 @@ export function formatDate(dateText: any) {
       : dateText
     : '';
 }
-
+// 防止XSS攻击
 export function decodeHtml(text) {
   if (!text) {
     return '';
@@ -54,57 +54,27 @@ export function decodeHtml(text) {
   temp = null;
   return output;
 }
-/**
- * 获取第一个表格的可视化高度
- * @param {*} extraHeight 额外的高度(表格底部的内容高度 Number类型,默认为74)
- * @param {*} id 当前页面中有多个table时需要制定table的id
- */
-export function getTableInlineScroll(id) {
-  let tHeader = null;
-  // debugger
-  // if (id) {
-  //   tHeader = document.getElementById(id)
-  //     ? document.getElementById(id).getElementsByClassName('ant-table-thead')[0]
-  //     : null;
-  // } else {
-  //   tHeader = document.getElementsByClassName('ant-table-thead')[0];
-  // }
-  //表格内容距离顶部的距离
-  // let tHeaderBottom = 0;
-  // let tHeaderTop = 0;
-  // if (tHeader) {
-  //   tHeaderBottom = tHeader.getBoundingClientRect().bottom;
-  //   tHeaderTop = tHeader.getBoundingClientRect().top;
-  // }
-  //窗体高度-表格内容顶部的高度-表格内容底部的高度
-  let height = document.querySelector(".ant-pro-grid-content").clientHeight -document.getElementById("filterGroup").clientHeight;
-  // let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
-  // let _table: any = document.getElementsByClassName('ant-table')[0];
-  // if (_table) {
-  //   _table.style.minHeight =
-  //     getClientHeight() - tHeaderTop + 'px';
-  // }
-  let _tables: any = document.querySelector('.ant-table .ant-table-body');
-  if (_tables) {
-    if (height < 100) {
-      height = 200;
+/* *  
+*obj:文件对象
+*form：formData
+filename：需要上传的文件名称
+**/
+export function objectToFormData(obj, form, filename: string) {
+  const fd = form || new FormData();
+  for (let property in obj) {
+    if (obj.hasOwnProperty(property)) {
+      // if the property is an object, but not a File, use recursivity.
+      if (
+        typeof obj[property] === 'object' &&
+        !(obj[property] instanceof File)
+      ) {
+        objectToFormData(obj[property], fd, filename);
+      } else if (obj[property] instanceof File) {
+        // if it's a string or a File object
+        fd.append(filename, obj[property]);
+      }
     }
-    _tables.style.height = height + 'px';
-    //     getClientHeight() - tHeaderBottom - extraHeight + 'px';
   }
-  // checkScrollBar(height);
-  return height;
-}
-export const checkScrollBar = (height: any) => {
-  let antTableBody = document.querySelector('.ant-table-body');
-
-  let antTableBodyScrollHeight = antTableBody && antTableBody.scrollHeight;
-
-  let antTableFixHeader = document.querySelector('.ant-table-container');
-
-  if (antTableBodyScrollHeight < height) {
-    antTableFixHeader && antTableFixHeader.classList.add('change-scrollBal');
-  } else {
-    antTableFixHeader && antTableFixHeader.classList.remove('change-scrollBal');
-  }
+  return fd;
 };
+
