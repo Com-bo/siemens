@@ -141,7 +141,7 @@ export default (props: any) => {
               </Space>
             </Button>
           </Dropdown></BtnThemeWrap>
-        <BtnThemeWrap><Button>Copy</Button></BtnThemeWrap>
+        <BtnThemeWrap><Button>Copys</Button></BtnThemeWrap>
         <BtnThemeWrap><Button>Submit</Button></BtnThemeWrap>
         <Button>Delete</Button>
         <Divider type="vertical" style={{ height: '20px', borderColor: "#999" }} />
