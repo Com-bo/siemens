@@ -67,6 +67,31 @@ export const defaultRoute =
       key: 'MasterData',
       path: '/MasterData',
       icon:'masterData',
+      routes: [
+        {
+          name: 'Business Line',
+          key: "BusinessLine",
+          path: '/MasterData/BusinessLine',
+        },
+        {
+          name: 'Cost Center',
+          key: "CostCenter",
+          path: '/MasterData/CostCenter',
+        },
+        {
+          name: 'ICB Customer',
+          key: "ICBCustomer",
+          path: '/MasterData/ICBCustomer',
+        },{
+          name: 'ServiceLine Basic',
+          key: "ServiceLineBasic",
+          path: '/MasterData/ServiceLineBasic',
+        },{
+          name: 'Product',
+          key: "Product",
+          path: '/MasterData/Product',
+        }
+    ]
     },
     {
       name: 'System Setting',
