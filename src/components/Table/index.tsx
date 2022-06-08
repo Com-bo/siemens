@@ -8,6 +8,7 @@ interface TableOptions {
   total?: number;
   pageSize?: number;
   selection?: boolean;
+  selectedRowKeys?: Array<any>;
   current?: number;
   rowKey?: string;
   scrollY?: string | number;
@@ -19,6 +20,7 @@ interface TableOptions {
   onChange?: (selectedRowKeys, selectedRows) => void,
   pagination?: boolean;
   rowClick?: (record: Object) => void;
+
 }
 
 export default (_props: TableOptions) => {
@@ -30,15 +32,17 @@ export default (_props: TableOptions) => {
       <Table
         dataSource={_props.data}
         rowSelection={_props.selection ? {
+          selectedRowKeys: _props.selectedRowKeys||[],
           onChange: (selectedRowKeys, selectedRows) => {
             _props.onChange(selectedRowKeys, selectedRows)
           }
-        } : null}
+        } : undefined}
         columns={_props.columns}
         onRow={record => {
           return {
-            onClick: event => { 
-              _props.rowClick && _props.rowClick(record) }, // 点击行
+            onClick: event => {
+              _props.rowClick && _props.rowClick(record)
+            }, // 点击行
           };
         }}
         rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}

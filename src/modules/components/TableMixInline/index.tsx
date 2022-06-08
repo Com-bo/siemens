@@ -3,7 +3,6 @@ import TableMix from '@/components/Table'
 import { Button, Divider, Form, Input, InputNumber, Select, Space } from 'antd';
 import { TableBtnDiv, TableTitleDiv, TableTopDiv, TaleTitleIconDiv } from '@/assets/style';
 import { TableMixDiv } from './tablemix'
-import { TablePaginationConfig } from 'antd/es/table/interface';
 export default (props: any) => {
     // const [scrollY, setScrollY] = useState<any>(0);
     const [columns, setColumns] = useState([])
@@ -69,7 +68,7 @@ export default (props: any) => {
             </TableTopDiv>
             {/* table 数据组 */}
             <Form form={props.form}>
-                <TableMix rowClick={(record=>props.rowClick && props.rowClick(record))} scrollY={'calc(100vh - 500px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)} data={props.data} columns={columns} total={props.total} current={props.current} pageSize={pageSize} rowKey={props.rowKey} selection={true} pagination={true} />
+                <TableMix   rowClick={(record=>props.rowClick && props.rowClick(record))} scrollY={'calc(100vh - 495px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)}{...props} columns={columns}  pageSize={pageSize}  selection={true} pagination={true} />
             </Form>
         </TableMixDiv>);
 

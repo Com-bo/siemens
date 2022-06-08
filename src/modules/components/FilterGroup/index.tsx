@@ -12,7 +12,9 @@ export default (props: any) => {
         setFilterGroup(val)
     }
     const [form] = Form.useForm()
+    const validFilterName=(value,rule,callback)=>{
 
+    }
     useEffect(() => {
         form.setFieldsValue({
             logicList: [{ name: '', logic: '', logicContent: '' }]
@@ -41,6 +43,7 @@ export default (props: any) => {
                     <Form.Item
                         label="New Group"
                         name="newGroup"
+                        rules={[{validator:validFilterName}]}
                     >
                         <Input />
                     </Form.Item>

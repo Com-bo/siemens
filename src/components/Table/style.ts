@@ -66,4 +66,5 @@ margin:0 24px 24px;
  .ant-table-tbody > tr.ant-table-row-selected > td{
   background: unset;
  }
+
 `;

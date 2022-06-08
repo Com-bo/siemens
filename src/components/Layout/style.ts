@@ -84,6 +84,7 @@ export const LayoutDiv = styled.div`
     background-image:url(${siderbg});
     background-position:0 -10px;
     font-size:14px;
+    overflow:hidden;
   }
 
   .ant-menu-item:active,
@@ -115,6 +116,7 @@ export const LayoutDiv = styled.div`
   }
   .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after{
     border-right-width:4px;
+    right:2px;
   }
 .ant-menu-item{
     height:60px;

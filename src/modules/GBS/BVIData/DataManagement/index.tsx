@@ -28,7 +28,8 @@ export default (props: any) => {
   const [formData] = Form.useForm();
   const [formImport] = Form.useForm();
 
-  const getCheckOriginalData = () => {
+  const getCheckOriginalData = (event) => {
+    event.stopPropagation();
     setIsCheckOriginal(true)
     setCheckData([{
       id: 1,
@@ -207,8 +208,23 @@ export default (props: any) => {
     render: (text) => <span style={{ color: "red" }}>{text}</span>
   }]
   const orignalCols = [{
+    name: 'BVIBusinessLine',
+    title: 'BVI Business Line',
+    width: "120px",
+    // titleRender: 'input'
+  }, {
     name: 'BusinessLine',
     title: 'Business Line',
+    width: "100px",
+    // titleRender: 'input'
+  }, {
+    name: 'Service Line',
+    title: 'ServiceLine',
+    width: "100px",
+    logic: true
+  }, {
+    name: 'Product',
+    title: 'Product',
     width: "100px",
     titleRender: 'input'
   }, {
@@ -224,13 +240,21 @@ export default (props: any) => {
   }, {
     name: 'CompanyCode',
     title: 'Company Code',
-    width: "100px",
+    width: "120px",
     titleRender: 'input'
   }, {
     name: 'CustomerDevision',
     title: 'Customer Devision',
     width: "100px",
-    titleRender: 'input'
+    logic: true
+  }, {
+    name: 'UnitPrice',
+    title: 'Product Unit Price',
+    width: "100px",
+  }, {
+    name: 'UnitPriceCurrency',
+    title: 'Product Unit Price Currency',
+    width: "120px",
   }, {
     name: 'CostCenter',
     title: 'Cost Center',
@@ -242,24 +266,10 @@ export default (props: any) => {
     width: "100px",
     titleRender: 'input'
   }, {
-    name: 'ProductName',
-    title: 'Product Name',
-    width: "100px",
-    titleRender: 'input'
-  }, {
-    name: 'DataType',
-    title: 'Data Type',
-    width: "100px",
-    titleRender: 'input'
-  }, {
-    name: 'Status',
-    title: 'Status',
-    width: "100px",
-    titleRender: 'input'
-  }, {
     name: 'BVI',
     title: 'BVI',
     width: "100px",
+    logic: true,
     titleRender: 'number',
     render: (text, record, index) => {
       if (record.bviFlag) {
@@ -268,6 +278,83 @@ export default (props: any) => {
         return <BtnTextRedWrap ><Button type="text" onClick={getCheckOriginalData}>{text}</Button></BtnTextRedWrap>
       }
     }
+  }, {
+    name: 'TotalAmount',
+    title: 'Total Amount(Unit Price Currency)',
+    width: "140px",
+    titleRender: 'input'
+  }, {
+    name: 'BillingCurrency',
+    title: 'Billing Currency',
+    width: "100px",
+  }, {
+    name: 'TotalAmountCNY',
+    title: 'Total Amount(CNY)',
+    width: "100px",
+  }, {
+    name: 'BatchFileExchangeRate',
+    title: 'BatchFile Exchange Rate',
+    width: "100px",
+  }, {
+    name: 'PO',
+    title: 'PO',
+    width: "100px",
+    titleRender: 'input'
+  }, {
+    name: 'BVIMonth',
+    title: 'BVI Month',
+    width: "100px",
+    logic: true
+  }, {
+    name: 'System',
+    title: 'System',
+    width: "100px",
+    logic: true
+  }, {
+    name: 'ChargeType',
+    title: 'ChargeType',
+    width: "100px",
+    logic: true
+  }, {
+    name: 'AdjustTag',
+    title: 'AdjustTag',
+    width: "100px",
+    logic: true
+  }, {
+    name: 'TemplateType',
+    title: 'Template Type',
+    width: "100px",
+    logic: true
+  }, {
+    name: 'BVIStatus',
+    title: 'BVI Status',
+    width: "100px",
+    titleRender: 'input'
+  }, {
+    name: 'ModifiedUser',
+    title: 'Modified User',
+    width: "100px",
+    titleRender: 'input'
+  }, {
+    name: 'SalesOrder',
+    title: 'Sales Order',
+    width: "100px",
+    titleRender: 'input'
+  }, {
+    name: 'BillingDoc',
+    title: 'Billing Doc.',
+    width: "100px",
+    titleRender: 'input'
+  }, {
+    name: 'BillingStatus',
+    title: 'Billing Status',
+    width: "100px",
+    logic: true
+  }, {
+    name: 'Comment',
+    title: 'Comment',
+    width: "200px",
+    titleRender: 'input'
   }, {
     name: 'Operate',
     title: 'Operate',
@@ -282,13 +369,26 @@ export default (props: any) => {
       }}></Button>
       <Popconfirm
         title="Are you sure?"
-        onConfirm={() => deleteInfos([record.id])}
+        onConfirm={(event) => {
+          event.stopPropagation();
+          deleteInfos([record.id])
+        }}
         okText="Yes"
         cancelText="Cancel"
       >
-        <Button type="text" key="2" icon={<i className='gbs gbs-delete'></i>}></Button>
+        <Button type="text" key="2" onClick={(event) => event.stopPropagation()} icon={<i className='gbs gbs-delete'></i>}></Button>
       </Popconfirm>
-      <Button type="text" key="3" icon={<i className='gbs gbs-confirm'></i>}></Button>
+      {!record.bviFlag ? <Popconfirm
+        title="Are you sure?"
+        onConfirm={(event) => {
+          event.stopPropagation();
+        }}
+        okText="Yes"
+        cancelText="Cancel"
+      >
+        <Button onClick={(event) => event.stopPropagation()} type="text" key="3" icon={<i className='gbs gbs-confirm'></i>}>
+        </Button>
+      </Popconfirm> : ''}
     </Space>
   }]
   useEffect(() => {
@@ -429,6 +529,55 @@ export default (props: any) => {
       centered: true,
     })
   }
+  // 
+  const toRecheck = () => {
+    if (!selectedRowKeys.length) {
+      message.warning("No information selected!")
+      return
+    }
+    let validData = selectedRows.find(item => item.bviFlag)
+    if (validData) {
+      //  调用接口
+      message.success("Operation succeeded!")
+      setSelectedRowKeys([])
+    } else {
+      message.warning("Please select the data in question")
+    }
+
+  }
+  const toConfirm = () => {
+
+  }
+  const toUnconfirm = () => {
+
+  }
+
+  const onExport = () => {
+    // const params = _getparams(true);
+    // exportClearance({
+    //   // "orderField": "string",
+    //   // "orderType": "string",
+    //   // "conditions": [
+    //   //     {
+    //   //         "fieldName": "string",
+    //   //         "fieldValue": "string",
+    //   //         "conditionalType": 0
+    //   //     }
+    //   // ],
+    //   pageIndex: current,
+    //   pageSize: pageSize,
+    //   certificateNumber: search.certificateNumber,
+    //   ...params,
+    //   keyWords: search.keyWords,
+    // }).then((res: any) => {
+    //   let elink = document.createElement('a');
+    //   // 设置下载文件名
+    //   elink.download = '进口清关数据列表.xlsx';
+    //   elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+    //   elink.click();
+    //   window.URL.revokeObjectURL(elink.href);
+    // });
+  };
   return <div>
     <Modal width="800px" title={
       <TableTopDiv style={{ margin: 0 }}>
@@ -489,7 +638,7 @@ export default (props: any) => {
         </Form.Item>
       </Form>
     </Modal>
-    <Modal width="1000px" title={
+    <Modal maskClosable={false} width="1000px" title={
       <TableTopDiv style={{ margin: 0 }}>
         <TableTitleDiv style={{ float: 'left' }}>
           <TaleTitleIconDiv>
@@ -498,7 +647,10 @@ export default (props: any) => {
           <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>BVI Data</span>
         </TableTitleDiv>
       </TableTopDiv>
-    } visible={showBviData} footer={null} onCancel={() => setShowBviData(false)}>
+    } visible={showBviData} footer={null} onCancel={() => {
+      setShowBviData(false)
+      formData.resetFields()
+    }}>
       <Form requiredMark={!componentDisabled} form={formData} labelCol={{ flex: '120px' }} >
         <Row gutter={20}>
           <Col span={24}>
@@ -531,7 +683,7 @@ export default (props: any) => {
               label="Customer Devision"
               name="CustomerDevision"
             >
-              <Input disabled={componentDisabled} />
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -539,7 +691,7 @@ export default (props: any) => {
               label="ARE"
               name="ARE"
             >
-              <Input disabled={componentDisabled} />
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -654,7 +806,7 @@ export default (props: any) => {
       </Form>
 
     </Modal>
-    <Modal title={
+    <Modal maskClosable={false} title={
       <TableTopDiv style={{ margin: 0 }}>
         <TableTitleDiv style={{ float: 'left' }}>
           <TaleTitleIconDiv>
@@ -679,6 +831,7 @@ export default (props: any) => {
       rowClick={(record => rowClick(record))}
       current={current}
       onPageChange={onPageChange}
+      selectedRowKeys={selectedRowKeys}
       onChange={(_selectedRowKeys, _selectedRows) => {
         setSelectedRowKeys(_selectedRowKeys)
         setSelectedRows(_selectedRows)
@@ -688,21 +841,25 @@ export default (props: any) => {
       rowKey="BusinessLine"
       listName="Data Management"
       renderFilterGroup={
-        <FilterGroup onSaveFilterGroup={savefilterGroup} fields={orignalCols} onSearch={() => _getData()} />
+        <FilterGroup onSaveFilterGroup={savefilterGroup} fields={orignalCols.filter(item => item.logic)} onSearch={() => _getData()} />
       }
       renderBtns={<Space>
-        <BtnOrangeWrap><Button onClick={() => { }}>Recheck</Button></BtnOrangeWrap>
-        <BtnGreenWrap><Button>Confirm</Button></BtnGreenWrap>
-        <BtnBlueWrap><Button>Unconfirm</Button></BtnBlueWrap>
+        <BtnOrangeWrap><Button disabled={!selectedRowKeys.length} onClick={toRecheck}>Recheck</Button></BtnOrangeWrap>
+        <BtnGreenWrap><Button disabled={!selectedRowKeys.length} onClick={toConfirm}>Confirm</Button></BtnGreenWrap>
+        <BtnBlueWrap><Button disabled={!selectedRowKeys.length} onClick={toUnconfirm}>Unconfirm</Button></BtnBlueWrap>
         <Divider type="vertical" style={{ height: '20px', borderColor: "#999" }} />
-        <BtnThemeWrap><Button>Export Original</Button></BtnThemeWrap>
+        <BtnThemeWrap><Button onClick={onExport}>Export Original</Button></BtnThemeWrap>
         <BtnThemeWrap>
           <Dropdown overlay={() => (
             <Menu>
               <Menu.Item key="1" icon={<i className='gbs gbs-import'></i>} onClick={() => setShowImport(true)}>
                 <span style={{ margin: "0 10px" }}>Import</span>
               </Menu.Item>
-              <Menu.Item key="2" icon={<i className='gbs gbs-add'></i>}>
+              <Menu.Item key="2" icon={<i className='gbs gbs-add'></i>} onClick={() => {
+                setShowBviData(true)
+                // formData.setFieldsValue({})
+                setComponentDisabled(false)
+              }}>
                 <span style={{ margin: "0 10px" }}>Add</span>
               </Menu.Item>
               <Menu.SubMenu key="3" title={<span style={{ margin: "0 10px" }}>Import</span>} icon={<i className='gbs gbs-download'></i>}>

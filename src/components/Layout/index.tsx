@@ -113,7 +113,6 @@ export const MedalsoftLayout = (props: any) => {
         collapsedButtonRender={false}
         collapsed={collapsed}
         headerTheme="light"
-
         breadcrumbProps={{
           separator: <RightOutlined />,
           itemRender: (route, params, routes, paths) => {
@@ -122,12 +121,12 @@ export const MedalsoftLayout = (props: any) => {
         }}
         navTheme="light"
         fixedHeader={true}
-        logo={<LogoImgWrap>
+        logo={!collapsed?<LogoImgWrap>
           <img
             src={logo}
             onClick={() => history.push(routes.routes[0].path)}
           />
-        </LogoImgWrap>}
+        </LogoImgWrap>:null}
         title={null}
         pageTitleRender={() => 'B&B System'}
         siderWidth={240}
@@ -179,7 +178,7 @@ export const MedalsoftLayout = (props: any) => {
                   className={`gbs   gbs-${subMenuProps.icon as string}`}
                 ></span>
               </span>
-              <span style={{ fontSize: "16px",verticalAlign:'middle' }}>{subMenuProps.name}</span>
+              <span style={{ fontSize: "16px", verticalAlign: 'middle' }}>{subMenuProps.name}</span>
             </div>
           ) : (
             <div>

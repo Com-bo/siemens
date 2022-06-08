@@ -11,9 +11,9 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { IRouteComponentProps } from 'umi';
 import React, { useEffect, useRef, useState, createContext } from 'react';
 import { useLocalStorageState } from 'ahooks';
-import font from './YouSheBiaoTiHei.ttf'
+// import font from './YouSheBiaoTiHei.ttf'
 // import siemens from './SiemensSans_Global_Bold.ttf'
-import Roman from './SiemensSans_Global_Roman.ttf'
+// import Roman from './SiemensSans_Global_Roman.ttf'
 const GlobalStyle = createGlobalStyle`
  /**
     全局样式
@@ -42,12 +42,12 @@ const GlobalStyle = createGlobalStyle`
   @font-face
   {
   font-family: 'youshe';
-  src: url(${font});
+  src: url('./font/YouSheBiaoTiHei.ttf');
   }
   @font-face
   {
   font-family: 'siemens';
-  src: url(${Roman});
+  src: url(./font/SiemensSans_Global_Roman.ttf);
   }
  
   body{
@@ -270,23 +270,23 @@ export default function Layout({
       {/* 全局样式 */}
       <GlobalStyle />
       {/* <FormatLanguageService.Provider value={formatLanguageService}> */}
-        <UseRequestProvider
-          value={{
-            requestMethod: (param) =>
-              axios(param).then((r) => {
-                return r.data;
-              }),
-          }}
+      <UseRequestProvider
+        value={{
+          requestMethod: (param) =>
+            axios(param).then((r) => {
+              return r.data;
+            }),
+        }}
+      >
+        <MedalsoftLayout
+          search={true}
+          layout={mode}
+          navTheme="light"
+          rightContentRender={() => [<PersonalDropdown userName={userName} />]}
         >
-          <MedalsoftLayout
-            search={true}
-            layout={mode}
-            navTheme="light"
-            rightContentRender={() => [<PersonalDropdown userName={userName} />]}
-          >
-            {children}
-          </MedalsoftLayout>
-        </UseRequestProvider>
+          {children}
+        </MedalsoftLayout>
+      </UseRequestProvider>
       {/* </FormatLanguageService.Provider> */}
     </ThemeProvider>
   );
