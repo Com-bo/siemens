@@ -12,6 +12,7 @@ interface TableOptions {
   current?: number;
   rowKey?: string;
   scrollY?: string | number;
+  scrollX?: string | number;
   onPageChange?: (
     pagination: any, filters: any, sorter: any, extra: any
   ) => void;
@@ -32,7 +33,7 @@ export default (_props: TableOptions) => {
       <Table
         dataSource={_props.data}
         rowSelection={_props.selection ? {
-          selectedRowKeys: _props.selectedRowKeys||[],
+          selectedRowKeys: _props.selectedRowKeys || [],
           onChange: (selectedRowKeys, selectedRows) => {
             _props.onChange(selectedRowKeys, selectedRows)
           }
@@ -69,7 +70,7 @@ export default (_props: TableOptions) => {
           },
         } : false}
         rowKey={_props.rowKey}
-        scroll={{ x: 1000, y: _props.scrollY ?? null }}
+        scroll={{ x: _props.scrollX ?? null, y: _props.scrollY ?? null }}
         onChange={_props.onPageChange}
 
       />

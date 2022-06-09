@@ -33,11 +33,15 @@ margin:0 24px 24px;
     position:absolute;
     bottom:0px;
   }
+  .ant-table-tbody > tr.ant-table-row-selected > td{
+    background-color: #fff !important;
+  }
   .stripe,
   .stripe .ant-table-cell-fix-right,
-  .stripe .ant-table-cell-fix-left {
-    background-color: #f8f8f8;
+  .stripe .ant-table-cell-fix-left , .ant-table-tbody >tr.ant-table-row-selected.stripe > td{
+    background-color: #f8f8f8 !important;
   }
+  
   .total{
     strong{
       margin-right:20px;
