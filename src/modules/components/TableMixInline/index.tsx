@@ -3,10 +3,15 @@ import TableMix from '@/components/Table'
 import { Button, Divider, Form, Input, InputNumber, Select, Space } from 'antd';
 import { TableBtnDiv, TableTitleDiv, TableTopDiv, TaleTitleIconDiv } from '@/assets/style';
 import { TableMixDiv } from './tablemix'
+import { useRequest } from 'ahooks';
 export default (props: any) => {
     // const [scrollY, setScrollY] = useState<any>(0);
     const [columns, setColumns] = useState([])
     const [pageSize, setPageSize] = useState(20)
+    const { run } = useRequest(props.headerSearch, {
+        debounceInterval: 800,
+        manual: true,
+    });
 
     const getcolumnItem = (col: any) => {
 
@@ -30,7 +35,7 @@ export default (props: any) => {
     const getSearchInputType = (text?: string) => {
         switch (text) {
             case "input":
-                return <Input />
+                return <Input onChange={(e) => run(e.target.value)} />
             case "number":
                 return <InputNumber />
             default:
@@ -68,7 +73,7 @@ export default (props: any) => {
             </TableTopDiv>
             {/* table 数据组 */}
             <Form form={props.form}>
-                <TableMix   rowClick={(record=>props.rowClick && props.rowClick(record))} scrollY={'calc(100vh - 495px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)}{...props} columns={columns}  pageSize={pageSize}  selection={true} pagination={true} />
+                <TableMix rowClick={(record => props.rowClick && props.rowClick(record))} scrollY={'calc(100vh - 495px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)}{...props} columns={columns} pageSize={pageSize} selection={true} pagination={true} />
             </Form>
         </TableMixDiv>);
 

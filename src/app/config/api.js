@@ -5,12 +5,16 @@ export const Api = {
   ImportManualDataSave: '/api/ImportManual/ImportDataSave',//导入ImportManual
   ImportH2RTE: '/api/ImportH2RTE/ImportDataSave',//导入ImportH2RTE
   // Flat Charge 
-  HomePageQuery: '/api/FlatCharge/HomePageQuery',//数据查询
+  HomePageQuery: '/api/FlatCharge/ListHeaderQuery',//数据查询
+  ListGroupQuery :'/api/FlatCharge/ListGroupQuery',//group数据查询
   ListDataSubmit: '/api/FlatCharge/ListDataSubmit',//批量提交
   DeleteData:'/api/FlatCharge/DeleteData',//删除数据
   CopyData:'/api/FlatCharge/CopyData',//拷贝
   LogDataQuery:'/api/FlatCharge/LogDataQuery',//日志查询
   ImportFlatData:'/api/FlatCharge/ImportData',//导入
   PopWinPagingQuery:'/api/Product/PopWinPagingQuery',//获取产品
+  ExportDataByGroup:'/api/FlatCharge/ExportDataByGroup',//导出group
+  ExportDataByHearder:'/api/FlatCharge/ExportDataByHearder',//导出
+
 
 };

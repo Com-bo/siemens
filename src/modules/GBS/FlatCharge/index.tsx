@@ -6,8 +6,9 @@ import { BtnThemeWrap, TableTitleDiv, TableTopDiv, TableWrapDiv, TaleTitleIconDi
 import search from '@/assets/images/search.png'
 import FilterGroup from '@/modules/components/FilterGroup'
 import TableMix from '@/components/Table'
-import { deleteData, getFlatChargeData, submitMulti, copyData, logDataQuery, importFlatData, getProductData } from '@/app/request/apiFlat'
-import { objectToFormData } from '@/tools/utils';
+import { deleteData, getFlatChargeData, submitMulti, copyData, logDataQuery, importFlatData, getProductData, exportExcel } from '@/app/request/apiFlat'
+import './style.less'
+import moment from 'moment';
 export default (props: any) => {
   const [tableData, setTableData] = useState([])
   const [isSearch, setIsSearch] = useState(true)
@@ -28,7 +29,14 @@ export default (props: any) => {
   const [componentDisabled, setComponentDisabled] = useState(false);
   const [productData, setProductData] = useState([])
   const [showPro, setShowPro] = useState(false)
+  const [searchType, setSearchType] = useState("header")
+  const [groupName, setGroupName] = useState("")
   const orignalCols = [{
+    name: 'bviBusinessLine',
+    title: 'BVI Business Line',
+    width: "150px",
+    titleRender: 'input'
+  }, {
     name: 'businessLine',
     title: 'Business Line',
     width: "100px",
@@ -37,6 +45,7 @@ export default (props: any) => {
     name: 'serviceLine',
     title: 'Service Line',
     width: "100px",
+    titleRender: 'input',
     logic: true
   }, {
     name: 'are',
@@ -46,12 +55,13 @@ export default (props: any) => {
   }, {
     name: 'companyCode',
     title: 'Company Code',
-    width: "100px",
+    width: "150px",
     titleRender: 'input'
   }, {
     name: 'customerDevision',
     title: 'Customer Devision',
-    width: "100px",
+    width: "150px",
+    titleRender: 'input',
     logic: true
   },
   {
@@ -72,7 +82,7 @@ export default (props: any) => {
   }, {
     name: 'po',
     title: 'PO',
-    width: "100px",
+    width: "180px",
     titleRender: 'input'
   }, {
     name: 'comment',
@@ -97,11 +107,21 @@ export default (props: any) => {
   }, {
     name: 'system',
     title: 'System',
-    width: "100px",
-    // titleRender: 'input'
+    width: "120px",
+    titleRender: 'input'
   }, {
-    name: 'dataStatus',
-    title: 'Status',
+    name: 'TemplateType',
+    title: 'Template Type',
+    width: "100px",
+    titleRender: 'input'
+  }, {
+    name: 'modifiedDate',
+    title: 'Modified Date',
+    width: "180px",
+    render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+  }, {
+    name: 'modifiedUser',
+    title: 'Modified User',
     width: "100px",
     titleRender: 'input'
   },
@@ -137,7 +157,43 @@ export default (props: any) => {
     </Space >
   }]
   const columns: any = [{
-    title: 'modifiedUser',
+    title: 'Created Date',
+    dataIndex: 'createdDate',
+    key: 'createdDate',
+    align: 'center',
+    width: "160px",
+    render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+  }, {
+    title: 'Created User',
+    dataIndex: 'createdUser',
+    key: 'createdUser',
+    align: 'center',
+  }, {
+    title: 'Fields Name',
+    dataIndex: 'fieldsName',
+    key: 'fieldsName',
+    align: 'center',
+  }, {
+    title: 'Old Value',
+    dataIndex: 'oldValue',
+    key: 'oldValue',
+    align: 'center',
+  }, {
+    title: 'New Value',
+    dataIndex: 'newValue',
+    key: 'newValue',
+    align: 'center',
+  }, {
+    title: 'Modified Date',
+    dataIndex: 'modifiedDate',
+    // sorter: {
+    //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
+    // },
+    key: 'modifiedDate',
+    align: 'center',
+    render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+  }, {
+    title: 'Modified User',
     dataIndex: 'modifiedUser',
     key: 'modifiedUser',
     align: 'center',
@@ -153,19 +209,30 @@ export default (props: any) => {
       width: "100px",
     }]
   useEffect(() => {
+
     _getData()
-  }, [current])
+
+  }, [current, searchType])
 
   // 用于获取table接口方法
   const _getData = (_pageSize?: number) => {
+    let params = {};
+    if (searchType == "header") {
+      params = {
+        current,
+        pageSize: _pageSize ?? pageSize,
+        searchCondition: form.getFieldsValue()
+      }
+    } else {
+      params = {
+        groupName,
+        current,
+        pageSize: _pageSize ?? pageSize,
 
-    const params = {
-      current,
-      pageSize: _pageSize ?? pageSize,
-      ...form.getFieldsValue()
-
+      }
     }
-    getFlatChargeData(params).then(res => {
+
+    return getFlatChargeData(params).then(res => {
       if (res.isSuccess) {
         setTableData(res.data)
         setTotal(res.totalCount)
@@ -197,7 +264,7 @@ export default (props: any) => {
   }
   const handleLogSize = (val: number) => {
     setLogSize(val)
-    _getData(val)
+
   }
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
@@ -257,20 +324,20 @@ export default (props: any) => {
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId)
-    _getLogData(recordId).then(() => setShowLog(true))
   }
   useEffect(() => {
-    logId && _getLogData(logId)
-  }, [logCurrent])
-  const _getLogData = async (recordId) => {
+    logId && _getLogData()
+  }, [logCurrent, logId, logSize])
+  const _getLogData = async () => {
     const res = await logDataQuery({
-      recordId,
-      pageIndex: 1,
-      pageSize: 20
+      recordId: logId,
+      pageIndex: logCurrent,
+      pageSize: logSize
     })
     if (res.isSuccess) {
       setLogData(res.data || [])
       setLogTotal(res.totalCount)
+      setShowLog(true)
     } else {
       message.error(res.msg)
     }
@@ -278,7 +345,6 @@ export default (props: any) => {
   }
   const onLogPageChange = (pagination, filters, sorter, extra) => {
     //   翻页|排序|筛选
-    setLogCurrent(pagination.current);
     switch (extra.action) {
       case "paginate":
         setLogCurrent(pagination.current)
@@ -302,17 +368,36 @@ export default (props: any) => {
       }
     })
   }
-  const _getProduct=()=>{
+  const _getProduct = () => {
     getProductData({
       "are": "",
       "customerDivision": "",
       "productName": "",
-      "pageIndex":1,
+      "pageIndex": 1,
       "pageSize": 20
-    }).then(res=>{
+    }).then(res => {
 
     })
   }
+  const exportExcelAction = () => {
+    // 确认导出哪一种搜索方式
+    let params: any = {
+      pageIndex: current,
+      pageSize: pageSize,
+    }
+    if (searchType == "header") {
+      params.searchCondition = form.getFieldsValue()
+    }
+    exportExcel(params, searchType).then((res: any) => {
+      let elink = document.createElement('a');
+      // 设置下载文件名
+      elink.download = 'Flat Charge List.xlsx';
+      elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+      elink.click();
+      window.URL.revokeObjectURL(elink.href);
+      // parseExcel(res.data, fileName);
+    });
+  };
 
 
   return <div>
@@ -347,8 +432,8 @@ export default (props: any) => {
       // formImport.resetFields();
       setShowLog(false);
     }}>
-      <TableWrapDiv>
-        <TableMix columns={columns} data={logData} current={logCurrent} pageSize={logSize} total={logTotal} handlePageSize={handleLogSize} rowKey="id" onPageChange={onLogPageChange} />
+      <TableWrapDiv className='selfTable'>
+        <TableMix columns={columns} data={logData} current={logCurrent} pageSize={logSize} total={logTotal} handlePageSize={handleLogSize} rowKey="id" onPageChange={onLogPageChange} pagination={true} />
       </TableWrapDiv>
     </Modal>
     {/* 新增、编辑flat Charge */}
@@ -522,6 +607,13 @@ export default (props: any) => {
     </Modal>
 
     <TableList
+      headerSearch={() => {
+        if (searchType == "header") {
+          return _getData()
+        } else {
+          setSearchType("header")
+        }
+      }}
       form={form}
       data={tableData}
       columns={orignalCols}
@@ -538,7 +630,7 @@ export default (props: any) => {
       rowKey="orgId"
       listName="Flat Charge"
       renderFilterGroup={
-        <FilterGroup onSearch={() => _getData()} onSaveFilterGroup={savefilterGroup} fields={orignalCols} />
+        <FilterGroup defaultVal={groupName} changeVal={setGroupName} onSearch={() => setSearchType("group")} onSaveFilterGroup={savefilterGroup} fields={orignalCols} exportAction={exportExcelAction} />
       }
       renderBtns={<Space>
         {/* <BtnThemeWrap><Button>Export Original</Button></BtnThemeWrap> */}

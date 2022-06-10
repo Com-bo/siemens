@@ -9,7 +9,7 @@ export default (props: any) => {
     const [isSetting, setSetting] = useState(false)
     const { Option } = Select
     const changeFilterGroup = (val) => {
-        setFilterGroup(val)
+        props.changeVal(val)
     }
     const [form] = Form.useForm()
     const validFilterName=(value,rule,callback)=>{
@@ -119,14 +119,14 @@ export default (props: any) => {
             </Modal>
             <FilterGroupDiv id="filterGroup">
                 <label>Filter Group:</label>
-                <Select value={filterGroup} onChange={changeFilterGroup}>
+                <Select value={props.defaultVal} onChange={changeFilterGroup}>
                     <Option value="">Default</Option>
                 </Select>
                 <Space size={10}>
                     {props?.customComponet}
-                    <Button type="primary" icon={<i className="gbs gbs-search"></i>} onClick={props.onSearch} ></Button>
+                    <Button type="primary" icon={<i className="gbs gbs-search"></i>} onClick={()=>props.onSearch(filterGroup)} ></Button>
                     <Button icon={<i className="gbs gbs-setting"></i>} onClick={() => setSetting(true)}></Button>
-                    <Button icon={<i className="gbs gbs-export"></i>}></Button>
+                    <Button icon={<i className="gbs gbs-export"></i>} onClick={props.exportAction}></Button>
                 </Space>
             </FilterGroupDiv>
         </>

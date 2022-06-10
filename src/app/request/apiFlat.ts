@@ -6,6 +6,11 @@ export const getFlatChargeData = (data: Object) => {
         autoLoading: true,
     });
 };
+export const getFilterGroupData=(data)=>{
+    return usePost(`${Config.Api.Base}${Config.Api.ListGroupQuery}`, data, {
+        autoLoading: true,
+    });
+}
 
 export const submitMulti = (data: Object) => {
     return usePost(`${Config.Api.Base}${Config.Api.ListDataSubmit}`, data, {
@@ -37,5 +42,15 @@ export const importFlatData = (data: Object) => {
 export const getProductData = (data: Object) => {
     return usePost(`${Config.Api.Base}${Config.Api.PopWinPagingQuery}`, data, {
         autoLoading: true,
+    });
+};
+export const exportExcel = (data: Object, type?: string) => {
+    let url = Config.Api.ExportDataByGroup
+    if (type == "header") {
+        url = Config.Api.ExportDataByHearder
+    }
+    return usePost(`${Config.Api.Base}${url}`, data, {
+        autoLoading: true,
+        responseType: 'blob',
     });
 };
