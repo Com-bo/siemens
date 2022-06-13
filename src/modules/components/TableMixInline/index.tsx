@@ -7,20 +7,18 @@ import { useRequest } from 'ahooks';
 export default (props: any) => {
     // const [scrollY, setScrollY] = useState<any>(0);
     const [columns, setColumns] = useState([])
-    const [pageSize, setPageSize] = useState(20)
     const { run } = useRequest(props.headerSearch, {
         debounceInterval: 800,
         manual: true,
     });
 
     const getcolumnItem = (col: any) => {
-
         return {
             title: <div className={props.search ? "listSearch" : 'hiddenlistSearch'}>
                 <div className="title">{col.title}</div>
-                <Form.Item name={col.name}>
+                {col.name == "Operate" || !col.titleRender ? <Form.Item></Form.Item> : <Form.Item name={col.name}>
                     {getSearchInputType(col.titleRender)}
-                </Form.Item>
+                </Form.Item>}
             </div>,
             align: 'center',
             dataIndex: col.name,
@@ -73,7 +71,7 @@ export default (props: any) => {
             </TableTopDiv>
             {/* table 数据组 */}
             <Form form={props.form}>
-                <TableMix rowClick={(record => props.rowClick && props.rowClick(record))} scrollY={'calc(100vh - 495px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)}{...props} columns={columns} pageSize={pageSize} selection={true} pagination={true} />
+                <TableMix rowClick={(record => props.rowClick && props.rowClick(record))} scrollY={'calc(100vh - 495px)'} handlePageSize={props.changePageSize} onPageChange={props.onPageChange} onChange={(selectedRowKeys, selectedRows) => props.onChange(selectedRowKeys, selectedRows)}{...props} columns={columns} selection={true} pagination={true} />
             </Form>
         </TableMixDiv>);
 

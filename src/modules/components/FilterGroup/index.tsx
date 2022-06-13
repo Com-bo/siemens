@@ -1,3 +1,4 @@
+import { getFilterGroupFieldList } from '@/app/request/common';
 import { FilterGroupDiv, TableTitleDiv, TaleTitleIconDiv } from '@/assets/style';
 import { PlusCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Modal, Radio, Row, Select, Space } from 'antd';
@@ -12,10 +13,14 @@ export default (props: any) => {
         props.changeVal(val)
     }
     const [form] = Form.useForm()
-    const validFilterName=(value,rule,callback)=>{
+    const validFilterName = (value, rule, callback) => {
 
     }
     useEffect(() => {
+        // getFilterGroupFieldList({ moduleName: props.moudleName ?? "Flat Charge" }).then(res => {
+        //     console.log(res)
+        //     debugger
+        // })
         form.setFieldsValue({
             logicList: [{ name: '', logic: '', logicContent: '' }]
         })
@@ -27,10 +32,10 @@ export default (props: any) => {
                     <span></span>
                 </TaleTitleIconDiv>
                 <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>Filter Group</span>
-            </div>} 
-            footer={null} visible={isSetting} onCancel={() => setSetting(false)} width={1000}>
+            </div>}
+                footer={null} visible={isSetting} onCancel={() => setSetting(false)} width={1000}>
 
-                
+
                 <Form labelCol={{ span: 4 }} form={form}>
                     <Form.Item
                         label="Filter Group"
@@ -43,7 +48,7 @@ export default (props: any) => {
                     <Form.Item
                         label="New Group"
                         name="newGroup"
-                        rules={[{validator:validFilterName}]}
+                        rules={[{ validator: validFilterName }]}
                     >
                         <Input />
                     </Form.Item>
@@ -124,7 +129,7 @@ export default (props: any) => {
                 </Select>
                 <Space size={10}>
                     {props?.customComponet}
-                    <Button type="primary" icon={<i className="gbs gbs-search"></i>} onClick={()=>props.onSearch(filterGroup)} ></Button>
+                    <Button type="primary" icon={<i className="gbs gbs-search"></i>} onClick={() => props.onSearch(filterGroup)} ></Button>
                     <Button icon={<i className="gbs gbs-setting"></i>} onClick={() => setSetting(true)}></Button>
                     <Button icon={<i className="gbs gbs-export"></i>} onClick={props.exportAction}></Button>
                 </Space>

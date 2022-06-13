@@ -245,7 +245,6 @@ const GlobalStyle = createGlobalStyle`
 import noData from '@/assets/images/noData.png';
 import MedalsoftLayout from '@/components/Layout';
 import PersonalDropdown from '@/components/PersonalDropdown';
-
 export default function Layout({
   children,
   location,

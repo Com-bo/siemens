@@ -6,6 +6,7 @@ interface TableOptions {
   columns: Array<any>; //列
   data: Array<any>; //table 数据
   total?: number;
+  type?: "checkbox" | "radio";
   pageSize?: number;
   selection?: boolean;
   selectedRowKeys?: Array<any>;
@@ -33,7 +34,8 @@ export default (_props: TableOptions) => {
       <Table
         dataSource={_props.data}
         rowSelection={_props.selection ? {
-          selectedRowKeys: _props.selectedRowKeys || [],
+          type: _props.type ?? "checkbox",
+          selectedRowKeys: _props.selectedRowKeys || null,
           onChange: (selectedRowKeys, selectedRows) => {
             _props.onChange(selectedRowKeys, selectedRows)
           }

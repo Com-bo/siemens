@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/TableMixInline'
-import { Button, Col, DatePicker, Divider, Dropdown, Form, Input, Menu, message, Modal, Popconfirm, Radio, Row, Select, Space, Table, Upload } from 'antd';
-import { DownOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Divider, Dropdown, Form, Input, InputNumber, Menu, message, Modal, Popconfirm, Radio, Row, Select, Space, Table, Upload } from 'antd';
+import { CodeSandboxCircleFilled, DownOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { BtnThemeWrap, TableTitleDiv, TableTopDiv, TableWrapDiv, TaleTitleIconDiv } from '@/assets/style';
 import search from '@/assets/images/search.png'
 import FilterGroup from '@/modules/components/FilterGroup'
 import TableMix from '@/components/Table'
-import { deleteData, getFlatChargeData, submitMulti, copyData, logDataQuery, importFlatData, getProductData, exportExcel } from '@/app/request/apiFlat'
+import { deleteData, getFlatChargeData, submitMulti, copyData, logDataQuery, importFlatData, getProductData, exportExcel, queryBVIData, editDataSave, editDataSubmit } from '@/app/request/apiFlat'
 import './style.less'
 import moment from 'moment';
+import { getCompanyCodeDrop, getCostCenterDrop } from '@/app/request/common';
+import DebounceSelect from '@/components/Select/debounceSelect'
+import { format } from 'prettier';
 export default (props: any) => {
   const [tableData, setTableData] = useState([])
   const [isSearch, setIsSearch] = useState(true)
@@ -26,25 +29,35 @@ export default (props: any) => {
   const [showFlatData, setShowFlatData] = useState(false)
   const [form] = Form.useForm();
   const [formData] = Form.useForm();
+  const [proForm] = Form.useForm();
   const [componentDisabled, setComponentDisabled] = useState(false);
   const [productData, setProductData] = useState([])
+  const [proSize, setProSize] = useState(20)
+  const [proCurrent, setProCurrent] = useState(1)
+  const [proTotal, setProTotal] = useState(0)
   const [showPro, setShowPro] = useState(false)
   const [searchType, setSearchType] = useState("header")
   const [groupName, setGroupName] = useState("")
+  const [isCheckOriginal, setIsCheckOriginal] = useState(false)
+  const [checkData, setCheckData] = useState([])
+  const [selectProKeys, setSelectProKeys] = useState([])
+  const [selectProductRow, setSelectProductRow] = useState([])
+  const [customerDivision, setCustomerDivision] = useState("")//用于比对
+  const { Option } = Select;
   const orignalCols = [{
     name: 'bviBusinessLine',
     title: 'BVI Business Line',
-    width: "150px",
+    width: "180px",
     titleRender: 'input'
   }, {
     name: 'businessLine',
     title: 'Business Line',
-    width: "100px",
+    width: "150px",
     titleRender: 'input'
   }, {
     name: 'serviceLine',
     title: 'Service Line',
-    width: "100px",
+    width: "150px",
     titleRender: 'input',
     logic: true
   }, {
@@ -78,6 +91,19 @@ export default (props: any) => {
     name: 'totalAmount',
     title: 'Total Amount',
     width: "100px",
+    render: (text, record) => {
+      return text ? <Button type="link" onClick={(event) => {
+        event.stopPropagation()
+        queryBVIData({ recordId: record.orgId }).then(res => {
+          if (res.isSuccess) {
+            setCheckData(res.data)
+            setIsCheckOriginal(true)
+          } else {
+            message.error(res.msg)
+          }
+        })
+      }}><span style={{ textDecoration: "underline" }}>{text}</span></Button> : text
+    },
     logic: true
   }, {
     name: 'po',
@@ -110,9 +136,9 @@ export default (props: any) => {
     width: "120px",
     titleRender: 'input'
   }, {
-    name: 'TemplateType',
+    name: 'templateType',
     title: 'Template Type',
-    width: "100px",
+    width: "150px",
     titleRender: 'input'
   }, {
     name: 'modifiedDate',
@@ -131,7 +157,19 @@ export default (props: any) => {
     width: "200px",
     fixed: 'right',
     render: (text, record, index) => <Space>
-      <Button type="text" key="1" icon={<EditOutlined />}></Button>
+      <Button type="text" key="1" icon={<EditOutlined />} onClick={() => {
+        setShowFlatData(true)
+        setComponentDisabled(record.dataStatus == "Submit")
+        formData.setFieldsValue({
+          ...record,
+          productName: record.product,
+          customerDivision: record.customerDevision,
+          startMonth: record.startMonth ? moment(record.startMonth) : null,
+          endMonth: record.endMonth ? moment(record.endMonth) : null,
+          modifiedDate: record.modifiedDate ? moment(record.modifiedDate) : null,
+          createdDate: record.createdDate ? moment(record.createdDate) : null,
+        })
+      }}></Button>
       <Popconfirm
         title="Confirm to delete?"
         onConfirm={(event) => deleteInfos([record.id], event)}
@@ -200,19 +238,357 @@ export default (props: any) => {
   }]
   const proColumns: any = [
     {
-      name: 'businessLine',
+      dataIndex: 'businessLine',
       title: 'Business Line',
-      width: "100px",
+      key: 'serviceLine',
+      width: "120px",
+      align: "center"
     }, {
-      name: 'are',
+      dataIndex: 'serviceLine',
+      title: 'Service Line',
+      key: 'serviceLine',
+      width: "150px",
+      align: "center"
+    }, {
+      dataIndex: 'are',
+      key: 'are',
       title: 'ARE',
       width: "100px",
+      align: 'center',
+    }, {
+      title: 'Product Name',
+      width: "200px",
+      dataIndex: 'productName',
+      key: 'productName',
+      align: 'center',
+    }, {
+      title: 'Customer Division',
+      width: "150px",
+      dataIndex: 'customerDivision',
+      key: 'customerDivision',
+      align: 'center',
+    }, {
+      title: 'Start Date',
+      width: "180px",
+      dataIndex: 'startDate',
+      key: 'startDate',
+      align: 'center',
+      render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+    }, {
+      title: 'End Date',
+      width: "180px",
+      dataIndex: 'endDate',
+      key: 'endDate',
+      align: 'center',
+      render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+    }, {
+      title: 'Product Name for Report',
+      width: "180px",
+      dataIndex: 'productNameForReport',
+      key: 'productNameForReport',
+      align: 'center',
+    }, {
+      title: 'Signed',
+      width: "180px",
+      dataIndex: 'signed',
+      key: 'signed',
+      align: 'center',
+      render: (text) => text === true ? "Yes" : 'No'
+    }, {
+      title: 'Signed Date',
+      width: "180px",
+      dataIndex: 'signedDate',
+      key: 'signedDate',
+      align: 'center',
+      render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+    }, {
+      title: 'Material Number',
+      width: "180px",
+      dataIndex: 'materialNumber',
+      key: 'materialNumber',
+      align: 'center',
+    }, {
+      title: 'Unit_Price',
+      width: "180px",
+      dataIndex: 'unitPrice',
+      key: 'unitPrice',
+      align: 'center',
+    }, {
+      title: 'Unit Price Currency',
+      width: "180px",
+      dataIndex: 'unitPriceCurrency',
+      key: 'unitPriceCurrency',
+      align: 'center',
+    }, {
+      title: 'Alt.tax classific.',
+      width: "180px",
+      dataIndex: 'altTaxClassific',
+      key: 'altTaxClassific',
+      align: 'center',
+    }, {
+      title: 'Sender PC',
+      width: "150px",
+      dataIndex: 'senderPC',
+      key: 'senderPC',
+      align: 'center',
+    }, {
+      title: 'Individual Invoice',
+      width: "150px",
+      dataIndex: 'individualInvoice',
+      key: 'individualInvoice',
+      align: 'center',
+    }, {
+      title: 'MandotoryBVI',
+      width: "150px",
+      dataIndex: 'mandotoryBVI',
+      key: 'mandotoryBVI',
+      align: 'center',
+    }, {
+      title: 'SystemTag',
+      width: "150px",
+      dataIndex: 'systemTag',
+      key: 'systemTag',
+      align: 'center',
+    }, {
+      title: 'Quarterly Charge',
+      width: "150px",
+      dataIndex: 'quarterlyCharge',
+      key: 'quarterlyCharge',
+      align: 'center',
     }]
+  const checkColumn: any = [{
+    dataIndex: 'bviBusinessLine',
+    title: 'BVI Business Line',
+    width: "150px",
+    key: 'bviBusinessLine',
+    align: 'center',
+  }, {
+    title: 'Business Line',
+    dataIndex: 'businessLine',
+    key: 'businessLine',
+    width: "150px",
+    align: 'center',
+  }, {
+    dataIndex: 'serviceLine',
+    title: 'Service Line',
+    key: 'serviceLine',
+    width: "150px",
+  }, {
+    title: 'Product',
+    dataIndex: 'product',
+    key: 'product',
+    width: "200px",
+    align: 'center',
+  }, {
+    title: 'ARE',
+    dataIndex: 'are',
+    width: "100px",
+    key: 'are',
+    align: 'center',
+  }, {
+    title: 'Billing ARE',
+    dataIndex: 'billingARE',
+    width: "150px",
+    key: 'billingARE',
+    align: 'center',
+  }, {
+    title: 'Company Code',
+    width: "150px",
+    dataIndex: 'companyCode',
+    key: 'companyCode',
+    align: 'center',
+  }, {
+    title: 'Customer Division',
+    width: "150px",
+    dataIndex: 'customerDevision',
+    key: 'customerDevision',
+    align: 'center',
+  }, {
+    title: 'Product Unit Price',
+    width: "150px",
+    dataIndex: 'productUnitPrice',
+    key: 'productUnitPrice',
+    align: 'center',
+  }, {
+    title: 'Product Unit Price Currency',
+    width: "200px",
+    dataIndex: 'productUnitPriceCurrency',
+    key: 'productUnitPriceCurrency',
+    align: 'center',
+  }, {
+    title: 'Cost Center',
+    dataIndex: 'costCenter',
+    width: "150px",
+    key: 'costCenter',
+    align: 'center',
+  }, {
+    title: 'Billing Cost Center',
+    dataIndex: 'billingCostCenter',
+    width: "150px",
+    key: 'billingCostCenter',
+    align: 'center',
+  }, {
+    title: 'BVI',
+    dataIndex: 'bvi',
+    width: "120px",
+    key: 'bvi',
+    align: 'center',
+  }, {
+    title: 'Total Amount（Unit Price Currency）',
+    dataIndex: 'totalAmount',
+    key: 'totalAmount',
+    width: "280px",
+    align: 'center',
+  }, {
+    title: 'Billing Currency',
+    dataIndex: 'billingCurrency',
+    key: 'billingCurrency',
+    width: "150px",
+    align: 'center',
+  }, {
+    title: 'PO',
+    dataIndex: 'po',
+    width: "120px",
+    key: 'po',
+    align: 'center',
+  }, {
+    title: 'PO Percentage',
+    dataIndex: 'poPercentage',
+    width: "150px",
+    key: 'poPercentage',
+    align: 'center',
+  }, {
+    title: 'Comment',
+    width: "200px",
+    dataIndex: 'comment',
+    key: 'comment',
+    align: 'center',
+  }, {
+    title: 'BVI Month',
+    width: "160px",
+    dataIndex: 'bviMonth',
+    key: 'bviMonth',
+    align: 'center',
+  }, {
+    title: 'System',
+    width: "150px",
+    dataIndex: 'system',
+    key: 'system',
+    align: 'center',
+  }, {
+    title: 'ID_H',
+    width: "100px",
+    dataIndex: 'idH',
+    key: 'idH',
+    align: 'center',
+  }, {
+    title: 'ChargeType',
+    width: "150px",
+    dataIndex: 'chargeType',
+    key: 'chargeType',
+    align: 'center',
+  }, {
+    title: 'AdjustTag',
+    dataIndex: 'adjustTag',
+    width: "150px",
+    key: 'adjustTag',
+    align: 'center',
+  }, {
+    title: 'Template Type',
+    width: "150px",
+    dataIndex: 'templateType',
+    key: 'templateType',
+    align: 'center',
+  }, {
+
+    //   title: 'Billing Location',
+    //   dataIndex: 'billingLocation',
+    //   key: 'billingLocation',
+    //   align: 'center',
+    // },{
+    title: 'BVI Status',
+    width: "150px",
+    dataIndex: 'bviStatus',
+    key: 'bviStatus',
+    align: 'center',
+  }, {
+    title: 'Modified User',
+    width: "150px",
+    dataIndex: 'modifiedUser',
+    key: 'modifiedUser',
+    align: 'center',
+  }, {
+    title: 'Modified Date',
+    width: "180px",
+    dataIndex: 'modifiedDate',
+    key: 'modifiedDate',
+    align: 'center',
+    render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+  }, {
+    title: 'Z003',
+    width: "150px",
+    dataIndex: 'z003',
+    key: 'z003',
+    align: 'center',
+  }, {
+    title: 'Sales Order',
+    width: "150px",
+    dataIndex: 'salesOrder',
+    key: 'salesOrder',
+    align: 'center',
+  }, {
+    title: 'Billing Doc.',
+    width: "180px",
+    dataIndex: 'billingDoc',
+    key: 'billingDoc',
+    align: 'center',
+  }, {
+    title: 'Billing Status',
+    width: "150px",
+    dataIndex: 'billingStatus',
+    key: 'billingStatus',
+    align: 'center',
+  }, {
+    title: 'Item No.',
+    width: "150px",
+    dataIndex: 'itemNo',
+    key: 'itemNo',
+    align: 'center',
+  }, {
+    title: 'Amount in Currecy',
+    width: "150px",
+    dataIndex: 'amountInCurrecy',
+    key: 'amountInCurrecy',
+    align: 'center',
+  }, {
+    title: 'Currency in SAP',
+    width: "150px",
+    dataIndex: 'currencyInSAP',
+    key: 'currencyInSAP',
+    align: 'center',
+  }, {
+    title: 'Amount in Local Currency(CNY)',
+    width: "240px",
+    dataIndex: 'amountInLocalCurrencyCNY',
+    key: 'amountInLocalCurrencyCNY',
+    align: 'center',
+  }, {
+    title: 'Billing Date',
+    width: "180px",
+    dataIndex: 'billingDate',
+    key: 'billingDate',
+    align: 'center',
+  }, {
+    title: 'SAP Exchange Rate',
+    width: "150px",
+    dataIndex: 'exchangeRate',
+    key: 'exchangeRate',
+    align: 'center',
+    render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+  }]
   useEffect(() => {
-
     _getData()
-
-  }, [current, searchType])
+  }, [current, searchType, pageSize])
 
   // 用于获取table接口方法
   const _getData = (_pageSize?: number) => {
@@ -247,7 +623,6 @@ export default (props: any) => {
   }
   const onPageChange = (pagination, filters, sorter, extra) => {
     //   翻页|排序|筛选
-    setCurrent(pagination.current);
     switch (extra.action) {
       case "paginate":
         setCurrent(pagination.current)
@@ -258,13 +633,17 @@ export default (props: any) => {
         break;
     }
   }
+  const onProPageChange = (pagination, filters, sorter, extra) => {
+    setProCurrent(pagination.current)
+  }
   const changePageSize = (val: number) => {
     setPageSize(val)
-    _getData(val)
   }
   const handleLogSize = (val: number) => {
     setLogSize(val)
-
+  }
+  const handleProSize = (val: number) => {
+    setProSize(val)
   }
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
@@ -369,15 +748,27 @@ export default (props: any) => {
     })
   }
   const _getProduct = () => {
-    getProductData({
-      "are": "",
-      "customerDivision": "",
-      "productName": "",
-      "pageIndex": 1,
-      "pageSize": 20
-    }).then(res => {
+    proForm.validateFields().then(values => {
+      getProductData({
+        ...values,
+        "systemTag": "Flat Charge",
+        "pageIndex": proCurrent,
+        "pageSize": proSize
+      }).then(res => {
+        if (res.isSuccess) {
+          setProductData(res.data)
+          setProTotal(res.totalCount)
+        } else {
+          message.error(res.msg)
+        }
+      })
+    }).catch(e => {
 
     })
+
+  }
+  const exportBvi = () => {
+    message.warning("暂未开发")
   }
   const exportExcelAction = () => {
     // 确认导出哪一种搜索方式
@@ -398,10 +789,116 @@ export default (props: any) => {
       // parseExcel(res.data, fileName);
     });
   };
+  const selectProSure = () => {
+    setShowPro(false)
+    console.log(selectProductRow)
+    let data = selectProductRow[0]
+    formData.setFieldsValue({
+      businessLine: data.businessLine,
+      are: data.are,
+      serviceLine: data.serviceLine,
+      customerDivision: data.customerDivision,
+      productName: data.productName,
+    })
+    if (data.are != 5547) {
+      // 获取compamycode下拉选择
+      // getCompanyCodeDrop()
+    } else {
+      // 获取costcenter下拉接口
+    }
+  }
+  const validCostCenterRequired = (rule, value, callback) => {
+    if (formData.getFieldValue("are") == '5547' && !value) {
+      return Promise.reject(new Error("Cost Center Required;"))
+    }
+    if (formData.getFieldValue("are") == "5547" && customerDivision && value && customerDivision != formData.getFieldValue("customerDivision")) {
+      return Promise.reject(new Error("Customer division conflict, unable to submit;"))
+    }
+    return Promise.resolve()
+  }
+  const validEndMonth = (rule, value, callback) => {
+    if (formData.getFieldValue("startMonth") && value && (formData.getFieldValue("startMonth") >= value || (value.format("YYYY-MM") == formData.getFieldValue("startMonth").format("YYYY-MM")))) {
+      return Promise.reject(new Error("The end month must be greater than the start month;"))
+    }
+    return Promise.resolve()
+  }
+  // 保存草稿
+  const saveFormData = () => {
+    formData.validateFields().then(values => {
+      const params = {
+        "id": formData.getFieldValue("orgId") || '',
+        "are": formData.getFieldValue("are"),
+        "companyCode": formData.getFieldValue("companyCode"),
+        "product": formData.getFieldValue("productName"),
+        "costCenter": formData.getFieldValue("costCenter"),
+        "totalAmount": formData.getFieldValue("totalAmount"),
+        "po": formData.getFieldValue("po"),
+        "comment": formData.getFieldValue("comment") || '',
+        "startMonth": formData.getFieldValue("startMonth").format("YYYYMM"),
+        "endMonth": formData.getFieldValue("endMonth").format("YYYYMM"),
+      }
+      editDataSave(params).then(res => {
+        if (res.isSuccess) {
+          message.success(res.msg)
+          setShowFlatData(false)
+          formData.resetFields()
+          setCustomerDivision("")
+          _getData()
+        } else {
+          message.error(res.msg)
+        }
+      })
+    }).catch(e => { })
+  }
+  // 提交
+  const onSubmitData = () => {
+    formData.validateFields().then(values => {
+      editDataSubmit({
+        "id": formData.getFieldValue("orgId") || '',
+        "are": formData.getFieldValue("are"),
+        "companyCode": formData.getFieldValue("companyCode"),
+        "product": formData.getFieldValue("productName"),
+        "costCenter": formData.getFieldValue("costCenter"),
+        "totalAmount": formData.getFieldValue("totalAmount"),
+        "po": formData.getFieldValue("po"),
+        "comment": formData.getFieldValue("comment") || '',
+        "startMonth": formData.getFieldValue("startMonth").format("YYYYMM"),
+        "endMonth": formData.getFieldValue("endMonth").format("YYYYMM"),
+      }).then(res => {
+        if (res.isSuccess) {
+          message.success(res.msg)
+          setShowFlatData(false)
+          formData.resetFields()
+          setCustomerDivision("")
+          _getData()
+        } else {
+          message.error(res.msg)
+        }
+      })
+    }).catch(e => { })
+  }
 
 
   return <div>
-    <Modal width="1000px" title={
+    <Modal maskClosable={false} title={
+      <TableTopDiv style={{ margin: 0 }}>
+        <TableTitleDiv style={{ float: 'left' }}>
+          <TaleTitleIconDiv>
+            <span></span>
+          </TaleTitleIconDiv>
+          <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>BVI Data List</span>
+        </TableTitleDiv>
+      </TableTopDiv>} width="1300px" visible={isCheckOriginal} footer={null} onCancel={() => setIsCheckOriginal(false)}>
+      <TableWrapDiv>
+        <Table columns={checkColumn} rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')} dataSource={checkData} rowKey="id" pagination={false} scroll={{ y: 'calc(100vh - 390px)' }} />
+      </TableWrapDiv>
+
+      <div style={{ margin: "20px auto 40px", textAlign: 'center' }}>
+        <Button type="primary" onClick={exportBvi}>Export</Button>
+      </div>
+    </Modal>
+    {/* 产品列表 */}
+    <Modal width="1200px" title={
       <TableTopDiv style={{ margin: 0 }}>
         <TableTitleDiv style={{ float: 'left' }}>
           <TaleTitleIconDiv>
@@ -414,9 +911,67 @@ export default (props: any) => {
       // formImport.resetFields();
       setShowPro(false);
     }}>
-      <TableWrapDiv>
-        <Table columns={proColumns} dataSource={productData} rowKey="id" pagination={false} />
+      <Form form={proForm} labelCol={{ flex: "120px" }}>
+        <Row gutter={20}>
+          <Col span={8}>
+            <Form.Item
+              label="Business Line"
+              name="businessLine"
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Service Line"
+              name="serviceLine"
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Customer Division"
+              name="customerDevision"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="ARE"
+              name="are"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Product Name"
+              name="productName"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item style={{ textAlign: 'right' }}>
+              <Button type="primary" onClick={_getProduct}>Search</Button>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+      <TableWrapDiv className='selfTable' style={{ margin: "0 0px 0 -24px" }}>
+        <TableMix columns={proColumns} type="radio" onChange={(rowkeys, rows) => {
+          setSelectProKeys(rowkeys)
+          setSelectProductRow(rows)
+        }} data={productData} current={proCurrent} pageSize={proSize} total={proTotal} handlePageSize={handleProSize} rowKey="id" onPageChange={onProPageChange} pagination={true} scrollX={1000} selection={true} selectedRowKeys={selectProKeys} />
       </TableWrapDiv>
+      <div style={{ textAlign: 'center' }}>
+        <Button onClick={selectProSure} type="primary" disabled={!selectProductRow.length}>Confirm</Button>
+      </div>
     </Modal>
     {/* 日志查询 */}
     <Modal width="1000px" title={
@@ -432,9 +987,9 @@ export default (props: any) => {
       // formImport.resetFields();
       setShowLog(false);
     }}>
-      <TableWrapDiv className='selfTable'>
+      <div className='selfTable' style={{ margin: "0 0px 0 -24px" }}>
         <TableMix columns={columns} data={logData} current={logCurrent} pageSize={logSize} total={logTotal} handlePageSize={handleLogSize} rowKey="id" onPageChange={onLogPageChange} pagination={true} />
-      </TableWrapDiv>
+      </div>
     </Modal>
     {/* 新增、编辑flat Charge */}
     <Modal maskClosable={false} width="1000px" title={
@@ -449,27 +1004,27 @@ export default (props: any) => {
     } visible={showFlatData} footer={null} onCancel={() => {
       setShowFlatData(false)
       formData.resetFields()
+      setCustomerDivision("")
     }}>
-      <Form requiredMark={!componentDisabled} form={formData} labelCol={{ flex: '120px' }} >
+      <Form form={formData} labelCol={{ flex: '120px' }} >
         <Row gutter={20}>
           <Col span={20}>
             <Form.Item
               label="Product Name"
-              name="ProductName"
+              name="productName"
               rules={[{ required: true }]}
             >
               <Input disabled={true} />
             </Form.Item>
           </Col>
-          <Col span={4}>
-            <Button type="primary" onClick={() => {
+          {formData.getFieldValue("orgId") ? '' : <Col span={4}>
+            <Button type="primary" onClick={() => setShowPro(true)}>Search Product</Button>
+          </Col>}
 
-            }}>Search Product</Button>
-          </Col>
           <Col span={8}>
             <Form.Item
               label="Bussiness Line"
-              name="BussinessLine"
+              name="businessLine"
             >
               <Input disabled={true} />
             </Form.Item>
@@ -477,58 +1032,143 @@ export default (props: any) => {
           <Col span={8}>
             <Form.Item
               label="Service Line"
-              name="ServiceLine"
+              name="serviceLine"
             >
               <Input disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
-              label="Customer Devision"
-              name="CustomerDevision"
-            >
-              <Input disabled />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
               label="ARE"
-              name="ARE"
+              name="are"
             >
-              <Input disabled />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              label="Company Code"
-              name="CompanyCode"
-            >
-              <Input disabled />
+              <Input onChange={(e) => {
+                formData.setFieldsValue({
+                  chargeType: e.target.value == "5547" ? "ICB" : 'ICC'
+                })
+
+              }} disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="Cost Center"
-              name="CostCenter"
+              name="costCenter"
+              rules={[{ validator: validCostCenterRequired }]}
             >
-              <Select >
-                {/* <Select.Option></Select.Option> */}
-              </Select>
+              {
+                formData.getFieldValue("are") == "5547" && formData.getFieldValue("productName") ?
+                  <DebounceSelect
+                    initFlag
+                    onChange={(value, data) => {
+                      if (value && data.customerDivision != formData.getFieldValue("customerDivision")) {
+                        setCustomerDivision(data.customerDivision)
+                      }
+                    }}
+                    getoptions={(options) => {
+                      return options?.map((x, index) => {
+                        return (
+                          <Select.Option
+                            key={index}
+                            data={x}
+                            value={x.costCenter}
+                          >
+                            {x.costCenter}
+                          </Select.Option>
+                        );
+                      });
+                    }}
+
+                    delegate={(e) => {
+                      if (!formData.getFieldValue("are")) {
+                        return Promise.resolve({
+                          code: 200,
+                          isSuccess: true,
+                          data: [],
+                        });
+                      }
+                      return getCostCenterDrop({
+                        "are": formData.getFieldValue("are"),
+                        "costCenter": e
+                      });
+                    }}
+                  /> :
+                  // <Select disabled={!formData.getFieldValue("productName")} onChange={(val)=>{
+                  //     if(val){
+
+                  //     }
+                  // }}>
+                  //   {costCenters.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
+                  // </Select> :
+                  <Input disabled={!formData.getFieldValue("productName")} />
+              }
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Company Code"
+              name="companyCode"
+              rules={[{ required: true }]}
+            >
+              {
+                !formData.getFieldValue("are") || formData.getFieldValue("are") == '5547' ? <Input disabled /> :
+                  <DebounceSelect
+                    initFlag
+                    getoptions={(options) => {
+                      return options?.map((x, index) => {
+                        return (
+                          <Select.Option
+                            key={index}
+                            data={x}
+                            value={x.companyCode}
+                          >
+                            {x.companyCode}
+                          </Select.Option>
+                        );
+                      });
+                    }}
+
+                    delegate={(e) => {
+                      if (!formData.getFieldValue("are")) {
+                        return Promise.resolve({
+                          code: 200,
+                          isSuccess: true,
+                          data: [],
+                        });
+                      }
+                      return getCompanyCodeDrop({
+                        "are": formData.getFieldValue("are"),
+                        "companyCode": e
+                      });
+                    }}
+                  />
+              }
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Customer Division"
+              name="customerDivision"
+            >
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="Total Amount"
-              name="TotalAmount"
-              rules={[{ required: true, message: 'Total Amount is Required;' }]}
+              name="totalAmount"
+              rules={[{ required: true, message: 'Total Amount is Required;' },
+              { pattern: /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/, message: 'Greater than zero and two decimal places at most' }
+              ]}
             >
-              <Input disabled={componentDisabled} />
+              <InputNumber disabled={componentDisabled} min={0} style={{ width: '100%' }} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="PO"
-              name="PO"
+              name="po"
+              rules={[{ required: true }]}
             >
               <Input disabled={componentDisabled} />
             </Form.Item>
@@ -536,69 +1176,102 @@ export default (props: any) => {
           <Col span={8}>
             <Form.Item
               label="Start Month"
-              name="StartMonth"
+              name="startMonth"
+              rules={[{ required: true }]}
             >
-              <DatePicker disabled={componentDisabled} />
+              <DatePicker disabled={componentDisabled} picker="month" format="YYYY-MM" style={{ width: '100%' }} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="End Month"
-              name="EndMonth"
+              name="endMonth"
+              rules={[{ required: true }, {
+                validator: validEndMonth
+              }]}
             >
-              <DatePicker disabled={componentDisabled} />
+              <DatePicker picker="month" format="YYYY-MM" style={{ width: '100%' }} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="ChargeType"
-              name="ChargeType"
+              name="chargeType"
             >
-              <Input disabled={componentDisabled} />
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="System"
-              name="System"
+              name="system"
             >
-              <Input disabled={componentDisabled} />
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="Template Type"
-              name="TemplateType"
+              name="templateType"
             >
-              <Input disabled={componentDisabled} />
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="Upload Date"
-              name="UploadDate"
+              name="createdDate"
             >
-              <DatePicker disabled={componentDisabled} />
+              <DatePicker disabled style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Upload User"
+              name="createdUser"
+            >
+              <Input disabled />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Modified Date"
+              name="modifiedDate"
+            >
+              <DatePicker disabled style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Modified User"
+              name="modifiedUser"
+            >
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={24}>
             <Form.Item
               label="Comment"
-              name="Comment"
+              name="comment"
             >
-              <Input.TextArea disabled={componentDisabled} />
+              <Input.TextArea />
             </Form.Item>
           </Col>
           {
-            !componentDisabled ? <Col span={24} >
+            <Col span={24} >
               <Form.Item style={{ textAlign: 'center' }}
               >
                 <Space size={60}>
-                  <Button type="primary">Save</Button>
-                  <Button>Cancel</Button>
+                  {!componentDisabled ? <Button type="primary" onClick={saveFormData}>Save</Button> : ''}
+                  <Button type="primary" onClick={onSubmitData}>Submit</Button>
+                  <Button onClick={() => {
+                    setShowFlatData(false)
+                    formData.resetFields()
+                    setCustomerDivision("")
+                  }}>Cancel</Button>
                 </Space>
               </Form.Item>
-            </Col> : ''
+            </Col>
           }
 
         </Row>
@@ -612,6 +1285,7 @@ export default (props: any) => {
           return _getData()
         } else {
           setSearchType("header")
+          return Promise.resolve()
         }
       }}
       form={form}
@@ -656,6 +1330,11 @@ export default (props: any) => {
               <Menu.Item key="2" icon={<i className='gbs gbs-add'></i>}>
                 <span style={{ margin: "0 10px" }} onClick={() => {
                   setShowFlatData(true)
+                  formData.setFieldsValue({
+                    templateType: 'Flat Charge',
+                    system: 'Flat Charge',
+                    uploadUser: sessionStorage.getItem("user")
+                  })
                   setComponentDisabled(false)
                 }}>Add</span>
               </Menu.Item>

@@ -1,4 +1,4 @@
-import { ObjectIteratee } from 'lodash';
+
 import { useGet, usePost } from '.';
 import Config from '../config';
 export const getFlatChargeData = (data: Object) => {
@@ -6,7 +6,7 @@ export const getFlatChargeData = (data: Object) => {
         autoLoading: true,
     });
 };
-export const getFilterGroupData=(data)=>{
+export const getFilterGroupData = (data) => {
     return usePost(`${Config.Api.Base}${Config.Api.ListGroupQuery}`, data, {
         autoLoading: true,
     });
@@ -54,3 +54,18 @@ export const exportExcel = (data: Object, type?: string) => {
         responseType: 'blob',
     });
 };
+export const queryBVIData = (data: Object) => {
+    return usePost(`${Config.Api.Base}${Config.Api.QueryBVIData}`, data, {
+        autoLoading: true,
+    });
+}
+export const editDataSave=(data: Object)=>{
+    return usePost(`${Config.Api.Base}${Config.Api.EditDataSave}`, data, {
+        autoLoading: true,
+    });  
+}
+export const editDataSubmit=(data: Object)=>{
+    return usePost(`${Config.Api.Base}${Config.Api.EditDataSubmit}`, data, {
+        autoLoading: true,
+    });  
+}
