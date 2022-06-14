@@ -1,169 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/TableMixInline'
-import { Button, Divider, Dropdown, Menu, Modal, Popconfirm, Space, Table, Form, message, Input, Row, Col, Radio, Upload } from 'antd';
+import { Button, Divider, Dropdown, Menu, Modal, Popconfirm, Space, Table, Form, message, Input, Row, Col, Radio, Upload, Tooltip, Checkbox } from 'antd';
 import { DownOutlined, EditOutlined, ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import { BtnTextRedWrap, BtnBlueWrap, BtnGreenWrap, BtnOrangeWrap, BtnThemeWrap, TableTopDiv, TableTitleDiv, TaleTitleIconDiv, TableWrapDiv } from '@/assets/style';
 import search from '@/assets/images/search.png'
 import FilterGroup from '@/modules/components/FilterGroup'
-import { objectToFormData } from '@/tools/utils'
-import {
-  importDataSave
-} from '@/app/request/apiBVI'
+import useService from './useServise'
+import moment from 'moment';
 export default (props: any) => {
 
-  const [tableData, setTableData] = useState([])
-  const [isSearch, setIsSearch] = useState(true)
-  const [isCheckOriginal, setIsCheckOriginal] = useState(false)
-  const [checkData, setCheckData] = useState([])
-  const [total, setTotal] = useState(0)
-  const [current, setCurrent] = useState(1)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  const [selectedRows, setSelectedRows] = useState([])
-  const [pageSize, setPageSize] = useState(20)
-  const [componentDisabled, setComponentDisabled] = useState(false);
-  const [showBviData, setShowBviData] = useState(false)
-  const [showImport, setShowImport] = useState(false)
-  const [form] = Form.useForm();
+  const {
+    form,
+    formData,
+    formImport,
+    selectedRowKeys,
+    total,
+    current,
+    selectedRows,
+    pageSize,
+    getData,
+    componentDisabled,
+    showBviData,
+    showImport,
+    tableData,
+    isSearch,
+    setIsSearch,
+    isCheckOriginal,
+    checkData,
+    changePageSize,
+    getCheckOriginalData,
+    setShowBviData,
+    setComponentDisabled,
+    deleteInfos,
+    onPageChange,
+    importExcel,
+    copyDataMethod,
+    setSelectedRowKeys,
+    recheckDataAction,
+    confirmDataAction,
+    unconfirmDataAction,
+    onExport,
+    setShowImport,
+    setSelectedRows,
+    setIsCheckOriginal,
+    groupName,
+    setGroupName,
+    exportExcelAction,
+    unconfirmChecked, setUnconfirmData,
+    setErrorData, errorChecked
+  } = useService(props)
 
-  const [formData] = Form.useForm();
-  const [formImport] = Form.useForm();
-
-  const getCheckOriginalData = (event) => {
-    event.stopPropagation();
-    setIsCheckOriginal(true)
-    setCheckData([{
-      id: 1,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 2,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 3,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 4,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 5,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 6,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 7,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 8,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 9,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 10,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 11,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    },
-    {
-      id: 12,
-      BusinessLine: 'R2R',
-      ARE: '563s',
-      CompanyCode: '563s',
-      CustomerDevision: 'DI',
-      CostCenter: 'A22885020',
-      CostLocation: 'SAS03570',
-      ProductName: '3rd party VendorMaster Data Maintenance - ERP',
-      ErrorMessage: '不能匹配到Unit Price'
-    }])
-  }
   const columns: any = [{
     title: 'Business Line',
     dataIndex: 'BusinessLine',
@@ -208,153 +94,186 @@ export default (props: any) => {
     render: (text) => <span style={{ color: "red" }}>{text}</span>
   }]
   const orignalCols = [{
-    name: 'BVIBusinessLine',
+    name: 'bviBusinessLine',
     title: 'BVI Business Line',
     width: "120px",
-    // titleRender: 'input'
   }, {
-    name: 'BusinessLine',
+    name: 'businessLine',
     title: 'Business Line',
     width: "100px",
-    // titleRender: 'input'
   }, {
-    name: 'Service Line',
+    name: 'serviceLine',
     title: 'ServiceLine',
-    width: "100px",
-    logic: true
+    width: "150px",
+    titleRender: 'input',
   }, {
-    name: 'Product',
+    name: 'product',
     title: 'Product',
-    width: "100px",
-    titleRender: 'input'
+    width: "200px",
+    titleRender: 'input',
   }, {
-    name: 'ARE',
+    name: 'are',
     title: 'ARE',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
+
   }, {
-    name: 'BillingARE',
+    name: 'billingARE',
     title: 'Billing ARE',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'CompanyCode',
+    name: 'companyCode',
     title: 'Company Code',
     width: "120px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'CustomerDevision',
-    title: 'Customer Devision',
+    name: 'customerDivision',
+    title: 'Customer Division',
     width: "100px",
-    logic: true
+    titleRender: 'input',
   }, {
-    name: 'UnitPrice',
+    name: 'productUnitPrice',
     title: 'Product Unit Price',
     width: "100px",
   }, {
-    name: 'UnitPriceCurrency',
+    name: 'productUnitPriceCurrency',
     title: 'Product Unit Price Currency',
     width: "120px",
+    titleRender: 'input',
   }, {
-    name: 'CostCenter',
+    name: 'costCenter',
     title: 'Cost Center',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'BillingCostCenter',
+    name: 'billingCostCenter',
     title: 'Billing Cost Center',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'BVI',
+    name: 'bvi',
     title: 'BVI',
     width: "100px",
-    logic: true,
-    titleRender: 'number',
     render: (text, record, index) => {
-      if (record.bviFlag) {
+      if (record.validationMsg) {
         return <BtnTextRedWrap color="red"><Button type="text" onClick={getCheckOriginalData} icon={<ExclamationCircleOutlined />}>{text}</Button></BtnTextRedWrap>
       } else {
         return <BtnTextRedWrap ><Button type="text" onClick={getCheckOriginalData}>{text}</Button></BtnTextRedWrap>
       }
     }
   }, {
-    name: 'TotalAmount',
+    name: 'totalAmount',
     title: 'Total Amount(Unit Price Currency)',
-    width: "140px",
-    titleRender: 'input'
+    width: "180px",
   }, {
-    name: 'BillingCurrency',
+    name: 'billingCurrency',
     title: 'Billing Currency',
     width: "100px",
   }, {
-    name: 'TotalAmountCNY',
-    title: 'Total Amount(CNY)',
-    width: "100px",
-  }, {
-    name: 'BatchFileExchangeRate',
-    title: 'BatchFile Exchange Rate',
-    width: "100px",
-  }, {
-    name: 'PO',
+    name: 'po',
     title: 'PO',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'BVIMonth',
+    name: 'poPercentage',
+    title: 'PO Percentage',
+    width: "100px"
+  }, {
+    name: 'comment',
+    title: 'Comment',
+    width: "100px",
+    titleRender: 'input',
+  }, {
+    name: 'bviMonth',
     title: 'BVI Month',
     width: "100px",
-    logic: true
+    titleRender: 'input',
   }, {
-    name: 'System',
+    name: 'system',
     title: 'System',
     width: "100px",
-    logic: true
   }, {
-    name: 'ChargeType',
+    name: 'idH',
+    title: 'ID_H',
+    width: "100px",
+  }, {
+    name: 'chargeType',
     title: 'ChargeType',
     width: "100px",
-    logic: true
+    titleRender: 'input',
   }, {
-    name: 'AdjustTag',
+    name: 'adjustTag',
     title: 'AdjustTag',
     width: "100px",
-    logic: true
+    titleRender: 'input',
+    render: (text) => text === false ? "Yes" : "No"
   }, {
-    name: 'TemplateType',
+    name: 'templateType',
     title: 'Template Type',
     width: "100px",
-    logic: true
+    titleRender: 'input',
   }, {
-    name: 'BVIStatus',
+    name: 'IsPOByPercentage',
+    title: 'IsPOByPercentage',
+    width: "160px",
+  }, {
+    name: 'bviStatus',
     title: 'BVI Status',
     width: "100px",
-    titleRender: 'input'
   }, {
-    name: 'ModifiedUser',
+    name: 'modifiedUser',
     title: 'Modified User',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'SalesOrder',
+    name: 'modifiedDate',
+    title: 'Modified Date',
+    width: "100px",
+    render: (text) => text && moment(text).isValid() ? moment(text).format("YYYY-MM-DD HH:mm:ss") : text
+  }, {
+    name: 'z003',
+    title: 'Z003',
+    width: "100px",
+  }, {
+    name: 'salesOrder',
     title: 'Sales Order',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'BillingDoc',
+    name: 'billingDoc',
     title: 'Billing Doc.',
     width: "100px",
-    titleRender: 'input'
+    titleRender: 'input',
   }, {
-    name: 'BillingStatus',
+    name: 'billingStatus',
     title: 'Billing Status',
     width: "100px",
-    logic: true
+    titleRender: 'input',
   }, {
-    name: 'Comment',
-    title: 'Comment',
+    name: 'itemNo',
+    title: 'Item No.',
     width: "200px",
-    titleRender: 'input'
+  }, {
+    title: 'Amount in Currecy',
+    width: "150px",
+    name: 'amountInCurrecy',
+  }, {
+    title: 'Currency in SAP',
+    width: "150px",
+    name: 'currencyInSAP'
+  }, {
+    title: 'Amount in Local Currency(CNY)',
+    width: "240px",
+    name: 'amountInLocalCurrencyCNY'
+  }, {
+    title: 'Billing Date',
+    width: "180px",
+    name: 'billingDate'
+  }, {
+    title: 'SAP Exchange Rate',
+    width: "150px",
+    name: 'exchangeRate',
   }, {
     name: 'Operate',
     title: 'Operate',
@@ -367,7 +286,7 @@ export default (props: any) => {
         setComponentDisabled(false)
         formData.setFieldsValue(record)
       }}></Button>
-      <Popconfirm
+      {record.bviStatus == "Unconfirm" ? <Popconfirm
         title="Are you sure?"
         onConfirm={(event) => {
           event.stopPropagation();
@@ -377,11 +296,17 @@ export default (props: any) => {
         cancelText="Cancel"
       >
         <Button type="text" key="2" onClick={(event) => event.stopPropagation()} icon={<i className='gbs gbs-delete'></i>}></Button>
-      </Popconfirm>
+      </Popconfirm> : ''}
+
       {!record.bviFlag ? <Popconfirm
         title="Are you sure?"
         onConfirm={(event) => {
           event.stopPropagation();
+          if (record.bviStatus == "Unconfirm") {
+            toConfirm([record.id])
+          } else {
+            toUnconfirm([record.id])
+          }
         }}
         okText="Yes"
         cancelText="Cancel"
@@ -391,96 +316,13 @@ export default (props: any) => {
       </Popconfirm> : ''}
     </Space>
   }]
-  useEffect(() => {
-    _getData()
-  }, [current])
 
-  const _getData = (_pageSize?: number) => {
-
-    const params = {
-      current,
-      pageSize: _pageSize ?? pageSize,
-      ...form.getFieldsValue()
-
-    }
-    console.log(params)
-    setTableData([{
-      BusinessLine: "1",
-      BVI: 3,
-      bviFlag: true
-    }, {
-      BusinessLine: "2",
-      BVI: 4,
-
-    }, {
-      BusinessLine: "3",
-      BVI: 38,
-      bviFlag: true
-    }, {
-      BusinessLine: "4",
-      BVI: 3,
-      bviFlag: true
-    }, {
-      BusinessLine: "5",
-      BVI: 4,
-
-    }, {
-      BusinessLine: "6",
-      BVI: 38,
-      bviFlag: true
-    }, {
-      BusinessLine: "7",
-      BVI: 3,
-      bviFlag: true
-    }, {
-      BusinessLine: "8",
-      BVI: 4,
-
-    }, {
-      BusinessLine: "9",
-      BVI: 38,
-      bviFlag: true
-    }, {
-      BusinessLine: "10",
-      BVI: 3,
-      bviFlag: true
-    }, {
-      BusinessLine: "11",
-      BVI: 4,
-
-    }, {
-      BusinessLine: "12",
-      BVI: 38,
-      bviFlag: true
-    }])
-  }
 
   const savefilterGroup = () => {
     console.log("please save  filter group interface")
   }
-  const changePageSize = (val: number) => {
-    setPageSize(val)
-    _getData(val)
-  }
-  // 删除接口
-  const deleteInfos = (ids: Array<any>) => {
-    message.success("success");
-    setSelectedRowKeys([])
-    setCurrent(1)
-  }
-  const onPageChange = (pagination, filters, sorter, extra) => {
-    //   翻页|排序|筛选
-    setCurrent(pagination.current);
-    switch (extra.action) {
-      case "paginate":
-        setCurrent(pagination.current)
-        break;
-      case "sort":
-        break;
-      default:
-        break;
-    }
-  }
+
+
   // BVI-View
   const rowClick = (record) => {
     formData.setFieldsValue(record)
@@ -492,92 +334,62 @@ export default (props: any) => {
       return false
     }
   }
-  // }导入数据
-  const importExcel = () => {
-    formImport.validateFields().then((values) => {
-      console.log(values)
-      const fd = new FormData();
-      objectToFormData(values.file[0], fd, "file")
-      importDataSave(fd, values.type).then(res => {
-        setShowImport(false)
-        if (res.isSuccess) {
-          message.success("Submit success!")
-          _getData()
-        } else {
-          message.error(res.msg)
-        }
-      })
-
-    }).catch(error => {
-
-    })
-  }
 
   const copyData = () => {
     Modal.confirm({
-      title: "Copy Confirm",
+      title: "Tips",
       icon: <ExclamationCircleOutlined />,
-      content: "Copy confirm?",
-      okText: "OK",
+      content: "Confirm copying selected data?",
+      okText: "Confirm",
       cancelText: "Cancel",
       onOk: () => {
-        console.log("调用copy接口")
-        _getData()
-        setSelectedRowKeys([])
-        message.success("Copy success！")
+        copyDataMethod()
       },
       centered: true,
     })
   }
-  // 
+  const toConfirm = (selectIds) => {
+    Modal.confirm({
+      title: "Tips",
+      icon: <ExclamationCircleOutlined />,
+      content: "Confirm to confirm the selected data?",
+      okText: "Confirm",
+      cancelText: "Cancel",
+      onOk: () => {
+        confirmDataAction(selectIds)
+      },
+      centered: true,
+    })
+  }
+  const toUnconfirm = (selectIds) => {
+    Modal.confirm({
+      title: "Tips",
+      icon: <ExclamationCircleOutlined />,
+      content: "UnConfirm to confirm the selected data?",
+      okText: "Confirm",
+      cancelText: "Cancel",
+      onOk: () => {
+        unconfirmDataAction(selectIds)
+      },
+      centered: true,
+    })
+  }
   const toRecheck = () => {
-    if (!selectedRowKeys.length) {
-      message.warning("No information selected!")
-      return
-    }
-    let validData = selectedRows.find(item => item.bviFlag)
-    if (validData) {
-      //  调用接口
-      message.success("Operation succeeded!")
-      setSelectedRowKeys([])
-    } else {
-      message.warning("Please select the data in question")
-    }
-
-  }
-  const toConfirm = () => {
-
-  }
-  const toUnconfirm = () => {
-
+    Modal.confirm({
+      title: "Tips",
+      icon: <ExclamationCircleOutlined />,
+      content: "Are you sure to recheck the selected data?",
+      okText: "Confirm",
+      cancelText: "Cancel",
+      onOk: () => {
+        recheckDataAction()
+      },
+      centered: true,
+    })
   }
 
-  const onExport = () => {
-    // const params = _getparams(true);
-    // exportClearance({
-    //   // "orderField": "string",
-    //   // "orderType": "string",
-    //   // "conditions": [
-    //   //     {
-    //   //         "fieldName": "string",
-    //   //         "fieldValue": "string",
-    //   //         "conditionalType": 0
-    //   //     }
-    //   // ],
-    //   pageIndex: current,
-    //   pageSize: pageSize,
-    //   certificateNumber: search.certificateNumber,
-    //   ...params,
-    //   keyWords: search.keyWords,
-    // }).then((res: any) => {
-    //   let elink = document.createElement('a');
-    //   // 设置下载文件名
-    //   elink.download = '进口清关数据列表.xlsx';
-    //   elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
-    //   elink.click();
-    //   window.URL.revokeObjectURL(elink.href);
-    // });
-  };
+
+
   return <div>
     <Modal width="800px" title={
       <TableTopDiv style={{ margin: 0 }}>
@@ -825,11 +637,11 @@ export default (props: any) => {
     </Modal>
     <TableList
       data={tableData}
+      headerSearch={getData}
       form={form}
       columns={orignalCols}
       total={total}
       rowClick={(record => rowClick(record))}
-      current={current}
       onPageChange={onPageChange}
       selectedRowKeys={selectedRowKeys}
       onChange={(_selectedRowKeys, _selectedRows) => {
@@ -837,16 +649,20 @@ export default (props: any) => {
         setSelectedRows(_selectedRows)
       }}
       changePageSize={changePageSize}
+      current={current}
       search={isSearch}
-      rowKey="BusinessLine"
+      rowKey="id"
       listName="Data Management"
       renderFilterGroup={
-        <FilterGroup onSaveFilterGroup={savefilterGroup} fields={orignalCols.filter(item => item.logic)} onSearch={() => _getData()} />
+        <FilterGroup customComponet={<><Checkbox onChange={(e) => setUnconfirmData(e.target.checked)}>View all unconfirm Data</Checkbox><Checkbox onChange={(e) => setErrorData(e.target.checked)}>View all Error Data</Checkbox></>} defaultVal={groupName} onSearch={(val) => {
+          setGroupName(val)
+          getData({ groupId: val })
+        }} onSaveFilterGroup={savefilterGroup} fields={orignalCols} exportAction={exportExcelAction} />
       }
       renderBtns={<Space>
         <BtnOrangeWrap><Button disabled={!selectedRowKeys.length} onClick={toRecheck}>Recheck</Button></BtnOrangeWrap>
-        <BtnGreenWrap><Button disabled={!selectedRowKeys.length} onClick={toConfirm}>Confirm</Button></BtnGreenWrap>
-        <BtnBlueWrap><Button disabled={!selectedRowKeys.length} onClick={toUnconfirm}>Unconfirm</Button></BtnBlueWrap>
+        <BtnGreenWrap><Button disabled={!selectedRowKeys.length} onClick={() => toConfirm(selectedRowKeys)}>Confirm</Button></BtnGreenWrap>
+        <BtnBlueWrap><Button disabled={!selectedRowKeys.length} onClick={() => toUnconfirm(selectedRowKeys)}>Unconfirm</Button></BtnBlueWrap>
         <Divider type="vertical" style={{ height: '20px', borderColor: "#999" }} />
         <BtnThemeWrap><Button onClick={onExport}>Export Original</Button></BtnThemeWrap>
         <BtnThemeWrap>
@@ -857,7 +673,6 @@ export default (props: any) => {
               </Menu.Item>
               <Menu.Item key="2" icon={<i className='gbs gbs-add'></i>} onClick={() => {
                 setShowBviData(true)
-                // formData.setFieldsValue({})
                 setComponentDisabled(false)
               }}>
                 <span style={{ margin: "0 10px" }}>Add</span>

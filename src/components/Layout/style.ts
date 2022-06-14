@@ -3,7 +3,6 @@ import banner from '@/assets/images/banner.png'
 import siderbg from '@/assets/images/sidebg.png'
 
 export const LayoutDiv = styled.div`
-
   .ant-pro-sider-extra {
     margin-top: 20px;
   }
@@ -14,8 +13,6 @@ export const LayoutDiv = styled.div`
   .ant-menu-sub {
     background-color: rgba(0, 0, 0, 0.05);
   }
-  
-
   .ant-design-pro {
     background: url(${banner}) no-repeat ;
     background-size:100% auto;

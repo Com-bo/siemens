@@ -8,7 +8,17 @@ export const getCompanyCodeDrop = (data: Object) => {
 };
 
 export const getFilterGroupFieldList = (data: Object) => {
-    return usePost(`${Config.Api.Base}${Config.Api.GetFilterGroupFieldList}`,data, {
+    return usePost(`${Config.Api.Base}${Config.Api.GetFilterGroupFieldList}`, data, {
+        autoLoading: true,
+    });
+};
+export const queryFilterGroupList = (data: Object) => {
+    return usePost(`${Config.Api.Base}${Config.Api.QueryFilterGroupList}`, data, {
+        autoLoading: true,
+    });
+};
+export const saveFilterGroupData = (data: Object) => {
+    return usePost(`${Config.Api.Base}${Config.Api.SaveFilterGroupData}`, data, {
         autoLoading: true,
     });
 };

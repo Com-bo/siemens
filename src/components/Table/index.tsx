@@ -53,6 +53,7 @@ export default (_props: TableOptions) => {
           total: _props.total,
           current: _props.current,
           pageSize: _pageSize,
+          showSizeChanger:false,
           showTotal: (total) => {
             return <>
               <span className="total">Total: <strong>{total}</strong></span>

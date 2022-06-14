@@ -7,10 +7,6 @@ import { useRequest } from 'ahooks';
 export default (props: any) => {
     // const [scrollY, setScrollY] = useState<any>(0);
     const [columns, setColumns] = useState([])
-    const { run } = useRequest(props.headerSearch, {
-        debounceInterval: 800,
-        manual: true,
-    });
 
     const getcolumnItem = (col: any) => {
         return {
@@ -33,7 +29,7 @@ export default (props: any) => {
     const getSearchInputType = (text?: string) => {
         switch (text) {
             case "input":
-                return <Input onChange={(e) => run(e.target.value)} />
+                return <Input/>
             case "number":
                 return <InputNumber />
             default:

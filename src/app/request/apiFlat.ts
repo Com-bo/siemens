@@ -44,12 +44,8 @@ export const getProductData = (data: Object) => {
         autoLoading: true,
     });
 };
-export const exportExcel = (data: Object, type?: string) => {
-    let url = Config.Api.ExportDataByGroup
-    if (type == "header") {
-        url = Config.Api.ExportDataByHearder
-    }
-    return usePost(`${Config.Api.Base}${url}`, data, {
+export const exportExcel = (data: Object) => {
+    return usePost(`${Config.Api.Base}${ Config.Api.ExportDataByHearder}`, data, {
         autoLoading: true,
         responseType: 'blob',
     });

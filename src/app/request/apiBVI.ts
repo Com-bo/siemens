@@ -29,3 +29,32 @@ export const importDataSave = (data: object, type: number) => {
         autoLoading: true,
     });
 };
+export const bviGroupQuery=(data: Object)=>{
+    return usePost(`${Config.Api.Base}${Config.Api.BviGroupQuery}`, data, {
+        autoLoading: true,
+    });  
+}
+// copy function
+export const bivCopyDta=(data: Object)=>{
+    return usePost(`${Config.Api.Base}${Config.Api.BivCopyDta}`, data, {
+        autoLoading: true,
+    });  
+}
+// export data
+export const exportExcel = (data: Object) => {
+    return usePost(`${Config.Api.Base}${ Config.Api.ExportBVIData}`, data, {
+        autoLoading: true,
+        responseType: 'blob',
+    });
+};
+export const unConfirmData=(data: Object)=>{
+    return usePost(`${Config.Api.Base}${Config.Api.UnConfirmData}`, data, {
+        autoLoading: true,
+    });  
+}
+export const confirmData=(data: Object)=>{
+    return usePost(`${Config.Api.Base}${Config.Api.ConfirmData}`, data, {
+        autoLoading: true,
+    });  
+}
+

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/TableMixInline'
-import { Button, Col, DatePicker, Divider, Dropdown, Form, Input, InputNumber, Menu, message, Modal, Popconfirm, Radio, Row, Select, Space, Table, Upload } from 'antd';
+import { Button, Col, DatePicker, Divider, Dropdown, Form, Input, InputNumber, Menu, message, Modal, Popconfirm, Radio, Row, Select, Space, Table, Tooltip, Upload } from 'antd';
 import { CodeSandboxCircleFilled, DownOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { BtnThemeWrap, TableTitleDiv, TableTopDiv, TableWrapDiv, TaleTitleIconDiv } from '@/assets/style';
+import { BtnTextRedWrap, BtnThemeWrap, TableTitleDiv, TableTopDiv, TableWrapDiv, TaleTitleIconDiv } from '@/assets/style';
 import search from '@/assets/images/search.png'
 import FilterGroup from '@/modules/components/FilterGroup'
 import TableMix from '@/components/Table'
@@ -12,6 +12,7 @@ import moment from 'moment';
 import { getCompanyCodeDrop, getCostCenterDrop } from '@/app/request/common';
 import DebounceSelect from '@/components/Select/debounceSelect'
 import { format } from 'prettier';
+import { getMenuData } from '@ant-design/pro-layout';
 export default (props: any) => {
   const [tableData, setTableData] = useState([])
   const [isSearch, setIsSearch] = useState(true)
@@ -36,7 +37,6 @@ export default (props: any) => {
   const [proCurrent, setProCurrent] = useState(1)
   const [proTotal, setProTotal] = useState(0)
   const [showPro, setShowPro] = useState(false)
-  const [searchType, setSearchType] = useState("header")
   const [groupName, setGroupName] = useState("")
   const [isCheckOriginal, setIsCheckOriginal] = useState(false)
   const [checkData, setCheckData] = useState([])
@@ -72,7 +72,7 @@ export default (props: any) => {
     titleRender: 'input'
   }, {
     name: 'customerDevision',
-    title: 'Customer Devision',
+    title: 'Customer Division',
     width: "150px",
     titleRender: 'input',
     logic: true
@@ -92,6 +92,9 @@ export default (props: any) => {
     title: 'Total Amount',
     width: "100px",
     render: (text, record) => {
+      if (record?.validationMsg ) {
+        return <Tooltip title={record.validationMsg} ><BtnTextRedWrap color="red"><Button type="text" icon={<ExclamationCircleOutlined />}>{text||"_"}</Button></BtnTextRedWrap></Tooltip>
+      }
       return text ? <Button type="link" onClick={(event) => {
         event.stopPropagation()
         queryBVIData({ recordId: record.orgId }).then(res => {
@@ -588,27 +591,17 @@ export default (props: any) => {
   }]
   useEffect(() => {
     _getData()
-  }, [current, searchType, pageSize])
+  }, [current, pageSize])
 
   // 用于获取table接口方法
   const _getData = (_pageSize?: number) => {
-    let params = {};
-    if (searchType == "header") {
-      params = {
-        current,
-        pageSize: _pageSize ?? pageSize,
-        searchCondition: form.getFieldsValue()
-      }
-    } else {
-      params = {
-        groupName,
-        current,
-        pageSize: _pageSize ?? pageSize,
 
-      }
+    let params = {
+      current,
+      pageSize: _pageSize ?? pageSize,
+      searchCondition: form.getFieldsValue()
     }
-
-    return getFlatChargeData(params).then(res => {
+    getFlatChargeData(params).then(res => {
       if (res.isSuccess) {
         setTableData(res.data)
         setTotal(res.totalCount)
@@ -767,19 +760,16 @@ export default (props: any) => {
     })
 
   }
-  const exportBvi = () => {
-    message.warning("暂未开发")
-  }
+
   const exportExcelAction = () => {
     // 确认导出哪一种搜索方式
     let params: any = {
       pageIndex: current,
       pageSize: pageSize,
+      searchCondition: form.getFieldsValue()
     }
-    if (searchType == "header") {
-      params.searchCondition = form.getFieldsValue()
-    }
-    exportExcel(params, searchType).then((res: any) => {
+
+    exportExcel(params).then((res: any) => {
       let elink = document.createElement('a');
       // 设置下载文件名
       elink.download = 'Flat Charge List.xlsx';
@@ -893,9 +883,7 @@ export default (props: any) => {
         <Table columns={checkColumn} rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')} dataSource={checkData} rowKey="id" pagination={false} scroll={{ y: 'calc(100vh - 390px)' }} />
       </TableWrapDiv>
 
-      <div style={{ margin: "20px auto 40px", textAlign: 'center' }}>
-        <Button type="primary" onClick={exportBvi}>Export</Button>
-      </div>
+
     </Modal>
     {/* 产品列表 */}
     <Modal width="1200px" title={
@@ -1280,14 +1268,7 @@ export default (props: any) => {
     </Modal>
 
     <TableList
-      headerSearch={() => {
-        if (searchType == "header") {
-          return _getData()
-        } else {
-          setSearchType("header")
-          return Promise.resolve()
-        }
-      }}
+      headerSearch={_getData}
       form={form}
       data={tableData}
       columns={orignalCols}
@@ -1304,7 +1285,7 @@ export default (props: any) => {
       rowKey="orgId"
       listName="Flat Charge"
       renderFilterGroup={
-        <FilterGroup defaultVal={groupName} changeVal={setGroupName} onSearch={() => setSearchType("group")} onSaveFilterGroup={savefilterGroup} fields={orignalCols} exportAction={exportExcelAction} />
+        <FilterGroup moudleName="Flat Charge" onSearch={(val) => {}}  exportAction={exportExcelAction} />
       }
       renderBtns={<Space>
         {/* <BtnThemeWrap><Button>Export Original</Button></BtnThemeWrap> */}
@@ -1312,7 +1293,6 @@ export default (props: any) => {
           <Dropdown overlay={() => (
             <Menu >
               <Menu.Item key="1" icon={<i className='gbs gbs-import'></i>}>
-
                 <Upload style={{ margin: "0 10px" }}
                   maxCount={1}
                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
@@ -1328,7 +1308,7 @@ export default (props: any) => {
 
               </Menu.Item>
               <Menu.Item key="2" icon={<i className='gbs gbs-add'></i>}>
-                <span style={{ margin: "0 10px" }} onClick={() => {
+                <Button style={{ margin: "0 10px" }} type="text" onClick={() => {
                   setShowFlatData(true)
                   formData.setFieldsValue({
                     templateType: 'Flat Charge',
@@ -1336,7 +1316,7 @@ export default (props: any) => {
                     uploadUser: sessionStorage.getItem("user")
                   })
                   setComponentDisabled(false)
-                }}>Add</span>
+                }}>Add</Button>
               </Menu.Item>
               <Menu.Item key="3" icon={<i className='gbs gbs-download'></i>}>
                 <span style={{ margin: "0 10px" }}><a href="./template/Flat Charge.xlsx">Download Template</a></span>

@@ -3,11 +3,18 @@ export const Api = {
   QueryLoginUser: '/api/System/QueryLoginUser', // 获取用户信息
   CostCenterDrop: '/api/CostCenterIcb/QueryPageDropListData',//获取cost center下拉框
   CompanyCodeDrop: '/api/DivMappingOc/QueryPageDropListData',//获取companyCode
-  GetFilterGroupFieldList:'/api/ConfigureQueryField/QueryPageDropListData',//获取Filter Group Field
+  GetFilterGroupFieldList:'/api/FilterGroup/QueryConfigureFieldList',//获取Filter Group Field
+  QueryFilterGroupList :'/api/FilterGroup/QueryFilterGroupList',//数据查询 - 获取用户FilterGroup列表
+  SaveFilterGroupData:'/api/FilterGroup/SaveFilterGroupData',//数据保存 - 保存用户FilterGroup数据
   // BVI
   ImportDataSave: '/api/ImportR2R/ImportDataSave',//导入R2r
   ImportManualDataSave: '/api/ImportManual/ImportDataSave',//导入ImportManual
   ImportH2RTE: '/api/ImportH2RTE/ImportDataSave',//导入ImportH2RTE
+  BviGroupQuery:'/api/BVIDataManage/ListGroupQuery',//数据查询group
+  BivCopyDta:'/api/BVIDataManage/CopyData',//copy功能
+  ExportBVIData:'/api/BVIDataManage/ExportBVIData',//导出BVI
+  UnConfirmData:'/api/BVIDataManage/UnConfirmData',//UnConfirm数据
+  ConfirmData:'/api/BVIDataManage/ConfirmData',//Confirm数据
   // Flat Charge 
   HomePageQuery: '/api/FlatCharge/ListHeaderQuery',//数据查询
   ListGroupQuery: '/api/FlatCharge/ListGroupQuery',//group数据查询
