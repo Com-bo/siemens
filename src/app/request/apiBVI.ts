@@ -63,3 +63,8 @@ export const deleteBVIData = (data: Object) => {
     autoLoading: true,
   });
 };
+export const InsertBVIData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.InsertBVIData}`, data, {
+    autoLoading: true,
+  });
+};

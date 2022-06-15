@@ -17,6 +17,7 @@ export const Api = {
   UnConfirmData: '/api/BVIDataManage/UnConfirmData', //UnConfirm数据
   ConfirmData: '/api/BVIDataManage/ConfirmData', //Confirm数据
   DeleteBVIData: '/api/BVIDataManage/DeleteData', //删除bvi
+  InsertBVIData: '/api/BVIDataManage/InsertData', //添加数据
   // Flat Charge
   HomePageQuery: '/api/FlatCharge/ListHeaderQuery', //数据查询
   ListGroupQuery: '/api/FlatCharge/ListGroupQuery', //group数据查询

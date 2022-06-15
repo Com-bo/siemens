@@ -82,6 +82,8 @@ export default (props: any) => {
     setUnconfirmData,
     setErrorData,
     errorChecked,
+    //
+    saveFormData,
   } = useService(props);
 
   const columns: any = [
@@ -510,7 +512,6 @@ export default (props: any) => {
       centered: true,
     });
   };
-
   return (
     <div>
       <Modal
@@ -590,7 +591,7 @@ export default (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                BVI Data
+                BVI Data1111
               </span>
             </TableTitleDiv>
           </TableTopDiv>
@@ -701,7 +702,9 @@ export default (props: any) => {
               <Col span={24}>
                 <Form.Item style={{ textAlign: 'center' }}>
                   <Space size={60}>
-                    <Button type="primary">Save</Button>
+                    <Button type="primary" onClick={saveFormData}>
+                      Save
+                    </Button>
                     <Button>Cancel</Button>
                   </Space>
                 </Form.Item>
@@ -935,7 +938,14 @@ export default (props: any) => {
             <BtnThemeWrap>
               <Button disabled={!selectedRowKeys.length}>Edit</Button>
             </BtnThemeWrap>
-            <Button disabled={!selectedRowKeys.length}>Delete</Button>
+            <Button
+              disabled={!selectedRowKeys.length}
+              onClick={() => {
+                deleteInfos(selectedRowKeys, event);
+              }}
+            >
+              Delete
+            </Button>
             <Divider
               type="vertical"
               style={{ height: '20px', borderColor: '#999' }}

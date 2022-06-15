@@ -7,8 +7,9 @@ import {
   exportExcel,
   importDataSave,
   unConfirmData,
+  InsertBVIData,
 } from '@/app/request/apiBVI';
-import { objectToFormData } from '@/tools/utils';
+import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
 
 export default (props: any) => {
@@ -38,10 +39,12 @@ export default (props: any) => {
   };
   const getData = (conditions?: any) => {
     const params = {
+      pageIndex: current,
       current,
       pageSize,
       ...form.getFieldsValue(),
     };
+    console.log(params);
     if (conditions) {
       params.groupId = conditions.groupId || null;
     }
@@ -198,6 +201,45 @@ export default (props: any) => {
     });
   };
 
+  // insert
+  const saveFormData = () => {
+    formData
+      .validateFields()
+      .then((values) => {
+        console.log(values);
+        const params = {
+          id: formData.getFieldValue('orgId') || '',
+          are: formData.getFieldValue('are'),
+          companyCode: formData.getFieldValue('companyCode'),
+          product: formData.getFieldValue('productName'),
+          productId: formData.getFieldValue('productId'),
+          bvi: formData.getFieldValue('bvi'),
+          poPercentage: formData.getFieldValue('poPercentage'),
+          costCenter: formData.getFieldValue('costCenter'),
+          totalAmount: formData.getFieldValue('totalAmount'),
+          po: formData.getFieldValue('po'),
+          isTag: formData.getFieldValue('isTag'),
+          billingARE: formData.getFieldValue('billingARE'),
+          billingCostCenter: formData.getFieldValue('billingCostCenter'),
+          comment: formData.getFieldValue('comment') || '',
+          bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
+        };
+        console.log(params);
+        InsertBVIData(params).then((res) => {
+          if (res.isSuccess) {
+            message.success(res.msg);
+            setShowBviData(false);
+            formData.resetFields();
+            // setCustomerDivision('');
+            getData();
+          } else {
+            message.error(res.msg);
+          }
+        });
+      })
+      .catch((e) => {});
+  };
+
   return {
     form,
     formData,
@@ -239,5 +281,8 @@ export default (props: any) => {
     setUnconfirmData,
     setErrorData,
     errorChecked,
+
+    //
+    saveFormData,
   };
 };
