@@ -5,6 +5,8 @@ export const Api = {
   CompanyCodeDrop: '/api/DivMappingOc/QueryPageDropListData', //获取companyCode
   GetFilterGroupFieldList: '/api/FilterGroup/QueryConfigureFieldList', //获取Filter Group Field
   QueryFilterGroupList: '/api/FilterGroup/QueryFilterGroupList', //数据查询 - 获取用户FilterGroup列表
+  QueryFilterGroupListWithFields:
+    '/api/FilterGroup/QueryFilterGroupListWithFields', //获取filter group全数据
   SaveFilterGroupData: '/api/FilterGroup/SaveFilterGroupData', //数据保存 - 保存用户FilterGroup数据
   DeleteFilterGroupData: '/api/FilterGroup/DeleteFilterGroupData', //删除Filter Group
   // BVI
@@ -18,16 +20,14 @@ export const Api = {
   ConfirmData: '/api/BVIDataManage/ConfirmData', //Confirm数据
   DeleteBVIData: '/api/BVIDataManage/DeleteData', //删除bvi
   // Flat Charge
-  HomePageQuery: '/api/FlatCharge/ListHeaderQuery', //数据查询
-  ListGroupQuery: '/api/FlatCharge/ListGroupQuery', //group数据查询
+  HomePageQuery: '/api/FlatCharge/ListDataQuery', //数据查询
   ListDataSubmit: '/api/FlatCharge/ListDataSubmit', //批量提交
   DeleteData: '/api/FlatCharge/DeleteData', //删除数据
   CopyData: '/api/FlatCharge/CopyData', //拷贝
   LogDataQuery: '/api/FlatCharge/LogDataQuery', //日志查询
   ImportFlatData: '/api/FlatCharge/ImportData', //导入
   PopWinPagingQuery: '/api/Product/PopWinPagingQuery', //获取产品
-  ExportDataByGroup: '/api/FlatCharge/ExportDataByGroup', //导出group
-  ExportDataByHearder: '/api/FlatCharge/ExportDataByHearder', //导出
+  ExportDataByGroup: '/api/FlatCharge/ExportDataBy', //导出group
   QueryBVIData: '/api/FlatCharge/QueryBVIData', //导出bvi拆分
   EditDataSave: '/api/FlatCharge/EditDataSave', //保存flat数据
   EditDataSubmit: '/api/FlatCharge/EditDataSubmit', //提交flat数据

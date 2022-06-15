@@ -1,25 +1,25 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const TableMixDiv = styled.div<{ status: boolean }>`
-.listSearch {
+  .listSearch {
     .ant-form-item {
-        display: block;
+      display: block;
     }
 
-    padding-bottom:50px;
+    padding-bottom: 50px;
+  }
+  .ant-table-column-sorter-full {
+    // margin-top:${(props) => (props.status ? '-3.5em' : '0px')};
+    display: none;
+  }
 
-}
-
-.hiddenlistSearch {
+  .hiddenlistSearch {
     .ant-form-item {
-        display: none;
+      display: none;
     }
-    padding-bottom:0;
-}
-th.ant-table-cell.ant-table-selection-column::after{
-        height:${(props) =>props.status?'50px':'0px'}
-}
-`
-
-
-
+    padding-bottom: 0;
+  }
+  th.ant-table-cell.ant-table-selection-column::after {
+    height: ${(props) => (props.status ? '50px' : '0px')};
+  }
+`;
