@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TableList from '@/modules/components/TableMixInline';
 import {
   Button,
@@ -23,7 +23,6 @@ import {
   Upload,
 } from 'antd';
 import {
-  CodeSandboxCircleFilled,
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
@@ -56,8 +55,7 @@ import './style.less';
 import moment from 'moment';
 import { getCompanyCodeDrop, getCostCenterDrop } from '@/app/request/common';
 import DebounceSelect from '@/components/Select/debounceSelect';
-import { format } from 'prettier';
-import { getMenuData } from '@ant-design/pro-layout';
+
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
@@ -87,10 +85,9 @@ export default (props: any) => {
   const [selectProKeys, setSelectProKeys] = useState([]);
   const [selectProductRow, setSelectProductRow] = useState([]);
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
-  const [errorChecked, setErrorData] = useState(false);
-  const [orderFeild, setOrderFeild] = useState('modifiedDate');
+  const [errorChecked, setErrorChecked] = useState(false);
+  const [orderField, setOrderField] = useState('modifiedDate');
   const [orderType, setOrderType] = useState('descend');
-  const [groupId, setGroupId] = useState('');
   const { Option } = Select;
   const orignalCols = [
     {
@@ -205,14 +202,14 @@ export default (props: any) => {
     {
       name: 'startMonth',
       title: 'Start Month',
-      width: '100px',
+      width: '150px',
       sorter: true,
       // titleRender: 'input'
     },
     {
       name: 'endMonth',
       title: 'End Month',
-      width: '100px',
+      width: '150px',
       sorter: true,
       // titleRender: 'input'
     },
@@ -250,7 +247,7 @@ export default (props: any) => {
     {
       name: 'modifiedUser',
       title: 'Modified User',
-      width: '100px',
+      width: '120px',
       titleRender: 'input',
       sorter: true,
     },
@@ -808,22 +805,24 @@ export default (props: any) => {
           : text,
     },
   ];
+  const latestGroupIdRef = useRef<any>();
+  const errorCheckedRef = useRef<any>(false);
   useEffect(() => {
     _getData();
-  }, [current, pageSize, orderFeild, orderType]);
+  }, [current, pageSize, orderField, orderType]);
 
   // 用于获取table接口方法
   const _getData = (recordId?: any) => {
     let params = {
       searchCondition: {
         filterGroup: {
-          recordId: groupId || recordId,
+          recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
-        isOnlyQueryErrorData: errorChecked,
+        isOnlyQueryErrorData: errorCheckedRef.current,
       },
       orderCondition: {
-        [orderFeild]: orderType == 'ascend' ? 0 : 1,
+        [orderField]: orderType == 'ascend' ? 0 : 1,
       },
       current,
       pageSize: pageSize,
@@ -848,7 +847,7 @@ export default (props: any) => {
     //   翻页|排序|筛选
     switch (action) {
       case 'sort':
-        setOrderFeild(field);
+        setOrderField(field);
         setOrderType(order);
         break;
       default:
@@ -994,13 +993,13 @@ export default (props: any) => {
     let params = {
       searchCondition: {
         filterGroup: {
-          recordId: groupId,
+          recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
-        isOnlyQueryErrorData: errorChecked,
+        isOnlyQueryErrorData: errorCheckedRef.current,
       },
       orderCondition: {
-        [orderFeild]: orderType == 'ascend' ? 0 : 1,
+        [orderField]: orderType == 'ascend' ? 0 : 1,
       },
       current,
       pageSize: pageSize,
@@ -1408,13 +1407,6 @@ export default (props: any) => {
                     }}
                   />
                 ) : (
-                  // <Select disabled={!formData.getFieldValue("productName")} onChange={(val)=>{
-                  //     if(val){
-
-                  //     }
-                  // }}>
-                  //   {costCenters.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
-                  // </Select> :
                   <Input disabled={!formData.getFieldValue('productName')} />
                 )}
               </Form.Item>
@@ -1596,6 +1588,8 @@ export default (props: any) => {
 
       <TableList
         headerSearch={_getData}
+        orderField={orderField}
+        orderType={orderType}
         form={form}
         data={tableData}
         columns={orignalCols}
@@ -1615,12 +1609,29 @@ export default (props: any) => {
           <FilterGroup
             moudleName="Flat Charge"
             onSearch={(val) => {
-              setGroupId(val);
+              latestGroupIdRef.current = val;
               _getData(val);
+            }}
+            onClear={() => {
+              setErrorChecked(false);
+              errorCheckedRef.current = false;
+              latestGroupIdRef.current = '';
+              form.resetFields();
+              if (current != 1) {
+                setCurrent(1);
+              } else {
+                _getData();
+              }
             }}
             exportAction={exportExcelAction}
             customComponet={
-              <Checkbox onChange={(e) => setErrorData(e.target.checked)}>
+              <Checkbox
+                checked={errorChecked}
+                onChange={(e) => {
+                  errorCheckedRef.current = e.target.checked;
+                  setErrorChecked(e.target.checked);
+                }}
+              >
                 View all Error Data
               </Checkbox>
             }

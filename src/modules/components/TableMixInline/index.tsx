@@ -11,7 +11,6 @@ import { TableMixDiv } from './tablemix';
 export default (props: any) => {
   // const [scrollY, setScrollY] = useState<any>(0);
   const [columns, setColumns] = useState([]);
-
   const getcolumnItem = (col: any) => {
     return {
       title: (

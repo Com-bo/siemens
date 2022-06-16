@@ -1,20 +1,17 @@
 import {
   deleteFilterGroupData,
+  getCustemerDivisionList,
   getFilterGroupFieldList,
+  getServiceLineList,
   queryFilterGroupList,
   queryFilterGroupListWithFields,
   saveFilterGroupData,
 } from '@/app/request/common';
+import { FilterGroupDiv, TaleTitleIconDiv } from '@/assets/style';
 import {
-  FilterGroupDiv,
-  TableTitleDiv,
-  TaleTitleIconDiv,
-} from '@/assets/style';
-import {
-  ControlOutlined,
+  ClearOutlined,
   ExclamationCircleOutlined,
   PlusCircleOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -22,6 +19,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   message,
   Modal,
   Radio,
@@ -31,7 +29,8 @@ import {
   Switch,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-
+import DebounceSelect from '@/components/Select/debounceSelect';
+import moment from 'moment';
 export default (props: any) => {
   const [filterGroup, setFilterGroup] = useState('');
   const [isSetting, setSetting] = useState(false);
@@ -48,30 +47,32 @@ export default (props: any) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    getFilterGroupFieldList({
-      moduleName: props.moudleName ?? 'Flat Charge',
-    }).then((res) => {
-      if (res.isSuccess) {
-        let _fields = {};
-        let data = res.data || [];
-        data.map((item) => {
-          if (!_fields[item.fieldName]) {
-            _fields[item.fieldName] = {
-              fieldName: item.fieldName,
-              fieldDispName: item.fieldDispName,
-              operator: [item.operator],
-            };
-          } else {
-            _fields[item.fieldName]['operator'].push(item.operator);
-          }
-        });
-        setFields(_fields);
-      }
-
-      //   获取filter Group 全数据
-      _getFilterList();
-    });
+    initData(props.moudleName ?? 'Flat Charge');
   }, []);
+
+  const initData = async (moduleName: string) => {
+    const res = await getFilterGroupFieldList({
+      moduleName,
+    });
+    if (res.isSuccess) {
+      let _fields = {};
+      let data = res.data || [];
+      data.map((item) => {
+        if (!_fields[item.fieldName]) {
+          _fields[item.fieldName] = {
+            fieldName: item.fieldName,
+            fieldDispName: item.fieldDispName,
+            operator: [item.operator],
+          };
+        } else {
+          _fields[item.fieldName]['operator'].push(item.operator);
+        }
+      });
+      setFields(_fields);
+    }
+    //   获取filter Group 全数据
+    _getFilterList();
+  };
   const _getFilterList = () => {
     queryFilterGroupListWithFields({
       moduleName: props.moudleName ?? 'Flat Charge',
@@ -119,31 +120,91 @@ export default (props: any) => {
     }
   };
   const getFilterElement = (fieldName: string, index: number) => {
-    console.log(form.getFieldValue('groupFieldList')[index].fieldValue);
+    let arra = form.getFieldValue('groupFieldList');
     switch (fieldName) {
       case 'ServiceLine':
-        let arra = form.getFieldValue('groupFieldList');
-        arra[index].fieldValue = [];
         if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
-          form.setFieldsValue({
-            groupFieldList: arra,
-          });
+          arra[index].fieldValue = [];
+        } else {
+          if (typeof arra[index].fieldValue == 'string') {
+            arra[index].fieldValue = JSON.parse(arra[index].fieldValue);
+            // form.setFieldsValue({
+            //     groupFieldList: arra,
+            // });
+          }
+        }
+
+        return (
+          <DebounceSelect
+            initFlag
+            mode="multiple"
+            onChange={(value, data) => {}}
+            getoptions={(options) => {
+              return options?.map((x, index) => {
+                return (
+                  <Select.Option key={index} data={x} value={x.value}>
+                    {x.label}
+                  </Select.Option>
+                );
+              });
+            }}
+            delegate={(e) => {
+              return getServiceLineList({
+                businessLine: '',
+                keywords: e,
+              });
+            }}
+          />
+        );
+      case 'CustomerDevision':
+        if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
+          arra[index].fieldValue = [];
+        } else {
+          if (typeof arra[index].fieldValue == 'string') {
+            arra[index].fieldValue = JSON.parse(arra[index].fieldValue);
+          }
+        }
+
+        return (
+          <DebounceSelect
+            initFlag
+            mode="multiple"
+            onChange={(value, data) => {}}
+            getoptions={(options) => {
+              return options?.map((x, index) => {
+                return (
+                  <Select.Option key={index} data={x} value={x.value}>
+                    {x.label}
+                  </Select.Option>
+                );
+              });
+            }}
+            delegate={(e) => {
+              return getCustemerDivisionList({
+                keywords: e,
+              });
+            }}
+          />
+        );
+      case 'StartMonth':
+      case 'EndMonth':
+        if (typeof arra[index].fieldValue == 'string') {
+          arra[index].fieldValue = moment(arra[index].fieldValue);
         }
         return (
-          <Select
-            mode="multiple"
-            allowClear
+          <DatePicker
+            picker="month"
+            format="YYYYMM"
             style={{ width: '100%' }}
-            onChange={(val) => {
-              console.log(val);
-            }}
-          >
-            <Option value={1}>test</Option>
-          </Select>
+          />
         );
-      case 'EndMonth':
       case 'ModifiedDate':
+        if (typeof arra[index].fieldValue == 'string') {
+          arra[index].fieldValue = moment(arra[index].fieldValue);
+        }
         return <DatePicker style={{ width: '100%' }} />;
+      case 'TotalAmount':
+        return <InputNumber style={{ width: '100%' }} />;
       default:
         return <Input style={{ width: '100%' }} />;
     }
@@ -164,12 +225,27 @@ export default (props: any) => {
         }
         let groupFieldList = [];
         form.getFieldValue('groupFieldList').map((item) => {
+          switch (item.fieldName) {
+            case 'StartMonth':
+            case 'EndMonth':
+              item.fieldValue = moment(item.fieldValue).format('YYYYMM');
+              break;
+            case 'ModifiedDate':
+              item.fieldValue = moment(item.fieldValue).format(
+                'YYYY-MM-DD HH:mm:ss',
+              );
+              break;
+            default:
+              if (typeof item.fieldValue == 'number') {
+                item.fieldValue = item.fieldValue.toString();
+              } else if (typeof item.fieldValue == 'object') {
+                item.fieldValue = JSON.stringify(item.fieldValue);
+              }
+              break;
+          }
           groupFieldList.push({
             fieldName: item.fieldName,
-            fieldValue:
-              typeof item.fieldValue == 'object'
-                ? JSON.stringify(item.fieldValue)
-                : item.fieldValue,
+            fieldValue: item.fieldValue,
             operator: item.operator,
             fieldDispName: operfields[item.fieldName]?.fieldDispName,
           });
@@ -187,7 +263,7 @@ export default (props: any) => {
           },
           groupFieldList: groupFieldList,
         };
-        // console.log(params)
+        console.log(params);
         saveFilterGroupData(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
@@ -447,9 +523,10 @@ export default (props: any) => {
       <FilterGroupDiv id="filterGroup">
         <label>Filter Group:</label>
         <Select
+          value={filterGroup}
           style={{ minWidth: '300px' }}
           onChange={changeFilterGroup}
-          allowClear
+          // allowClear
         >
           {filterGropList.map((item, i) => (
             <Option key={i} value={item?.value}>
@@ -479,6 +556,13 @@ export default (props: any) => {
           <Button
             icon={<i className="gbs gbs-export"></i>}
             onClick={props.exportAction}
+          ></Button>
+          <Button
+            icon={<ClearOutlined />}
+            onClick={() => {
+              setFilterGroup('');
+              props.onClear();
+            }}
           ></Button>
         </Space>
       </FilterGroupDiv>

@@ -9,6 +9,9 @@ export const Api = {
     '/api/FilterGroup/QueryFilterGroupListWithFields', //获取filter group全数据
   SaveFilterGroupData: '/api/FilterGroup/SaveFilterGroupData', //数据保存 - 保存用户FilterGroup数据
   DeleteFilterGroupData: '/api/FilterGroup/DeleteFilterGroupData', //删除Filter Group
+  GetServiceLineList: '/api/BusinessLine/QueryServicelineOptionsList', //Service Line Options列表数据
+  GetCustemerDivisionList:
+    '/api/OtherMasterData/QueryCustemerDivisionOptionsList',
   // BVI
   ImportDataSave: '/api/ImportR2R/ImportDataSave', //导入R2r
   ImportManualDataSave: '/api/ImportManual/ImportDataSave', //导入ImportManual
