@@ -1588,8 +1588,6 @@ export default (props: any) => {
 
       <TableList
         headerSearch={_getData}
-        orderField={orderField}
-        orderType={orderType}
         form={form}
         data={tableData}
         columns={orignalCols}
