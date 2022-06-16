@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/TableMixInline';
 import {
   Button,
+  Checkbox,
   Col,
   DatePicker,
   Divider,
@@ -81,12 +82,15 @@ export default (props: any) => {
   const [proCurrent, setProCurrent] = useState(1);
   const [proTotal, setProTotal] = useState(0);
   const [showPro, setShowPro] = useState(false);
-  const [groupName, setGroupName] = useState('');
   const [isCheckOriginal, setIsCheckOriginal] = useState(false);
   const [checkData, setCheckData] = useState([]);
   const [selectProKeys, setSelectProKeys] = useState([]);
   const [selectProductRow, setSelectProductRow] = useState([]);
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
+  const [errorChecked, setErrorData] = useState(false);
+  const [orderFeild, setOrderFeild] = useState('modifiedDate');
+  const [orderType, setOrderType] = useState('descend');
+  const [groupId, setGroupId] = useState('');
   const { Option } = Select;
   const orignalCols = [
     {
@@ -94,55 +98,62 @@ export default (props: any) => {
       title: 'BVI Business Line',
       width: '180px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'businessLine',
       title: 'Business Line',
       width: '150px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'serviceLine',
       title: 'Service Line',
       width: '150px',
       titleRender: 'input',
-      logic: true,
+      sorter: true,
     },
     {
       name: 'are',
       title: 'ARE',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'companyCode',
       title: 'Company Code',
       width: '150px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'customerDevision',
       title: 'Customer Division',
       width: '150px',
       titleRender: 'input',
-      logic: true,
+      sorter: true,
     },
     {
       name: 'product',
       title: 'Product Name',
       width: '200px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'costCenter',
       title: 'Cost Center',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'totalAmount',
       title: 'Total Amount',
       width: '100px',
+      sorter: true,
       render: (text, record) => {
         if (record?.validationMsg) {
           return (
@@ -176,30 +187,33 @@ export default (props: any) => {
           text
         );
       },
-      logic: true,
     },
     {
       name: 'po',
       title: 'PO',
       width: '180px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'comment',
       title: 'Comment',
       width: '200px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'startMonth',
       title: 'Start Month',
       width: '100px',
+      sorter: true,
       // titleRender: 'input'
     },
     {
       name: 'endMonth',
       title: 'End Month',
       width: '100px',
+      sorter: true,
       // titleRender: 'input'
     },
     {
@@ -207,23 +221,27 @@ export default (props: any) => {
       title: 'ChargeType',
       width: '200px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'system',
       title: 'System',
       width: '120px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'templateType',
       title: 'Template Type',
       width: '150px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'modifiedDate',
       title: 'Modified Date',
       width: '180px',
+      sorter: true,
       render: (text) =>
         text && moment(text).isValid()
           ? moment(text).format('YYYY-MM-DD HH:mm:ss')
@@ -234,6 +252,7 @@ export default (props: any) => {
       title: 'Modified User',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'Operate',
@@ -791,15 +810,25 @@ export default (props: any) => {
   ];
   useEffect(() => {
     _getData();
-  }, [current, pageSize]);
+  }, [current, pageSize, orderFeild, orderType]);
 
   // 用于获取table接口方法
-  const _getData = (_pageSize?: number) => {
+  const _getData = (recordId?: any) => {
     let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: groupId || recordId,
+        },
+        listHeader: form.getFieldsValue(),
+        isOnlyQueryErrorData: errorChecked,
+      },
+      orderCondition: {
+        [orderFeild]: orderType == 'ascend' ? 0 : 1,
+      },
       current,
-      pageSize: _pageSize ?? pageSize,
-      searchCondition: form.getFieldsValue(),
+      pageSize: pageSize,
     };
+
     getFlatChargeData(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
@@ -810,18 +839,20 @@ export default (props: any) => {
     });
   };
 
-  const savefilterGroup = () => {
-    console.log('please save  filter group interface');
-  };
-  const onPageChange = (pagination, filters, sorter, extra) => {
+  const onPageChange = (
+    pagination,
+    filters,
+    { column, columnKey, field, order },
+    { currentDataSource, action },
+  ) => {
     //   翻页|排序|筛选
-    switch (extra.action) {
-      case 'paginate':
-        setCurrent(pagination.current);
-        break;
+    switch (action) {
       case 'sort':
+        setOrderFeild(field);
+        setOrderType(order);
         break;
       default:
+        setCurrent(pagination.current);
         break;
     }
   };
@@ -960,11 +991,19 @@ export default (props: any) => {
   };
 
   const exportExcelAction = () => {
-    // 确认导出哪一种搜索方式
-    let params: any = {
-      pageIndex: current,
+    let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: groupId,
+        },
+        listHeader: form.getFieldsValue(),
+        isOnlyQueryErrorData: errorChecked,
+      },
+      orderCondition: {
+        [orderFeild]: orderType == 'ascend' ? 0 : 1,
+      },
+      current,
       pageSize: pageSize,
-      searchCondition: form.getFieldsValue(),
     };
 
     exportExcel(params).then((res: any) => {
@@ -974,7 +1013,6 @@ export default (props: any) => {
       elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
       elink.click();
       window.URL.revokeObjectURL(elink.href);
-      // parseExcel(res.data, fileName);
     });
   };
   const selectProSure = () => {
@@ -1576,8 +1614,16 @@ export default (props: any) => {
         renderFilterGroup={
           <FilterGroup
             moudleName="Flat Charge"
-            onSearch={(val) => {}}
+            onSearch={(val) => {
+              setGroupId(val);
+              _getData(val);
+            }}
             exportAction={exportExcelAction}
+            customComponet={
+              <Checkbox onChange={(e) => setErrorData(e.target.checked)}>
+                View all Error Data
+              </Checkbox>
+            }
           />
         }
         renderBtns={

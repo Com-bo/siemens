@@ -35,3 +35,12 @@ export const deleteFilterGroupData = (data: Object) => {
     },
   );
 };
+export const queryFilterGroupListWithFields = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.QueryFilterGroupListWithFields}`,
+    data,
+    {
+      autoLoading: true,
+    },
+  );
+};

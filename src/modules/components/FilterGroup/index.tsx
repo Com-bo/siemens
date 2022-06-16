@@ -2,6 +2,7 @@ import {
   deleteFilterGroupData,
   getFilterGroupFieldList,
   queryFilterGroupList,
+  queryFilterGroupListWithFields,
   saveFilterGroupData,
 } from '@/app/request/common';
 import {
@@ -18,6 +19,7 @@ import {
 import {
   Button,
   Col,
+  DatePicker,
   Form,
   Input,
   message,
@@ -37,8 +39,9 @@ export default (props: any) => {
   const [operList, setOperList] = useState([]);
   const [filterGropList, setFilterGroupList] = useState([]);
   const [requireMark, setRequireMark] = useState(false);
-
+  const [filterGroupInfoById, setFilterGroupInfoById] = useState({});
   const { Option } = Select;
+
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
   };
@@ -64,19 +67,43 @@ export default (props: any) => {
         });
         setFields(_fields);
       }
+
+      //   获取filter Group 全数据
       _getFilterList();
-    });
-    form.setFieldsValue({
-      groupFieldList: [{ fieldName: '', operator: '', fieldValue: '' }],
     });
   }, []);
   const _getFilterList = () => {
-    queryFilterGroupList({
+    queryFilterGroupListWithFields({
       moduleName: props.moudleName ?? 'Flat Charge',
-    }).then((result) => {
-      if (result.isSuccess) {
-        setFilterGroupList(result.data || []);
-      }
+    })
+      .then((result) => {
+        // 处理数据
+        if (result.isSuccess) {
+          let obj = {};
+          result.data?.map((item) => {
+            let _group = item.filterGroup;
+            obj[_group.id] = {
+              conditionRelationship: _group.conditionRelationship,
+              groupFieldList: item?.groupFieldList || [],
+            };
+          });
+          setFilterGroupInfoById(obj);
+        } else {
+          console.error(result.msg);
+        }
+        return queryFilterGroupList({
+          moduleName: props.moudleName ?? 'Flat Charge',
+        });
+      })
+      .then((result) => {
+        if (result.isSuccess) {
+          setFilterGroupList(result.data || []);
+        }
+      });
+    form.setFieldsValue({
+      id: '',
+      conditionRelationship: '',
+      groupFieldList: [{ fieldName: '', operator: '', fieldValue: null }],
     });
   };
   const getFilterOperator = (operator) => {
@@ -89,6 +116,36 @@ export default (props: any) => {
       //     return ">="
       default:
         return operator;
+    }
+  };
+  const getFilterElement = (fieldName: string, index: number) => {
+    console.log(form.getFieldValue('groupFieldList')[index].fieldValue);
+    switch (fieldName) {
+      case 'ServiceLine':
+        let arra = form.getFieldValue('groupFieldList');
+        arra[index].fieldValue = [];
+        if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
+          form.setFieldsValue({
+            groupFieldList: arra,
+          });
+        }
+        return (
+          <Select
+            mode="multiple"
+            allowClear
+            style={{ width: '100%' }}
+            onChange={(val) => {
+              console.log(val);
+            }}
+          >
+            <Option value={1}>test</Option>
+          </Select>
+        );
+      case 'EndMonth':
+      case 'ModifiedDate':
+        return <DatePicker style={{ width: '100%' }} />;
+      default:
+        return <Input style={{ width: '100%' }} />;
     }
   };
   // type=true,新建type=false编辑
@@ -109,7 +166,10 @@ export default (props: any) => {
         form.getFieldValue('groupFieldList').map((item) => {
           groupFieldList.push({
             fieldName: item.fieldName,
-            fieldValue: item.fieldValue,
+            fieldValue:
+              typeof item.fieldValue == 'object'
+                ? JSON.stringify(item.fieldValue)
+                : item.fieldValue,
             operator: item.operator,
             fieldDispName: operfields[item.fieldName]?.fieldDispName,
           });
@@ -140,30 +200,37 @@ export default (props: any) => {
       .catch((e) => {});
   };
   const deleteFilterGroup = () => {
-    Modal.confirm({
-      title: 'Tips',
-      icon: <ExclamationCircleOutlined />,
-      content: 'Confirm to delete the selected Filter Group?',
-      okText: 'Confirm',
-      cancelText: 'Cancel',
-      onOk: () => {
-        if (!form.getFieldValue('id')) {
-          message.warning('Please select the Filter Group');
-          return;
+    form
+      .validateFields()
+      .then((valid) => {
+        if (valid) {
+          Modal.confirm({
+            title: 'Tips',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Confirm to delete the selected Filter Group?',
+            okText: 'Confirm',
+            cancelText: 'Cancel',
+            onOk: () => {
+              if (!form.getFieldValue('id')) {
+                message.warning('Please select the Filter Group');
+                return;
+              }
+              deleteFilterGroupData({
+                recordId: form.getFieldValue('id'),
+              }).then((res) => {
+                if (res.isSuccess) {
+                  message.success(res.msg);
+                  _getFilterList();
+                } else {
+                  message.error(res.msg);
+                }
+              });
+            },
+            centered: true,
+          });
         }
-        deleteFilterGroupData({
-          recordId: form.getFieldValue('id'),
-        }).then((res) => {
-          if (res.isSuccess) {
-            message.success(res.msg);
-            _getFilterList();
-          } else {
-            message.error(res.msg);
-          }
-        });
-      },
-      centered: true,
-    });
+      })
+      .catch((e) => {});
   };
   const validGroupName = (rule, value, callback) => {
     if (form.getFieldValue('isNew') && !value) {
@@ -213,7 +280,21 @@ export default (props: any) => {
               required
               rules={[{ validator: validFilterGroup }]}
             >
-              <Select style={{ width: '100%' }} allowClear>
+              <Select
+                style={{ width: '100%' }}
+                allowClear
+                onChange={(val: string) => {
+                  if (val) {
+                    form.setFieldsValue({
+                      conditionRelationship:
+                        filterGroupInfoById[
+                          val
+                        ].conditionRelationship.toLowerCase(),
+                      groupFieldList: filterGroupInfoById[val].groupFieldList,
+                    });
+                  }
+                }}
+              >
                 {filterGropList?.map((item, i) => (
                   <Option key={i} value={item?.value}>
                     {item?.label}
@@ -303,6 +384,7 @@ export default (props: any) => {
                         <Col span={10}>
                           <Form.Item
                             name={[name, 'fieldValue']}
+                            initialValue={null}
                             rules={[
                               {
                                 required: true,
@@ -310,7 +392,11 @@ export default (props: any) => {
                               },
                             ]}
                           >
-                            <Input style={{ width: '100%' }} />
+                            {getFilterElement(
+                              form.getFieldValue('groupFieldList')[index]
+                                .fieldName,
+                              index,
+                            )}
                           </Form.Item>
                         </Col>
                         <Col span={1}>
@@ -349,7 +435,11 @@ export default (props: any) => {
               <Button type="primary" onClick={() => saveFilterGroup()}>
                 Save
               </Button>
-              <Button onClick={deleteFilterGroup}>Delete</Button>
+              {!requireMark ? (
+                <Button onClick={deleteFilterGroup}>Delete</Button>
+              ) : (
+                ''
+              )}
             </Space>
           </Form.Item>
         </Form>
