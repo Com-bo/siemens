@@ -30,6 +30,7 @@ import {
 import {
   BtnTextRedWrap,
   BtnThemeWrap,
+  ContentWrap,
   TableTitleDiv,
   TableTopDiv,
   TableWrapDiv,
@@ -1149,7 +1150,7 @@ export default (props: any) => {
   };
 
   return (
-    <div>
+    <ContentWrap>
       <Modal
         maskClosable={false}
         title={
@@ -1759,6 +1760,6 @@ export default (props: any) => {
           </Space>
         }
       />
-    </div>
+    </ContentWrap>
   );
 };
