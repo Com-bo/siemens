@@ -11,9 +11,7 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { IRouteComponentProps } from 'umi';
 import React, { useEffect, useRef, useState, createContext } from 'react';
 import { useLocalStorageState } from 'ahooks';
-// import font from './YouSheBiaoTiHei.ttf'
-// import siemens from './SiemensSans_Global_Bold.ttf'
-// import Roman from './SiemensSans_Global_Roman.ttf'
+import enUS from 'antd/lib/locale/en_US';
 const GlobalStyle = createGlobalStyle`
  /**
     全局样式
@@ -245,6 +243,7 @@ const GlobalStyle = createGlobalStyle`
 import noData from '@/assets/images/noData.png';
 import MedalsoftLayout from '@/components/Layout';
 import PersonalDropdown from '@/components/PersonalDropdown';
+import { ConfigProvider } from 'antd';
 export default function Layout({
   children,
   location,
@@ -265,18 +264,19 @@ export default function Layout({
 
   // const authService = useAuthService({ mode: 'normal', formatLanguageService });
   return (
-    <ThemeProvider theme={theme}>
-      {/* 全局样式 */}
-      <GlobalStyle />
-      {/* <FormatLanguageService.Provider value={formatLanguageService}> */}
-      <UseRequestProvider
-        value={{
-          requestMethod: (param) =>
-            axios(param).then((r) => {
-              return r.data;
-            }),
-        }}
-      >
+    <ConfigProvider locale={enUS}>
+      <ThemeProvider theme={theme}>
+        {/* 全局样式 */}
+        <GlobalStyle />
+        {/* <FormatLanguageService.Provider value={formatLanguageService}> */}
+        {/* <UseRequestProvider
+          value={{
+            requestMethod: (param) =>
+              axios(param).then((r) => {
+                return r.data;
+              }),
+          }}
+        > */}
         <MedalsoftLayout
           search={true}
           layout={mode}
@@ -285,10 +285,9 @@ export default function Layout({
         >
           {children}
         </MedalsoftLayout>
-      </UseRequestProvider>
-      {/* </FormatLanguageService.Provider> */}
-    </ThemeProvider>
+        {/* </UseRequestProvider> */}
+        {/* </FormatLanguageService.Provider> */}
+      </ThemeProvider>
+    </ConfigProvider>
   );
 }
-
-

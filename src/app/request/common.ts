@@ -44,3 +44,12 @@ export const queryFilterGroupListWithFields = (data: Object) => {
     },
   );
 };
+export const getServiceLineList = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.GetServiceLineList}`, data);
+};
+export const getCustemerDivisionList = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.GetCustemerDivisionList}`,
+    data,
+  );
+};

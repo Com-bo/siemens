@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { message, Select, Spin } from 'antd';
 import { useCallback } from '@umijs/renderer-react/node_modules/@types/react';
 const { Option } = Select;
-
+import { useRequest } from 'ahooks';
 interface ComponentClass {
   getoptions: Function;
   onSearch?: (value: any) => void;
@@ -27,7 +27,30 @@ interface ComponentClass {
 
 const index = (props: ComponentClass) => {
   const [properties, setProperties] = useState<any>({});
+  let currentValue;
+  const fetch = (value, callback) => {
+    // if (timeout) {
+    //   clearTimeout(timeout);
+    //   timeout = null;
+    // }
+    currentValue = value;
 
+    // function fake() {
+    setFetching(true);
+    return props.delegate(value).then((res) => {
+      setFetching(false);
+      if (res.code != 200 || !res.isSuccess) {
+        message.error(res.msg);
+      } else callback(res.data);
+    });
+    // }
+
+    // timeout = setTimeout(fake, 300);
+  };
+  const { data, loading, run } = useRequest(fetch, {
+    debounceInterval: 500,
+    manual: true,
+  });
   useEffect(() => {
     var target: any = {};
     Object.assign(target, props);
@@ -47,28 +70,7 @@ const index = (props: ComponentClass) => {
     }
   }, [props.value]);
 
-  let timeout;
-  let currentValue;
-
-  const fetch = (value, callback) => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    currentValue = value;
-
-    function fake() {
-      setFetching(true);
-      props.delegate(value).then((res) => {
-        setFetching(false);
-        if (res.code != 200 || !res.isSuccess) {
-          message.error(res.msg);
-        } else callback(res.data);
-      });
-    }
-
-    timeout = setTimeout(fake, 300);
-  };
+  // let timeout;
 
   const handleSearch = (value) => {
     if (props.onSearch && value) {
