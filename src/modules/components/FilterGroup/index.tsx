@@ -27,6 +27,7 @@ import {
   Select,
   Space,
   Switch,
+  Tooltip,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
@@ -40,6 +41,13 @@ export default (props: any) => {
   const [requireMark, setRequireMark] = useState(false);
   const [filterGroupInfoById, setFilterGroupInfoById] = useState({});
   const { Option } = Select;
+
+  const status = {
+    'Flat Charge': [
+      { value: 'Draft', label: 'Draft' },
+      { value: 'Submit', label: 'Submit' },
+    ],
+  };
 
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
@@ -189,7 +197,10 @@ export default (props: any) => {
       case 'StartMonth':
       case 'EndMonth':
         if (typeof arra[index].fieldValue == 'string') {
-          arra[index].fieldValue = moment(arra[index].fieldValue);
+          arra[index].fieldValue =
+            arra[index].fieldValue && moment(arra[index].fieldValue).isValid()
+              ? moment(arra[index].fieldValue)
+              : null;
         }
         return (
           <DatePicker
@@ -200,11 +211,24 @@ export default (props: any) => {
         );
       case 'ModifiedDate':
         if (typeof arra[index].fieldValue == 'string') {
-          arra[index].fieldValue = moment(arra[index].fieldValue);
+          arra[index].fieldValue =
+            arra[index].fieldValue && moment(arra[index].fieldValue).isValid()
+              ? moment(arra[index].fieldValue)
+              : null;
         }
         return <DatePicker style={{ width: '100%' }} />;
       case 'TotalAmount':
         return <InputNumber style={{ width: '100%' }} />;
+      case 'DataStatus':
+        return (
+          <Select allowClear>
+            {status[props.moudleName]?.map((item, index) => (
+              <Option key={index} value={item.value}>
+                {item.label}
+              </Option>
+            ))}
+          </Select>
+        );
       default:
         return <Input style={{ width: '100%' }} />;
     }
@@ -424,6 +448,12 @@ export default (props: any) => {
                               style={{ width: '100%' }}
                               allowClear
                               onChange={(val: string) => {
+                                form.getFieldValue('groupFieldList')[
+                                  index
+                                ].fieldValue = null;
+                                form.getFieldValue('groupFieldList')[
+                                  index
+                                ].operator = null;
                                 if (val) {
                                   setOperList(operfields[val]?.operator || []);
                                 } else {
@@ -541,29 +571,35 @@ export default (props: any) => {
             icon={<i className="gbs gbs-search"></i>}
             onClick={() => props.onSearch(filterGroup)}
           ></Button>
-          <Button
-            icon={<i className="gbs gbs-setting"></i>}
-            onClick={() => {
-              form.resetFields();
-              form.setFieldsValue({
-                groupFieldList: [
-                  { fieldName: '', operator: '', fieldValue: '' },
-                ],
-              });
-              setSetting(true);
-            }}
-          ></Button>
-          <Button
-            icon={<i className="gbs gbs-export"></i>}
-            onClick={props.exportAction}
-          ></Button>
-          <Button
-            icon={<ClearOutlined />}
-            onClick={() => {
-              setFilterGroup('');
-              props.onClear();
-            }}
-          ></Button>
+          <Tooltip title="Setting">
+            <Button
+              icon={<i className="gbs gbs-setting"></i>}
+              onClick={() => {
+                form.resetFields();
+                form.setFieldsValue({
+                  groupFieldList: [
+                    { fieldName: '', operator: '', fieldValue: '' },
+                  ],
+                });
+                setSetting(true);
+              }}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="Export">
+            <Button
+              icon={<i className="gbs gbs-export"></i>}
+              onClick={props.exportAction}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="Clear">
+            <Button
+              icon={<ClearOutlined />}
+              onClick={() => {
+                setFilterGroup('');
+                props.onClear();
+              }}
+            ></Button>
+          </Tooltip>
         </Space>
       </FilterGroupDiv>
     </>
