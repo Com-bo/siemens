@@ -18,6 +18,8 @@ import {
   Upload,
   Tooltip,
   Checkbox,
+  DatePicker,
+  Switch,
 } from 'antd';
 import {
   DownOutlined,
@@ -40,6 +42,7 @@ import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
 import moment from 'moment';
+import { forEach } from 'lodash';
 export default (props: any) => {
   const {
     form,
@@ -84,6 +87,10 @@ export default (props: any) => {
     errorChecked,
     //
     saveFormData,
+    setIsTag,
+    isTag,
+    setDelMark,
+    delMark,
   } = useService(props);
 
   const columns: any = [
@@ -390,8 +397,21 @@ export default (props: any) => {
             onClick={(event) => {
               event.stopPropagation();
               setShowBviData(true);
-              setComponentDisabled(false);
-              formData.setFieldsValue(record);
+              formData.setFieldsValue({
+                ...record,
+                bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
+                isTag: isTag,
+              });
+              if (record.templateType == 'Maual') {
+                setComponentDisabled(false);
+              } else {
+                setComponentDisabled(true);
+              }
+              console.log(
+                '这是isTag数据',
+                record,
+                formData.getFieldValue('isTag'),
+              );
             }}
           ></Button>
           {record.bviStatus == 'Unconfirm' ? (
@@ -450,7 +470,11 @@ export default (props: any) => {
 
   // BVI-View
   const rowClick = (record) => {
-    formData.setFieldsValue(record);
+    formData.setFieldsValue({
+      ...record,
+      bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
+      isTag: isTag,
+    });
     setShowBviData(true);
     setComponentDisabled(true);
   };
@@ -612,89 +636,89 @@ export default (props: any) => {
             <Col span={24}>
               <Form.Item
                 label="Product Name"
-                name="ProductName"
-                rules={[{ required: true }]}
+                name="product"
+                // rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Bussiness Line" name="BussinessLine">
+              <Form.Item label="ARE" name="are">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Service Line" name="ServiceLine">
+              <Form.Item label="productId" name="productId">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Customer Devision" name="CustomerDevision">
-                <Input disabled />
+              <Form.Item label="Billing ARE" name="billingARE">
+                <Input />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="ARE" name="ARE">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Billing ARE" name="BillingARE">
+              <Form.Item label="Company Code" name="companyCode">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Company Code" name="CompanyCode">
+              <Form.Item label="Cost Center" name="costCenter">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Cost Center" name="CostCenter">
+              <Form.Item label="Billing Cost Center" name="billingCostCenter">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="BVI" name="bvi">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Billing Cost Center" name="BillingCostCenter">
+              <Form.Item label="Total Amount" name="totalAmount">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="BVI" name="BVI">
+              <Form.Item label="PO" name="po">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Unit Price" name="UnitPrice">
+              <Form.Item label="poPercentage" name="poPercentage">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Total Amount" name="TotalAmount">
-                <Input disabled={componentDisabled} />
+              <Form.Item label="isTag" name="isTag">
+                <Switch
+                  disabled={componentDisabled}
+                  defaultChecked={isTag}
+                  onChange={() => {
+                    setIsTag(!isTag);
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="PO" name="PO">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="System" name="System">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="BVI Month" name="BVIMonth">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="BVI Status" name="BVIStatus">
-                <Input disabled={componentDisabled} />
+              <Form.Item
+                label="BVI Month"
+                name="bviMonth"
+                rules={[{ required: true }]}
+              >
+                <DatePicker
+                  disabled={componentDisabled}
+                  picker="month"
+                  format="YYYY-MM"
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="Comment" name="Comment">
+              <Form.Item label="Comment" name="comment">
                 <Input.TextArea disabled={componentDisabled} />
               </Form.Item>
             </Col>
@@ -761,6 +785,15 @@ export default (props: any) => {
         onChange={(_selectedRowKeys, _selectedRows) => {
           setSelectedRowKeys(_selectedRowKeys);
           setSelectedRows(_selectedRows);
+          console.log(_selectedRows);
+          if (_selectedRows.length == 0) {
+            setDelMark(false);
+          } else {
+            let Mark = _selectedRows.every(function (item, index) {
+              return item.bviStatus == 'Unconfirm';
+            });
+            setDelMark(Mark);
+          }
         }}
         changePageSize={changePageSize}
         current={current}
@@ -799,7 +832,17 @@ export default (props: any) => {
             <BtnGreenWrap>
               <Button
                 disabled={!selectedRowKeys.length}
-                onClick={() => toConfirm(selectedRowKeys)}
+                onClick={() => {
+                  let recordList = selectedRows.filter(
+                    (item) => item.bviStatus == 'Unconfirm',
+                  );
+                  if (!recordList || !recordList.length) {
+                    message.error('No data to confirm is selected');
+                    return;
+                  } else {
+                    toConfirm(selectedRowKeys);
+                  }
+                }}
               >
                 Confirm
               </Button>
@@ -807,7 +850,17 @@ export default (props: any) => {
             <BtnBlueWrap>
               <Button
                 disabled={!selectedRowKeys.length}
-                onClick={() => toUnconfirm(selectedRowKeys)}
+                onClick={() => {
+                  let recordList = selectedRows.filter(
+                    (item) => item.bviStatus == 'confirm',
+                  );
+                  if (!recordList || !recordList.length) {
+                    message.error('No data to unconfirm is selected');
+                    return;
+                  } else {
+                    toUnconfirm(selectedRowKeys);
+                  }
+                }}
               >
                 Unconfirm
               </Button>
@@ -939,7 +992,7 @@ export default (props: any) => {
               <Button disabled={!selectedRowKeys.length}>Edit</Button>
             </BtnThemeWrap>
             <Button
-              disabled={!selectedRowKeys.length}
+              disabled={!delMark}
               onClick={() => {
                 deleteInfos(selectedRowKeys, event);
               }}

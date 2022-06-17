@@ -32,24 +32,46 @@ export default (props: any) => {
   const [unconfirmChecked, setUnconfirmData] = useState(false);
   const [errorChecked, setErrorData] = useState(false);
   //
+  const [isTag, setIsTag] = useState(true);
+  const [delMark, setDelMark] = useState(false);
+  const [groupId, setGroupId] = useState('');
+  const [orderFeild, setOrderFeild] = useState('modifiedDate');
+  const [orderType, setOrderType] = useState('descend');
+
+  //
   const getCheckOriginalData = (event) => {
     event.stopPropagation();
     setIsCheckOriginal(true);
     setCheckData([]);
   };
-  const getData = (conditions?: any) => {
-    const params = {
-      pageIndex: current,
+  const getData = (recordId?: any) => {
+    // const params = {
+    //   pageIndex: current,
+    //   current,
+    //   pageSize,
+    //   ...form.getFieldsValue(),
+    // };
+    // if (conditions) {
+    //   params.groupId = conditions.groupId || null;
+    // }
+
+    let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: groupId || recordId,
+        },
+        listHeader: form.getFieldsValue(),
+        isOnlyQueryErrorData: errorChecked,
+      },
+      orderCondition: {
+        [orderFeild]: orderType == 'ascend' ? 0 : 1,
+      },
       current,
-      pageSize,
-      ...form.getFieldsValue(),
+      pageSize: pageSize,
     };
-    console.log(params);
-    if (conditions) {
-      params.groupId = conditions.groupId || null;
-    }
     bviGroupQuery(params).then((res) => {
       if (res.isSuccess) {
+        console.log('显示数据', res);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
@@ -75,7 +97,7 @@ export default (props: any) => {
   };
   useEffect(() => {
     getData();
-  }, [current, pageSize]);
+  }, [current, pageSize, orderFeild, orderType]);
   // }导入数据
   const importExcel = () => {
     formImport
@@ -123,13 +145,6 @@ export default (props: any) => {
     setSelectedRowKeys([]);
   };
   const confirmDataAction = (recordIdList) => {
-    let recordList = selectedRows.filter(
-      (item) => item.bviStatus == 'Unconfirm',
-    );
-    if (!recordList || !recordList.length) {
-      message.error('No data to confirm is selected');
-      return;
-    }
     confirmData({ recordIdList }).then((res) => {
       if (res.isSuccess) {
         getData();
@@ -141,11 +156,6 @@ export default (props: any) => {
     });
   };
   const unconfirmDataAction = (recordIdList) => {
-    let recordList = selectedRows.filter((item) => item.bviStatus == 'confirm');
-    if (!recordList || !recordList.length) {
-      message.error('No data to unconfirm is selected');
-      return;
-    }
     unConfirmData({ recordIdList }).then((res) => {
       if (res.isSuccess) {
         getData();
@@ -211,7 +221,7 @@ export default (props: any) => {
           id: formData.getFieldValue('orgId') || '',
           are: formData.getFieldValue('are'),
           companyCode: formData.getFieldValue('companyCode'),
-          product: formData.getFieldValue('productName'),
+          product: formData.getFieldValue('product'),
           productId: formData.getFieldValue('productId'),
           bvi: formData.getFieldValue('bvi'),
           poPercentage: formData.getFieldValue('poPercentage'),
@@ -284,5 +294,9 @@ export default (props: any) => {
 
     //
     saveFormData,
+    setIsTag,
+    isTag,
+    setDelMark,
+    delMark,
   };
 };

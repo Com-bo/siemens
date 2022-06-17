@@ -9,18 +9,21 @@ export const importDataSave = (data: object, type: number) => {
     case 2: //r2r
       url = Config.Api.ImportDataSave;
       break;
-    // case 3://h2r bvi
-    //     url = Config.Api.ImportH2RTE
-    //     break;
+    case 3: //h2r bvi
+      url = Config.Api.ImportH2R;
+      break;
     case 4: //H2RTE
       url = Config.Api.ImportH2RTE;
       break;
-    // case 5:
-    //     break;
-    // case 6:
-    //     break;
-    // case 7:
-    //     break;
+    case 5:
+      url = Config.Api.ImportH2RGMM;
+      break;
+    case 6:
+      url = Config.Api.ImportO2C;
+      break;
+    case 7:
+      url = Config.Api.ImportO2CTI;
+      break;
     default:
       url = Config.Api.ImportDataSave;
       break;
