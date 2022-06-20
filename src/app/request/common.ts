@@ -53,3 +53,6 @@ export const getCustemerDivisionList = (data: Object) => {
     data,
   );
 };
+export const ProductPoDrop = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ProductPoDrop}`, data);
+};

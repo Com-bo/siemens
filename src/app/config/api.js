@@ -12,6 +12,8 @@ export const Api = {
   GetServiceLineList: '/api/BusinessLine/QueryServicelineOptionsList', //Service Line Options列表数据
   GetCustemerDivisionList:
     '/api/OtherMasterData/QueryCustemerDivisionOptionsList',
+
+  ProductPoDrop: '/api/ProductPo/QueryPageDropListData', //Product下拉
   // BVI
   ImportDataSave: '/api/ImportR2R/ImportDataSave', //导入R2r
   ImportManualDataSave: '/api/ImportManual/ImportDataSave', //导入ImportManual
@@ -29,6 +31,8 @@ export const Api = {
   ConfirmData: '/api/BVIDataManage/ConfirmData', //Confirm数据
   DeleteBVIData: '/api/BVIDataManage/DeleteData', //删除bvi
   InsertBVIData: '/api/BVIDataManage/InsertData', //添加数据
+  EditBVIData: '/api/BVIDataManage/EditData', //编辑数据
+  EditDataListSave: '/api/BVIDataManage/EditDataListSave', //批量编辑数据
   // Flat Charge
   HomePageQuery: '/api/FlatCharge/ListDataQuery', //数据查询
   ListDataSubmit: '/api/FlatCharge/ListDataSubmit', //批量提交
