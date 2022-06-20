@@ -51,6 +51,7 @@ export default (props: any) => {
   const [selectProKeys, setSelectProKeys] = useState([]);
   const [selectProductRow, setSelectProductRow] = useState([]);
   const [editListMark, setEditListMark] = useState(false);
+  const [customerDivision, setCustomerDivision] = useState(''); //用于比对
   //
   const getCheckOriginalData = (event) => {
     event.stopPropagation();
@@ -281,7 +282,7 @@ export default (props: any) => {
             message.success(res.msg);
             setShowBviData(false);
             formData.resetFields();
-            // setCustomerDivision('');
+            setCustomerDivision('');
             getData();
           } else {
             message.error(res.msg);
@@ -322,7 +323,7 @@ export default (props: any) => {
             message.success(res.msg);
             setShowBviData(false);
             formData.resetFields();
-            // setCustomerDivision('');
+            setCustomerDivision('');
             getData();
           } else {
             message.error(res.msg);
@@ -378,11 +379,7 @@ export default (props: any) => {
       })
       .catch((e) => {});
   };
-  const get_ProductPoDrop = () => {
-    const params = {
-      productId: 'string',
-      poNumber: 'string',
-    };
+  const get_ProductPoDrop = (params) => {
     ProductPoDrop(params).then((res) => {
       if (res.isSuccess) {
         message.success(res.msg);
@@ -460,5 +457,8 @@ export default (props: any) => {
     editDataListSaveFn,
     editListMark,
     setEditListMark,
+    customerDivision,
+    setCustomerDivision,
+    get_ProductPoDrop,
   };
 };

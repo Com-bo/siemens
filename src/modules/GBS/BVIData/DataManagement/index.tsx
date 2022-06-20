@@ -21,6 +21,7 @@ import {
   DatePicker,
   Switch,
   InputNumber,
+  Select,
 } from 'antd';
 import {
   DownOutlined,
@@ -39,10 +40,12 @@ import {
   TaleTitleIconDiv,
   TableWrapDiv,
 } from '@/assets/style';
+import { getCompanyCodeDrop, getCostCenterDrop } from '@/app/request/common';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
 import TableMix from '@/components/Table';
+import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 import { forEach } from 'lodash';
 export default (props: any) => {
@@ -113,6 +116,9 @@ export default (props: any) => {
     editDataListSaveFn,
     editListMark,
     setEditListMark,
+    customerDivision,
+    setCustomerDivision,
+    get_ProductPoDrop,
   } = useService(props);
 
   const columns: any = [
@@ -787,6 +793,38 @@ export default (props: any) => {
     }
   };
 
+  const validEndMonth = (rule, value, callback) => {
+    if (
+      formData.getFieldValue('startMonth') &&
+      value &&
+      (formData.getFieldValue('startMonth') >= value ||
+        value.format('YYYY-MM') ==
+          formData.getFieldValue('startMonth').format('YYYY-MM'))
+    ) {
+      return Promise.reject(
+        new Error('The end month must be greater than the start month;'),
+      );
+    }
+    return Promise.resolve();
+  };
+
+  const validCostCenterRequired = (rule, value, callback) => {
+    if (formData.getFieldValue('are') == '5547' && !value) {
+      return Promise.reject(new Error('Cost Center Required;'));
+    }
+    if (
+      formData.getFieldValue('are') == '5547' &&
+      customerDivision &&
+      value &&
+      customerDivision != formData.getFieldValue('customerDivision')
+    ) {
+      return Promise.reject(
+        new Error('Customer division conflict, unable to submit;'),
+      );
+    }
+    return Promise.resolve();
+  };
+
   //
   return (
     <div>
@@ -909,7 +947,7 @@ export default (props: any) => {
                         onClick={() => {
                           setShowBviData(false);
                           formData.resetFields();
-                          // setCustomerDivision('');
+                          setCustomerDivision('');
                         }}
                       >
                         Cancel
@@ -924,10 +962,10 @@ export default (props: any) => {
               <Col span={20}>
                 <Form.Item
                   label="Product Name"
-                  name="product"
-                  // rules={[{ required: true }]}
+                  name="productName"
+                  rules={[{ required: true }]}
                 >
-                  <Input disabled />
+                  <Input disabled={true} />
                 </Form.Item>
               </Col>
 
@@ -940,53 +978,132 @@ export default (props: any) => {
                   </Button>
                 </Col>
               )}
-
+              <Col span={8}>
+                <Form.Item label="Bussiness Line" name="businessLine">
+                  <Input disabled={true} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Service Line" name="serviceLine">
+                  <Input disabled={true} />
+                </Form.Item>
+              </Col>
               <Col span={8}>
                 <Form.Item label="ARE" name="are">
+                  <Input
+                    onChange={(e) => {
+                      formData.setFieldsValue({
+                        chargeType: e.target.value == '5547' ? 'ICB' : 'ICC',
+                      });
+                    }}
+                    disabled
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Cost Center"
+                  name="costCenter"
+                  rules={[{ validator: validCostCenterRequired }]}
+                >
+                  {formData.getFieldValue('are') == '5547' &&
+                  formData.getFieldValue('productName') ? (
+                    <DebounceSelect
+                      initFlag
+                      onChange={(value, data) => {
+                        if (
+                          value &&
+                          data.customerDivision !=
+                            formData.getFieldValue('customerDivision')
+                        ) {
+                          setCustomerDivision(data.customerDivision);
+                        }
+                      }}
+                      getoptions={(options) => {
+                        return options?.map((x, index) => {
+                          return (
+                            <Select.Option
+                              key={index}
+                              data={x}
+                              value={x.costCenter}
+                            >
+                              {x.costCenter}
+                            </Select.Option>
+                          );
+                        });
+                      }}
+                      delegate={(e) => {
+                        if (!formData.getFieldValue('are')) {
+                          return Promise.resolve({
+                            code: 200,
+                            isSuccess: true,
+                            data: [],
+                          });
+                        }
+                        return getCostCenterDrop({
+                          are: formData.getFieldValue('are'),
+                          costCenter: e,
+                        });
+                      }}
+                    />
+                  ) : (
+                    <Input disabled={!formData.getFieldValue('productName')} />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Company Code"
+                  name="companyCode"
+                  rules={[{ required: true }]}
+                >
+                  {!formData.getFieldValue('are') ||
+                  formData.getFieldValue('are') == '5547' ? (
+                    <Input disabled />
+                  ) : (
+                    <DebounceSelect
+                      initFlag
+                      getoptions={(options) => {
+                        return options?.map((x, index) => {
+                          return (
+                            <Select.Option
+                              key={index}
+                              data={x}
+                              value={x.companyCode}
+                            >
+                              {x.companyCode}
+                            </Select.Option>
+                          );
+                        });
+                      }}
+                      delegate={(e) => {
+                        if (!formData.getFieldValue('are')) {
+                          return Promise.resolve({
+                            code: 200,
+                            isSuccess: true,
+                            data: [],
+                          });
+                        }
+                        return getCompanyCodeDrop({
+                          are: formData.getFieldValue('are'),
+                          companyCode: e,
+                        });
+                      }}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Customer Division" name="customerDivision">
                   <Input disabled />
                 </Form.Item>
               </Col>
-
               <Col span={8}>
-                <Form.Item label="productId" name="productId">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-
-              <Col span={8}>
-                <Form.Item label="Company Code" name="companyCode">
-                  <Input disabled={componentDisabled} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Cost Center" name="costCenter">
-                  <Input disabled={componentDisabled} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Billing ARE" name="billingARE">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Billing Cost Center" name="billingCostCenter">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="BVI" name="bvi">
-                  <Input disabled={componentDisabled} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                {/* <Form.Item label="Total Amount" name="totalAmount">
-                <Input disabled={componentDisabled} />
-              </Form.Item> */}
                 <Form.Item
                   label="Total Amount"
                   name="totalAmount"
                   rules={[
-                    // { required: true, message: 'Total Amount is Required;' },
+                    { required: true, message: 'Total Amount is Required;' },
                     {
                       pattern:
                         /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
@@ -1003,7 +1120,114 @@ export default (props: any) => {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="PO" name="po">
+                <Form.Item label="PO" name="po" rules={[{ required: true }]}>
+                  {/* <Input disabled={componentDisabled} /> */}
+                  <DebounceSelect
+                    initFlag
+                    getoptions={(options) => {
+                      return options?.map((x, index) => {
+                        return (
+                          <Select.Option key={index} data={x} value={x.po}>
+                            {x.po}
+                          </Select.Option>
+                        );
+                      });
+                    }}
+                    delegate={(e) => {
+                      // if (!formData.getFieldValue('are')) {
+                      //   return Promise.resolve({
+                      //     code: 200,
+                      //     isSuccess: true,
+                      //     data: [],
+                      //   });
+                      // }
+                      return get_ProductPoDrop({
+                        productId: formData.getFieldValue('id'),
+                        poNumber: e,
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Start Month"
+                  name="startMonth"
+                  rules={[{ required: true }]}
+                >
+                  <DatePicker
+                    disabled={componentDisabled}
+                    picker="month"
+                    format="YYYY-MM"
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="End Month"
+                  name="endMonth"
+                  rules={[
+                    { required: true },
+                    {
+                      validator: validEndMonth,
+                    },
+                  ]}
+                >
+                  <DatePicker
+                    picker="month"
+                    format="YYYY-MM"
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="ChargeType" name="chargeType">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="System" name="system">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Template Type" name="templateType">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Upload Date" name="createdDate">
+                  <DatePicker disabled style={{ width: '100%' }} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Upload User" name="createdUser">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Modified Date" name="modifiedDate">
+                  <DatePicker disabled style={{ width: '100%' }} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Modified User" name="modifiedUser">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Billing ARE" name="billingARE">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Billing Cost Center" name="billingCostCenter">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="BVI" name="bvi">
                   <Input disabled={componentDisabled} />
                 </Form.Item>
               </Col>
@@ -1064,7 +1288,7 @@ export default (props: any) => {
                         onClick={() => {
                           setShowBviData(false);
                           formData.resetFields();
-                          // setCustomerDivision('');
+                          setCustomerDivision('');
                         }}
                       >
                         Cancel
