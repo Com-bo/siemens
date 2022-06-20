@@ -71,3 +71,18 @@ export const InsertBVIData = (data: Object) => {
     autoLoading: true,
   });
 };
+export const getProductData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.PopWinPagingQuery}`, data, {
+    autoLoading: true,
+  });
+};
+export const EditBVIData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.EditBVIData}`, data, {
+    autoLoading: true,
+  });
+};
+export const EditDataListSave = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.EditDataListSave}`, data, {
+    autoLoading: true,
+  });
+};

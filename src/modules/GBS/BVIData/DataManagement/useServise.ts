@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   bivCopyDta,
   bviGroupQuery,
@@ -8,7 +8,11 @@ import {
   importDataSave,
   unConfirmData,
   InsertBVIData,
+  getProductData,
+  EditBVIData,
+  EditDataListSave,
 } from '@/app/request/apiBVI';
+import { ProductPoDrop } from '@/app/request/common';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
 
@@ -30,14 +34,23 @@ export default (props: any) => {
   const [formImport] = Form.useForm();
   const [groupName, setGroupName] = useState('');
   const [unconfirmChecked, setUnconfirmData] = useState(false);
-  const [errorChecked, setErrorData] = useState(false);
+  const [errorChecked, setErrorChecked] = useState(false);
   //
-  const [isTag, setIsTag] = useState(true);
-  const [delMark, setDelMark] = useState(false);
   const [groupId, setGroupId] = useState('');
-  const [orderFeild, setOrderFeild] = useState('modifiedDate');
+  const [orderField, setOrderField] = useState('modifiedDate');
   const [orderType, setOrderType] = useState('descend');
-
+  const latestGroupIdRef = useRef<any>();
+  const errorCheckedRef = useRef<any>(false);
+  const UnconfirmDataRef = useRef<any>(false);
+  const [showPro, setShowPro] = useState(false);
+  const [proForm] = Form.useForm();
+  const [proCurrent, setProCurrent] = useState(1);
+  const [proSize, setProSize] = useState(20);
+  const [productData, setProductData] = useState([]);
+  const [proTotal, setProTotal] = useState(0);
+  const [selectProKeys, setSelectProKeys] = useState([]);
+  const [selectProductRow, setSelectProductRow] = useState([]);
+  const [editListMark, setEditListMark] = useState(false);
   //
   const getCheckOriginalData = (event) => {
     event.stopPropagation();
@@ -58,20 +71,22 @@ export default (props: any) => {
     let params = {
       searchCondition: {
         filterGroup: {
-          recordId: groupId || recordId,
+          recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
-        isOnlyQueryErrorData: errorChecked,
+        isOnlyQueryErrorData: errorCheckedRef.current,
+        isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
       },
       orderCondition: {
-        [orderFeild]: orderType == 'ascend' ? 0 : 1,
+        [orderField]: orderType == 'ascend' ? 0 : 1,
       },
-      current,
+      pageIndex: current,
       pageSize: pageSize,
     };
+    console.log('请求参数', params);
     bviGroupQuery(params).then((res) => {
       if (res.isSuccess) {
-        console.log('显示数据', res);
+        console.log('请求数据', res);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
@@ -82,28 +97,44 @@ export default (props: any) => {
   const changePageSize = (val: number) => {
     setPageSize(val);
   };
-  const onPageChange = (pagination, filters, sorter, extra) => {
+  // const onPageChange = (pagination, filters, sorter, extra) => {
+  //   //   翻页|排序|筛选
+  //   setCurrent(pagination.current);
+  //   switch (extra.action) {
+  //     case 'paginate':
+  //       setCurrent(pagination.current);
+  //       break;
+  //     case 'sort':
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
+  const onPageChange = (
+    pagination,
+    filters,
+    { column, columnKey, field, order },
+    { currentDataSource, action },
+  ) => {
     //   翻页|排序|筛选
-    setCurrent(pagination.current);
-    switch (extra.action) {
-      case 'paginate':
-        setCurrent(pagination.current);
-        break;
+    switch (action) {
       case 'sort':
+        setOrderField(field);
+        setOrderType(order);
         break;
       default:
+        setCurrent(pagination.current);
         break;
     }
   };
   useEffect(() => {
     getData();
-  }, [current, pageSize, orderFeild, orderType]);
+  }, [current, pageSize, orderField, orderType]);
   // }导入数据
   const importExcel = () => {
     formImport
       .validateFields()
       .then((values) => {
-        console.log(values);
         const fd = new FormData();
         objectToFormData(values.file[0], fd, 'file');
         importDataSave(fd, values.type).then((res) => {
@@ -181,11 +212,22 @@ export default (props: any) => {
     // });
   };
   const exportExcelAction = () => {
-    exportExcel({
-      pageIndex: current,
+    let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: latestGroupIdRef.current,
+        },
+        listHeader: form.getFieldsValue(),
+        isOnlyQueryErrorData: errorCheckedRef.current,
+        isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+      },
+      orderCondition: {
+        [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      current,
       pageSize: pageSize,
-      searchCondition: form.getFieldsValue(),
-    }).then((res: any) => {
+    };
+    exportExcel(params).then((res: any) => {
       let elink = document.createElement('a');
       // 设置下载文件名
       elink.download = 'Data Management List.xlsx';
@@ -212,11 +254,10 @@ export default (props: any) => {
   };
 
   // insert
-  const saveFormData = () => {
+  const insertFormData = () => {
     formData
       .validateFields()
       .then((values) => {
-        console.log(values);
         const params = {
           id: formData.getFieldValue('orgId') || '',
           are: formData.getFieldValue('are'),
@@ -228,13 +269,13 @@ export default (props: any) => {
           costCenter: formData.getFieldValue('costCenter'),
           totalAmount: formData.getFieldValue('totalAmount'),
           po: formData.getFieldValue('po'),
-          isTag: formData.getFieldValue('isTag'),
+          isTag: formData.getFieldValue('adjustTag'),
           billingARE: formData.getFieldValue('billingARE'),
           billingCostCenter: formData.getFieldValue('billingCostCenter'),
           comment: formData.getFieldValue('comment') || '',
           bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
         };
-        console.log(params);
+        console.log('添加数据', params);
         InsertBVIData(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
@@ -248,6 +289,107 @@ export default (props: any) => {
         });
       })
       .catch((e) => {});
+  };
+  // edit
+  const editFormData = () => {
+    formData
+      .validateFields()
+      .then((values) => {
+        const params = {
+          bviList: [
+            {
+              id: formData.getFieldValue('orgId') || '',
+              are: formData.getFieldValue('are'),
+              companyCode: formData.getFieldValue('companyCode'),
+              product: formData.getFieldValue('product'),
+              productId: formData.getFieldValue('productId'),
+              bvi: formData.getFieldValue('bvi'),
+              poPercentage: formData.getFieldValue('poPercentage'),
+              costCenter: formData.getFieldValue('costCenter'),
+              totalAmount: formData.getFieldValue('totalAmount'),
+              po: formData.getFieldValue('po'),
+              isTag: formData.getFieldValue('adjustTag'),
+              billingARE: formData.getFieldValue('billingARE'),
+              billingCostCenter: formData.getFieldValue('billingCostCenter'),
+              comment: formData.getFieldValue('comment') || '',
+              bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
+            },
+          ],
+        };
+        console.log('编辑数据', params);
+        EditBVIData(params).then((res) => {
+          if (res.isSuccess) {
+            message.success(res.msg);
+            setShowBviData(false);
+            formData.resetFields();
+            // setCustomerDivision('');
+            getData();
+          } else {
+            message.error(res.msg);
+          }
+        });
+      })
+      .catch((e) => {});
+  };
+  // 批量edit
+  const editDataListSaveFn = () => {
+    formData
+      .validateFields()
+      .then((values) => {
+        const idList = [];
+        selectedRows.forEach((item, index) => {
+          idList.push(item.id);
+        });
+        const params = {
+          billingARE: formData.getFieldValue('billingARE'),
+          billingCostCenter: formData.getFieldValue('billingCostCenter'),
+          recordIdList: idList,
+        };
+        EditDataListSave(params).then((res) => {
+          if (res.isSuccess) {
+            message.success(res.msg);
+            setShowBviData(false);
+            formData.resetFields();
+            getData();
+          } else {
+            message.error(res.msg);
+          }
+        });
+      })
+      .catch((e) => {});
+  };
+  const _getProduct = () => {
+    proForm
+      .validateFields()
+      .then((values) => {
+        getProductData({
+          ...values,
+          systemTag: 'Flat Charge',
+          pageIndex: proCurrent,
+          pageSize: proSize,
+        }).then((res) => {
+          if (res.isSuccess) {
+            setProductData(res.data);
+            setProTotal(res.totalCount);
+          } else {
+            message.error(res.msg);
+          }
+        });
+      })
+      .catch((e) => {});
+  };
+  const get_ProductPoDrop = () => {
+    const params = {
+      productId: 'string',
+      poNumber: 'string',
+    };
+    ProductPoDrop(params).then((res) => {
+      if (res.isSuccess) {
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
   };
 
   return {
@@ -289,14 +431,34 @@ export default (props: any) => {
     exportExcelAction,
     unconfirmChecked,
     setUnconfirmData,
-    setErrorData,
+    setErrorChecked,
     errorChecked,
 
     //
-    saveFormData,
-    setIsTag,
-    isTag,
-    setDelMark,
-    delMark,
+    insertFormData,
+    editFormData,
+    latestGroupIdRef,
+    errorCheckedRef,
+    UnconfirmDataRef,
+    setCurrent,
+    showPro,
+    setShowPro,
+    proForm,
+    proCurrent,
+    setProCurrent,
+    proSize,
+    setProSize,
+    productData,
+    setProductData,
+    proTotal,
+    setProTotal,
+    _getProduct,
+    selectProKeys,
+    setSelectProKeys,
+    selectProductRow,
+    setSelectProductRow,
+    editDataListSaveFn,
+    editListMark,
+    setEditListMark,
   };
 };

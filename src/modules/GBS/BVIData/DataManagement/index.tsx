@@ -20,6 +20,7 @@ import {
   Checkbox,
   DatePicker,
   Switch,
+  InputNumber,
 } from 'antd';
 import {
   DownOutlined,
@@ -41,6 +42,7 @@ import {
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
+import TableMix from '@/components/Table';
 import moment from 'moment';
 import { forEach } from 'lodash';
 export default (props: any) => {
@@ -83,14 +85,34 @@ export default (props: any) => {
     exportExcelAction,
     unconfirmChecked,
     setUnconfirmData,
-    setErrorData,
+    setErrorChecked,
     errorChecked,
     //
-    saveFormData,
-    setIsTag,
-    isTag,
-    setDelMark,
-    delMark,
+    insertFormData,
+    editFormData,
+    latestGroupIdRef,
+    errorCheckedRef,
+    UnconfirmDataRef,
+    setCurrent,
+    showPro,
+    setShowPro,
+    proForm,
+    proCurrent,
+    setProCurrent,
+    proSize,
+    setProSize,
+    productData,
+    setProductData,
+    proTotal,
+    setProTotal,
+    _getProduct,
+    selectProKeys,
+    setSelectProKeys,
+    selectProductRow,
+    setSelectProductRow,
+    editDataListSaveFn,
+    editListMark,
+    setEditListMark,
   } = useService(props);
 
   const columns: any = [
@@ -150,75 +172,88 @@ export default (props: any) => {
       name: 'bviBusinessLine',
       title: 'BVI Business Line',
       width: '120px',
+      sorter: true,
     },
     {
       name: 'businessLine',
       title: 'Business Line',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'serviceLine',
       title: 'ServiceLine',
       width: '150px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'product',
       title: 'Product',
       width: '200px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'are',
       title: 'ARE',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'billingARE',
       title: 'Billing ARE',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'companyCode',
       title: 'Company Code',
       width: '120px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'customerDivision',
       title: 'Customer Division',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'productUnitPrice',
       title: 'Product Unit Price',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'productUnitPriceCurrency',
       title: 'Product Unit Price Currency',
-      width: '120px',
+      width: '150px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'costCenter',
       title: 'Cost Center',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'billingCostCenter',
       title: 'Billing Cost Center',
-      width: '100px',
+      width: '150px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'bvi',
       title: 'BVI',
       width: '100px',
+      sorter: true,
       render: (text, record, index) => {
         if (record.validationMsg) {
           return (
@@ -247,56 +282,66 @@ export default (props: any) => {
       name: 'totalAmount',
       title: 'Total Amount(Unit Price Currency)',
       width: '180px',
+      sorter: true,
     },
     {
       name: 'billingCurrency',
       title: 'Billing Currency',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'po',
       title: 'PO',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'poPercentage',
       title: 'PO Percentage',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'comment',
       title: 'Comment',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'bviMonth',
       title: 'BVI Month',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'system',
       title: 'System',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'idH',
       title: 'ID_H',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'chargeType',
       title: 'ChargeType',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'adjustTag',
       title: 'AdjustTag',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
       render: (text) => (text === false ? 'Yes' : 'No'),
     },
     {
@@ -304,27 +349,32 @@ export default (props: any) => {
       title: 'Template Type',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'IsPOByPercentage',
       title: 'IsPOByPercentage',
       width: '160px',
+      sorter: true,
     },
     {
       name: 'bviStatus',
       title: 'BVI Status',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'modifiedUser',
       title: 'Modified User',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'modifiedDate',
       title: 'Modified Date',
       width: '100px',
+      sorter: true,
       render: (text) =>
         text && moment(text).isValid()
           ? moment(text).format('YYYY-MM-DD HH:mm:ss')
@@ -334,54 +384,64 @@ export default (props: any) => {
       name: 'z003',
       title: 'Z003',
       width: '100px',
+      sorter: true,
     },
     {
       name: 'salesOrder',
       title: 'Sales Order',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'billingDoc',
       title: 'Billing Doc.',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'billingStatus',
       title: 'Billing Status',
       width: '100px',
       titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'itemNo',
       title: 'Item No.',
       width: '200px',
+      sorter: true,
     },
     {
       title: 'Amount in Currecy',
       width: '150px',
       name: 'amountInCurrecy',
+      sorter: true,
     },
     {
       title: 'Currency in SAP',
       width: '150px',
       name: 'currencyInSAP',
+      sorter: true,
     },
     {
       title: 'Amount in Local Currency(CNY)',
       width: '240px',
       name: 'amountInLocalCurrencyCNY',
+      sorter: true,
     },
     {
       title: 'Billing Date',
       width: '180px',
       name: 'billingDate',
+      sorter: true,
     },
     {
       title: 'SAP Exchange Rate',
       width: '150px',
       name: 'exchangeRate',
+      sorter: true,
     },
     {
       name: 'Operate',
@@ -390,30 +450,32 @@ export default (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
-          <Button
-            type="text"
-            key="1"
-            icon={<EditOutlined />}
-            onClick={(event) => {
-              event.stopPropagation();
-              setShowBviData(true);
-              formData.setFieldsValue({
-                ...record,
-                bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
-                isTag: isTag,
-              });
-              if (record.templateType == 'Maual') {
-                setComponentDisabled(false);
-              } else {
-                setComponentDisabled(true);
-              }
-              console.log(
-                '这是isTag数据',
-                record,
-                formData.getFieldValue('isTag'),
-              );
-            }}
-          ></Button>
+          <Tooltip title="Edit">
+            <Button
+              type="text"
+              key="1"
+              icon={<EditOutlined />}
+              onClick={(event) => {
+                event.stopPropagation();
+                setShowBviData(true);
+                setEditListMark(false);
+                formData.setFieldsValue({
+                  ...record,
+                  bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
+                });
+                if (record.templateType == 'Maual') {
+                  setComponentDisabled(false);
+                } else {
+                  setComponentDisabled(true);
+                }
+                console.log(
+                  '本行编辑数据',
+                  record,
+                  formData.getFieldValue('adjustTag'),
+                );
+              }}
+            ></Button>
+          </Tooltip>
           {record.bviStatus == 'Unconfirm' ? (
             <Popconfirm
               title="Are you sure?"
@@ -424,12 +486,14 @@ export default (props: any) => {
               okText="Yes"
               cancelText="Cancel"
             >
-              <Button
-                type="text"
-                key="2"
-                onClick={(event) => event.stopPropagation()}
-                icon={<i className="gbs gbs-delete"></i>}
-              ></Button>
+              <Tooltip title="Delete">
+                <Button
+                  type="text"
+                  key="2"
+                  onClick={(event) => event.stopPropagation()}
+                  icon={<i className="gbs gbs-delete"></i>}
+                ></Button>
+              </Tooltip>
             </Popconfirm>
           ) : (
             ''
@@ -449,18 +513,179 @@ export default (props: any) => {
               okText="Yes"
               cancelText="Cancel"
             >
-              <Button
-                onClick={(event) => event.stopPropagation()}
-                type="text"
-                key="3"
-                icon={<i className="gbs gbs-confirm"></i>}
-              ></Button>
+              {record.bviStatus == 'Unconfirm' ? (
+                <Tooltip title="Confirm">
+                  <Button
+                    onClick={(event) => event.stopPropagation()}
+                    type="text"
+                    key="3"
+                    icon={<i className="gbs gbs-confirm"></i>}
+                  ></Button>
+                </Tooltip>
+              ) : (
+                <Tooltip title="Unconfirm">
+                  <Button
+                    onClick={(event) => event.stopPropagation()}
+                    type="text"
+                    key="3"
+                    icon={<i className="gbs gbs-confirm"></i>}
+                  ></Button>
+                </Tooltip>
+              )}
             </Popconfirm>
           ) : (
             ''
           )}
         </Space>
       ),
+    },
+  ];
+  const proColumns: any = [
+    {
+      dataIndex: 'businessLine',
+      title: 'Business Line',
+      key: 'serviceLine',
+      width: '120px',
+      align: 'center',
+    },
+    {
+      dataIndex: 'serviceLine',
+      title: 'Service Line',
+      key: 'serviceLine',
+      width: '150px',
+      align: 'center',
+    },
+    {
+      dataIndex: 'are',
+      key: 'are',
+      title: 'ARE',
+      width: '100px',
+      align: 'center',
+    },
+    {
+      title: 'Product Name',
+      width: '200px',
+      dataIndex: 'productName',
+      key: 'productName',
+      align: 'center',
+    },
+    {
+      title: 'Customer Division',
+      width: '150px',
+      dataIndex: 'customerDivision',
+      key: 'customerDivision',
+      align: 'center',
+    },
+    {
+      title: 'Start Date',
+      width: '180px',
+      dataIndex: 'startDate',
+      key: 'startDate',
+      align: 'center',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
+    },
+    {
+      title: 'End Date',
+      width: '180px',
+      dataIndex: 'endDate',
+      key: 'endDate',
+      align: 'center',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
+    },
+    {
+      title: 'Product Name for Report',
+      width: '180px',
+      dataIndex: 'productNameForReport',
+      key: 'productNameForReport',
+      align: 'center',
+    },
+    {
+      title: 'Signed',
+      width: '180px',
+      dataIndex: 'signed',
+      key: 'signed',
+      align: 'center',
+      render: (text) => (text === true ? 'Yes' : 'No'),
+    },
+    {
+      title: 'Signed Date',
+      width: '180px',
+      dataIndex: 'signedDate',
+      key: 'signedDate',
+      align: 'center',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
+    },
+    {
+      title: 'Material Number',
+      width: '180px',
+      dataIndex: 'materialNumber',
+      key: 'materialNumber',
+      align: 'center',
+    },
+    {
+      title: 'Unit_Price',
+      width: '180px',
+      dataIndex: 'unitPrice',
+      key: 'unitPrice',
+      align: 'center',
+    },
+    {
+      title: 'Unit Price Currency',
+      width: '180px',
+      dataIndex: 'unitPriceCurrency',
+      key: 'unitPriceCurrency',
+      align: 'center',
+    },
+    {
+      title: 'Alt.tax classific.',
+      width: '180px',
+      dataIndex: 'altTaxClassific',
+      key: 'altTaxClassific',
+      align: 'center',
+    },
+    {
+      title: 'Sender PC',
+      width: '150px',
+      dataIndex: 'senderPC',
+      key: 'senderPC',
+      align: 'center',
+    },
+    {
+      title: 'Individual Invoice',
+      width: '150px',
+      dataIndex: 'individualInvoice',
+      key: 'individualInvoice',
+      align: 'center',
+    },
+    {
+      title: 'MandotoryBVI',
+      width: '150px',
+      dataIndex: 'mandotoryBVI',
+      key: 'mandotoryBVI',
+      align: 'center',
+    },
+    {
+      title: 'SystemTag',
+      width: '150px',
+      dataIndex: 'systemTag',
+      key: 'systemTag',
+      align: 'center',
+    },
+    {
+      title: 'Quarterly Charge',
+      width: '150px',
+      dataIndex: 'quarterlyCharge',
+      key: 'quarterlyCharge',
+      align: 'center',
     },
   ];
 
@@ -470,13 +695,13 @@ export default (props: any) => {
 
   // BVI-View
   const rowClick = (record) => {
-    formData.setFieldsValue({
-      ...record,
-      bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
-      isTag: isTag,
-    });
-    setShowBviData(true);
-    setComponentDisabled(true);
+    // formData.setFieldsValue({
+    //   ...record,
+    //   bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
+    //   isTag: isTag,
+    // });
+    // setShowBviData(true);
+    // setComponentDisabled(true);
   };
   const uploadProps = {
     beforeUpload: () => {
@@ -536,8 +761,36 @@ export default (props: any) => {
       centered: true,
     });
   };
+
+  //
+  const handleProSize = (val: number) => {
+    setProSize(val);
+  };
+  const onProPageChange = (pagination, filters, sorter, extra) => {
+    setProCurrent(pagination.current);
+  };
+  const selectProSure = () => {
+    setShowPro(false);
+    let data = selectProductRow[0];
+    formData.setFieldsValue({
+      businessLine: data.businessLine,
+      are: data.are,
+      serviceLine: data.serviceLine,
+      customerDivision: data.customerDivision,
+      productName: data.productName,
+    });
+    if (data.are != 5547) {
+      // 获取compamycode下拉选择
+      // getCompanyCodeDrop()
+    } else {
+      // 获取costcenter下拉接口
+    }
+  };
+
+  //
   return (
     <div>
+      {/* 导入 */}
       <Modal
         width="800px"
         title={
@@ -605,6 +858,7 @@ export default (props: any) => {
           </Form.Item>
         </Form>
       </Modal>
+      {/* 新增 */}
       <Modal
         maskClosable={false}
         width="1000px"
@@ -615,7 +869,7 @@ export default (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                BVI Data1111
+                BVI Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>
@@ -632,113 +886,297 @@ export default (props: any) => {
           form={formData}
           labelCol={{ flex: '120px' }}
         >
-          <Row gutter={20}>
-            <Col span={24}>
-              <Form.Item
-                label="Product Name"
-                name="product"
-                // rules={[{ required: true }]}
-              >
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="ARE" name="are">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="productId" name="productId">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Billing ARE" name="billingARE">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Company Code" name="companyCode">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Cost Center" name="costCenter">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Billing Cost Center" name="billingCostCenter">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="BVI" name="bvi">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Total Amount" name="totalAmount">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="PO" name="po">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="poPercentage" name="poPercentage">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="isTag" name="isTag">
-                <Switch
-                  disabled={componentDisabled}
-                  defaultChecked={isTag}
-                  onChange={() => {
-                    setIsTag(!isTag);
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="BVI Month"
-                name="bviMonth"
-                rules={[{ required: true }]}
-              >
-                <DatePicker
-                  disabled={componentDisabled}
-                  picker="month"
-                  format="YYYY-MM"
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="Comment" name="comment">
-                <Input.TextArea disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            {!componentDisabled ? (
-              <Col span={24}>
-                <Form.Item style={{ textAlign: 'center' }}>
-                  <Space size={60}>
-                    <Button type="primary" onClick={saveFormData}>
-                      Save
-                    </Button>
-                    <Button>Cancel</Button>
-                  </Space>
+          {editListMark ? (
+            <Row gutter={20}>
+              <Col span={8}>
+                <Form.Item label="Billing ARE" name="billingARE">
+                  <Input />
                 </Form.Item>
               </Col>
-            ) : (
-              ''
-            )}
-          </Row>
+              <Col span={8}>
+                <Form.Item label="Billing Cost Center" name="billingCostCenter">
+                  <Input />
+                </Form.Item>
+              </Col>
+              {
+                <Col span={24}>
+                  <Form.Item style={{ textAlign: 'center' }}>
+                    <Space size={60}>
+                      <Button type="primary" onClick={editDataListSaveFn}>
+                        Submit
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setShowBviData(false);
+                          formData.resetFields();
+                          // setCustomerDivision('');
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Space>
+                  </Form.Item>
+                </Col>
+              }
+            </Row>
+          ) : (
+            <Row gutter={20}>
+              <Col span={20}>
+                <Form.Item
+                  label="Product Name"
+                  name="product"
+                  // rules={[{ required: true }]}
+                >
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+
+              {componentDisabled ? (
+                ''
+              ) : (
+                <Col span={4}>
+                  <Button type="primary" onClick={() => setShowPro(true)}>
+                    Search Product
+                  </Button>
+                </Col>
+              )}
+
+              <Col span={8}>
+                <Form.Item label="ARE" name="are">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+
+              <Col span={8}>
+                <Form.Item label="productId" name="productId">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+
+              <Col span={8}>
+                <Form.Item label="Company Code" name="companyCode">
+                  <Input disabled={componentDisabled} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Cost Center" name="costCenter">
+                  <Input disabled={componentDisabled} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Billing ARE" name="billingARE">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Billing Cost Center" name="billingCostCenter">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="BVI" name="bvi">
+                  <Input disabled={componentDisabled} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                {/* <Form.Item label="Total Amount" name="totalAmount">
+                <Input disabled={componentDisabled} />
+              </Form.Item> */}
+                <Form.Item
+                  label="Total Amount"
+                  name="totalAmount"
+                  rules={[
+                    // { required: true, message: 'Total Amount is Required;' },
+                    {
+                      pattern:
+                        /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
+                      message:
+                        'Greater than zero and two decimal places at most',
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    disabled={componentDisabled}
+                    min={0}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="PO" name="po">
+                  <Input disabled={componentDisabled} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="poPercentage" name="poPercentage">
+                  <Input disabled={componentDisabled} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="adjustTag"
+                  name="adjustTag"
+                  valuePropName="checked"
+                >
+                  <Switch
+                    disabled={componentDisabled}
+                    onChange={(val) => {
+                      formData.setFieldsValue({
+                        adjustTag: val,
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="BVI Month"
+                  name="bviMonth"
+                  rules={[{ required: true }]}
+                >
+                  <DatePicker
+                    disabled={componentDisabled}
+                    picker="month"
+                    format="YYYY-MM"
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item label="Comment" name="comment">
+                  <Input.TextArea disabled={componentDisabled} />
+                </Form.Item>
+              </Col>
+              {
+                <Col span={24}>
+                  <Form.Item style={{ textAlign: 'center' }}>
+                    <Space size={60}>
+                      {!componentDisabled ? (
+                        <Button type="primary" onClick={insertFormData}>
+                          insert
+                        </Button>
+                      ) : (
+                        <Button type="primary" onClick={editFormData}>
+                          Submit
+                        </Button>
+                      )}
+                      <Button
+                        onClick={() => {
+                          setShowBviData(false);
+                          formData.resetFields();
+                          // setCustomerDivision('');
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Space>
+                  </Form.Item>
+                </Col>
+              }
+            </Row>
+          )}
         </Form>
       </Modal>
+      {/* 产品列表 */}
+      <Modal
+        width="1200px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Product List Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        footer={null}
+        visible={showPro}
+        maskClosable={false}
+        destroyOnClose={true}
+        onCancel={() => {
+          // formImport.resetFields();
+          setShowPro(false);
+        }}
+      >
+        <Form form={proForm} labelCol={{ flex: '120px' }}>
+          <Row gutter={20}>
+            <Col span={8}>
+              <Form.Item label="Business Line" name="businessLine">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Service Line" name="serviceLine">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Customer Division"
+                name="customerDevision"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="ARE" name="are" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Product Name"
+                name="productName"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item style={{ textAlign: 'right' }}>
+                <Button type="primary" onClick={_getProduct}>
+                  Search
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <TableWrapDiv className="selfTable" style={{ margin: '0 0px 0 -24px' }}>
+          <TableMix
+            columns={proColumns}
+            type="radio"
+            onChange={(rowkeys, rows) => {
+              setSelectProKeys(rowkeys);
+              setSelectProductRow(rows);
+            }}
+            data={productData}
+            current={proCurrent}
+            pageSize={proSize}
+            total={proTotal}
+            handlePageSize={handleProSize}
+            rowKey="id"
+            onPageChange={onProPageChange}
+            pagination={true}
+            scrollX={1000}
+            selection={true}
+            selectedRowKeys={selectProKeys}
+          />
+        </TableWrapDiv>
+        <div style={{ textAlign: 'center' }}>
+          <Button
+            onClick={selectProSure}
+            type="primary"
+            disabled={!selectProductRow.length}
+          >
+            Confirm
+          </Button>
+        </div>
+      </Modal>
+      {/* 查看 */}
       <Modal
         maskClosable={false}
         title={
@@ -785,15 +1223,6 @@ export default (props: any) => {
         onChange={(_selectedRowKeys, _selectedRows) => {
           setSelectedRowKeys(_selectedRowKeys);
           setSelectedRows(_selectedRows);
-          console.log(_selectedRows);
-          if (_selectedRows.length == 0) {
-            setDelMark(false);
-          } else {
-            let Mark = _selectedRows.every(function (item, index) {
-              return item.bviStatus == 'Unconfirm';
-            });
-            setDelMark(Mark);
-          }
         }}
         changePageSize={changePageSize}
         current={current}
@@ -801,26 +1230,69 @@ export default (props: any) => {
         rowKey="id"
         listName="Data Management"
         renderFilterGroup={
+          // <FilterGroup
+          //   customComponet={
+          //     <>
+          //       <Checkbox onChange={(e) => setUnconfirmData(e.target.checked)}>
+          //         View all unconfirm Data
+          //       </Checkbox>
+          //       <Checkbox onChange={(e) => setErrorChecked(e.target.checked)}>
+          //         View all Error Data
+          //       </Checkbox>
+          //     </>
+          //   }
+          //   defaultVal={groupName}
+          //   onSearch={(val) => {
+          //     setGroupName(val);
+          //     getData({ groupId: val });
+          //   }}
+          //   onSaveFilterGroup={savefilterGroup}
+          //   fields={orignalCols}
+          //   exportAction={exportExcelAction}
+          // />
           <FilterGroup
             moudleName="BVI Data"
+            onSearch={(val) => {
+              latestGroupIdRef.current = val;
+              getData(val);
+            }}
+            onClear={() => {
+              setErrorChecked(false);
+              setUnconfirmData(false);
+              errorCheckedRef.current = false;
+              UnconfirmDataRef.current = false;
+              latestGroupIdRef.current = '';
+              form.resetFields();
+              if (current != 1) {
+                setCurrent(1);
+              } else {
+                getData();
+              }
+            }}
+            exportAction={exportExcelAction}
             customComponet={
               <>
-                <Checkbox onChange={(e) => setUnconfirmData(e.target.checked)}>
-                  View all unconfirm Data
-                </Checkbox>
-                <Checkbox onChange={(e) => setErrorData(e.target.checked)}>
+                <Checkbox
+                  checked={errorChecked}
+                  onChange={(e) => {
+                    errorCheckedRef.current = e.target.checked;
+                    setErrorChecked(e.target.checked);
+                  }}
+                >
                   View all Error Data
+                </Checkbox>
+
+                <Checkbox
+                  checked={unconfirmChecked}
+                  onChange={(e) => {
+                    UnconfirmDataRef.current = e.target.checked;
+                    setUnconfirmData(e.target.checked);
+                  }}
+                >
+                  View all unconfirm Data
                 </Checkbox>
               </>
             }
-            defaultVal={groupName}
-            onSearch={(val) => {
-              setGroupName(val);
-              getData({ groupId: val });
-            }}
-            onSaveFilterGroup={savefilterGroup}
-            fields={orignalCols}
-            exportAction={exportExcelAction}
           />
         }
         renderBtns={
@@ -889,14 +1361,18 @@ export default (props: any) => {
                       icon={<i className="gbs gbs-add"></i>}
                       onClick={() => {
                         setShowBviData(true);
+                        setEditListMark(false);
                         setComponentDisabled(false);
+                        formData.setFieldsValue({
+                          adjustTag: false,
+                        });
                       }}
                     >
                       <span style={{ margin: '0 10px' }}>Add</span>
                     </Menu.Item>
                     <Menu.SubMenu
                       key="3"
-                      title={<span style={{ margin: '0 10px' }}>Import</span>}
+                      title={<span style={{ margin: '0 10px' }}>Template</span>}
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <Menu.Item key="manual">
@@ -990,12 +1466,38 @@ export default (props: any) => {
               </Button>
             </BtnThemeWrap>
             <BtnThemeWrap>
-              <Button disabled={!selectedRowKeys.length}>Edit</Button>
+              <Button
+                disabled={!selectedRowKeys.length}
+                onClick={() => {
+                  setShowBviData(true);
+                  setEditListMark(true);
+                }}
+              >
+                Edit
+              </Button>
             </BtnThemeWrap>
             <Button
-              disabled={!delMark}
+              disabled={!selectedRowKeys.length}
               onClick={() => {
-                deleteInfos(selectedRowKeys, event);
+                Modal.confirm({
+                  title: 'Tips',
+                  icon: <ExclamationCircleOutlined />,
+                  content: 'Confirm delete selected data?',
+                  okText: 'Confirm',
+                  cancelText: 'Cancel',
+                  onOk: () => {
+                    let recordList = selectedRows.filter(
+                      (item) => item.bviStatus == 'Unconfirm',
+                    );
+                    if (!recordList || !recordList.length) {
+                      message.error('No data to delete is selected');
+                      return;
+                    } else {
+                      deleteInfos(selectedRowKeys, event);
+                    }
+                  },
+                  centered: true,
+                });
               }}
             >
               Delete
