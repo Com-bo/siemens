@@ -86,7 +86,7 @@ export default (props: any) => {
           }
           {...props}
           columns={columns}
-          selection={true}
+          selection={props.selection ?? true}
           pagination={true}
         />
       </Form>

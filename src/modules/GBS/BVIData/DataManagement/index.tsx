@@ -802,6 +802,7 @@ export default (props: any) => {
         listName="Data Management"
         renderFilterGroup={
           <FilterGroup
+            moudleName="BVI Data"
             customComponet={
               <>
                 <Checkbox onChange={(e) => setUnconfirmData(e.target.checked)}>

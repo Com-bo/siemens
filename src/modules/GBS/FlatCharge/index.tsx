@@ -839,7 +839,7 @@ export default (props: any) => {
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
       },
-      current,
+      pageIndex: current,
       pageSize: pageSize,
     };
 
@@ -1026,7 +1026,7 @@ export default (props: any) => {
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
       },
-      current,
+      pageIndex: current,
       pageSize: pageSize,
     };
 

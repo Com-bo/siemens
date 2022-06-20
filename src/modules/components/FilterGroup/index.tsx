@@ -69,6 +69,10 @@ export default (props: any) => {
         { value: 'Obsolete', label: 'Obsolete' },
         { value: 'Freeze', label: 'Freeze' },
       ],
+      AdjustTag: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
     },
   };
 
@@ -249,9 +253,10 @@ export default (props: any) => {
       case 'BVIStatus':
       case 'ChargeType':
       case 'TemplateType':
+      case 'AdjustTag':
         return (
           <Select allowClear>
-            {options[props.moudleName]?.map((item, index) => (
+            {options[props.moudleName][fieldName]?.map((item, index) => (
               <Option key={index} value={item.value}>
                 {item.label}
               </Option>
