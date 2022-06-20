@@ -38,6 +38,7 @@ import {
   TableTitleDiv,
   TaleTitleIconDiv,
   TableWrapDiv,
+  ContentWrap,
 } from '@/assets/style';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
@@ -789,7 +790,7 @@ export default (props: any) => {
 
   //
   return (
-    <div>
+    <ContentWrap>
       {/* 导入 */}
       <Modal
         width="800px"
@@ -1519,6 +1520,6 @@ export default (props: any) => {
           </Space>
         }
       />
-    </div>
+    </ContentWrap>
   );
 };
