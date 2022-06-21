@@ -27,6 +27,7 @@ import {
   Select,
   Space,
   Switch,
+  Tooltip,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
@@ -40,6 +41,40 @@ export default (props: any) => {
   const [requireMark, setRequireMark] = useState(false);
   const [filterGroupInfoById, setFilterGroupInfoById] = useState({});
   const { Option } = Select;
+  const options = {
+    'Flat Charge': {
+      DataStatus: [
+        { value: 'Draft', label: 'Draft' },
+        { value: 'Submit', label: 'Submit' },
+      ],
+    },
+    'BVI Data': {
+      TemplateType: [
+        { value: 'BVI Manual Template', label: 'BVI Manual Template' },
+        { value: 'R2R MD Import Template', label: 'R2R MD Import Template' },
+        { value: 'H2R BVI Template', label: 'H2R BVI Template' },
+        { value: 'H2R T&E BVI Template', label: 'H2R T&E BVI Template' },
+        { value: 'H2R GMM Template', label: 'H2R GMM Template' },
+        { value: 'O2C BVI Template', label: 'O2C BVI Template' },
+        { value: 'O2C T1 BVI Template', label: 'O2C T1 BVI Template' },
+        { value: 'P2P BCS Template', label: 'P2P BCS Template' },
+      ],
+      ChargeType: [
+        { value: 'ICB', label: 'ICB' },
+        { value: 'ICC', label: 'ICC' },
+      ],
+      BVIStatus: [
+        { value: 'Unconfirm', label: 'Unconfirm' },
+        { value: 'Confirm', label: 'Confirm' },
+        { value: 'Obsolete', label: 'Obsolete' },
+        { value: 'Freeze', label: 'Freeze' },
+      ],
+      AdjustTag: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+    },
+  };
 
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
@@ -188,8 +223,12 @@ export default (props: any) => {
         );
       case 'StartMonth':
       case 'EndMonth':
+      case 'BVIMonth':
         if (typeof arra[index].fieldValue == 'string') {
-          arra[index].fieldValue = moment(arra[index].fieldValue);
+          arra[index].fieldValue =
+            arra[index].fieldValue && moment(arra[index].fieldValue).isValid()
+              ? moment(arra[index].fieldValue)
+              : null;
         }
         return (
           <DatePicker
@@ -200,11 +239,30 @@ export default (props: any) => {
         );
       case 'ModifiedDate':
         if (typeof arra[index].fieldValue == 'string') {
-          arra[index].fieldValue = moment(arra[index].fieldValue);
+          arra[index].fieldValue =
+            arra[index].fieldValue && moment(arra[index].fieldValue).isValid()
+              ? moment(arra[index].fieldValue)
+              : null;
         }
         return <DatePicker style={{ width: '100%' }} />;
       case 'TotalAmount':
+      case 'ProductUnitPrice':
+      case 'BVI':
         return <InputNumber style={{ width: '100%' }} />;
+      case 'DataStatus':
+      case 'BVIStatus':
+      case 'ChargeType':
+      case 'TemplateType':
+      case 'AdjustTag':
+        return (
+          <Select allowClear>
+            {options[props.moudleName][fieldName]?.map((item, index) => (
+              <Option key={index} value={item.value}>
+                {item.label}
+              </Option>
+            ))}
+          </Select>
+        );
       default:
         return <Input style={{ width: '100%' }} />;
     }
@@ -424,6 +482,12 @@ export default (props: any) => {
                               style={{ width: '100%' }}
                               allowClear
                               onChange={(val: string) => {
+                                form.getFieldValue('groupFieldList')[
+                                  index
+                                ].fieldValue = null;
+                                form.getFieldValue('groupFieldList')[
+                                  index
+                                ].operator = null;
                                 if (val) {
                                   setOperList(operfields[val]?.operator || []);
                                 } else {
@@ -541,29 +605,35 @@ export default (props: any) => {
             icon={<i className="gbs gbs-search"></i>}
             onClick={() => props.onSearch(filterGroup)}
           ></Button>
-          <Button
-            icon={<i className="gbs gbs-setting"></i>}
-            onClick={() => {
-              form.resetFields();
-              form.setFieldsValue({
-                groupFieldList: [
-                  { fieldName: '', operator: '', fieldValue: '' },
-                ],
-              });
-              setSetting(true);
-            }}
-          ></Button>
-          <Button
-            icon={<i className="gbs gbs-export"></i>}
-            onClick={props.exportAction}
-          ></Button>
-          <Button
-            icon={<ClearOutlined />}
-            onClick={() => {
-              setFilterGroup('');
-              props.onClear();
-            }}
-          ></Button>
+          <Tooltip title="Setting">
+            <Button
+              icon={<i className="gbs gbs-setting"></i>}
+              onClick={() => {
+                form.resetFields();
+                form.setFieldsValue({
+                  groupFieldList: [
+                    { fieldName: '', operator: '', fieldValue: '' },
+                  ],
+                });
+                setSetting(true);
+              }}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="Export">
+            <Button
+              icon={<i className="gbs gbs-export"></i>}
+              onClick={props.exportAction}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="Clear">
+            <Button
+              icon={<ClearOutlined />}
+              onClick={() => {
+                setFilterGroup('');
+                props.onClear();
+              }}
+            ></Button>
+          </Tooltip>
         </Space>
       </FilterGroupDiv>
     </>

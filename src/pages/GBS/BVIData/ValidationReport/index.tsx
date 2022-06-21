@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Report from '@/modules/GBS/BVIData/ValidationReport';
 export default (props: any) => {
-  return <div>ValidationReport</div>;
+  return <Report {...props} />;
 };

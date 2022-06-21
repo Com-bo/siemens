@@ -30,6 +30,7 @@ import {
 import {
   BtnTextRedWrap,
   BtnThemeWrap,
+  ContentWrap,
   TableTitleDiv,
   TableTopDiv,
   TableWrapDiv,
@@ -142,14 +143,14 @@ export default (props: any) => {
     {
       name: 'costCenter',
       title: 'Cost Center',
-      width: '100px',
+      width: '120px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'totalAmount',
       title: 'Total Amount',
-      width: '100px',
+      width: '140px',
       sorter: true,
       render: (text, record) => {
         if (record?.validationMsg) {
@@ -235,6 +236,13 @@ export default (props: any) => {
       sorter: true,
     },
     {
+      name: 'dataStatus',
+      title: 'Status',
+      width: '150px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
       name: 'modifiedDate',
       title: 'Modified Date',
       width: '180px',
@@ -258,42 +266,46 @@ export default (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
-          <Button
-            type="text"
-            key="1"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setShowFlatData(true);
-              setComponentDisabled(record.dataStatus == 'Submit');
-              formData.setFieldsValue({
-                ...record,
-                productName: record.product,
-                customerDivision: record.customerDevision,
-                startMonth: record.startMonth
-                  ? moment(record.startMonth)
-                  : null,
-                endMonth: record.endMonth ? moment(record.endMonth) : null,
-                modifiedDate: record.modifiedDate
-                  ? moment(record.modifiedDate)
-                  : null,
-                createdDate: record.createdDate
-                  ? moment(record.createdDate)
-                  : null,
-              });
-            }}
-          ></Button>
+          <Tooltip title="Edit">
+            <Button
+              type="text"
+              key="1"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setShowFlatData(true);
+                setComponentDisabled(record.dataStatus == 'Submit');
+                formData.setFieldsValue({
+                  ...record,
+                  productName: record.product,
+                  customerDivision: record.customerDevision,
+                  startMonth: record.startMonth
+                    ? moment(record.startMonth)
+                    : null,
+                  endMonth: record.endMonth ? moment(record.endMonth) : null,
+                  modifiedDate: record.modifiedDate
+                    ? moment(record.modifiedDate)
+                    : null,
+                  createdDate: record.createdDate
+                    ? moment(record.createdDate)
+                    : null,
+                });
+              }}
+            ></Button>
+          </Tooltip>
           <Popconfirm
             title="Confirm to delete?"
             onConfirm={(event) => deleteInfos([record.id], event)}
             okText="Confirm"
             cancelText="Cancel"
           >
-            <Button
-              type="text"
-              key="2"
-              icon={<i className="gbs gbs-delete"></i>}
-              onClick={(event) => event.stopPropagation()}
-            ></Button>
+            <Tooltip title="Delete">
+              <Button
+                type="text"
+                key="2"
+                icon={<i className="gbs gbs-delete"></i>}
+                onClick={(event) => event.stopPropagation()}
+              ></Button>
+            </Tooltip>
           </Popconfirm>
           {record.dataStatus !== 'Submit' ? (
             <Popconfirm
@@ -304,26 +316,29 @@ export default (props: any) => {
               okText="Confirm"
               cancelText="Cancel"
             >
-              <Button
-                type="text"
-                key="3"
-                icon={<i className="gbs gbs-submit"></i>}
-                onClick={(event) => event.stopPropagation()}
-              ></Button>
+              <Tooltip title="Submit">
+                <Button
+                  type="text"
+                  key="3"
+                  icon={<i className="gbs gbs-submit"></i>}
+                  onClick={(event) => event.stopPropagation()}
+                ></Button>
+              </Tooltip>
             </Popconfirm>
           ) : (
             ''
           )}
-
-          <Button
-            type="text"
-            key="4"
-            icon={<i className="gbs gbs-logs"></i>}
-            onClick={(event) => {
-              event.stopPropagation();
-              toLog(record.orgId);
-            }}
-          ></Button>
+          <Tooltip title="Log">
+            <Button
+              type="text"
+              key="4"
+              icon={<i className="gbs gbs-logs"></i>}
+              onClick={(event) => {
+                event.stopPropagation();
+                toLog(record.orgId);
+              }}
+            ></Button>
+          </Tooltip>
         </Space>
       ),
     },
@@ -824,7 +839,7 @@ export default (props: any) => {
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
       },
-      current,
+      pageIndex: current,
       pageSize: pageSize,
     };
 
@@ -870,17 +885,27 @@ export default (props: any) => {
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
     event.stopPropagation();
-    deleteData({
-      recordIdList,
-    }).then((res) => {
-      if (res.isSuccess) {
-        message.success('Deletion succeeded!');
-        setSelectedRowKeys([]);
-        _getData();
-        setCurrent(1);
-      } else {
-        message.error(res.msg);
-      }
+    Modal.confirm({
+      title: 'Tips',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Confirm to delete the selected data?',
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      onOk: () => {
+        deleteData({
+          recordIdList,
+        }).then((res) => {
+          if (res.isSuccess) {
+            message.success('Deletion succeeded!');
+            setSelectedRowKeys([]);
+            _getData();
+            setCurrent(1);
+          } else {
+            message.error(res.msg);
+          }
+        });
+      },
+      centered: true,
     });
   };
   // 批量提交
@@ -1001,7 +1026,7 @@ export default (props: any) => {
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
       },
-      current,
+      pageIndex: current,
       pageSize: pageSize,
     };
 
@@ -1125,7 +1150,7 @@ export default (props: any) => {
   };
 
   return (
-    <div>
+    <ContentWrap>
       <Modal
         maskClosable={false}
         title={
@@ -1735,6 +1760,6 @@ export default (props: any) => {
           </Space>
         }
       />
-    </div>
+    </ContentWrap>
   );
 };

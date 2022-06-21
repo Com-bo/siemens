@@ -39,8 +39,13 @@ import {
   TableTitleDiv,
   TaleTitleIconDiv,
   TableWrapDiv,
+  ContentWrap,
 } from '@/assets/style';
-import { getCompanyCodeDrop, getCostCenterDrop } from '@/app/request/common';
+import {
+  getCompanyCodeDrop,
+  getCostCenterDrop,
+  ProductPoDrop,
+} from '@/app/request/common';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
@@ -118,7 +123,7 @@ export default (props: any) => {
     setEditListMark,
     customerDivision,
     setCustomerDivision,
-    get_ProductPoDrop,
+    formDataEdit,
   } = useService(props);
 
   const columns: any = [
@@ -463,22 +468,32 @@ export default (props: any) => {
               icon={<EditOutlined />}
               onClick={(event) => {
                 event.stopPropagation();
-                setShowBviData(true);
-                setEditListMark(false);
-                formData.setFieldsValue({
-                  ...record,
-                  bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
-                });
+                console.log(record);
                 if (record.templateType == 'Maual') {
                   setComponentDisabled(false);
+                  setShowBviData(true);
+                  formData.setFieldsValue({
+                    ...record,
+                    bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
+                    productName: record.product,
+                    customerDivision: record.customerDevision,
+                    startMonth: record.startMonth
+                      ? moment(record.startMonth)
+                      : null,
+                    endMonth: record.endMonth ? moment(record.endMonth) : null,
+                    modifiedDate: record.modifiedDate
+                      ? moment(record.modifiedDate)
+                      : null,
+                    createdDate: record.createdDate
+                      ? moment(record.createdDate)
+                      : null,
+                  });
                 } else {
-                  setComponentDisabled(true);
+                  setEditListMark(true);
+                  formDataEdit.setFieldsValue({
+                    ...record,
+                  });
                 }
-                console.log(
-                  '本行编辑数据',
-                  record,
-                  formData.getFieldValue('adjustTag'),
-                );
               }}
             ></Button>
           </Tooltip>
@@ -778,12 +793,14 @@ export default (props: any) => {
   const selectProSure = () => {
     setShowPro(false);
     let data = selectProductRow[0];
+    console.log(data);
     formData.setFieldsValue({
       businessLine: data.businessLine,
       are: data.are,
       serviceLine: data.serviceLine,
       customerDivision: data.customerDivision,
       productName: data.productName,
+      id: data.id,
     });
     if (data.are != 5547) {
       // 获取compamycode下拉选择
@@ -827,7 +844,7 @@ export default (props: any) => {
 
   //
   return (
-    <div>
+    <ContentWrap>
       {/* 导入 */}
       <Modal
         width="800px"
@@ -924,381 +941,420 @@ export default (props: any) => {
           form={formData}
           labelCol={{ flex: '120px' }}
         >
-          {editListMark ? (
-            <Row gutter={20}>
-              <Col span={8}>
-                <Form.Item label="Billing ARE" name="billingARE">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Billing Cost Center" name="billingCostCenter">
-                  <Input />
-                </Form.Item>
-              </Col>
-              {
-                <Col span={24}>
-                  <Form.Item style={{ textAlign: 'center' }}>
-                    <Space size={60}>
-                      <Button type="primary" onClick={editDataListSaveFn}>
-                        Submit
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setShowBviData(false);
-                          formData.resetFields();
-                          setCustomerDivision('');
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Space>
-                  </Form.Item>
-                </Col>
-              }
-            </Row>
-          ) : (
-            <Row gutter={20}>
-              <Col span={20}>
-                <Form.Item
-                  label="Product Name"
-                  name="productName"
-                  rules={[{ required: true }]}
-                >
-                  <Input disabled={true} />
-                </Form.Item>
-              </Col>
+          <Row gutter={20}>
+            <Col span={20}>
+              <Form.Item
+                label="Product Name"
+                name="productName"
+                rules={[{ required: true }]}
+              >
+                <Input disabled={true} />
+              </Form.Item>
+            </Col>
 
-              {componentDisabled ? (
-                ''
-              ) : (
-                <Col span={4}>
-                  <Button type="primary" onClick={() => setShowPro(true)}>
-                    Search Product
-                  </Button>
-                </Col>
-              )}
-              <Col span={8}>
-                <Form.Item label="Bussiness Line" name="businessLine">
-                  <Input disabled={true} />
-                </Form.Item>
+            {formData.getFieldValue('id') ? (
+              ''
+            ) : (
+              <Col span={4}>
+                <Button type="primary" onClick={() => setShowPro(true)}>
+                  Search Product
+                </Button>
               </Col>
-              <Col span={8}>
-                <Form.Item label="Service Line" name="serviceLine">
-                  <Input disabled={true} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="ARE" name="are">
-                  <Input
-                    onChange={(e) => {
-                      formData.setFieldsValue({
-                        chargeType: e.target.value == '5547' ? 'ICB' : 'ICC',
-                      });
-                    }}
-                    disabled
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Cost Center"
-                  name="costCenter"
-                  rules={[{ validator: validCostCenterRequired }]}
-                >
-                  {formData.getFieldValue('are') == '5547' &&
-                  formData.getFieldValue('productName') ? (
-                    <DebounceSelect
-                      initFlag
-                      onChange={(value, data) => {
-                        if (
-                          value &&
-                          data.customerDivision !=
-                            formData.getFieldValue('customerDivision')
-                        ) {
-                          setCustomerDivision(data.customerDivision);
-                        }
-                      }}
-                      getoptions={(options) => {
-                        return options?.map((x, index) => {
-                          return (
-                            <Select.Option
-                              key={index}
-                              data={x}
-                              value={x.costCenter}
-                            >
-                              {x.costCenter}
-                            </Select.Option>
-                          );
-                        });
-                      }}
-                      delegate={(e) => {
-                        if (!formData.getFieldValue('are')) {
-                          return Promise.resolve({
-                            code: 200,
-                            isSuccess: true,
-                            data: [],
-                          });
-                        }
-                        return getCostCenterDrop({
-                          are: formData.getFieldValue('are'),
-                          costCenter: e,
-                        });
-                      }}
-                    />
-                  ) : (
-                    <Input disabled={!formData.getFieldValue('productName')} />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Company Code"
-                  name="companyCode"
-                  rules={[{ required: true }]}
-                >
-                  {!formData.getFieldValue('are') ||
-                  formData.getFieldValue('are') == '5547' ? (
-                    <Input disabled />
-                  ) : (
-                    <DebounceSelect
-                      initFlag
-                      getoptions={(options) => {
-                        return options?.map((x, index) => {
-                          return (
-                            <Select.Option
-                              key={index}
-                              data={x}
-                              value={x.companyCode}
-                            >
-                              {x.companyCode}
-                            </Select.Option>
-                          );
-                        });
-                      }}
-                      delegate={(e) => {
-                        if (!formData.getFieldValue('are')) {
-                          return Promise.resolve({
-                            code: 200,
-                            isSuccess: true,
-                            data: [],
-                          });
-                        }
-                        return getCompanyCodeDrop({
-                          are: formData.getFieldValue('are'),
-                          companyCode: e,
-                        });
-                      }}
-                    />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Customer Division" name="customerDivision">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Total Amount"
-                  name="totalAmount"
-                  rules={[
-                    { required: true, message: 'Total Amount is Required;' },
-                    {
-                      pattern:
-                        /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
-                      message:
-                        'Greater than zero and two decimal places at most',
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    disabled={componentDisabled}
-                    min={0}
-                    style={{ width: '100%' }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="PO" name="po" rules={[{ required: true }]}>
-                  {/* <Input disabled={componentDisabled} /> */}
+            )}
+            <Col span={8}>
+              <Form.Item label="Bussiness Line" name="businessLine">
+                <Input disabled={true} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Service Line" name="serviceLine">
+                <Input disabled={true} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="ARE" name="are">
+                <Input
+                  onChange={(e) => {
+                    formData.setFieldsValue({
+                      chargeType: e.target.value == '5547' ? 'ICB' : 'ICC',
+                    });
+                  }}
+                  disabled
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Cost Center"
+                name="costCenter"
+                rules={[{ validator: validCostCenterRequired }]}
+              >
+                {formData.getFieldValue('are') == '5547' &&
+                formData.getFieldValue('productName') ? (
                   <DebounceSelect
                     initFlag
+                    onChange={(value, data) => {
+                      if (
+                        value &&
+                        data.customerDivision !=
+                          formData.getFieldValue('customerDivision')
+                      ) {
+                        setCustomerDivision(data.customerDivision);
+                      }
+                    }}
                     getoptions={(options) => {
                       return options?.map((x, index) => {
                         return (
-                          <Select.Option key={index} data={x} value={x.po}>
-                            {x.po}
+                          <Select.Option
+                            key={index}
+                            data={x}
+                            value={x.costCenter}
+                          >
+                            {x.costCenter}
                           </Select.Option>
                         );
                       });
                     }}
                     delegate={(e) => {
-                      // if (!formData.getFieldValue('are')) {
-                      //   return Promise.resolve({
-                      //     code: 200,
-                      //     isSuccess: true,
-                      //     data: [],
-                      //   });
-                      // }
-                      return get_ProductPoDrop({
-                        productId: formData.getFieldValue('id'),
-                        poNumber: e,
+                      if (!formData.getFieldValue('are')) {
+                        return Promise.resolve({
+                          code: 200,
+                          isSuccess: true,
+                          data: [],
+                        });
+                      }
+                      return getCostCenterDrop({
+                        are: formData.getFieldValue('are'),
+                        costCenter: e,
                       });
                     }}
                   />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Start Month"
-                  name="startMonth"
-                  rules={[{ required: true }]}
-                >
-                  <DatePicker
-                    disabled={componentDisabled}
-                    picker="month"
-                    format="YYYY-MM"
-                    style={{ width: '100%' }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="End Month"
-                  name="endMonth"
-                  rules={[
-                    { required: true },
-                    {
-                      validator: validEndMonth,
-                    },
-                  ]}
-                >
-                  <DatePicker
-                    picker="month"
-                    format="YYYY-MM"
-                    style={{ width: '100%' }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="ChargeType" name="chargeType">
+                ) : (
+                  <Input disabled={!formData.getFieldValue('productName')} />
+                )}
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Company Code"
+                name="companyCode"
+                rules={[{ required: true }]}
+              >
+                {!formData.getFieldValue('are') ||
+                formData.getFieldValue('are') == '5547' ? (
                   <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="System" name="system">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Template Type" name="templateType">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Upload Date" name="createdDate">
-                  <DatePicker disabled style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Upload User" name="createdUser">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Modified Date" name="modifiedDate">
-                  <DatePicker disabled style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Modified User" name="modifiedUser">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Billing ARE" name="billingARE">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Billing Cost Center" name="billingCostCenter">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="BVI" name="bvi">
-                  <Input disabled={componentDisabled} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="poPercentage" name="poPercentage">
-                  <Input disabled={componentDisabled} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="adjustTag"
-                  name="adjustTag"
-                  valuePropName="checked"
-                >
-                  <Switch
-                    disabled={componentDisabled}
-                    onChange={(val) => {
-                      formData.setFieldsValue({
-                        adjustTag: val,
+                ) : (
+                  <DebounceSelect
+                    initFlag
+                    getoptions={(options) => {
+                      return options?.map((x, index) => {
+                        return (
+                          <Select.Option
+                            key={index}
+                            data={x}
+                            value={x.companyCode}
+                          >
+                            {x.companyCode}
+                          </Select.Option>
+                        );
+                      });
+                    }}
+                    delegate={(e) => {
+                      if (!formData.getFieldValue('are')) {
+                        return Promise.resolve({
+                          code: 200,
+                          isSuccess: true,
+                          data: [],
+                        });
+                      }
+                      return getCompanyCodeDrop({
+                        are: formData.getFieldValue('are'),
+                        companyCode: e,
                       });
                     }}
                   />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="BVI Month"
-                  name="bviMonth"
-                  rules={[{ required: true }]}
-                >
-                  <DatePicker
-                    disabled={componentDisabled}
-                    picker="month"
-                    format="YYYY-MM"
-                    style={{ width: '100%' }}
-                  />
-                </Form.Item>
-              </Col>
+                )}
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Customer Division" name="customerDivision">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Total Amount"
+                name="totalAmount"
+                rules={[
+                  { required: true, message: 'Total Amount is Required;' },
+                  {
+                    pattern:
+                      /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
+                    message: 'Greater than zero and two decimal places at most',
+                  },
+                ]}
+              >
+                <InputNumber
+                  disabled={componentDisabled}
+                  min={0}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="PO" name="po" rules={[{ required: true }]}>
+                <DebounceSelect
+                  initFlag
+                  disabled={componentDisabled}
+                  getoptions={(options) => {
+                    return options?.map((x, index) => {
+                      return (
+                        <Select.Option key={index} data={x} value={x.po}>
+                          {x.po}
+                        </Select.Option>
+                      );
+                    });
+                  }}
+                  delegate={(e) => {
+                    if (!formData.getFieldValue('id')) {
+                      return Promise.resolve({
+                        code: 200,
+                        isSuccess: true,
+                        data: [],
+                      });
+                    }
+                    return ProductPoDrop({
+                      productId: formData.getFieldValue('id'),
+                      poNumber: e,
+                    });
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Start Month"
+                name="startMonth"
+                rules={[{ required: true }]}
+              >
+                <DatePicker
+                  disabled={componentDisabled}
+                  picker="month"
+                  format="YYYY-MM"
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="End Month"
+                name="endMonth"
+                rules={[
+                  { required: true },
+                  {
+                    validator: validEndMonth,
+                  },
+                ]}
+              >
+                <DatePicker
+                  disabled={componentDisabled}
+                  picker="month"
+                  format="YYYY-MM"
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="ChargeType" name="chargeType">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="System" name="system">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Template Type" name="templateType">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Upload Date" name="createdDate">
+                <DatePicker disabled style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Upload User" name="createdUser">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Modified Date" name="modifiedDate">
+                <DatePicker disabled style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Modified User" name="modifiedUser">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Billing ARE"
+                name="billingARE"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Billing Cost Center"
+                name="billingCostCenter"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="BVI" name="bvi" rules={[{ required: true }]}>
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="poPercentage"
+                name="poPercentage"
+                rules={[{ required: true }]}
+              >
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="adjustTag"
+                name="adjustTag"
+                valuePropName="checked"
+              >
+                <Switch
+                  disabled={componentDisabled}
+                  onChange={(val) => {
+                    formData.setFieldsValue({
+                      adjustTag: val,
+                    });
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="BVI Month"
+                name="bviMonth"
+                rules={[{ required: true }]}
+              >
+                <DatePicker
+                  disabled={componentDisabled}
+                  picker="month"
+                  format="YYYY-MM"
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label="Comment" name="comment">
+                <Input.TextArea disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            {
               <Col span={24}>
-                <Form.Item label="Comment" name="comment">
-                  <Input.TextArea disabled={componentDisabled} />
+                <Form.Item style={{ textAlign: 'center' }}>
+                  <Space size={60}>
+                    {!componentDisabled ? (
+                      <Button type="primary" onClick={insertFormData}>
+                        insert
+                      </Button>
+                    ) : (
+                      <Button type="primary" onClick={editFormData}>
+                        Submit
+                      </Button>
+                    )}
+                    <Button
+                      onClick={() => {
+                        setShowBviData(false);
+                        formData.resetFields();
+                        setCustomerDivision('');
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Space>
                 </Form.Item>
               </Col>
-              {
-                <Col span={24}>
-                  <Form.Item style={{ textAlign: 'center' }}>
-                    <Space size={60}>
-                      {!componentDisabled ? (
-                        <Button type="primary" onClick={insertFormData}>
-                          insert
-                        </Button>
-                      ) : (
-                        <Button type="primary" onClick={editFormData}>
-                          Submit
-                        </Button>
-                      )}
-                      <Button
-                        onClick={() => {
-                          setShowBviData(false);
-                          formData.resetFields();
-                          setCustomerDivision('');
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Space>
-                  </Form.Item>
-                </Col>
-              }
-            </Row>
-          )}
+            }
+          </Row>
+        </Form>
+      </Modal>
+      {/* 批量编辑*/}
+      <Modal
+        maskClosable={false}
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                BVI Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={editListMark}
+        footer={null}
+        onCancel={() => {
+          setEditListMark(false);
+          formDataEdit.resetFields();
+        }}
+      >
+        <Form
+          requiredMark={!componentDisabled}
+          form={formDataEdit}
+          labelCol={{ flex: '120px' }}
+        >
+          <Row gutter={20}>
+            <Col span={12}>
+              <Form.Item label="Billing ARE" name="billingARE">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Billing Cost Center" name="billingCostCenter">
+                <Input />
+              </Form.Item>
+            </Col>
+            {
+              <Col span={24}>
+                <Form.Item style={{ textAlign: 'center' }}>
+                  <Space size={60}>
+                    <Button type="primary" onClick={editDataListSaveFn}>
+                      Submit
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setEditListMark(false);
+                        formDataEdit.resetFields();
+                        setCustomerDivision('');
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Col>
+            }
+          </Row>
         </Form>
       </Modal>
       {/* 产品列表 */}
@@ -1589,6 +1645,8 @@ export default (props: any) => {
                         setComponentDisabled(false);
                         formData.setFieldsValue({
                           adjustTag: false,
+                          id: '',
+                          templateType: 'Manual',
                         });
                       }}
                     >
@@ -1693,7 +1751,6 @@ export default (props: any) => {
               <Button
                 disabled={!selectedRowKeys.length}
                 onClick={() => {
-                  setShowBviData(true);
                   setEditListMark(true);
                 }}
               >
@@ -1743,6 +1800,6 @@ export default (props: any) => {
           </Space>
         }
       />
-    </div>
+    </ContentWrap>
   );
 };

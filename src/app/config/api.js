@@ -41,7 +41,7 @@ export const Api = {
   LogDataQuery: '/api/FlatCharge/LogDataQuery', //日志查询
   ImportFlatData: '/api/FlatCharge/ImportData', //导入
   PopWinPagingQuery: '/api/Product/PopWinPagingQuery', //获取产品
-  ExportDataByGroup: '/api/FlatCharge/ExportDataBy', //导出group
+  ExportDataByGroup: '/api/FlatCharge/ExportData', //导出group
   QueryBVIData: '/api/FlatCharge/QueryBVIData', //导出bvi拆分
   EditDataSave: '/api/FlatCharge/EditDataSave', //保存flat数据
   EditDataSubmit: '/api/FlatCharge/EditDataSubmit', //提交flat数据

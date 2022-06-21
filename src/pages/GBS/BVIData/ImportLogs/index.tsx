@@ -1,5 +1,5 @@
 import React from 'react';
-
+import ImportLogs from '@/modules/GBS/BVIData/ImportLogs';
 export default (props: any) => {
-  return <div>ImportLogs</div>;
+  return <ImportLogs {...props} />;
 };

@@ -51,6 +51,7 @@ const GlobalStyle = createGlobalStyle`
   body{
     font-family:siemens,  Arail;
     background-color:#e6e6e6;
+    min-width:1366px;
   }
   .ant-input-affix-wrapper{
     border-radius:5px;
@@ -159,10 +160,6 @@ const GlobalStyle = createGlobalStyle`
   .remarkModalClass  .ant-modal{
     width: auto !important;
     max-width:800px;
-  }
-  .ant-pro-grid-content{
-    // height:calc(100% - 100px);
-    // overflow-y:auto;
   }
   .ant-checkbox-inner,.ant-tree-checkbox-inner{
     border-radius:0px;

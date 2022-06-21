@@ -12,7 +12,6 @@ import {
   EditBVIData,
   EditDataListSave,
 } from '@/app/request/apiBVI';
-import { ProductPoDrop } from '@/app/request/common';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
 
@@ -52,6 +51,7 @@ export default (props: any) => {
   const [selectProductRow, setSelectProductRow] = useState([]);
   const [editListMark, setEditListMark] = useState(false);
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
+  const [formDataEdit] = Form.useForm();
   //
   const getCheckOriginalData = (event) => {
     event.stopPropagation();
@@ -264,7 +264,7 @@ export default (props: any) => {
           are: formData.getFieldValue('are'),
           companyCode: formData.getFieldValue('companyCode'),
           product: formData.getFieldValue('product'),
-          productId: formData.getFieldValue('productId'),
+          productId: formData.getFieldValue('id'),
           bvi: formData.getFieldValue('bvi'),
           poPercentage: formData.getFieldValue('poPercentage'),
           costCenter: formData.getFieldValue('costCenter'),
@@ -303,7 +303,7 @@ export default (props: any) => {
               are: formData.getFieldValue('are'),
               companyCode: formData.getFieldValue('companyCode'),
               product: formData.getFieldValue('product'),
-              productId: formData.getFieldValue('productId'),
+              productId: formData.getFieldValue('id'),
               bvi: formData.getFieldValue('bvi'),
               poPercentage: formData.getFieldValue('poPercentage'),
               costCenter: formData.getFieldValue('costCenter'),
@@ -334,7 +334,7 @@ export default (props: any) => {
   };
   // 批量edit
   const editDataListSaveFn = () => {
-    formData
+    formDataEdit
       .validateFields()
       .then((values) => {
         const idList = [];
@@ -342,15 +342,17 @@ export default (props: any) => {
           idList.push(item.id);
         });
         const params = {
-          billingARE: formData.getFieldValue('billingARE'),
-          billingCostCenter: formData.getFieldValue('billingCostCenter'),
-          recordIdList: idList,
+          billingARE: formDataEdit.getFieldValue('billingARE'),
+          billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
+          recordIdList:
+            idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
         };
+        console.log(params);
         EditDataListSave(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
             setShowBviData(false);
-            formData.resetFields();
+            formDataEdit.resetFields();
             getData();
           } else {
             message.error(res.msg);
@@ -378,15 +380,6 @@ export default (props: any) => {
         });
       })
       .catch((e) => {});
-  };
-  const get_ProductPoDrop = (params) => {
-    ProductPoDrop(params).then((res) => {
-      if (res.isSuccess) {
-        message.success(res.msg);
-      } else {
-        message.error(res.msg);
-      }
-    });
   };
 
   return {
@@ -459,6 +452,6 @@ export default (props: any) => {
     setEditListMark,
     customerDivision,
     setCustomerDivision,
-    get_ProductPoDrop,
+    formDataEdit,
   };
 };
