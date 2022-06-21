@@ -1,10 +1,14 @@
-import { Button, Form, Tabs } from 'antd';
-import React, { useRef, useState } from 'react';
+import { Button, Form, message, Table, Tabs } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 const { TabPane } = Tabs;
 import TableList from '@/modules/components/TableMixInline';
 import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
 import { TabWrapDiv } from './style';
+import {
+  getDiffData,
+  getIntergrityReportData,
+} from '@/app/request/apiValidReport';
 export default (props: any) => {
   const [form] = Form.useForm();
   const [diffForm] = Form.useForm();
@@ -18,7 +22,38 @@ export default (props: any) => {
   const [diffPageSize, setDiffPageSize] = useState(20);
   const [isSearch, setIsSearch] = useState(true);
   const [isDiffSearch, setIsDiffSearch] = useState(true);
-  const [months, setMonths] = useState([]);
+  const [months, setMonths] = useState([
+    {
+      name: '202109',
+      title: '202109',
+      width: '100px',
+    },
+    {
+      name: '202110',
+      title: '202110',
+      width: '100px',
+    },
+    {
+      name: '202111',
+      title: '202111',
+      width: '100px',
+    },
+    {
+      name: '202112',
+      title: '202112',
+      width: '100px',
+    },
+    {
+      name: '202201',
+      title: '202201',
+      width: '100px',
+    },
+    {
+      name: '202202',
+      title: '202202',
+      width: '100px',
+    },
+  ]);
   const orignalCols = [
     {
       name: 'businessLine',
@@ -60,13 +95,11 @@ export default (props: any) => {
       name: 'isThereBVI',
       title: 'IS There BVI',
       width: '100px',
-      titleRender: 'input',
     },
     {
       name: 'MandatoryBVI',
       title: 'MandatoryBVI',
       width: '100px',
-      titleRender: 'input',
     },
     {
       name: 'BVIMonth',
@@ -115,11 +148,69 @@ export default (props: any) => {
       fixed: 'right',
     },
   ];
+  useEffect(() => {
+    _getData();
+  }, [current, pageSize]);
+  useEffect(() => {
+    _getDiffData();
+  }, [diffCurrent, diffPageSize]);
   const latestDiffGroupIdRef = useRef<any>();
   const latestGroupIdRef = useRef<any>();
-  const _getData = (recordId?: string) => {};
-  const onPageChange = () => {};
-  const changePageSize = () => {};
+  const _getData = () => {
+    let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: latestGroupIdRef.current,
+        },
+        listHeader: form.getFieldsValue(),
+      },
+      pageIndex: current,
+      pageSize: pageSize,
+    };
+
+    getIntergrityReportData(params).then((res) => {
+      if (res.isSuccess) {
+        setTableData(res.data);
+        setTotal(res.totalCount);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const _getDiffData = () => {
+    let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: latestDiffGroupIdRef.current,
+        },
+        listHeader: diffForm.getFieldsValue(),
+      },
+      pageIndex: diffCurrent,
+      pageSize: diffPageSize,
+    };
+
+    getDiffData(params).then((res) => {
+      if (res.isSuccess) {
+        setDiffData(res.data);
+        setDiffTotal(res.totalCount);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const onPageChange = (pagination) => {
+    setCurrent(pagination.current);
+  };
+
+  const onDiffPageChange = (pagination) => {
+    setDiffCurrent(pagination.current);
+  };
+  const changePageSize = (val: number) => {
+    setPageSize(val);
+  };
+  const changeDiffPageSize = (val: number) => {
+    setDiffPageSize(val);
+  };
   const exportExcelAction = () => {};
   const exportExcelDiffAction = () => {};
   return (
@@ -144,7 +235,7 @@ export default (props: any) => {
                 moudleName="Flat Charge"
                 onSearch={(val) => {
                   latestGroupIdRef.current = val;
-                  _getData(val);
+                  _getData();
                 }}
                 onClear={() => {
                   latestGroupIdRef.current = '';
@@ -174,24 +265,46 @@ export default (props: any) => {
         </TabPane>
         <TabPane tab="Difference Validation" key="2">
           <TableList
-            headerSearch={_getData}
+            headerSearch={_getDiffData}
             form={diffForm}
             data={differenceData}
             columns={originalColsSecond}
             total={diffTotal}
-            onPageChange={onPageChange}
-            changePageSize={changePageSize}
+            onPageChange={onDiffPageChange}
+            changePageSize={changeDiffPageSize}
             current={diffCurrent}
             search={isDiffSearch}
             selection={false}
             rowKey="orgId"
             listName="Validation Report"
+            summary={(currentData) => (
+              <>
+                <Table.Summary.Row>
+                  {originalColsSecond.map((item, index) => {
+                    if (index == 3) {
+                      return (
+                        <Table.Summary.Cell index={index} align="center">
+                          Total
+                        </Table.Summary.Cell>
+                      );
+                    } else {
+                      return (
+                        <Table.Summary.Cell
+                          index={index}
+                          align="center"
+                        ></Table.Summary.Cell>
+                      );
+                    }
+                  })}
+                </Table.Summary.Row>
+              </>
+            )}
             renderFilterGroup={
               <FilterGroup
                 moudleName="Flat Charge"
                 onSearch={(val) => {
                   latestDiffGroupIdRef.current = val;
-                  _getData(val);
+                  _getData();
                 }}
                 onClear={() => {
                   latestDiffGroupIdRef.current = '';
@@ -199,7 +312,7 @@ export default (props: any) => {
                   if (diffCurrent != 1) {
                     setDiffCurrent(1);
                   } else {
-                    _getData();
+                    _getDiffData();
                   }
                 }}
                 exportAction={exportExcelDiffAction}

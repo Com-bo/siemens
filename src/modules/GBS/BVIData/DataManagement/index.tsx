@@ -46,6 +46,7 @@ import useService from './useServise';
 import TableMix from '@/components/Table';
 import moment from 'moment';
 import { forEach } from 'lodash';
+import Item from 'antd/lib/list/Item';
 export default (props: any) => {
   const {
     form,
@@ -88,6 +89,7 @@ export default (props: any) => {
     setUnconfirmData,
     setErrorChecked,
     errorChecked,
+    columns,
     //
     insertFormData,
     editFormData,
@@ -114,60 +116,9 @@ export default (props: any) => {
     editDataListSaveFn,
     editListMark,
     setEditListMark,
+    onExportOriginal,
   } = useService(props);
 
-  const columns: any = [
-    {
-      title: 'Business Line',
-      dataIndex: 'BusinessLine',
-      key: 'BusinessLine',
-      align: 'center',
-    },
-    {
-      title: 'ARE',
-      dataIndex: 'ARE',
-      key: 'ARE',
-      align: 'center',
-    },
-    {
-      title: 'Company Code',
-      dataIndex: 'CompanyCode',
-      key: 'CompanyCode',
-      align: 'center',
-    },
-    {
-      title: 'Customer Devision',
-      dataIndex: 'CustomerDevision',
-      key: 'CustomerDevision',
-      width: '160px',
-      align: 'center',
-    },
-    {
-      title: 'Cost Center',
-      dataIndex: 'CostCenter',
-      key: 'CostCenter',
-      align: 'center',
-    },
-    {
-      title: 'Cost Location',
-      dataIndex: 'CostLocation',
-      key: 'CostLocation',
-      align: 'center',
-    },
-    {
-      title: 'Product Name',
-      dataIndex: 'ProductName',
-      key: 'ProductName',
-      align: 'center',
-    },
-    {
-      title: 'Error Message',
-      dataIndex: 'ErrorMessage',
-      key: 'ErrorMessage',
-      align: 'center',
-      render: (text) => <span style={{ color: 'red' }}>{text}</span>,
-    },
-  ];
   const orignalCols = [
     {
       name: 'bviBusinessLine',
@@ -261,7 +212,7 @@ export default (props: any) => {
             <BtnTextRedWrap color="red">
               <Button
                 type="text"
-                onClick={getCheckOriginalData}
+                onClick={(evt) => getCheckOriginalData(evt, record)}
                 icon={<ExclamationCircleOutlined />}
               >
                 {text}
@@ -271,7 +222,10 @@ export default (props: any) => {
         } else {
           return (
             <BtnTextRedWrap>
-              <Button type="text" onClick={getCheckOriginalData}>
+              <Button
+                type="text"
+                onClick={(evt) => getCheckOriginalData(evt, record)}
+              >
                 {text}
               </Button>
             </BtnTextRedWrap>
@@ -764,6 +718,10 @@ export default (props: any) => {
   };
 
   //
+  const checkOriginalOptions = {
+    validationMsg: '300px',
+    productName: '200px',
+  };
   const handleProSize = (val: number) => {
     setProSize(val);
   };
@@ -1199,17 +1157,35 @@ export default (props: any) => {
       >
         <TableWrapDiv>
           <Table
-            columns={columns}
+            columns={columns?.map((_item) => {
+              return {
+                ..._item,
+                fixed: _item.dataIndex == 'validationMsg' ? 'right' : null,
+                align: 'center',
+                width: checkOriginalOptions[_item.dataIndex] || '100px',
+                render: (text) => {
+                  if (_item.dataIndex == 'validationMsg') {
+                    return (
+                      <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
+                    );
+                  } else {
+                    return text;
+                  }
+                },
+              };
+            })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
             rowKey="id"
             pagination={false}
-            scroll={{ y: 'calc(100vh - 390px)' }}
+            scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
           />
         </TableWrapDiv>
 
         <div style={{ margin: '20px auto 40px', textAlign: 'center' }}>
-          <Button type="primary">Export</Button>
+          <Button type="primary" onClick={onExportOriginal}>
+            Export
+          </Button>
         </div>
       </Modal>
       <TableList
@@ -1344,7 +1320,9 @@ export default (props: any) => {
               style={{ height: '20px', borderColor: '#999' }}
             />
             <BtnThemeWrap>
-              <Button onClick={onExport}>Export Original</Button>
+              <Button onClick={onExport} disabled={!selectedRowKeys.length}>
+                Export Original
+              </Button>
             </BtnThemeWrap>
             <BtnThemeWrap>
               <Dropdown

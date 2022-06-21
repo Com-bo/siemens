@@ -1489,16 +1489,10 @@ export default (props: any) => {
                 name="totalAmount"
                 rules={[
                   { required: true, message: 'Total Amount is Required;' },
-                  {
-                    pattern:
-                      /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
-                    message: 'Greater than zero and two decimal places at most',
-                  },
                 ]}
               >
                 <InputNumber
                   disabled={componentDisabled}
-                  min={0}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1517,7 +1511,7 @@ export default (props: any) => {
                 <DatePicker
                   disabled={componentDisabled}
                   picker="month"
-                  format="YYYY-MM"
+                  format="YYYYMM"
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1535,7 +1529,7 @@ export default (props: any) => {
               >
                 <DatePicker
                   picker="month"
-                  format="YYYY-MM"
+                  format="YYYYMM"
                   style={{ width: '100%' }}
                 />
               </Form.Item>

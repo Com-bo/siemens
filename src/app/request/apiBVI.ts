@@ -86,3 +86,18 @@ export const EditDataListSave = (data: Object) => {
     autoLoading: true,
   });
 };
+export const getAbnormalOriginDataByBVI = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.GetAbnormalOriginDataByBVI}`,
+    data,
+    {
+      autoLoading: true,
+    },
+  );
+};
+export const exportOriginalData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ExportOriginalData}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
+};

@@ -23,7 +23,8 @@ export const Api = {
   ImportH2RGMM: '/api/ImportH2RGMM/ImportDataSave', //导入ImportH2RGMM
   ImportO2C: '/api/ImportO2C/ImportDataSave', //导入ImportO2C
   ImportO2CTI: '/api/ImportO2CTI/ImportDataSave', //导入ImportO2CTI
-
+  GetAbnormalOriginDataByBVI: '/api/BVIDataManage/GetOriginDataByBVI',
+  ExportOriginalData: '/api/BVIDataManage/ExportOriginalData',
   BviGroupQuery: '/api/BVIDataManage/ListGroupQuery', //数据查询group
   BivCopyDta: '/api/BVIDataManage/CopyData', //copy功能
   ExportBVIData: '/api/BVIDataManage/ExportBVIData', //导出BVI
