@@ -28,16 +28,8 @@ export const TabWrapDiv = styled.div`
   .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active,
   .ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab-active {
     background: #f6f8f9;
-    position: relative;
-    .ant-tabs-tab-btn::after {
-      content: '';
-      display: inline-block;
-      height: 4px;
-      width: 50px;
-      background-color: ${themeColor};
-      position: absolute;
-      left: 40%;
-      bottom: 0;
-    }
+  }
+  .ant-table-thead th .title {
+    padding: 10px 5px 10px 0;
   }
 `;

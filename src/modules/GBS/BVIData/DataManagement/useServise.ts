@@ -11,6 +11,8 @@ import {
   getProductData,
   EditBVIData,
   EditDataListSave,
+  getAbnormalOriginDataByBVI,
+  exportOriginalData,
 } from '@/app/request/apiBVI';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
@@ -19,7 +21,9 @@ export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
   const [isCheckOriginal, setIsCheckOriginal] = useState(false);
+  const [checkOriginalParam, setCheckOriginalParam] = useState({});
   const [checkData, setCheckData] = useState([]);
+  const [columns, setCols] = useState([]);
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -52,11 +56,51 @@ export default (props: any) => {
   const [editListMark, setEditListMark] = useState(false);
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
   const [formDataEdit] = Form.useForm();
-  //
-  const getCheckOriginalData = (event) => {
+  const _generateHead = (cols: any) => {
+    let _columns = [];
+    for (let _key in cols) {
+      if (_key) {
+        let start = _key[0].toLowerCase();
+        let end = _key.slice(1);
+        let colKey = start + end;
+        _columns.push({
+          title: cols[_key],
+          dataIndex: colKey,
+          // width: '120px',
+          key: colKey,
+        });
+      }
+    }
+    setCols(_columns);
+  };
+  const getCheckOriginalData = (event, _data) => {
     event.stopPropagation();
-    setIsCheckOriginal(true);
-    setCheckData([]);
+    setCheckOriginalParam(_data);
+    getAbnormalOriginDataByBVI([_data]).then((res) => {
+      if (res.isSuccess) {
+        setIsCheckOriginal(true);
+        setCheckData(res.data.body || []);
+        _generateHead(res.data.header || []);
+        // setCols(res.data.head||[])
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const onExportOriginal = () => {
+    exportOriginalData([checkOriginalParam]).then((res) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        elink.download = 'Original List.xlsx';
+        elink.href = window.URL.createObjectURL(
+          new Blob([res.response?.data as unknown as BlobPart]),
+        );
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
   };
   const getData = (recordId?: any) => {
     // const params = {
@@ -200,6 +244,20 @@ export default (props: any) => {
   };
 
   const onExport = () => {
+    exportOriginalData(selectedRows).then((res) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        elink.download = 'Original List.xlsx';
+        elink.href = window.URL.createObjectURL(
+          new Blob([res.response.data as unknown as BlobPart]),
+        );
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
+
     // exportExcel({
     //   pageIndex: current,
     //   pageSize: pageSize,
@@ -450,6 +508,8 @@ export default (props: any) => {
     editDataListSaveFn,
     editListMark,
     setEditListMark,
+    columns,
+    onExportOriginal,
     customerDivision,
     setCustomerDivision,
     formDataEdit,
