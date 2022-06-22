@@ -56,3 +56,10 @@ export const getCustemerDivisionList = (data: Object) => {
 export const ProductPoDrop = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.ProductPoDrop}`, data);
 };
+
+export const queryBusinesslineOptionsList = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.QueryBusinesslineOptionsList}`,
+    data,
+  );
+};

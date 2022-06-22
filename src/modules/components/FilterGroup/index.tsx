@@ -3,6 +3,7 @@ import {
   getCustemerDivisionList,
   getFilterGroupFieldList,
   getServiceLineList,
+  queryBusinesslineOptionsList,
   queryFilterGroupList,
   queryFilterGroupListWithFields,
   saveFilterGroupData,
@@ -70,6 +71,16 @@ export default (props: any) => {
         { value: 'Freeze', label: 'Freeze' },
       ],
       AdjustTag: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+    },
+    'BVI Integrity Report': {
+      IsThereBVI: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      MandatoryBVI: [
         { value: '1', label: 'Yes' },
         { value: '0', label: 'No' },
       ],
@@ -163,12 +174,8 @@ export default (props: any) => {
         } else {
           if (typeof arra[index].fieldValue == 'string') {
             arra[index].fieldValue = JSON.parse(arra[index].fieldValue);
-            // form.setFieldsValue({
-            //     groupFieldList: arra,
-            // });
           }
         }
-
         return (
           <DebounceSelect
             initFlag
@@ -186,6 +193,35 @@ export default (props: any) => {
             delegate={(e) => {
               return getServiceLineList({
                 businessLine: '',
+                keywords: e,
+              });
+            }}
+          />
+        );
+      case 'BusinessLine':
+        if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
+          arra[index].fieldValue = [];
+        } else {
+          if (typeof arra[index].fieldValue == 'string') {
+            arra[index].fieldValue = JSON.parse(arra[index].fieldValue);
+          }
+        }
+        return (
+          <DebounceSelect
+            initFlag
+            mode="multiple"
+            onChange={(value, data) => {}}
+            getoptions={(options) => {
+              return options?.map((x, index) => {
+                return (
+                  <Select.Option key={index} data={x} value={x.value}>
+                    {x.label}
+                  </Select.Option>
+                );
+              });
+            }}
+            delegate={(e) => {
+              return queryBusinesslineOptionsList({
                 keywords: e,
               });
             }}
@@ -254,6 +290,8 @@ export default (props: any) => {
       case 'ChargeType':
       case 'TemplateType':
       case 'AdjustTag':
+      case 'MandatoryBVI':
+      case 'IsThereBVI':
         return (
           <Select allowClear>
             {options[props.moudleName][fieldName]?.map((item, index) => (
@@ -286,6 +324,7 @@ export default (props: any) => {
           switch (item.fieldName) {
             case 'StartMonth':
             case 'EndMonth':
+            case 'BVIMonth':
               item.fieldValue = moment(item.fieldValue).format('YYYYMM');
               break;
             case 'ModifiedDate':

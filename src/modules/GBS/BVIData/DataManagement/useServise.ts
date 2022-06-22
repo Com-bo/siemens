@@ -11,6 +11,8 @@ import {
   getProductData,
   EditBVIData,
   EditDataListSave,
+  getAbnormalOriginDataByBVI,
+  exportOriginalData,
 } from '@/app/request/apiBVI';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
@@ -19,7 +21,9 @@ export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
   const [isCheckOriginal, setIsCheckOriginal] = useState(false);
+  const [checkOriginalParam, setCheckOriginalParam] = useState({});
   const [checkData, setCheckData] = useState([]);
+  const [columns, setCols] = useState([]);
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -50,13 +54,55 @@ export default (props: any) => {
   const [selectProKeys, setSelectProKeys] = useState([]);
   const [selectProductRow, setSelectProductRow] = useState([]);
   const [editListMark, setEditListMark] = useState(false);
+  const [isP2PMark, setIsP2PMark] = useState(false);
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
   const [formDataEdit] = Form.useForm();
   //
-  const getCheckOriginalData = (event) => {
+  const _generateHead = (cols: any) => {
+    let _columns = [];
+    for (let _key in cols) {
+      if (_key) {
+        let start = _key[0].toLowerCase();
+        let end = _key.slice(1);
+        let colKey = start + end;
+        _columns.push({
+          title: cols[_key],
+          dataIndex: colKey,
+          // width: '120px',
+          key: colKey,
+        });
+      }
+    }
+    setCols(_columns);
+  };
+  const getCheckOriginalData = (event, _data) => {
     event.stopPropagation();
-    setIsCheckOriginal(true);
-    setCheckData([]);
+    setCheckOriginalParam(_data);
+    getAbnormalOriginDataByBVI([_data]).then((res) => {
+      if (res.isSuccess) {
+        setIsCheckOriginal(true);
+        setCheckData(res.data.body || []);
+        _generateHead(res.data.header || []);
+        // setCols(res.data.head||[])
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const onExportOriginal = () => {
+    exportOriginalData([checkOriginalParam]).then((res) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        elink.download = 'Original List.xlsx';
+        elink.href = window.URL.createObjectURL(
+          new Blob([res.response?.data as unknown as BlobPart]),
+        );
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
   };
   const getData = (recordId?: any) => {
     // const params = {
@@ -84,10 +130,9 @@ export default (props: any) => {
       pageIndex: current,
       pageSize: pageSize,
     };
-    console.log('请求参数', params);
+
     bviGroupQuery(params).then((res) => {
       if (res.isSuccess) {
-        console.log('请求数据', res);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
@@ -200,6 +245,20 @@ export default (props: any) => {
   };
 
   const onExport = () => {
+    exportOriginalData(selectedRows).then((res) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        elink.download = 'Original List.xlsx';
+        elink.href = window.URL.createObjectURL(
+          new Blob([res.response.data as unknown as BlobPart]),
+        );
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
+
     // exportExcel({
     //   pageIndex: current,
     //   pageSize: pageSize,
@@ -260,23 +319,26 @@ export default (props: any) => {
       .validateFields()
       .then((values) => {
         const params = {
-          id: formData.getFieldValue('orgId') || '',
+          id: formData.getFieldValue('id') || '',
           are: formData.getFieldValue('are'),
           companyCode: formData.getFieldValue('companyCode'),
-          product: formData.getFieldValue('product'),
-          productId: formData.getFieldValue('id'),
-          bvi: formData.getFieldValue('bvi'),
-          poPercentage: formData.getFieldValue('poPercentage'),
+          product: formData.getFieldValue('productName'),
+          productId: formData.getFieldValue('productId'),
           costCenter: formData.getFieldValue('costCenter'),
+          customerDivision: formData.getFieldValue('customerDivision'),
+          bvi: formData.getFieldValue('bvi'),
           totalAmount: formData.getFieldValue('totalAmount'),
+          poPercentage: formData.getFieldValue('poPercentage'),
           po: formData.getFieldValue('po'),
+          comment: formData.getFieldValue('comment') || '',
+          bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
           isTag: formData.getFieldValue('adjustTag'),
           billingARE: formData.getFieldValue('billingARE'),
           billingCostCenter: formData.getFieldValue('billingCostCenter'),
-          comment: formData.getFieldValue('comment') || '',
-          bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
+          templateType: formData.getFieldValue('templateType'),
+          batchNo: formData.getFieldValue('batchNo'),
         };
-        console.log('添加数据', params);
+
         InsertBVIData(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
@@ -299,25 +361,27 @@ export default (props: any) => {
         const params = {
           bviList: [
             {
-              id: formData.getFieldValue('orgId') || '',
+              id: formData.getFieldValue('id') || '',
               are: formData.getFieldValue('are'),
               companyCode: formData.getFieldValue('companyCode'),
-              product: formData.getFieldValue('product'),
-              productId: formData.getFieldValue('id'),
-              bvi: formData.getFieldValue('bvi'),
-              poPercentage: formData.getFieldValue('poPercentage'),
+              product: formData.getFieldValue('productName'),
+              productId: formData.getFieldValue('productId'),
               costCenter: formData.getFieldValue('costCenter'),
+              customerDivision: formData.getFieldValue('customerDivision'),
+              bvi: formData.getFieldValue('bvi'),
               totalAmount: formData.getFieldValue('totalAmount'),
+              poPercentage: formData.getFieldValue('poPercentage'),
               po: formData.getFieldValue('po'),
+              comment: formData.getFieldValue('comment') || '',
+              bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
               isTag: formData.getFieldValue('adjustTag'),
               billingARE: formData.getFieldValue('billingARE'),
               billingCostCenter: formData.getFieldValue('billingCostCenter'),
-              comment: formData.getFieldValue('comment') || '',
-              bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
+              templateType: formData.getFieldValue('templateType'),
+              batchNo: formData.getFieldValue('batchNo'),
             },
           ],
         };
-        console.log('编辑数据', params);
         EditBVIData(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
@@ -351,7 +415,7 @@ export default (props: any) => {
         EditDataListSave(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
-            setShowBviData(false);
+            setEditListMark(false);
             formDataEdit.resetFields();
             getData();
           } else {
@@ -453,5 +517,9 @@ export default (props: any) => {
     customerDivision,
     setCustomerDivision,
     formDataEdit,
+    columns,
+    onExportOriginal,
+    isP2PMark,
+    setIsP2PMark,
   };
 };

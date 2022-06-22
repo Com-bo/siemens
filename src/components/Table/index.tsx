@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { Input, Select, Table, TablePaginationConfig } from 'antd';
 // import styles from './style.less';
 import { TableMixDiv } from './style';
@@ -25,6 +25,7 @@ interface TableOptions {
   onChange?: (selectedRowKeys, selectedRows) => void;
   pagination?: boolean;
   rowClick?: (record: Object) => void;
+  summary?: (currentData: any) => ReactNode;
 }
 
 export default (_props: TableOptions) => {
@@ -53,6 +54,7 @@ export default (_props: TableOptions) => {
             }, // 点击行
           };
         }}
+        summary={_props.summary ?? null}
         rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
         pagination={
           _props.pagination

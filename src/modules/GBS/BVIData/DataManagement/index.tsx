@@ -53,6 +53,7 @@ import TableMix from '@/components/Table';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 import { forEach } from 'lodash';
+import Item from 'antd/lib/list/Item';
 export default (props: any) => {
   const {
     form,
@@ -95,6 +96,7 @@ export default (props: any) => {
     setUnconfirmData,
     setErrorChecked,
     errorChecked,
+    columns,
     //
     insertFormData,
     editFormData,
@@ -124,60 +126,11 @@ export default (props: any) => {
     customerDivision,
     setCustomerDivision,
     formDataEdit,
+    onExportOriginal,
+    isP2PMark,
+    setIsP2PMark,
   } = useService(props);
 
-  const columns: any = [
-    {
-      title: 'Business Line',
-      dataIndex: 'BusinessLine',
-      key: 'BusinessLine',
-      align: 'center',
-    },
-    {
-      title: 'ARE',
-      dataIndex: 'ARE',
-      key: 'ARE',
-      align: 'center',
-    },
-    {
-      title: 'Company Code',
-      dataIndex: 'CompanyCode',
-      key: 'CompanyCode',
-      align: 'center',
-    },
-    {
-      title: 'Customer Devision',
-      dataIndex: 'CustomerDevision',
-      key: 'CustomerDevision',
-      width: '160px',
-      align: 'center',
-    },
-    {
-      title: 'Cost Center',
-      dataIndex: 'CostCenter',
-      key: 'CostCenter',
-      align: 'center',
-    },
-    {
-      title: 'Cost Location',
-      dataIndex: 'CostLocation',
-      key: 'CostLocation',
-      align: 'center',
-    },
-    {
-      title: 'Product Name',
-      dataIndex: 'ProductName',
-      key: 'ProductName',
-      align: 'center',
-    },
-    {
-      title: 'Error Message',
-      dataIndex: 'ErrorMessage',
-      key: 'ErrorMessage',
-      align: 'center',
-      render: (text) => <span style={{ color: 'red' }}>{text}</span>,
-    },
-  ];
   const orignalCols = [
     {
       name: 'bviBusinessLine',
@@ -271,7 +224,7 @@ export default (props: any) => {
             <BtnTextRedWrap color="red">
               <Button
                 type="text"
-                onClick={getCheckOriginalData}
+                onClick={(evt) => getCheckOriginalData(evt, record)}
                 icon={<ExclamationCircleOutlined />}
               >
                 {text}
@@ -281,7 +234,10 @@ export default (props: any) => {
         } else {
           return (
             <BtnTextRedWrap>
-              <Button type="text" onClick={getCheckOriginalData}>
+              <Button
+                type="text"
+                onClick={(evt) => getCheckOriginalData(evt, record)}
+              >
                 {text}
               </Button>
             </BtnTextRedWrap>
@@ -469,14 +425,11 @@ export default (props: any) => {
               onClick={(event) => {
                 event.stopPropagation();
                 console.log(record);
-                if (record.templateType == 'Maual') {
-                  setComponentDisabled(false);
-                  setShowBviData(true);
+                if (record.templateType == 'BVI Manual Template') {
                   formData.setFieldsValue({
                     ...record,
                     bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
                     productName: record.product,
-                    customerDivision: record.customerDevision,
                     startMonth: record.startMonth
                       ? moment(record.startMonth)
                       : null,
@@ -488,6 +441,8 @@ export default (props: any) => {
                       ? moment(record.createdDate)
                       : null,
                   });
+                  setComponentDisabled(false);
+                  setShowBviData(true);
                 } else {
                   setEditListMark(true);
                   formDataEdit.setFieldsValue({
@@ -784,6 +739,10 @@ export default (props: any) => {
   };
 
   //
+  const checkOriginalOptions = {
+    validationMsg: '300px',
+    productName: '200px',
+  };
   const handleProSize = (val: number) => {
     setProSize(val);
   };
@@ -793,14 +752,12 @@ export default (props: any) => {
   const selectProSure = () => {
     setShowPro(false);
     let data = selectProductRow[0];
-    console.log(data);
     formData.setFieldsValue({
       businessLine: data.businessLine,
       are: data.are,
       serviceLine: data.serviceLine,
       customerDivision: data.customerDivision,
       productName: data.productName,
-      id: data.id,
     });
     if (data.are != 5547) {
       // 获取compamycode下拉选择
@@ -842,6 +799,21 @@ export default (props: any) => {
     return Promise.resolve();
   };
 
+  const submitData = () => {
+    if (formData.getFieldValue('id')) {
+      editFormData();
+    } else {
+      insertFormData();
+    }
+  };
+  const onRodioChange = (e) => {
+    if (e.target.value == 8) {
+      setIsP2PMark(true);
+    } else {
+      setIsP2PMark(false);
+    }
+  };
+
   //
   return (
     <ContentWrap>
@@ -871,7 +843,7 @@ export default (props: any) => {
       >
         <Form form={formImport} labelCol={{ flex: '100px' }}>
           <Form.Item label="Type" name="type" rules={[{ required: true }]}>
-            <Radio.Group>
+            <Radio.Group onChange={onRodioChange}>
               <Radio value={1}>BVI Manual</Radio>
               <Radio value={2}>R2R MD</Radio>
               <Radio value={3}>H2R BVI</Radio>
@@ -879,30 +851,35 @@ export default (props: any) => {
               <Radio value={5}>H2R GMM</Radio>
               <Radio value={6}>O2C BVI</Radio>
               <Radio value={7}>O2C TI BVI</Radio>
+              <Radio value={8}>p2p</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item
-            label="File"
-            name="file"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => {
-              if (Array.isArray(e)) {
-                return e;
-              }
-              return e && e.fileList;
-            }}
-            rules={[{ required: true }]}
-          >
-            <Upload
-              maxCount={1}
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-              {...uploadProps}
+          {isP2PMark ? (
+            ''
+          ) : (
+            <Form.Item
+              label="File"
+              name="file"
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e;
+                }
+                return e && e.fileList;
+              }}
+              rules={[{ required: true }]}
             >
-              <Button key="import" type="text" icon={<UploadOutlined />}>
-                <span>Upload</span>
-              </Button>
-            </Upload>
-          </Form.Item>
+              <Upload
+                maxCount={1}
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                {...uploadProps}
+              >
+                <Button key="import" type="text" icon={<UploadOutlined />}>
+                  <span>Upload</span>
+                </Button>
+              </Upload>
+            </Form.Item>
+          )}
           <Form.Item style={{ textAlign: 'center' }}>
             <Space size={60}>
               <Button type="primary" onClick={importExcel}>
@@ -1087,16 +1064,16 @@ export default (props: any) => {
                 name="totalAmount"
                 rules={[
                   { required: true, message: 'Total Amount is Required;' },
-                  {
-                    pattern:
-                      /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
-                    message: 'Greater than zero and two decimal places at most',
-                  },
+                  // {
+                  //   pattern:
+                  //     /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
+                  //   message: 'Greater than zero and two decimal places at most',
+                  // },
                 ]}
               >
                 <InputNumber
                   disabled={componentDisabled}
-                  min={0}
+                  // min={0}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1107,22 +1084,23 @@ export default (props: any) => {
                   initFlag
                   disabled={componentDisabled}
                   getoptions={(options) => {
+                    console.log(options);
                     return options?.map((x, index) => {
                       return (
-                        <Select.Option key={index} data={x} value={x.po}>
-                          {x.po}
+                        <Select.Option key={index} data={x} value={x.poNumber}>
+                          {x.poNumber}
                         </Select.Option>
                       );
                     });
                   }}
                   delegate={(e) => {
-                    if (!formData.getFieldValue('id')) {
-                      return Promise.resolve({
-                        code: 200,
-                        isSuccess: true,
-                        data: [],
-                      });
-                    }
+                    // if (!formData.getFieldValue('id')) {
+                    //   return Promise.resolve({
+                    //     code: 200,
+                    //     isSuccess: true,
+                    //     data: [],
+                    //   });
+                    // }
                     return ProductPoDrop({
                       productId: formData.getFieldValue('id'),
                       poNumber: e,
@@ -1140,7 +1118,7 @@ export default (props: any) => {
                 <DatePicker
                   disabled={componentDisabled}
                   picker="month"
-                  format="YYYY-MM"
+                  format="YYYYMM"
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1159,7 +1137,7 @@ export default (props: any) => {
                 <DatePicker
                   disabled={componentDisabled}
                   picker="month"
-                  format="YYYY-MM"
+                  format="YYYYMM"
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1219,7 +1197,11 @@ export default (props: any) => {
             </Col>
             <Col span={8}>
               <Form.Item label="BVI" name="bvi" rules={[{ required: true }]}>
-                <Input disabled={componentDisabled} />
+                <InputNumber
+                  disabled={componentDisabled}
+                  // min={0}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -1256,7 +1238,7 @@ export default (props: any) => {
                 <DatePicker
                   disabled={componentDisabled}
                   picker="month"
-                  format="YYYY-MM"
+                  format="YYYYMM"
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1270,15 +1252,9 @@ export default (props: any) => {
               <Col span={24}>
                 <Form.Item style={{ textAlign: 'center' }}>
                   <Space size={60}>
-                    {!componentDisabled ? (
-                      <Button type="primary" onClick={insertFormData}>
-                        insert
-                      </Button>
-                    ) : (
-                      <Button type="primary" onClick={editFormData}>
-                        Submit
-                      </Button>
-                    )}
+                    <Button type="primary" onClick={submitData}>
+                      Submit
+                    </Button>
                     <Button
                       onClick={() => {
                         setShowBviData(false);
@@ -1478,17 +1454,35 @@ export default (props: any) => {
       >
         <TableWrapDiv>
           <Table
-            columns={columns}
+            columns={columns?.map((_item) => {
+              return {
+                ..._item,
+                fixed: _item.dataIndex == 'validationMsg' ? 'right' : null,
+                align: 'center',
+                width: checkOriginalOptions[_item.dataIndex] || '100px',
+                render: (text) => {
+                  if (_item.dataIndex == 'validationMsg') {
+                    return (
+                      <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
+                    );
+                  } else {
+                    return text;
+                  }
+                },
+              };
+            })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
             rowKey="id"
             pagination={false}
-            scroll={{ y: 'calc(100vh - 390px)' }}
+            scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
           />
         </TableWrapDiv>
 
         <div style={{ margin: '20px auto 40px', textAlign: 'center' }}>
-          <Button type="primary">Export</Button>
+          <Button type="primary" onClick={onExportOriginal}>
+            Export
+          </Button>
         </div>
       </Modal>
       <TableList
@@ -1623,7 +1617,9 @@ export default (props: any) => {
               style={{ height: '20px', borderColor: '#999' }}
             />
             <BtnThemeWrap>
-              <Button onClick={onExport}>Export Original</Button>
+              <Button onClick={onExport} disabled={!selectedRowKeys.length}>
+                Export Original
+              </Button>
             </BtnThemeWrap>
             <BtnThemeWrap>
               <Dropdown
@@ -1645,8 +1641,7 @@ export default (props: any) => {
                         setComponentDisabled(false);
                         formData.setFieldsValue({
                           adjustTag: false,
-                          id: '',
-                          templateType: 'Manual',
+                          uploadUser: sessionStorage.getItem('user'),
                         });
                       }}
                     >
