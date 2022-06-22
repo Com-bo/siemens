@@ -1,4 +1,4 @@
-import { Button, Form, message, Table, Tabs } from 'antd';
+import { Button, Form, message, Table, Tabs, Typography } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 const { TabPane } = Tabs;
 import TableList from '@/modules/components/TableMixInline';
@@ -6,9 +6,12 @@ import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
 import { TabWrapDiv } from './style';
 import {
+  exportIntergrityReport,
   getDiffData,
   getIntergrityReportData,
 } from '@/app/request/apiValidReport';
+import moment from 'moment';
+const { Text } = Typography;
 export default (props: any) => {
   const [form] = Form.useForm();
   const [diffForm] = Form.useForm();
@@ -80,13 +83,13 @@ export default (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'SystemTagofProduct',
+      name: 'systemTagOfProduct',
       title: 'System Tag of Product',
       width: '180px',
       titleRender: 'input',
     },
     {
-      name: 'SystemTagofBVI',
+      name: 'systemTagOfBVI',
       title: 'System Tag of BVI',
       width: '180px',
       titleRender: 'input',
@@ -95,16 +98,20 @@ export default (props: any) => {
       name: 'isThereBVI',
       title: 'IS There BVI',
       width: '100px',
+      render: (text) => (text == 1 ? 'Yes' : 'No'),
     },
     {
-      name: 'MandatoryBVI',
+      name: 'mandatoryBVI',
       title: 'MandatoryBVI',
       width: '100px',
+      render: (text) => (text == 1 ? 'Yes' : 'No'),
     },
     {
-      name: 'BVIMonth',
+      name: 'bviMonth',
       title: 'BVI Month',
       width: '100px',
+      render: (text) =>
+        text && moment(text).isValid() ? moment(text).format('YYYYMM') : text,
     },
   ];
 
@@ -141,11 +148,20 @@ export default (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'delta',
+      name: 'deltain',
       title: 'Delta in %',
       width: '100px',
       titleRender: 'input',
       fixed: 'right',
+      render: (text, record, index) => {
+        // return <Text type="danger" strong={true}><span style={{fontSize:'30px',verticalAlign:'sub'}}>·</span>11%</Text>
+        // return <Text type="success" strong={true}><span style={{fontSize:'30px',verticalAlign:'sub'}}>·</span>11%</Text>
+        return (
+          <Text strong={true}>
+            <span style={{ fontSize: '30px', verticalAlign: 'sub' }}>·</span>11%
+          </Text>
+        );
+      },
     },
   ];
   useEffect(() => {
@@ -211,7 +227,31 @@ export default (props: any) => {
   const changeDiffPageSize = (val: number) => {
     setDiffPageSize(val);
   };
-  const exportExcelAction = () => {};
+  const exportExcelAction = () => {
+    let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: latestGroupIdRef.current,
+        },
+        listHeader: form.getFieldsValue(),
+      },
+      pageIndex: current,
+      pageSize: pageSize,
+    };
+
+    exportIntergrityReport(params).then((res: any) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        // 设置下载文件名
+        elink.download = 'Integrity Validation List.xlsx';
+        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
+  };
   const exportExcelDiffAction = () => {};
   return (
     <TabWrapDiv>
@@ -228,11 +268,12 @@ export default (props: any) => {
             current={current}
             search={isSearch}
             selection={false}
+            scrollY={'calc(100vh - 533px)'}
             rowKey="orgId"
             listName="Validation Report"
             renderFilterGroup={
               <FilterGroup
-                moudleName="Flat Charge"
+                moudleName="BVI Integrity Report"
                 onSearch={(val) => {
                   latestGroupIdRef.current = val;
                   _getData();
@@ -270,6 +311,7 @@ export default (props: any) => {
             data={differenceData}
             columns={originalColsSecond}
             total={diffTotal}
+            scrollY={'calc(100vh - 533px)'}
             onPageChange={onDiffPageChange}
             changePageSize={changeDiffPageSize}
             current={diffCurrent}

@@ -12,6 +12,8 @@ export const Api = {
   GetServiceLineList: '/api/BusinessLine/QueryServicelineOptionsList', //Service Line Options列表数据
   GetCustemerDivisionList:
     '/api/OtherMasterData/QueryCustemerDivisionOptionsList',
+  QueryBusinesslineOptionsList:
+    '/api/BusinessLine/QueryBusinesslineOptionsList', //数据查询 - 【Business Line】页面Options列表数据【Label : Name / Value : Name】
 
   ProductPoDrop: '/api/ProductPo/QueryPageDropListData', //Product下拉
   // BVI
@@ -46,4 +48,7 @@ export const Api = {
   QueryBVIData: '/api/FlatCharge/QueryBVIData', //导出bvi拆分
   EditDataSave: '/api/FlatCharge/EditDataSave', //保存flat数据
   EditDataSubmit: '/api/FlatCharge/EditDataSubmit', //提交flat数据
+  // BVI-validation report
+  IntegrityDataQuery: '/api/BVIValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
+  IntegrityDataExport: '/api/BVIValidateReport/IntegrityDataExport', //数据导出 - Integrity Report
 };
