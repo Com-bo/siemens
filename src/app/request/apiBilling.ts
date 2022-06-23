@@ -4,28 +4,16 @@ export const importDataSave = (data: object, type: number) => {
   let url = '';
   switch (type) {
     case 1: //manual
-      url = Config.Api.ImportManualDataSave;
-      break;
+            url = Config.Api.ImportUIPathResult;
+    break;
     case 2: //r2r
-      url = Config.Api.ImportDataSave;
-      break;
+            url = Config.Api.ImportTEXTDISP;
+    break;
     case 3: //h2r bvi
-      url = Config.Api.ImportH2R;
-      break;
-    case 4: //H2RTE
-      url = Config.Api.ImportH2RTE;
-      break;
-    case 5:
-      url = Config.Api.ImportH2RGMM;
-      break;
-    case 6:
-      url = Config.Api.ImportO2C;
-      break;
-    case 7:
-      url = Config.Api.ImportO2CTI;
+            url = Config.Api.ImportVF05;
       break;
     default:
-      url = Config.Api.ImportDataSave;
+    //   url = Config.Api.ImportDataSave;
       break;
   }
   return usePost(`${Config.Api.Base}${url}`, data, {
@@ -101,11 +89,3 @@ export const exportOriginalData = (data: Object) => {
     responseType: 'blob',
   });
 };
-export const QueryImportLog = (data: Object) => {
-  return usePost(`${Config.Api.Base}${Config.Api.QueryImportLog}`, data, {
-    autoLoading: true
-  });
-};
-
-
-// 

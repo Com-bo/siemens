@@ -758,13 +758,9 @@ export default (props: any) => {
       serviceLine: data.serviceLine,
       customerDivision: data.customerDivision,
       productName: data.productName,
+      productId:data.id,
+      po:null
     });
-    if (data.are != 5547) {
-      // 获取compamycode下拉选择
-      // getCompanyCodeDrop()
-    } else {
-      // 获取costcenter下拉接口
-    }
   };
 
   const validEndMonth = (rule, value, callback) => {
@@ -1094,15 +1090,15 @@ export default (props: any) => {
                     });
                   }}
                   delegate={(e) => {
-                    // if (!formData.getFieldValue('id')) {
-                    //   return Promise.resolve({
-                    //     code: 200,
-                    //     isSuccess: true,
-                    //     data: [],
-                    //   });
-                    // }
+                    if (!formData.getFieldValue('productId')) {
+                      return Promise.resolve({
+                        code: 200,
+                        isSuccess: true,
+                        data: [],
+                      });
+                    }
                     return ProductPoDrop({
-                      productId: formData.getFieldValue('id'),
+                      productId: formData.getFieldValue('productId'),
                       poNumber: e,
                     });
                   }}
@@ -1504,26 +1500,6 @@ export default (props: any) => {
         rowKey="id"
         listName="Data Management"
         renderFilterGroup={
-          // <FilterGroup
-          //   customComponet={
-          //     <>
-          //       <Checkbox onChange={(e) => setUnconfirmData(e.target.checked)}>
-          //         View all unconfirm Data
-          //       </Checkbox>
-          //       <Checkbox onChange={(e) => setErrorChecked(e.target.checked)}>
-          //         View all Error Data
-          //       </Checkbox>
-          //     </>
-          //   }
-          //   defaultVal={groupName}
-          //   onSearch={(val) => {
-          //     setGroupName(val);
-          //     getData({ groupId: val });
-          //   }}
-          //   onSaveFilterGroup={savefilterGroup}
-          //   fields={orignalCols}
-          //   exportAction={exportExcelAction}
-          // />
           <FilterGroup
             moudleName="BVI Data"
             onSearch={(val) => {
