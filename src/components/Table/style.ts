@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 export const TableMixDiv = styled.div<{ data: any }>`
-  margin: 0 24px 24px;
+  margin: 0 24px;
   .stripe {
     background-color: #f8f8f8;
   }
