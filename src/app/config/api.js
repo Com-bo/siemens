@@ -36,6 +36,8 @@ export const Api = {
   InsertBVIData: '/api/BVIDataManage/InsertData', //添加数据
   EditBVIData: '/api/BVIDataManage/EditData', //编辑数据
   EditDataListSave: '/api/BVIDataManage/EditDataListSave', //批量编辑数据
+
+  QueryImportLog: '/api/BVIDataManage/QueryImportLog', //查询日志
   // Flat Charge
   HomePageQuery: '/api/FlatCharge/ListDataQuery', //数据查询
   ListDataSubmit: '/api/FlatCharge/ListDataSubmit', //批量提交
@@ -50,7 +52,13 @@ export const Api = {
   EditDataSubmit: '/api/FlatCharge/EditDataSubmit', //提交flat数据
   // BVI-validation report
   IntegrityDataQuery: '/api/BVIValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
-  IntegrityDataExport: '/api/BVIValidateReport/IntegrityDataExport', //数据导出 - Integrity Report
+  IntegrityDataExport: '/api/BVIValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、
   DeferenceDataQuery: '/api/BVIValidateReport/DeferenceDataQuery', //数据查询 - Deference Report
   DeferenceDataExport: '/api/BVIValidateReport/DeferenceDataExport', //数据导出
+  // billing data
+  ImportVF05: '/api/Billing/ImportVF05',
+  ImportTEXTDISP: '/api/Billing/ImportTEXTDISP',
+  ImportUIPathResult: '/api/Billing/ImportUIPathResult',
+
+  ExportBillingData: '/api/Billing/ExportBillingData',
 };

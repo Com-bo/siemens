@@ -14,15 +14,8 @@ export default (props: any) => {
   const getcolumnItem = (col: any) => {
     return {
       title: (
-        <div className={props.search ? 'listSearch' : 'hiddenlistSearch'}>
+        <div style={{ padding: '10px 0' }}>
           <div className="title">{col.title}</div>
-          {col.name == 'Operate' || !col.titleRender ? (
-            <Form.Item></Form.Item>
-          ) : (
-            <Form.Item name={col.name}>
-              {getSearchInputType(col.titleRender)}
-            </Form.Item>
-          )}
         </div>
       ),
       align: 'center',
@@ -34,18 +27,6 @@ export default (props: any) => {
       sorter: col.sorter || null,
     };
   };
-
-  const getSearchInputType = (text?: string) => {
-    switch (text) {
-      case 'input':
-        return <Input onClick={(e) => e.stopPropagation()} />;
-      case 'number':
-        return <InputNumber />;
-      default:
-        return '';
-    }
-  };
-  // orignalColsObject{name:'',title:''}
   const generateColumns = (orignalColsObject: any) => {
     let arr = [];
     orignalColsObject.forEach((element) => {
@@ -60,8 +41,6 @@ export default (props: any) => {
   }, [props.search]);
   return (
     <TableMixDiv status={props.search}>
-      {/* table 过滤组 */}
-      {props.renderFilterGroup}
       {/* table 按钮组 */}
       <TableTopDiv>
         <TableTitleDiv style={{ float: 'left' }}>
@@ -86,7 +65,6 @@ export default (props: any) => {
           }
           {...props}
           columns={columns}
-          selection={props.selection ?? true}
           pagination={true}
         />
       </Form>
