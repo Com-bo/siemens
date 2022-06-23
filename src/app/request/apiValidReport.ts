@@ -11,27 +11,15 @@ export const exportIntergrityReport = (data: Object) => {
     responseType: 'blob',
   });
 };
-
 export const getDiffData = (data: Object) => {
-  return Promise.resolve({
-    data: [
-      {
-        orgId: '4090820a-9ea7-407d-941d-31ffb4228316',
-        businessLine: 'XXXX',
-        serviceLine: null,
-        are: 'XXX',
-        customerDivision: 'XXX',
-        productName: '!@#',
-        202109: 12,
-        delta: '111',
-      },
-    ],
-    pageSize: 0,
-    pageIndex: 0,
-    totalCount: 13,
-    totalPage: 0,
-    code: 200,
-    isSuccess: true,
-    msg: '',
+  return usePost(`${Config.Api.Base}${Config.Api.DeferenceDataQuery}`, data, {
+    autoLoading: true,
+  });
+};
+
+export const deferenceDataExport = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.DeferenceDataExport}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
   });
 };

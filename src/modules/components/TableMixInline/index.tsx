@@ -78,7 +78,7 @@ export default (props: any) => {
       <Form form={props.form}>
         <TableMix
           rowClick={(record) => props.rowClick && props.rowClick(record)}
-          scrollY={props.scrollY || 'calc(100vh - 495px)'}
+          scrollY={props.scrollY || 'calc(100vh - 471px)'}
           handlePageSize={props.changePageSize}
           onPageChange={props.onPageChange}
           onChange={(selectedRowKeys, selectedRows) =>

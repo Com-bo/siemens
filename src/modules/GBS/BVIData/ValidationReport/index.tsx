@@ -6,11 +6,13 @@ import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
 import { TabWrapDiv } from './style';
 import {
+  deferenceDataExport,
   exportIntergrityReport,
   getDiffData,
   getIntergrityReportData,
 } from '@/app/request/apiValidReport';
 import moment from 'moment';
+import { random } from 'lodash';
 const { Text } = Typography;
 export default (props: any) => {
   const [form] = Form.useForm();
@@ -25,38 +27,8 @@ export default (props: any) => {
   const [diffPageSize, setDiffPageSize] = useState(20);
   const [isSearch, setIsSearch] = useState(true);
   const [isDiffSearch, setIsDiffSearch] = useState(true);
-  const [months, setMonths] = useState([
-    {
-      name: '202109',
-      title: '202109',
-      width: '100px',
-    },
-    {
-      name: '202110',
-      title: '202110',
-      width: '100px',
-    },
-    {
-      name: '202111',
-      title: '202111',
-      width: '100px',
-    },
-    {
-      name: '202112',
-      title: '202112',
-      width: '100px',
-    },
-    {
-      name: '202201',
-      title: '202201',
-      width: '100px',
-    },
-    {
-      name: '202202',
-      title: '202202',
-      width: '100px',
-    },
-  ]);
+  const [months, setMonths] = useState([]);
+  const [totalSum, setTotalSum] = useState([]);
   const orignalCols = [
     {
       name: 'businessLine',
@@ -148,17 +120,20 @@ export default (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'deltain',
+      name: 'deltaInPercentage',
       title: 'Delta in %',
       width: '100px',
-      titleRender: 'input',
       fixed: 'right',
       render: (text, record, index) => {
         // return <Text type="danger" strong={true}><span style={{fontSize:'30px',verticalAlign:'sub'}}>·</span>11%</Text>
         // return <Text type="success" strong={true}><span style={{fontSize:'30px',verticalAlign:'sub'}}>·</span>11%</Text>
         return (
-          <Text strong={true}>
-            <span style={{ fontSize: '30px', verticalAlign: 'sub' }}>·</span>11%
+          <Text
+            strong={true}
+            style={{ color: record.deltaInPercentageColor || '' }}
+          >
+            <span style={{ fontSize: '30px', verticalAlign: 'sub' }}>·</span>
+            {text}%
           </Text>
         );
       },
@@ -204,11 +179,25 @@ export default (props: any) => {
       pageIndex: diffCurrent,
       pageSize: diffPageSize,
     };
-
     getDiffData(params).then((res) => {
       if (res.isSuccess) {
-        setDiffData(res.data);
+        setDiffData(res.data?.dataList || []);
+        if (res.data?.monthList) {
+          setMonths(
+            res.data?.monthList.map((item, index) => {
+              return {
+                name: item,
+                title: item,
+                width: '120px',
+                render: (text, record) => record?.monthOfBVI[index],
+              };
+            }),
+          );
+        } else {
+          setMonths([]);
+        }
         setDiffTotal(res.totalCount);
+        setTotalSum(res.data?.monthOfTotalBVI || []);
       } else {
         message.error(res.msg);
       }
@@ -252,7 +241,31 @@ export default (props: any) => {
       }
     });
   };
-  const exportExcelDiffAction = () => {};
+  const exportExcelDiffAction = () => {
+    let params = {
+      searchCondition: {
+        filterGroup: {
+          recordId: latestDiffGroupIdRef.current,
+        },
+        listHeader: diffForm.getFieldsValue(),
+      },
+      pageIndex: diffCurrent,
+      pageSize: diffPageSize,
+    };
+
+    deferenceDataExport(params).then((res: any) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        // 设置下载文件名
+        elink.download = 'Difference Validation List.xlsx';
+        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
+  };
   return (
     <TabWrapDiv>
       <Tabs defaultActiveKey="1" type="card">
@@ -260,7 +273,12 @@ export default (props: any) => {
           <TableList
             headerSearch={_getData}
             form={form}
-            data={tableData}
+            data={tableData.map((item) => {
+              return {
+                ...item,
+                key: Math.random(),
+              };
+            })}
             columns={orignalCols}
             total={total}
             onPageChange={onPageChange}
@@ -268,8 +286,7 @@ export default (props: any) => {
             current={current}
             search={isSearch}
             selection={false}
-            scrollY={'calc(100vh - 533px)'}
-            rowKey="orgId"
+            scrollY={'calc(100vh - 509px)'}
             listName="Validation Report"
             renderFilterGroup={
               <FilterGroup
@@ -308,45 +325,52 @@ export default (props: any) => {
           <TableList
             headerSearch={_getDiffData}
             form={diffForm}
-            data={differenceData}
+            data={differenceData.map((item) => {
+              return {
+                ...item,
+                key: Math.random(),
+              };
+            })}
             columns={originalColsSecond}
             total={diffTotal}
-            scrollY={'calc(100vh - 533px)'}
+            scrollY={'calc(100vh - 509px)'}
             onPageChange={onDiffPageChange}
             changePageSize={changeDiffPageSize}
             current={diffCurrent}
             search={isDiffSearch}
             selection={false}
-            rowKey="orgId"
             listName="Validation Report"
             summary={(currentData) => (
-              <>
-                <Table.Summary.Row>
-                  {originalColsSecond.map((item, index) => {
-                    if (index == 3) {
-                      return (
-                        <Table.Summary.Cell index={index} align="center">
-                          Total
-                        </Table.Summary.Cell>
-                      );
-                    } else {
-                      return (
-                        <Table.Summary.Cell
-                          index={index}
-                          align="center"
-                        ></Table.Summary.Cell>
-                      );
-                    }
-                  })}
-                </Table.Summary.Row>
-              </>
+              // <Table.Summary fixed>
+              <Table.Summary.Row>
+                {originalColsSecond.map((item, index) => {
+                  if (index == 3) {
+                    return (
+                      <Table.Summary.Cell index={index} align="center">
+                        Total
+                      </Table.Summary.Cell>
+                    );
+                  } else {
+                    return (
+                      <Table.Summary.Cell index={index} align="center">
+                        {months.length &&
+                        index > 3 &&
+                        index <= 3 + months.length
+                          ? totalSum[index - 4]
+                          : ''}
+                      </Table.Summary.Cell>
+                    );
+                  }
+                })}
+              </Table.Summary.Row>
+              // </Table.Summary>
             )}
             renderFilterGroup={
               <FilterGroup
-                moudleName="Flat Charge"
+                moudleName="BVI Difference Report"
                 onSearch={(val) => {
                   latestDiffGroupIdRef.current = val;
-                  _getData();
+                  _getDiffData();
                 }}
                 onClear={() => {
                   latestDiffGroupIdRef.current = '';

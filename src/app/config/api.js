@@ -51,4 +51,6 @@ export const Api = {
   // BVI-validation report
   IntegrityDataQuery: '/api/BVIValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
   IntegrityDataExport: '/api/BVIValidateReport/IntegrityDataExport', //数据导出 - Integrity Report
+  DeferenceDataQuery: '/api/BVIValidateReport/DeferenceDataQuery', //数据查询 - Deference Report
+  DeferenceDataExport: '/api/BVIValidateReport/DeferenceDataExport', //数据导出
 };

@@ -32,4 +32,15 @@ export const TabWrapDiv = styled.div`
   .ant-table-thead th .title {
     padding: 10px 5px 10px 0;
   }
+  tfoot {
+    tr {
+      position: sticky;
+      bottom: 0;
+      background-color: #fff;
+      z-index: 999;
+      td {
+        box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%);
+      }
+    }
+  }
 `;
