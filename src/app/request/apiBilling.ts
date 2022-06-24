@@ -89,3 +89,14 @@ export const exportOriginalData = (data: Object) => {
     responseType: 'blob',
   });
 };
+// 冻结
+export const FreezeData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.FreezeData}`, data, {
+    autoLoading: true
+  });
+};
+export const ExportBillingData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ExportBillingData}`, data, {
+    autoLoading: true
+  });
+};

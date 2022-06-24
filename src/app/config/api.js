@@ -61,4 +61,5 @@ export const Api = {
   ImportUIPathResult: '/api/Billing/ImportUIPathResult',
 
   ExportBillingData: '/api/Billing/ExportBillingData',
+  FreezeData: '/api/Billing/FreezeData',
 };
