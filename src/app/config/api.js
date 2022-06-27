@@ -62,4 +62,8 @@ export const Api = {
 
   ExportBillingData: '/api/Billing/ExportBillingData',
   FreezeData: '/api/Billing/FreezeData',
+  QueryData: '/api/Billing/QueryData',
+  QuickEditDataSave: '/api/Billing/QuickEditDataSave',
+  EditDataSave: '/api/Billing/EditDataSave',
+  EditDataSpecialSave: '/api/Billing/EditDataSpecialSave',
 };

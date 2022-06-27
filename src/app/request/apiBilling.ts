@@ -89,14 +89,34 @@ export const exportOriginalData = (data: Object) => {
     responseType: 'blob',
   });
 };
-// 冻结
+// 
+export const QueryData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.QueryData}`, data, {
+    autoLoading: true,
+  });
+};
+export const ExportBillingData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ExportBillingData}`, data, {
+    autoLoading: true,
+  });
+};
 export const FreezeData = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.FreezeData}`, data, {
     autoLoading: true
   });
 };
-export const ExportBillingData = (data: Object) => {
-  return usePost(`${Config.Api.Base}${Config.Api.ExportBillingData}`, data, {
+export const QuickEditDataSave = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.QuickEditDataSave}`, data, {
+    autoLoading: true
+  });
+};
+export const EditDataSave = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.EditDataSave}`, data, {
+    autoLoading: true
+  });
+};
+export const EditDataSpecialSave = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.EditDataSpecialSave}`, data, {
     autoLoading: true
   });
 };
