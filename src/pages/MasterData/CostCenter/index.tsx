@@ -1,5 +1,5 @@
 import React from 'react';
-
+import CostCenter from '@/modules/masterData/CostCenter';
 export default (props: any) => {
-  return <div>DataManagement</div>;
+  return <CostCenter {...props} />;
 };
