@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { ContentWrap, FilterGroupDiv } from '@/assets/style';
+import { BtnThemeWrap, ContentWrap, FilterGroupDiv } from '@/assets/style';
 import TableList from '@/modules/components/TableMixInline';
-import { Button, Col, Form, Input, Row, Select, Space } from 'antd';
+import {
+  Button,
+  Col,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  Row,
+  Select,
+  Space,
+  Upload,
+} from 'antd';
 import moment from 'moment';
 import './style.less';
 import DebounceSelect from '@/components/Select/debounceSelect';
@@ -10,6 +21,7 @@ import {
   getServiceLineList,
   queryBusinesslineOptionsList,
 } from '@/app/request/common';
+import { DownOutlined } from '@ant-design/icons';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [tableData, setTableData] = useState([]);
@@ -155,7 +167,19 @@ export const Index = (props: any) => {
       pageSize: pageSize,
     };
   };
-
+  const importExcel = (file) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    // importProductData(fd).then((res) => {
+    //   if (res.isSuccess) {
+    //     message.success(res.msg);
+    //     getData();
+    //     setSelectedRowKeys([]);
+    //   } else {
+    //     message.error(res.msg);
+    //   }
+    // });
+  };
   return (
     <ContentWrap>
       <TableList
@@ -279,6 +303,64 @@ export const Index = (props: any) => {
               </Row>
             </Form>
           </FilterGroupDiv>
+        }
+        renderBtns={
+          <Space>
+            <BtnThemeWrap>
+              <Dropdown
+                overlay={() => (
+                  <Menu>
+                    <Menu.Item
+                      key="1"
+                      icon={<i className="gbs gbs-import"></i>}
+                    >
+                      <Upload
+                        style={{ margin: '0 10px' }}
+                        maxCount={1}
+                        showUploadList={false}
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                        beforeUpload={(file) => {
+                          importExcel(file);
+                          return false;
+                        }}
+                      >
+                        <Button key="import" type="text">
+                          <span>Import</span>
+                        </Button>
+                      </Upload>
+                    </Menu.Item>
+                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
+                      <Button
+                        style={{ margin: '0 10px' }}
+                        type="text"
+                        onClick={() => {}}
+                      >
+                        Add
+                      </Button>
+                    </Menu.Item>
+                    <Menu.Item
+                      key="3"
+                      icon={<i className="gbs gbs-download"></i>}
+                    >
+                      <span style={{ margin: '0 10px' }}>
+                        <a href="./template/Flat Charge.xlsx">
+                          Download Template
+                        </a>
+                      </span>
+                    </Menu.Item>
+                  </Menu>
+                )}
+              >
+                <Button>
+                  <Space>
+                    Add
+                    <DownOutlined />
+                  </Space>
+                </Button>
+              </Dropdown>
+            </BtnThemeWrap>
+            <Button disabled={selectedRowKeys.length != 1}>Delete</Button>
+          </Space>
         }
         changePageSize={changePageSize}
         current={current}
