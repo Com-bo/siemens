@@ -1,4 +1,13 @@
-import { Button, Form, message, Table, Tabs, Typography } from 'antd';
+import {
+  Button,
+  Divider,
+  Form,
+  InputNumber,
+  message,
+  Table,
+  Tabs,
+  Typography,
+} from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 const { TabPane } = Tabs;
 import TableList from '@/modules/components/TableMixInline';
@@ -12,7 +21,7 @@ import {
   getIntergrityReportData,
 } from '@/app/request/apiValidReport';
 import moment from 'moment';
-import { random } from 'lodash';
+
 const { Text } = Typography;
 export default (props: any) => {
   const [form] = Form.useForm();
@@ -29,6 +38,7 @@ export default (props: any) => {
   const [isDiffSearch, setIsDiffSearch] = useState(true);
   const [months, setMonths] = useState([]);
   const [totalSum, setTotalSum] = useState([]);
+  const [deltaInPercentage, setDeltaInPercentage] = useState(null);
   const orignalCols = [
     {
       name: 'businessLine',
@@ -139,6 +149,7 @@ export default (props: any) => {
       },
     },
   ];
+
   useEffect(() => {
     _getData();
   }, [current, pageSize]);
@@ -147,26 +158,31 @@ export default (props: any) => {
   }, [diffCurrent, diffPageSize]);
   const latestDiffGroupIdRef = useRef<any>();
   const latestGroupIdRef = useRef<any>();
-  const _getData = () => {
+  const _getData = async () => {
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
+        deltaInPercentage,
       },
       pageIndex: current,
       pageSize: pageSize,
     };
 
-    getIntergrityReportData(params).then((res) => {
-      if (res.isSuccess) {
-        setTableData(res.data);
-        setTotal(res.totalCount);
-      } else {
-        message.error(res.msg);
-      }
-    });
+    let res = await getIntergrityReportData(params);
+    if (res.isSuccess) {
+      setTableData(res.data);
+      setTotal(res.totalCount);
+    } else {
+      message.error(res.msg);
+    }
+
+    // let delta=await getDeltaInPercent();
+    // if(delta.isSuccess){
+    //   setDeltaInPercentage(delta.data)
+    // }
   };
   const _getDiffData = () => {
     let params = {
@@ -308,16 +324,35 @@ export default (props: any) => {
               />
             }
             renderBtns={
-              <Button
-                style={{ width: '40px' }}
-                onClick={() => setIsSearch(!isSearch)}
-                icon={
-                  <img
-                    style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                    src={search}
-                  />
-                }
-              ></Button>
+              <>
+                <span style={{ marginRight: '10px' }}>Delta in Value:</span>
+                <InputNumber
+                  value={deltaInPercentage}
+                  min={0}
+                  onChange={(val) => {
+                    if (val === 0) {
+                      setDeltaInPercentage(null);
+                    } else {
+                      setDeltaInPercentage(val);
+                    }
+                  }}
+                />
+                <span>%</span>
+                <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
+                />
+                <Button
+                  style={{ width: '40px' }}
+                  onClick={() => setIsSearch(!isSearch)}
+                  icon={
+                    <img
+                      style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                      src={search}
+                    />
+                  }
+                ></Button>
+              </>
             }
           />
         </TabPane>
