@@ -19,6 +19,7 @@ import {
   exportIntergrityReport,
   getDiffData,
   getIntergrityReportData,
+  detalInPercentageConfigQuery,
 } from '@/app/request/apiValidReport';
 import moment from 'moment';
 
@@ -37,8 +38,14 @@ export default (props: any) => {
   const [isSearch, setIsSearch] = useState(true);
   const [isDiffSearch, setIsDiffSearch] = useState(true);
   const [months, setMonths] = useState([]);
+  const [deltaTotal, setDeltaTotal] = useState(0);
   const [totalSum, setTotalSum] = useState([]);
-  const [deltaInPercentage, setDeltaInPercentage] = useState(null);
+  const [deltaInPercentage, setDeltaInPercentage] = useState({
+    percentage: 0,
+    plusColorCode: '',
+    minusColorCode: '',
+  });
+  const [first, setFirst] = useState(true);
   const orignalCols = [
     {
       name: 'businessLine',
@@ -135,8 +142,6 @@ export default (props: any) => {
       width: '100px',
       fixed: 'right',
       render: (text, record, index) => {
-        // return <Text type="danger" strong={true}><span style={{fontSize:'30px',verticalAlign:'sub'}}>·</span>11%</Text>
-        // return <Text type="success" strong={true}><span style={{fontSize:'30px',verticalAlign:'sub'}}>·</span>11%</Text>
         return (
           <Text
             strong={true}
@@ -154,7 +159,20 @@ export default (props: any) => {
     _getData();
   }, [current, pageSize]);
   useEffect(() => {
-    _getDiffData();
+    if (first) {
+      detalInPercentageConfigQuery().then((res) => {
+        if (res.isSuccess) {
+          // 默认配置
+          setDeltaInPercentage(res.data);
+          _getDiffData(res.data);
+        } else {
+          console.error(res.msg);
+        }
+      });
+    } else {
+      setFirst(false);
+      _getDiffData();
+    }
   }, [diffCurrent, diffPageSize]);
   const latestDiffGroupIdRef = useRef<any>();
   const latestGroupIdRef = useRef<any>();
@@ -165,7 +183,6 @@ export default (props: any) => {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
-        deltaInPercentage,
       },
       pageIndex: current,
       pageSize: pageSize,
@@ -178,19 +195,25 @@ export default (props: any) => {
     } else {
       message.error(res.msg);
     }
-
-    // let delta=await getDeltaInPercent();
-    // if(delta.isSuccess){
-    //   setDeltaInPercentage(delta.data)
-    // }
   };
-  const _getDiffData = () => {
+  const _getDiffData = (deltaParam?: {
+    percentage: number;
+    plusColorCode: string;
+    minusColorCode: string;
+  }) => {
+    let _deltaInPercentage = {};
+    if (deltaParam) {
+      _deltaInPercentage = deltaParam;
+    } else {
+      _deltaInPercentage = deltaInPercentage;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestDiffGroupIdRef.current,
         },
         listHeader: diffForm.getFieldsValue(),
+        deltaInPercentage: _deltaInPercentage,
       },
       pageIndex: diffCurrent,
       pageSize: diffPageSize,
@@ -209,6 +232,7 @@ export default (props: any) => {
               };
             }),
           );
+          setDeltaTotal(res.data.deltaTotal);
         } else {
           setMonths([]);
         }
@@ -264,6 +288,7 @@ export default (props: any) => {
           recordId: latestDiffGroupIdRef.current,
         },
         listHeader: diffForm.getFieldsValue(),
+        deltaInPercentage,
       },
       pageIndex: diffCurrent,
       pageSize: diffPageSize,
@@ -325,23 +350,6 @@ export default (props: any) => {
             }
             renderBtns={
               <>
-                <span style={{ marginRight: '10px' }}>Delta in Value:</span>
-                <InputNumber
-                  value={deltaInPercentage}
-                  min={0}
-                  onChange={(val) => {
-                    if (val === 0) {
-                      setDeltaInPercentage(null);
-                    } else {
-                      setDeltaInPercentage(val);
-                    }
-                  }}
-                />
-                <span>%</span>
-                <Divider
-                  type="vertical"
-                  style={{ height: '20px', borderColor: '#999' }}
-                />
                 <Button
                   style={{ width: '40px' }}
                   onClick={() => setIsSearch(!isSearch)}
@@ -379,6 +387,16 @@ export default (props: any) => {
               // <Table.Summary fixed>
               <Table.Summary.Row>
                 {originalColsSecond.map((item, index) => {
+                  if (item.name == 'delta') {
+                    return (
+                      <Table.Summary.Cell
+                        index={originalColsSecond.length - 1}
+                        align="center"
+                      >
+                        {deltaTotal}
+                      </Table.Summary.Cell>
+                    );
+                  }
                   if (index == 3) {
                     return (
                       <Table.Summary.Cell index={index} align="center">
@@ -420,16 +438,41 @@ export default (props: any) => {
               />
             }
             renderBtns={
-              <Button
-                style={{ width: '40px' }}
-                onClick={() => setIsDiffSearch(!isDiffSearch)}
-                icon={
-                  <img
-                    style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                    src={search}
-                  />
-                }
-              ></Button>
+              <>
+                <span style={{ marginRight: '10px' }}>Delta in Value:</span>
+                <InputNumber
+                  value={deltaInPercentage.percentage}
+                  min={0}
+                  onChange={(val) => {
+                    if (val === 0) {
+                      setDeltaInPercentage({
+                        ...deltaInPercentage,
+                        percentage: null,
+                      });
+                    } else {
+                      setDeltaInPercentage({
+                        ...deltaInPercentage,
+                        percentage: val,
+                      });
+                    }
+                  }}
+                />
+                <span>%</span>
+                <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
+                />
+                <Button
+                  style={{ width: '40px' }}
+                  onClick={() => setIsDiffSearch(!isDiffSearch)}
+                  icon={
+                    <img
+                      style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                      src={search}
+                    />
+                  }
+                ></Button>
+              </>
             }
           />
         </TabPane>

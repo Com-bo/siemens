@@ -23,3 +23,12 @@ export const deferenceDataExport = (data: Object) => {
     responseType: 'blob',
   });
 };
+export const detalInPercentageConfigQuery = () => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.DetalInPercentageConfigQuery}`,
+    {},
+    {
+      autoLoading: true,
+    },
+  );
+};

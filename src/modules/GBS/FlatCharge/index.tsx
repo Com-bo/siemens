@@ -336,6 +336,7 @@ export default (props: any) => {
               onClick={(event) => {
                 event.stopPropagation();
                 toLog(record.orgId);
+                setShowLog(true);
               }}
             ></Button>
           </Tooltip>

@@ -55,6 +55,8 @@ export const Api = {
   IntegrityDataExport: '/api/BVIValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、
   DeferenceDataQuery: '/api/BVIValidateReport/DeferenceDataQuery', //数据查询 - Deference Report
   DeferenceDataExport: '/api/BVIValidateReport/DeferenceDataExport', //数据导出
+  DetalInPercentageConfigQuery:
+    '/api/BVIValidateReport/DetalInPercentageConfigQuery', //获取delta颜色配置
   // billing data
   ImportVF05: '/api/Billing/ImportVF05',
   ImportTEXTDISP: '/api/Billing/ImportTEXTDISP',
@@ -62,4 +64,11 @@ export const Api = {
 
   ExportBillingData: '/api/Billing/ExportBillingData',
   FreezeData: '/api/Billing/FreezeData',
+  // masterData-costcenter
+  GetCostCenterData: '/api/CostCenterIcb/QueryListData',
+  ExportCostCenterData: '/api/CostCenterIcb/ExportData', //导出costcenter
+  ImportCostCenterData: '/api/CostCenterIcb/ImportData', //导入数据
+  DeleteCostCenterData: '/api/CostCenterIcb/DeleteData',
+  LogCostCenterDataQuery: '/api/CostCenterIcb/QueryLogData',
+  EditCostCenterDataSave: '/api/CostCenterIcb/EditDataSave', //保存数据
 };
