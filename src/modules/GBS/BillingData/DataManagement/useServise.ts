@@ -13,9 +13,17 @@ import {
   EditDataListSave,
   getAbnormalOriginDataByBVI,
   exportOriginalData,
-  // 
+  //
   FreezeData,
-  ExportBillingData
+  ExportBillingData,
+  QueryData,
+  QuickEditDataSave,
+  EditDataSave,
+  EditDataSpecialSave,
+  SetStatusSave,
+  BatchFileManual,
+  BatchFileAuto,
+  AllocationFile,
 } from '@/app/request/apiBilling';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
@@ -57,9 +65,11 @@ export default (props: any) => {
   const [selectProKeys, setSelectProKeys] = useState([]);
   const [selectProductRow, setSelectProductRow] = useState([]);
   const [editListMark, setEditListMark] = useState(false);
-  const [isP2PMark, setIsP2PMark] = useState(false);
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
   const [formDataEdit] = Form.useForm();
+  //
+  const [successMark, setSuccessMark] = useState(false);
+  const [isSingelEdit, setIsSingelEdits] = useState(false);
   //
   const _generateHead = (cols: any) => {
     let _columns = [];
@@ -108,16 +118,6 @@ export default (props: any) => {
     });
   };
   const getData = (recordId?: any) => {
-    // const params = {
-    //   pageIndex: current,
-    //   current,
-    //   pageSize,
-    //   ...form.getFieldsValue(),
-    // };
-    // if (conditions) {
-    //   params.groupId = conditions.groupId || null;
-    // }
-
     let params = {
       searchCondition: {
         filterGroup: {
@@ -125,7 +125,7 @@ export default (props: any) => {
         },
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
-        isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+        isOnlyQueryUncompleteData: UnconfirmDataRef.current,
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -133,8 +133,8 @@ export default (props: any) => {
       pageIndex: current,
       pageSize: pageSize,
     };
-
-    bviGroupQuery(params).then((res) => {
+    // bviGroupQuery(params).then((res) => {
+    QueryData(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);
@@ -282,7 +282,7 @@ export default (props: any) => {
         },
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
-        isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+        isOnlyQueryUncompleteData: UnconfirmDataRef.current,
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -356,50 +356,7 @@ export default (props: any) => {
       })
       .catch((e) => {});
   };
-  // edit
-  const editFormData = () => {
-    formData
-      .validateFields()
-      .then((values) => {
-        const params = {
-          bviList: [
-            {
-              id: formData.getFieldValue('id') || '',
-              are: formData.getFieldValue('are'),
-              companyCode: formData.getFieldValue('companyCode'),
-              product: formData.getFieldValue('productName'),
-              productId: formData.getFieldValue('productId'),
-              costCenter: formData.getFieldValue('costCenter'),
-              customerDivision: formData.getFieldValue('customerDivision'),
-              bvi: formData.getFieldValue('bvi'),
-              totalAmount: formData.getFieldValue('totalAmount'),
-              poPercentage: formData.getFieldValue('poPercentage'),
-              po: formData.getFieldValue('po'),
-              comment: formData.getFieldValue('comment') || '',
-              bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
-              isTag: formData.getFieldValue('adjustTag'),
-              billingARE: formData.getFieldValue('billingARE'),
-              billingCostCenter: formData.getFieldValue('billingCostCenter'),
-              templateType: formData.getFieldValue('templateType'),
-              batchNo: formData.getFieldValue('batchNo'),
-            },
-          ],
-        };
-        EditBVIData(params).then((res) => {
-          if (res.isSuccess) {
-            message.success(res.msg);
-            setShowBviData(false);
-            formData.resetFields();
-            setCustomerDivision('');
-            getData();
-          } else {
-            message.error(res.msg);
-          }
-        });
-      })
-      .catch((e) => {});
-  };
-  // 批量edit
+  // 多种编辑
   const editDataListSaveFn = () => {
     formDataEdit
       .validateFields()
@@ -408,23 +365,78 @@ export default (props: any) => {
         selectedRows.forEach((item, index) => {
           idList.push(item.id);
         });
-        const params = {
-          billingARE: formDataEdit.getFieldValue('billingARE'),
-          billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
-          recordIdList:
-            idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
-        };
-        console.log(params);
-        EditDataListSave(params).then((res) => {
-          if (res.isSuccess) {
-            message.success(res.msg);
-            setEditListMark(false);
-            formDataEdit.resetFields();
-            getData();
+        console.log(selectedRowKeys);
+        let params = {};
+        if (isSingelEdit) {
+          if (!successMark) {
+            params = {
+              billingStatus: formDataEdit.getFieldValue('billingStatus'),
+              billingARE: formDataEdit.getFieldValue('billingARE'),
+              billingCostCenter:
+                formDataEdit.getFieldValue('billingCostCenter'),
+              billingPO: formDataEdit.getFieldValue('billingPO'),
+
+              salesOrder: formDataEdit.getFieldValue('salesOrder'),
+              billingDoc: formDataEdit.getFieldValue('billingDoc'),
+              itemNo: formDataEdit.getFieldValue('itemNo'),
+              amountInCurrecy: formDataEdit.getFieldValue('amountInCurrecy'),
+              currencyInSAP: formDataEdit.getFieldValue('currencyInSAP'),
+              amountInLocalCurrencyCNY: formDataEdit.getFieldValue(
+                'amountInLocalCurrencyCNY',
+              ),
+              billingDate: formDataEdit.getFieldValue('billingDate'),
+              sapExchangeRate: formDataEdit.getFieldValue('exchangeRate'),
+              id: formDataEdit.getFieldValue('id'),
+            };
+            EditDataSpecialSave(params).then((res) => {
+              if (res.isSuccess) {
+                message.success(res.msg);
+                setEditListMark(false);
+                formDataEdit.resetFields();
+                getData();
+              } else {
+                message.error(res.msg);
+              }
+            });
           } else {
-            message.error(res.msg);
+            params = {
+              billingStatus: formDataEdit.getFieldValue('billingStatus'),
+              billingARE: formDataEdit.getFieldValue('billingARE'),
+              billingCostCenter:
+                formDataEdit.getFieldValue('billingCostCenter'),
+              billingPO: formDataEdit.getFieldValue('billingPO'),
+              id: formDataEdit.getFieldValue('id'),
+            };
+            EditDataSave(params).then((res) => {
+              if (res.isSuccess) {
+                message.success(res.msg);
+                setEditListMark(false);
+                formDataEdit.resetFields();
+                getData();
+              } else {
+                message.error(res.msg);
+              }
+            });
           }
-        });
+        } else {
+          params = {
+            billingARE: formDataEdit.getFieldValue('billingARE'),
+            billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
+            billingPO: formDataEdit.getFieldValue('billingPO'),
+            recordIdList:
+              idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
+          };
+          QuickEditDataSave(params).then((res) => {
+            if (res.isSuccess) {
+              message.success(res.msg);
+              setEditListMark(false);
+              formDataEdit.resetFields();
+              getData();
+            } else {
+              message.error(res.msg);
+            }
+          });
+        }
       })
       .catch((e) => {});
   };
@@ -447,6 +459,71 @@ export default (props: any) => {
         });
       })
       .catch((e) => {});
+  };
+
+  // freeze
+  const freezeDataMethod = () => {
+    FreezeData({}).then((res) => {
+      if (res.isSuccess) {
+        getData();
+        setSelectedRowKeys([]);
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const setStatusFun = () => {
+    const params = {
+      billingStatus: 0,
+      recordIdList: selectedRowKeys,
+    };
+    SetStatusSave(params).then((res) => {
+      if (res.isSuccess) {
+        getData();
+        setSelectedRowKeys([]);
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const ImportFlieFn = (index) => {
+    switch (index) {
+      case 1:
+        BatchFileManual({}).then((res) => {
+          if (res.isSuccess) {
+            getData();
+            setSelectedRowKeys([]);
+            message.success(res.msg);
+          } else {
+            message.error(res.msg);
+          }
+        });
+        break;
+      case 2:
+        BatchFileAuto({}).then((res) => {
+          if (res.isSuccess) {
+            getData();
+            setSelectedRowKeys([]);
+            message.success(res.msg);
+          } else {
+            message.error(res.msg);
+          }
+        });
+        break;
+      case 3:
+        AllocationFile({}).then((res) => {
+          if (res.isSuccess) {
+            getData();
+            setSelectedRowKeys([]);
+            message.success(res.msg);
+          } else {
+            message.error(res.msg);
+          }
+        });
+        break;
+    }
   };
 
   return {
@@ -493,7 +570,6 @@ export default (props: any) => {
 
     //
     insertFormData,
-    editFormData,
     latestGroupIdRef,
     errorCheckedRef,
     UnconfirmDataRef,
@@ -522,7 +598,13 @@ export default (props: any) => {
     formDataEdit,
     columns,
     onExportOriginal,
-    isP2PMark,
-    setIsP2PMark,
+    //
+    freezeDataMethod,
+    successMark,
+    setSuccessMark,
+    isSingelEdit,
+    setIsSingelEdits,
+    setStatusFun,
+    ImportFlieFn,
   };
 };

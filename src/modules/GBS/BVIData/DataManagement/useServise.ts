@@ -57,6 +57,7 @@ export default (props: any) => {
   const [isP2PMark, setIsP2PMark] = useState(false);
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
   const [formDataEdit] = Form.useForm();
+  const [isViewMark, setIsViewMark] = useState(false);
   //
   const _generateHead = (cols: any) => {
     let _columns = [];
@@ -521,6 +522,7 @@ export default (props: any) => {
     onExportOriginal,
     isP2PMark,
     setIsP2PMark,
+    isViewMark,
+    setIsViewMark,
   };
 };
-

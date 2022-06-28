@@ -64,7 +64,15 @@ export const Api = {
 
   ExportBillingData: '/api/Billing/ExportBillingData',
   FreezeData: '/api/Billing/FreezeData',
-  // masterData-costcenter
+  QueryData: '/api/Billing/QueryData',
+  QuickEditDataSave: '/api/Billing/QuickEditDataSave',
+  EditDataSave: '/api/Billing/EditDataSave',
+  EditDataSpecialSave: '/api/Billing/EditDataSpecialSave',
+
+  SetStatusSave: '/api/Billing/SetStatusSave',
+  BatchFileManual: '/api/Billing/BatchFileManual',
+  BatchFileAuto: '/api/Billing/BatchFileAuto',
+  AllocationFile: '/api/Billing/AllocationFile', // masterData-costcenter
   GetCostCenterData: '/api/CostCenterIcb/QueryListData',
   ExportCostCenterData: '/api/CostCenterIcb/ExportData', //导出costcenter
   ImportCostCenterData: '/api/CostCenterIcb/ImportData', //导入数据

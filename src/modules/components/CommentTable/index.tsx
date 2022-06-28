@@ -41,6 +41,7 @@ export default (props: any) => {
   }, [props.search]);
   return (
     <TableMixDiv status={props.search}>
+      {props.renderFilterGroup}
       {/* table 按钮组 */}
       <TableTopDiv>
         <TableTitleDiv style={{ float: 'left' }}>

@@ -1,5 +1,3 @@
-import { ContentWrap } from '@/assets/style';
-import { TabWrapDiv } from './style';
 import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/CommentTable';
 import {
@@ -16,11 +14,11 @@ import {
   Col,
   Input,
   Select,
-  DatePicker
+  DatePicker,
 } from 'antd';
 const { RangePicker } = DatePicker;
 import moment from 'moment';
-import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker'
+import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import { QueryImportLog } from '@/app/request/apiBVI';
 import {
   DownOutlined,
@@ -33,6 +31,8 @@ import {
   BtnGreenWrap,
   BtnOrangeWrap,
   BtnThemeWrap,
+  ContentWrap,
+  FilterGroupDiv,
 } from '@/assets/style';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
@@ -42,7 +42,7 @@ export default (props: any) => {
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [formDataSearch] = Form.useForm()
+  const [formDataSearch] = Form.useForm();
   const orignalCols = [
     {
       name: 'businessLine',
@@ -80,32 +80,31 @@ export default (props: any) => {
       width: '100px',
     },
   ];
-  useEffect(()=>{
-    formDataSearch.setFieldsValue({
-      businessLine:businessLineData[0].value,
-      templateType:templateTypeData[0].value,
-      startUploadDate: "",
-      endUploadDate: "",
-      uploadUser: "",
-    })
-  },[])
   useEffect(() => {
-    getData()
+    formDataSearch.setFieldsValue({
+      businessLine: businessLineData[0].value,
+      templateType: templateTypeData[0].value,
+      startUploadDate: '',
+      endUploadDate: '',
+      uploadUser: '',
+    });
+  }, []);
+  useEffect(() => {
+    getData();
   }, [current, pageSize]);
   const savefilterGroup = () => {
     console.log('please save  filter group interface');
   };
   const getData = (recordId?: any) => {
     let params = {
-      businessLine: formDataSearch.getFieldValue("businessLine"),
-      templateType: formDataSearch.getFieldValue("templateType"),
-      startUploadDate: formDataSearch.getFieldValue("startUploadDate"),
-      endUploadDate: formDataSearch.getFieldValue("endUploadDate"),
-      uploadUser: formDataSearch.getFieldValue("uploadUser"),
+      businessLine: formDataSearch.getFieldValue('businessLine'),
+      templateType: formDataSearch.getFieldValue('templateType'),
+      startUploadDate: formDataSearch.getFieldValue('startUploadDate'),
+      endUploadDate: formDataSearch.getFieldValue('endUploadDate'),
+      uploadUser: formDataSearch.getFieldValue('uploadUser'),
       pageIndex: current,
       pageSize: pageSize,
     };
-
     QueryImportLog(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
@@ -133,10 +132,14 @@ export default (props: any) => {
   };
 
   const handleChangebus = (val: string) => {
-    console.log(val);
+    formDataSearch.setFieldsValue({
+      businessLine: val,
+    });
   };
   const handleChangetemp = (val: string) => {
-    console.log(val);
+    formDataSearch.setFieldsValue({
+      templateType: val,
+    });
   };
 
   const onChange = (
@@ -144,13 +147,14 @@ export default (props: any) => {
     dateString: [string, string] | string,
   ) => {
     formDataSearch.setFieldsValue({
-      startUploadDate:dateString[0],
-      endUploadDate:dateString[1]
-    })
+      startUploadDate: dateString[0],
+      endUploadDate: dateString[1],
+    });
   };
-  
-  const onOk = (value: DatePickerProps['value'] | RangePickerProps['value']) => {
-  };
+
+  const onOk = (
+    value: DatePickerProps['value'] | RangePickerProps['value'],
+  ) => {};
 
   const businessLineData = [
     {
@@ -171,7 +175,7 @@ export default (props: any) => {
     { value: 'O2C BVI Template', label: 'O2C BVI Template' },
     { value: 'O2C T1 BVI Template', label: 'O2C T1 BVI Template' },
     { value: 'P2P BCS Template', label: 'P2P BCS Template' },
-  ]
+  ];
   const { Option } = Select;
   const renderOption = (fieldList) => {
     const options = [];
@@ -185,8 +189,7 @@ export default (props: any) => {
     return options;
   };
   return (
-      <ContentWrap>
-        <TabWrapDiv>
+    <ContentWrap>
       <TableList
         data={tableData}
         form={form}
@@ -198,14 +201,11 @@ export default (props: any) => {
         current={current}
         rowKey="uploadDate"
         listName="Logs"
-        renderBtns={
-          <Space>
-            <Form
-              form={formDataSearch}
-              labelCol={{ flex: '120px' }}
-            >
-              <Row gutter={24}>
-                <Col span={5}>
+        renderFilterGroup={
+          <FilterGroupDiv>
+            <Form form={form}>
+              <Row className="masterData" justify="space-between">
+                <Col span={4}>
                   <Form.Item label="Business Line" name="businessLine">
                     <Select
                       defaultValue={businessLineData[0].value}
@@ -215,7 +215,7 @@ export default (props: any) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={7}>
+                <Col span={5}>
                   <Form.Item label="Template Type" name="templateType">
                     <Select
                       defaultValue={templateTypeData[0].value}
@@ -225,7 +225,7 @@ export default (props: any) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={7}>
+                <Col span={5}>
                   <Form.Item label="Upload Date" name="uploadDate">
                     <RangePicker
                       showTime={{ format: 'HH:mm:ss' }}
@@ -235,25 +235,81 @@ export default (props: any) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={5}>
+                <Col span={4}>
                   <Form.Item label="Upload User" name="uploadUser">
                     <Input />
                   </Form.Item>
                 </Col>
+                <Col span={2}>
+                  <Form.Item style={{ textAlign: 'right' }}>
+                    <Space>
+                      <Button
+                        type="primary"
+                        icon={<i className="gbs gbs-search"></i>}
+                        onClick={getData}
+                      ></Button>
+                    </Space>
+                  </Form.Item>
+                </Col>
               </Row>
             </Form>
-            <Button
-            type="primary"
-              onClick={() => {
-                getData();
-              }}
-            >
-              Search
-            </Button>
-          </Space>
+          </FilterGroupDiv>
         }
+        //   renderBtns={
+        //     <Space>
+        //       <Form
+        //         form={formDataSearch}
+        //         labelCol={{ flex: '120px' }}
+        //       >
+        //         <Row gutter={24}>
+        //           <Col span={5}>
+        //             <Form.Item label="Business Line" name="businessLine">
+        //               <Select
+        //                 defaultValue={businessLineData[0].value}
+        //                 onChange={handleChangebus}
+        //               >
+        //                 {renderOption(businessLineData)}
+        //               </Select>
+        //             </Form.Item>
+        //           </Col>
+        //           <Col span={7}>
+        //             <Form.Item label="Template Type" name="templateType">
+        //               <Select
+        //                 defaultValue={templateTypeData[0].value}
+        //                 onChange={handleChangetemp}
+        //               >
+        //                 {renderOption(templateTypeData)}
+        //               </Select>
+        //             </Form.Item>
+        //           </Col>
+        //           <Col span={7}>
+        //             <Form.Item label="Upload Date" name="uploadDate">
+        //               <RangePicker
+        //                 showTime={{ format: 'HH:mm:ss' }}
+        //                 format="YYYY-MM-DD HH:mm:ss"
+        //                 onChange={onChange}
+        //                 onOk={onOk}
+        //               />
+        //             </Form.Item>
+        //           </Col>
+        //           <Col span={5}>
+        //             <Form.Item label="Upload User" name="uploadUser">
+        //               <Input />
+        //             </Form.Item>
+        //           </Col>
+        //         </Row>
+        //       </Form>
+        //       <Button
+        //       type="primary"
+        //         onClick={() => {
+        //           getData();
+        //         }}
+        //       >
+        //         Search
+        //       </Button>
+        //     </Space>
+        //   }
       />
-      </TabWrapDiv>
-      </ContentWrap>
+    </ContentWrap>
   );
 };
