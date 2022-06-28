@@ -1,5 +1,3 @@
-import { ContentWrap } from '@/assets/style';
-import { TabWrapDiv } from './style';
 import React, { useEffect, useState } from 'react';
 import TableList from '@/modules/components/CommentTable';
 import {
@@ -33,6 +31,7 @@ import {
   BtnGreenWrap,
   BtnOrangeWrap,
   BtnThemeWrap,
+  ContentWrap, FilterGroupDiv
 } from '@/assets/style';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
@@ -105,7 +104,6 @@ export default (props: any) => {
       pageIndex: current,
       pageSize: pageSize,
     };
-
     QueryImportLog(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
@@ -133,10 +131,14 @@ export default (props: any) => {
   };
 
   const handleChangebus = (val: string) => {
-    console.log(val);
+    formDataSearch.setFieldsValue({
+      businessLine:val
+    })
   };
   const handleChangetemp = (val: string) => {
-    console.log(val);
+    formDataSearch.setFieldsValue({
+      templateType:val
+    })
   };
 
   const onChange = (
@@ -186,7 +188,6 @@ export default (props: any) => {
   };
   return (
       <ContentWrap>
-        <TabWrapDiv>
       <TableList
         data={tableData}
         form={form}
@@ -198,15 +199,12 @@ export default (props: any) => {
         current={current}
         rowKey="uploadDate"
         listName="Logs"
-        renderBtns={
-          <Space>
-            <Form
-              form={formDataSearch}
-              labelCol={{ flex: '120px' }}
-            >
-              <Row gutter={24}>
-                <Col span={5}>
-                  <Form.Item label="Business Line" name="businessLine">
+        renderFilterGroup={
+          <FilterGroupDiv>
+            <Form form={form}>
+              <Row className="masterData" justify="space-between">
+                <Col span={4}>
+                <Form.Item label="Business Line" name="businessLine">
                     <Select
                       defaultValue={businessLineData[0].value}
                       onChange={handleChangebus}
@@ -215,8 +213,8 @@ export default (props: any) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={7}>
-                  <Form.Item label="Template Type" name="templateType">
+                <Col span={5}>
+                <Form.Item label="Template Type" name="templateType">
                     <Select
                       defaultValue={templateTypeData[0].value}
                       onChange={handleChangetemp}
@@ -225,8 +223,8 @@ export default (props: any) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={7}>
-                  <Form.Item label="Upload Date" name="uploadDate">
+                <Col span={5}>
+                <Form.Item label="Upload Date" name="uploadDate">
                     <RangePicker
                       showTime={{ format: 'HH:mm:ss' }}
                       format="YYYY-MM-DD HH:mm:ss"
@@ -235,25 +233,81 @@ export default (props: any) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={5}>
-                  <Form.Item label="Upload User" name="uploadUser">
+                <Col span={4}>
+                <Form.Item label="Upload User" name="uploadUser">
                     <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={2}>
+                  <Form.Item style={{ textAlign: 'right' }}>
+                    <Space>
+                      <Button
+                        type="primary"
+                        icon={<i className="gbs gbs-search"></i>}
+                        onClick={getData}
+                      ></Button>
+                    </Space>
                   </Form.Item>
                 </Col>
               </Row>
             </Form>
-            <Button
-            type="primary"
-              onClick={() => {
-                getData();
-              }}
-            >
-              Search
-            </Button>
-          </Space>
+          </FilterGroupDiv>
         }
+      //   renderBtns={
+      //     <Space>
+      //       <Form
+      //         form={formDataSearch}
+      //         labelCol={{ flex: '120px' }}
+      //       >
+      //         <Row gutter={24}>
+      //           <Col span={5}>
+      //             <Form.Item label="Business Line" name="businessLine">
+      //               <Select
+      //                 defaultValue={businessLineData[0].value}
+      //                 onChange={handleChangebus}
+      //               >
+      //                 {renderOption(businessLineData)}
+      //               </Select>
+      //             </Form.Item>
+      //           </Col>
+      //           <Col span={7}>
+      //             <Form.Item label="Template Type" name="templateType">
+      //               <Select
+      //                 defaultValue={templateTypeData[0].value}
+      //                 onChange={handleChangetemp}
+      //               >
+      //                 {renderOption(templateTypeData)}
+      //               </Select>
+      //             </Form.Item>
+      //           </Col>
+      //           <Col span={7}>
+      //             <Form.Item label="Upload Date" name="uploadDate">
+      //               <RangePicker
+      //                 showTime={{ format: 'HH:mm:ss' }}
+      //                 format="YYYY-MM-DD HH:mm:ss"
+      //                 onChange={onChange}
+      //                 onOk={onOk}
+      //               />
+      //             </Form.Item>
+      //           </Col>
+      //           <Col span={5}>
+      //             <Form.Item label="Upload User" name="uploadUser">
+      //               <Input />
+      //             </Form.Item>
+      //           </Col>
+      //         </Row>
+      //       </Form>
+      //       <Button
+      //       type="primary"
+      //         onClick={() => {
+      //           getData();
+      //         }}
+      //       >
+      //         Search
+      //       </Button>
+      //     </Space>
+      //   }
       />
-      </TabWrapDiv>
       </ContentWrap>
   );
 };

@@ -19,7 +19,11 @@ import {
   QueryData,
   QuickEditDataSave,
   EditDataSave,
-  EditDataSpecialSave
+  EditDataSpecialSave,
+  SetStatusSave,
+  BatchFileManual,
+  BatchFileAuto,
+  AllocationFile,
 } from '@/app/request/apiBilling';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
@@ -352,49 +356,6 @@ export default (props: any) => {
       })
       .catch((e) => {});
   };
-  // edit
-  const editFormData = () => {
-    formData
-      .validateFields()
-      .then((values) => {
-        const params = {
-          bviList: [
-            {
-              id: formData.getFieldValue('id') || '',
-              are: formData.getFieldValue('are'),
-              companyCode: formData.getFieldValue('companyCode'),
-              product: formData.getFieldValue('productName'),
-              productId: formData.getFieldValue('productId'),
-              costCenter: formData.getFieldValue('costCenter'),
-              customerDivision: formData.getFieldValue('customerDivision'),
-              bvi: formData.getFieldValue('bvi'),
-              totalAmount: formData.getFieldValue('totalAmount'),
-              poPercentage: formData.getFieldValue('poPercentage'),
-              po: formData.getFieldValue('po'),
-              comment: formData.getFieldValue('comment') || '',
-              bviMonth: formData.getFieldValue('bviMonth').format('YYYYMM'),
-              isTag: formData.getFieldValue('adjustTag'),
-              billingARE: formData.getFieldValue('billingARE'),
-              billingCostCenter: formData.getFieldValue('billingCostCenter'),
-              templateType: formData.getFieldValue('templateType'),
-              batchNo: formData.getFieldValue('batchNo'),
-            },
-          ],
-        };
-        EditBVIData(params).then((res) => {
-          if (res.isSuccess) {
-            message.success(res.msg);
-            setShowBviData(false);
-            formData.resetFields();
-            setCustomerDivision('');
-            getData();
-          } else {
-            message.error(res.msg);
-          }
-        });
-      })
-      .catch((e) => {});
-  };
   // 多种编辑
   const editDataListSaveFn = () => {
     formDataEdit
@@ -404,9 +365,10 @@ export default (props: any) => {
         selectedRows.forEach((item, index) => {
           idList.push(item.id);
         });
+        console.log(selectedRowKeys)
         let params={}
         if(isSingelEdit){
-          if(successMark){
+          if(!successMark){
             params = {
               billingStatus: formDataEdit.getFieldValue('billingStatus'),
               billingARE: formDataEdit.getFieldValue('billingARE'),
@@ -421,10 +383,8 @@ export default (props: any) => {
               amountInLocalCurrencyCNY: formDataEdit.getFieldValue('amountInLocalCurrencyCNY'),
               billingDate: formDataEdit.getFieldValue('billingDate'),
               sapExchangeRate: formDataEdit.getFieldValue('exchangeRate'),
-              id:
-                idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
+              id: formDataEdit.getFieldValue('id'),
             };
-            console.log(params);
             EditDataSpecialSave(params).then((res) => {
               if (res.isSuccess) {
                 message.success(res.msg);
@@ -441,10 +401,8 @@ export default (props: any) => {
               billingARE: formDataEdit.getFieldValue('billingARE'),
               billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
               billingPO: formDataEdit.getFieldValue('billingPO'),
-              id:
-                idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
+              id: formDataEdit.getFieldValue('id'),
             };
-            console.log(params);
             EditDataSave(params).then((res) => {
               if (res.isSuccess) {
                 message.success(res.msg);
@@ -464,7 +422,6 @@ export default (props: any) => {
             recordIdList:
               idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
           };
-          console.log(params);
           QuickEditDataSave(params).then((res) => {
             if (res.isSuccess) {
               message.success(res.msg);
@@ -513,6 +470,58 @@ export default (props: any) => {
       }
     });
   };
+  const setStatusFun=()=>{
+    const params={
+      billingStatus: 0,
+      recordIdList: selectedRowKeys
+    }
+    SetStatusSave(params).then((res) => {
+      if (res.isSuccess) {
+        getData();
+        setSelectedRowKeys([]);
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  }
+  const ImportFlieFn=(index)=>{
+    switch(index){
+      case 1:
+        BatchFileManual({}).then((res) => {
+          if (res.isSuccess) {
+            getData();
+            setSelectedRowKeys([]);
+            message.success(res.msg);
+          } else {
+            message.error(res.msg);
+          }
+        });
+        break;
+      case 2:
+      BatchFileAuto({}).then((res) => {
+          if (res.isSuccess) {
+            getData();
+            setSelectedRowKeys([]);
+            message.success(res.msg);
+          } else {
+            message.error(res.msg);
+          }
+        });
+        break;
+      case 3:
+        AllocationFile({}).then((res) => {
+          if (res.isSuccess) {
+            getData();
+            setSelectedRowKeys([]);
+            message.success(res.msg);
+          } else {
+            message.error(res.msg);
+          }
+        });
+        break;
+    }
+  }
 
   return {
     form,
@@ -558,7 +567,6 @@ export default (props: any) => {
 
     //
     insertFormData,
-    editFormData,
     latestGroupIdRef,
     errorCheckedRef,
     UnconfirmDataRef,
@@ -590,7 +598,9 @@ export default (props: any) => {
     // 
     freezeDataMethod,
     successMark,setSuccessMark,
-    isSingelEdit,setIsSingelEdits
+    isSingelEdit,setIsSingelEdits,
+    setStatusFun,
+    ImportFlieFn
   };
 };
 

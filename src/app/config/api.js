@@ -66,4 +66,9 @@ export const Api = {
   QuickEditDataSave: '/api/Billing/QuickEditDataSave',
   EditDataSave: '/api/Billing/EditDataSave',
   EditDataSpecialSave: '/api/Billing/EditDataSpecialSave',
+
+  SetStatusSave: '/api/Billing/SetStatusSave',
+  BatchFileManual: '/api/Billing/BatchFileManual',
+  BatchFileAuto: '/api/Billing/BatchFileAuto',
+  AllocationFile: '/api/Billing/AllocationFile',
 };

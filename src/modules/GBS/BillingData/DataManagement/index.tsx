@@ -100,7 +100,6 @@ export default (props: any) => {
     columns,
     //
     insertFormData,
-    editFormData,
     latestGroupIdRef,
     errorCheckedRef,
     UnconfirmDataRef,
@@ -132,18 +131,21 @@ export default (props: any) => {
     // 
     successMark,setSuccessMark,
     freezeDataMethod,
-    isSingelEdit,setIsSingelEdits
+    isSingelEdit,setIsSingelEdits,
+    setStatusFun,
+
+    ImportFlieFn
   } = useService(props);
   const orignalCols = [
     {
-      name: 'SONumber',
+      name: 'soNumber',
       title: 'SO Number',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'BusinessLine',
+      name: 'businessLine',
       title: 'Business Line',
       width: '100px',
       sorter: true,
@@ -156,7 +158,7 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'product',
+      name: 'productName',
       title: 'Product Name',
       width: '200px',
       titleRender: 'input',
@@ -170,7 +172,7 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'customerDivision',
+      name: 'customerDevision',
       title: 'Customer Division',
       width: '100px',
       titleRender: 'input',
@@ -183,28 +185,28 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'sold-to party',
+      name: 'soldToParty',
       title: 'sold-to party',
       width: '100px',
       titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'Billing PO',
+      name: 'billingPO',
       title: 'Billing PO',
       width: '100px',
       titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'Material number',
+      name: 'materialNumber',
       title: 'Material number',
       width: '100px',
       titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'BVI',
+      name: 'bvi',
       title: 'BVI',
       width: '100px',
       sorter: true,
@@ -242,26 +244,29 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'totalAmount',
+      name: 'totalAmout',
       title: 'Total Amount(Unit Price Currency)',
       width: '180px',
       sorter: true,
     },
+
+    // 
     {
       name: 'BatchFile Exchange Rate',
       title: 'BatchFile Exchange Rate',
       width: '180px',
       sorter: true,
     },
+    // 
     {
-      name: 'Currency',
-      title: 'Currency',
+      name: 'billingCurrency',
+      title: 'Billing Currency',
       width: '180px',
       sorter: true,
       titleRender: 'input',
     },
     {
-      name: 'Alt.tax classific',
+      name: 'altTaxClassific',
       title: 'Alt.tax classific',
       width: '180px',
       sorter: true,
@@ -281,7 +286,7 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'Material Sales Text & Customer Text (z003)',
+      name: 'materialSalesTextCustomerTextZ003',
       title: 'Material Sales Text & Customer Text (z003)',
       width: '250px',
       titleRender: 'input',
@@ -309,7 +314,7 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'billing Error Message',
+      name: 'billingErrorMsg',
       title: 'billing Error Message',
       width: '200px',
       sorter: true,
@@ -343,17 +348,21 @@ export default (props: any) => {
       width: '180px',
       name: 'billingDate',
       sorter: true,
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
     },
     {
       title: 'SAP Exchange Rate',
       width: '150px',
-      name: 'exchangeRate',
+      name: 'sapExchangeRate',
       sorter: true,
     },
     {
       title: 'Data Type',
       width: '180px',
-      name: 'Data Type',
+      name: 'dataType',
       sorter: true,
       titleRender: 'input',
     },
@@ -372,38 +381,39 @@ export default (props: any) => {
       render: (text) => (text === false ? 'Yes' : 'No'),
     },
     {
-      name: 'Quarterly Charge',
+      name: 'quarterlyCharge',
       title: 'Quarterly Charge',
       width: '150px',
       titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'SETag',
+      name: 'seTag',
       title: 'SETag',
       width: '100px',
       titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'Billing Month',
+      name: 'billingMonth',
       title: 'Billing Month',
       width: '100px',
       sorter: true,
     },
     {
-      name: 'Period',
+      name: 'period',
       title: 'Period',
       width: '100px',
       sorter: true,
     },
     {
-      name: 'ChargeType',
+      name: 'chargeType',
       title: 'ChargeType',
       width: '100px',
       titleRender: 'input',
       sorter: true,
     },
+    // 
     {
       name: 'modifiedTag',
       title: 'modifiedTag',
@@ -411,17 +421,18 @@ export default (props: any) => {
       titleRender: 'input',
       sorter: true,
     },
+    // 
     {
       name: 'modifiedUser',
       title: 'Modified User',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'modifiedDate',
       title: 'Modified Date',
-      width: '100px',
+      width: '200px',
       sorter: true,
       render: (text) =>
         text && moment(text).isValid()
@@ -447,7 +458,15 @@ export default (props: any) => {
               setIsSingelEdits(true)
               formDataEdit.setFieldsValue({
                 ...record,
+                billingDate: record.billingDate
+                      ? moment(record.billingDate)
+                      : null,
               });
+              if(formDataEdit.getFieldValue("billingStatus")=="Successful"){
+                setSuccessMark(false)
+              }else{
+                setSuccessMark(true)
+              }
             }}
           ></Button>
         </Space>
@@ -723,13 +742,13 @@ export default (props: any) => {
     return Promise.resolve();
   };
 
-  const submitData = () => {
-    if (formData.getFieldValue('id')) {
-      editFormData();
-    } else {
-      insertFormData();
-    }
-  };
+  // const submitData = () => {
+  //   if (formData.getFieldValue('id')) {
+  //     editFormData();
+  //   } else {
+  //     insertFormData();
+  //   }
+  // };
   // const onRodioChange = (e) => {
   //   if (e.target.value == 8) {
   //     setIsP2PMark(true);
@@ -755,13 +774,13 @@ export default (props: any) => {
   };
   const  billingStatusGroup= [
     {
-      label: 'Freeze',
-      value: 'Freeze',
-    },
-    {
       label: 'Successful',
       value: 'Successful',
     },
+    {
+      label: 'Freeze',
+      value: 'Freeze',
+    }
   ];
   const renderOption = (fieldList) => {
     const options = [];
@@ -1212,9 +1231,9 @@ export default (props: any) => {
               <Col span={24}>
                 <Form.Item style={{ textAlign: 'center' }}>
                   <Space size={60}>
-                    <Button type="primary" onClick={submitData}>
+                    {/* <Button type="primary" onClick={submitData}>
                       Submit
-                    </Button>
+                    </Button> */}
                     <Button
                       onClick={() => {
                         setShowBviData(false);
@@ -1319,7 +1338,12 @@ export default (props: any) => {
             </Col>
             <Col span={12}>
               <Form.Item label="billingDate" name="billingDate">
-                <Input disabled={successMark}/>
+                <DatePicker
+                  disabled={successMark}
+                  picker="month"
+                  format="YYYYMM"
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -1576,8 +1600,20 @@ export default (props: any) => {
                 disabled={!selectedRowKeys.length}
                 onClick={() => {
                   setEditListMark(true);
+                  setSuccessMark(true)
                   if(selectedRowKeys.length==1){
                     setIsSingelEdits(true)
+                    formDataEdit.setFieldsValue({
+                      ...selectedRows[0],
+                      billingDate: selectedRows[0].billingDate
+                            ? moment(selectedRows[0].billingDate)
+                            : null,
+                    });
+                    if(formDataEdit.getFieldValue("billingStatus")=="Successful"){
+                      setSuccessMark(false)
+                    }else{
+                      setSuccessMark(true)
+                    }
                   }else{
                     setIsSingelEdits(false)
                   }
@@ -1609,6 +1645,11 @@ export default (props: any) => {
                     <Menu.Item key="6">
                       <span style={{ margin: '0 10px' }}>Obsolete</span>
                     </Menu.Item>
+                    <Menu.Item key="7">
+                      <span style={{ margin: '0 10px' }} onClick={()=>{
+                        setStatusFun()
+                      }}>Successfully</span>
+                    </Menu.Item>
                   </Menu>
                 )}
               >
@@ -1633,15 +1674,21 @@ export default (props: any) => {
                 overlay={() => (
                   <Menu>
                     <Menu.Item key="1">
-                      <span style={{ margin: '0 10px' }}>
+                      <span style={{ margin: '0 10px' }} onClick={()=>{
+                        ImportFlieFn(1)
+                      }}>
                         Batch File-Manual
                       </span>
                     </Menu.Item>
                     <Menu.Item key="2">
-                      <span style={{ margin: '0 10px' }}>Batch File-Auto</span>
+                      <span style={{ margin: '0 10px' }} onClick={()=>{
+                        ImportFlieFn(2)
+                      }}>Batch File-Auto</span>
                     </Menu.Item>
                     <Menu.Item key="3">
-                      <span style={{ margin: '0 10px' }}>Allocation File</span>
+                      <span style={{ margin: '0 10px' }} onClick={()=>{
+                          ImportFlieFn(3)
+                      }}>Allocation File</span>
                     </Menu.Item>
                   </Menu>
                 )}

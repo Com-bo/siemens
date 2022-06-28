@@ -1,5 +1,5 @@
 import React from 'react';
-
+import BusinessLine from '@/modules/masterData/BusinessLine';
 export default (props: any) => {
-  return <div>DataManagement</div>;
+  return <BusinessLine {...props} />;
 };

@@ -129,6 +129,7 @@ export default (props: any) => {
     onExportOriginal,
     isP2PMark,
     setIsP2PMark,
+    isViewMark, setIsViewMark
   } = useService(props);
 
   const orignalCols = [
@@ -260,20 +261,20 @@ export default (props: any) => {
     {
       name: 'po',
       title: 'PO',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'poPercentage',
       title: 'PO Percentage',
-      width: '100px',
+      width: '150px',
       sorter: true,
     },
     {
       name: 'comment',
       title: 'Comment',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
@@ -671,14 +672,15 @@ export default (props: any) => {
 
   // BVI-View
   const rowClick = (record) => {
-    // formData.setFieldsValue({
-    //   ...record,
-    //   bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
-    //   isTag: isTag,
-    // });
-    // setShowBviData(true);
-    // setComponentDisabled(true);
+    formData.setFieldsValue({
+      ...record,
+      bviMonth: record.bviMonth ? moment(record.bviMonth) : null
+    });
+    setShowBviData(true);
+    setComponentDisabled(true);
+    setIsViewMark(true)
   };
+
   const uploadProps = {
     beforeUpload: () => {
       return false;
@@ -906,6 +908,7 @@ export default (props: any) => {
         footer={null}
         onCancel={() => {
           setShowBviData(false);
+          setIsViewMark(false)
           formData.resetFields();
         }}
       >
@@ -1080,7 +1083,6 @@ export default (props: any) => {
                   initFlag
                   disabled={componentDisabled}
                   getoptions={(options) => {
-                    console.log(options);
                     return options?.map((x, index) => {
                       return (
                         <Select.Option key={index} data={x} value={x.poNumber}>
@@ -1179,7 +1181,7 @@ export default (props: any) => {
                 name="billingARE"
                 rules={[{ required: true }]}
               >
-                <Input />
+                <Input disabled={isViewMark}/>
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -1188,7 +1190,7 @@ export default (props: any) => {
                 name="billingCostCenter"
                 rules={[{ required: true }]}
               >
-                <Input />
+                <Input disabled={isViewMark}/>
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -1244,7 +1246,7 @@ export default (props: any) => {
                 <Input.TextArea disabled={componentDisabled} />
               </Form.Item>
             </Col>
-            {
+            {isViewMark?(""):(
               <Col span={24}>
                 <Form.Item style={{ textAlign: 'center' }}>
                   <Space size={60}>
@@ -1263,7 +1265,7 @@ export default (props: any) => {
                   </Space>
                 </Form.Item>
               </Col>
-            }
+            )}
           </Row>
         </Form>
       </Modal>
