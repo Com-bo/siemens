@@ -478,6 +478,9 @@ export default (props: any) => {
           )}
 
           {!record.bviFlag ? (
+            <span onClick={(event)=>{
+              event.stopPropagation();
+            }}>
             <Popconfirm
               title="Are you sure?"
               onConfirm={(event) => {
@@ -511,6 +514,7 @@ export default (props: any) => {
                 </Tooltip>
               )}
             </Popconfirm>
+            </span>
           ) : (
             ''
           )}
@@ -676,6 +680,17 @@ export default (props: any) => {
     formData.setFieldsValue({
       ...record,
       bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
+      productName: record.product,
+      startMonth: record.startMonth
+        ? moment(record.startMonth)
+        : null,
+      endMonth: record.endMonth ? moment(record.endMonth) : null,
+      modifiedDate: record.modifiedDate
+        ? moment(record.modifiedDate)
+        : null,
+      createdDate: record.createdDate
+        ? moment(record.createdDate)
+        : null,
     });
     setShowBviData(true);
     setComponentDisabled(true);
@@ -884,7 +899,9 @@ export default (props: any) => {
               <Button type="primary" onClick={importExcel}>
                 Submit
               </Button>
-              <Button>Cancel</Button>
+              <Button onClick={()=>{
+                setShowImport(false)
+              }}>Cancel</Button>
             </Space>
           </Form.Item>
         </Form>
@@ -1312,7 +1329,7 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             {
-              <Col span={24}>
+              <Col span={24} style={{marginTop:"20px"}}>
                 <Form.Item style={{ textAlign: 'center' }}>
                   <Space size={60}>
                     <Button type="primary" onClick={editDataListSaveFn}>

@@ -66,7 +66,7 @@ export const Api = {
   FreezeData: '/api/Billing/FreezeData',
   QueryData: '/api/Billing/QueryData',
   QuickEditDataSave: '/api/Billing/QuickEditDataSave',
-  EditDataSave: '/api/Billing/EditDataSave',
+  EditDataSaveBill: '/api/Billing/EditDataSave',
   EditDataSpecialSave: '/api/Billing/EditDataSpecialSave',
 
   SetStatusSave: '/api/Billing/SetStatusSave',

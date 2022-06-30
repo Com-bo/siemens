@@ -110,8 +110,8 @@ export const QuickEditDataSave = (data: Object) => {
     autoLoading: true,
   });
 };
-export const EditDataSave = (data: Object) => {
-  return usePost(`${Config.Api.Base}${Config.Api.EditDataSave}`, data, {
+export const EditDataSaveBill = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.EditDataSaveBill}`, data, {
     autoLoading: true,
   });
 };
