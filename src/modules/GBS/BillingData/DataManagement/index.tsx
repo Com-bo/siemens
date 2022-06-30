@@ -837,7 +837,6 @@ export default (props: any) => {
               <Radio value={3}>ASP_SD_VF05 Report</Radio>
             </Radio.Group>
           </Form.Item>
-          (
           <Form.Item
             label="File"
             name="file"
@@ -860,7 +859,7 @@ export default (props: any) => {
               </Button>
             </Upload>
           </Form.Item>
-          )
+          
           <Form.Item style={{ textAlign: 'center' }}>
             <Space size={60}>
               <Button type="primary" onClick={importExcel}>

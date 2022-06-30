@@ -203,9 +203,9 @@ export default (props: any) => {
         listName="Logs"
         renderFilterGroup={
           <FilterGroupDiv>
-            <Form form={form}>
-              <Row className="masterData" justify="space-between">
-                <Col span={4}>
+            <Form form={form} labelCol={{ flex: '120px' }}>
+              <Row className="masterData" gutter={24}>
+                <Col span={6}>
                   <Form.Item label="Business Line" name="businessLine">
                     <Select
                       defaultValue={businessLineData[0].value}
@@ -215,7 +215,7 @@ export default (props: any) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={5}>
+                <Col span={6}>
                   <Form.Item label="Template Type" name="templateType">
                     <Select
                       defaultValue={templateTypeData[0].value}

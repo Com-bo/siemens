@@ -18,7 +18,7 @@ import {
   ExportBillingData,
   QueryData,
   QuickEditDataSave,
-  EditDataSave,
+  EditDataSaveBill,
   EditDataSpecialSave,
   SetStatusSave,
   BatchFileManual,
@@ -246,7 +246,6 @@ export default (props: any) => {
       }
     });
   };
-
   const onExport = () => {
     exportOriginalData(selectedRows).then((res) => {
       if (res.response.status == 200) {
@@ -407,7 +406,7 @@ export default (props: any) => {
               billingPO: formDataEdit.getFieldValue('billingPO'),
               id: formDataEdit.getFieldValue('id'),
             };
-            EditDataSave(params).then((res) => {
+            EditDataSaveBill(params).then((res) => {
               if (res.isSuccess) {
                 message.success(res.msg);
                 setEditListMark(false);
@@ -492,39 +491,35 @@ export default (props: any) => {
     switch (index) {
       case 1:
         BatchFileManual({}).then((res) => {
-          if (res.isSuccess) {
-            getData();
-            setSelectedRowKeys([]);
-            message.success(res.msg);
-          } else {
-            message.error(res.msg);
-          }
+          exportFun(res,"BatchFileManual")
         });
         break;
       case 2:
         BatchFileAuto({}).then((res) => {
-          if (res.isSuccess) {
-            getData();
-            setSelectedRowKeys([]);
-            message.success(res.msg);
-          } else {
-            message.error(res.msg);
-          }
+          exportFun(res,"BatchFileAuto")
         });
         break;
       case 3:
         AllocationFile({}).then((res) => {
-          if (res.isSuccess) {
-            getData();
-            setSelectedRowKeys([]);
-            message.success(res.msg);
-          } else {
-            message.error(res.msg);
-          }
-        });
+          exportFun(res,"AllocationFile")
+        })
         break;
     }
   };
+
+  const exportFun=(res:any,exportName:any)=>{
+    if (res.response.status == 200) {
+      let elink = document.createElement('a');
+      elink.download = `${exportName}.xlsx`;
+      elink.href = window.URL.createObjectURL(
+        new Blob([res.response.data as unknown as BlobPart]),
+      );
+      elink.click();
+      window.URL.revokeObjectURL(elink.href);
+    } else {
+      message.error(res.response.statusText);
+    }
+  }
 
   return {
     form,
