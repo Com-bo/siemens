@@ -61,7 +61,7 @@ const index = (props: ComponentClass) => {
     setProperties(target);
     if (props.initFlag) {
       fetch('', (data) => {
-        setOptions(data);
+        setOptions([...data]);
         setFetching(false);
         if (props.callBack) {
           props.callBack(data);

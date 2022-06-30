@@ -294,7 +294,7 @@ export default (props: any) => {
           </Tooltip>
           <Popconfirm
             title="Confirm to delete?"
-            onConfirm={(event) => deleteInfos([record.id], event)}
+            onConfirm={(event) => deleteInfos([record.orgId], event)}
             okText="Confirm"
             cancelText="Cancel"
           >
@@ -933,7 +933,7 @@ export default (props: any) => {
       cancelText: 'Cancel',
       onOk: () => {
         copyData({
-          recordIdList: selectedRowKeys,
+          recordId: selectedRowKeys[0],
         }).then((res) => {
           if (res.isSuccess) {
             _getData();
@@ -1094,7 +1094,7 @@ export default (props: any) => {
       .validateFields()
       .then((values) => {
         const params = {
-          id: formData.getFieldValue('orgId') || '',
+          id: formData.getFieldValue('orgId') || null,
           are: formData.getFieldValue('are'),
           companyCode: formData.getFieldValue('companyCode'),
           product: formData.getFieldValue('productName'),
@@ -1402,8 +1402,12 @@ export default (props: any) => {
                         data.customerDivision !=
                           formData.getFieldValue('customerDivision')
                       ) {
-                        setCustomerDivision(data.customerDivision);
+                        setCustomerDivision(data.data.custemerDivision);
                       }
+                      value &&
+                        formData.setFieldsValue({
+                          companyCode: data.data.companyCode,
+                        });
                     }}
                     getoptions={(options) => {
                       return options?.map((x, index) => {
@@ -1413,7 +1417,7 @@ export default (props: any) => {
                             data={x}
                             value={x.costCenter}
                           >
-                            {x.costCenter}
+                            {x.costCenter}-{x.custemerDivision}
                           </Select.Option>
                         );
                       });
