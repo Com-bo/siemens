@@ -63,3 +63,7 @@ export const queryBusinesslineOptionsList = (data: Object) => {
     data,
   );
 };
+
+export const queryDictionaryInfo = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.QueryDictionaryInfo}`, data);
+};

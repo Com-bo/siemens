@@ -950,6 +950,7 @@ export default (props: any) => {
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId);
+    setLogCurrent(1);
   };
   useEffect(() => {
     logId && _getLogData();
@@ -1632,7 +1633,11 @@ export default (props: any) => {
             moudleName="Flat Charge"
             onSearch={(val) => {
               latestGroupIdRef.current = val;
-              _getData(val);
+              if (current != 1) {
+                setCurrent(1);
+              } else {
+                _getData(val);
+              }
             }}
             onClear={() => {
               setErrorChecked(false);

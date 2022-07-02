@@ -14,7 +14,7 @@ export const Api = {
     '/api/OtherMasterData/QueryCustemerDivisionOptionsList',
   QueryBusinesslineOptionsList:
     '/api/BusinessLine/QueryBusinesslineOptionsList', //数据查询 - 【Business Line】页面Options列表数据【Label : Name / Value : Name】
-
+  QueryDictionaryInfo: '/api/System/QueryDictionaryInfo', //数据字典
   ProductPoDrop: '/api/ProductPo/QueryPageDropListData', //Product下拉
   // BVI
   ImportDataSave: '/api/ImportR2R/ImportDataSave', //导入R2r
@@ -72,11 +72,20 @@ export const Api = {
   SetStatusSave: '/api/Billing/SetStatusSave',
   BatchFileManual: '/api/Billing/BatchFileManual',
   BatchFileAuto: '/api/Billing/BatchFileAuto',
-  AllocationFile: '/api/Billing/AllocationFile', // masterData-costcenter
+  AllocationFile: '/api/Billing/AllocationFile',
+  // masterData-costcenter
   GetCostCenterData: '/api/CostCenterIcb/QueryListData',
   ExportCostCenterData: '/api/CostCenterIcb/ExportData', //导出costcenter
   ImportCostCenterData: '/api/CostCenterIcb/ImportData', //导入数据
   DeleteCostCenterData: '/api/CostCenterIcb/DeleteData',
   LogCostCenterDataQuery: '/api/CostCenterIcb/QueryLogData',
   EditCostCenterDataSave: '/api/CostCenterIcb/EditDataSave', //保存数据
+  // masterData-product
+  QueryProductListData: '/api/Product/QueryListData',
+  ImportProductData: '/api/Product/ImportData', //导入产品
+  ExportProductData: '/api/Product/ExportData', //导出产品
+  QueryProductLogData: '/api/Product/QueryLogData', //查询产品日志
+  DeleteProductData: '/api/Product/DeleteData', //删除product数据
+  DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
+  EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
 };

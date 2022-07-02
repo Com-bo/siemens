@@ -76,8 +76,6 @@ export const PanelTitleDiv = styled.div`
   font-family: Arail;
 `;
 export const FormTableDiv = styled.div`
-
- 
   .ant-table-container table > thead > tr:first-child th:first-child {
     border-bottom-left-radius: 0;
   }
@@ -86,17 +84,18 @@ export const FormTableDiv = styled.div`
   }
   .ant-table {
     border-radius: 0px 0px 5px 5px;
-    border: solid 1px #ceeffb;
+    // border: solid 1px #ceeffb;
     color: #666;
     background: #fff;
     overflow: hidden;
   }
   .ant-table table > thead th {
-    border-color: #ceeffb;
+    // border-color: #ceeffb;
+    background-color: #dfdfdf;
   }
   .ant-table table > thead .ant-table-cell-fix-right,
   .ant-table table > thead .ant-table-cell-fix-left {
-    background-color: #ceeffb;
+    // background-color: #ceeffb;
   }
   .stripe,
   .stripe .ant-table-cell-fix-right,

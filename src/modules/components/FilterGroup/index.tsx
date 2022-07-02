@@ -85,6 +85,28 @@ export default (props: any) => {
         { value: '0', label: 'No' },
       ],
     },
+    Product: {
+      BillingMonthTag: [
+        { value: 'Last Month', label: 'Last Month' },
+        { value: 'Current Month', label: 'Current Month' },
+      ],
+      IndividualInvoice: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      QuarterlyCharge: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      IsPOByPercentage: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      Signed: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+    },
   };
 
   const changeFilterGroup = (val) => {
@@ -274,6 +296,8 @@ export default (props: any) => {
           />
         );
       case 'ModifiedDate':
+      case 'StartDate':
+      case 'EndDate':
         if (typeof arra[index].fieldValue == 'string') {
           arra[index].fieldValue =
             arra[index].fieldValue && moment(arra[index].fieldValue).isValid()
@@ -292,6 +316,11 @@ export default (props: any) => {
       case 'AdjustTag':
       case 'MandatoryBVI':
       case 'IsThereBVI':
+      case 'BillingMonthTag':
+      case 'QuarterlyCharge':
+      case 'IsPOByPercentage':
+      case 'Signed':
+      case 'IndividualInvoice':
         return (
           <Select allowClear>
             {options[props.moudleName][fieldName]?.map((item, index) => (
