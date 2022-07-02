@@ -88,4 +88,12 @@ export const Api = {
   DeleteProductData: '/api/Product/DeleteData', //删除product数据
   DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
   EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
+  // 系统设置
+  InsertRole: '/api/System/InsertRole', //新建角色
+  ModifyRole: '/api/System/ModifyRole', //编辑角色
+  QueryRoleMapUsers: '/api/System/QueryRoleMapUsers', // 角色管理-人员维护已选列表
+  RoleBingUser: '/api/System/RoleBingUser', // 角色管理-角色绑定人员
+  QueryRoleMapAuthTrees: '/api/System/QueryRoleMapAuthTrees', // 角色管理-功能授权树
+  RoleBingAuth: '/api/System/RoleBingAuth', // 角色管理-功能授权
+  QueryRolePageInfo: '/api/System/QueryRolePageInfo', // 角色管理-列表
 };

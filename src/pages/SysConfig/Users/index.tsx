@@ -1,4 +1,5 @@
 import React from 'react';
+import Users from '@/modules/SysConfig/Users';
 export default (props: any) => {
-  return <div>开发中...</div>;
+  return <Users {...props} />;
 };

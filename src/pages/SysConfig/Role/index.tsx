@@ -1,4 +1,5 @@
 import React from 'react';
+import Role from '@/modules/SysConfig/Role';
 export default (props: any) => {
-  return <div>开发中...</div>;
+  return <Role {...props} />;
 };

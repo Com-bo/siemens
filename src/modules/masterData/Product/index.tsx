@@ -143,7 +143,7 @@ export const Index = (props: any) => {
       name: 'signed',
       title: 'Signed',
       width: '120px',
-      render: (text) => (text === true ? 'Yes' : 'No'),
+      render: (text) => (text === true ? 'Yes' : text === false ? 'No' : text),
     },
     {
       title: 'SignedDate',
@@ -236,7 +236,7 @@ export const Index = (props: any) => {
       width: '150px',
       name: 'individualInvoice',
       titleRender: 'input',
-      render: (text) => (text ? 'Yes' : 'No'),
+      render: (text) => (text === true ? 'Yes' : text === false ? 'No' : text),
     },
 
     {
@@ -251,6 +251,7 @@ export const Index = (props: any) => {
       width: '150px',
       name: 'quarterlyCharge',
       titleRender: 'input',
+      render: (text) => (text === true ? 'Yes' : text === false ? 'No' : text),
     },
     {
       title: 'BillingMonthTag',
