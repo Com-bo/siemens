@@ -26,7 +26,7 @@ import {
   AllocationFile,
 } from '@/app/request/apiBilling';
 import { formatDate, objectToFormData } from '@/tools/utils';
-import { Form, message, Modal } from 'antd';
+import { Form, message, Modal,notification } from 'antd';
 
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
@@ -70,6 +70,40 @@ export default (props: any) => {
   //
   const [successMark, setSuccessMark] = useState(false);
   const [isSingelEdit, setIsSingelEdits] = useState(false);
+  const [billingStatusGroup, setBillingStatusGroup] = useState([
+    {
+      label: 'Freeze',
+      value: 'Freeze',
+    },
+    {
+      label: 'Unfreeze',
+      value: 'Unfreeze',
+    },
+    {
+      label: 'Auto To SAP',
+      value: 'AutoToSAP',
+    },
+    {
+      label: 'Manual To SAP',
+      value: 'ManualToSAP',
+    },
+    {
+      label: 'Waiting For SAP',
+      value: 'WaitingForSAP',
+    },
+    {
+      label: 'PostPone',
+      value: 'PostPone',
+    },
+    {
+      label: 'Obsolete',
+      value: 'Obsolete',
+    },
+    {
+      label: 'Successful',
+      value: 'Successful',
+    },
+  ]);
   //
   const _generateHead = (cols: any) => {
     let _columns = [];
@@ -289,7 +323,7 @@ export default (props: any) => {
       current,
       pageSize: pageSize,
     };
-    exportExcel(params).then((res: any) => {
+    ExportBillingData(params).then((res: any) => {
       let elink = document.createElement('a');
       // 设置下载文件名
       elink.download = 'Data Management List.xlsx';
@@ -472,35 +506,77 @@ export default (props: any) => {
       }
     });
   };
-  const setStatusFun = () => {
-    const params = {
-      billingStatus: 0,
+  const setStatusFun = (statusIndex) => {
+    const statusMark=selectedRows.some((item) => {
+      return item.totalAmout<0 && item.chargeType=="ICC"
+    })
+    let params = {
+      billingStatus: statusIndex,
       recordIdList: selectedRowKeys,
     };
+    switch (statusIndex) {
+      case 0:
+        break;
+      case 1:
+   
+        break;
+      case 2:
+        if(statusMark){
+          message.error("Please repeat the selection");
+          return
+        }
+        break;
+      case 3:
+        if(statusMark){
+          message.error("Please repeat the selection");
+          return
+        }
+        break;
+      case 4:
+
+        break;
+      case 5:
+
+        break;
+      case 6:
+
+        break;
+      case 7:
+
+        break;
+    }
     SetStatusSave(params).then((res) => {
       if (res.isSuccess) {
         getData();
         setSelectedRowKeys([]);
         message.success(res.msg);
+        if(statusIndex==7){
+          notification.open({
+            message: 'Tip',
+            description:
+              'Please add the relevant information about SAP recharge',
+          });
+        }
       } else {
         message.error(res.msg);
       }
     });
   };
   const ImportFlieFn = (index) => {
+    let date=`yyyyMM=${new Date().getFullYear()}${new Date().getMonth()}`
     switch (index) {
       case 1:
-        BatchFileManual({}).then((res) => {
+        BatchFileManual(date).then((res) => {
           exportFun(res,"BatchFileManual")
         });
         break;
       case 2:
-        BatchFileAuto({}).then((res) => {
+        BatchFileAuto(date).then((res) => {
           exportFun(res,"BatchFileAuto")
         });
         break;
       case 3:
-        AllocationFile({}).then((res) => {
+        AllocationFile(date).then((res) => {
           exportFun(res,"AllocationFile")
         })
         break;
@@ -601,5 +677,6 @@ export default (props: any) => {
     setIsSingelEdits,
     setStatusFun,
     ImportFlieFn,
+    billingStatusGroup
   };
 };

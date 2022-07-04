@@ -311,7 +311,7 @@ export default (props: any) => {
       width: '100px',
       titleRender: 'input',
       sorter: true,
-      render: (text) => (text === false ? 'Yes' : 'No'),
+      render: (text) => (text===null?"":text === false ? 'No' : 'Yes'),
     },
     {
       name: 'templateType',
@@ -770,6 +770,7 @@ export default (props: any) => {
   const selectProSure = () => {
     setShowPro(false);
     let data = selectProductRow[0];
+    console.log(data)
     formData.setFieldsValue({
       businessLine: data.businessLine,
       are: data.are,
@@ -1125,7 +1126,7 @@ export default (props: any) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item
                 label="Start Month"
                 name="startMonth"
@@ -1157,7 +1158,7 @@ export default (props: any) => {
                   style={{ width: '100%' }}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item label="ChargeType" name="chargeType">
                 <Input disabled />
@@ -1197,7 +1198,7 @@ export default (props: any) => {
               <Form.Item
                 label="Billing ARE"
                 name="billingARE"
-                rules={[{ required: true }]}
+              
               >
                 <Input disabled={isViewMark} />
               </Form.Item>
@@ -1206,13 +1207,13 @@ export default (props: any) => {
               <Form.Item
                 label="Billing Cost Center"
                 name="billingCostCenter"
-                rules={[{ required: true }]}
+              
               >
                 <Input disabled={isViewMark} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="BVI" name="bvi" rules={[{ required: true }]}>
+              <Form.Item label="BVI" name="bvi">
                 <InputNumber
                   disabled={componentDisabled}
                   // min={0}
@@ -1220,18 +1221,17 @@ export default (props: any) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item
-                label="poPercentage"
+                label="POPercentage"
                 name="poPercentage"
-                rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item
-                label="adjustTag"
+                label="AdjustTag"
                 name="adjustTag"
                 valuePropName="checked"
               >

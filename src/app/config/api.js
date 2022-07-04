@@ -72,7 +72,7 @@ export const Api = {
   SetStatusSave: '/api/Billing/SetStatusSave',
   BatchFileManual: '/api/Billing/BatchFileManual',
   BatchFileAuto: '/api/Billing/BatchFileAuto',
-  AllocationFile: '/api/Billing/AllocationFile', // masterData-costcenter
+  AllocationFile: '/api/Billing/AllocationFile', 
   GetCostCenterData: '/api/CostCenterIcb/QueryListData',
   ExportCostCenterData: '/api/CostCenterIcb/ExportData', //导出costcenter
   ImportCostCenterData: '/api/CostCenterIcb/ImportData', //导入数据

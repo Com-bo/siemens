@@ -86,10 +86,43 @@ export const defaultRoute =
           name: 'ServiceLine Basic',
           key: "ServiceLineBasic",
           path: '/MasterData/ServiceLineBasic',
-        },{
+        }
+        ,
+        {
           name: 'Product',
           key: "Product",
           path: '/MasterData/Product',
+        }
+        
+        ,
+        {
+          name: 'SpecialDivision',
+          key: "SpecialDivision",
+          path: '/MasterData/SpecialDivision',
+        }
+        ,
+        {
+          name: 'DivisionMapping-ICB',
+          key: "DivisionMapping-ICB",
+          path: '/MasterData/DivisionMappingICB',
+        }
+        ,
+        {
+          name: 'DivisionMapping-OC',
+          key: "DivisionMapping-OC",
+          path: '/MasterData/DivisionMappingOC',
+        }
+        ,
+        {
+          name: 'O2CUserID',
+          key: "O2CUserID",
+          path: '/MasterData/O2CUserID',
+        }
+        ,
+        {
+          name: 'Currency',
+          key: "Currency",
+          path: '/MasterData/Currency',
         }
     ]
     },
