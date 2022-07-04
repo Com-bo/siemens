@@ -63,6 +63,10 @@ export default (props: any) => {
       name: 'uploadDate',
       title: 'Upload Date',
       width: '100px',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
     },
     {
       name: 'uploadUser',
@@ -204,7 +208,7 @@ export default (props: any) => {
         renderFilterGroup={
           <FilterGroupDiv>
             <Form form={form} labelCol={{ flex: '120px' }}>
-              <Row className="masterData" gutter={24}>
+              <Row className="masterData" gutter={10}>
                 <Col span={6}>
                   <Form.Item label="Business Line" name="businessLine">
                     <Select
