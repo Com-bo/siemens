@@ -311,7 +311,7 @@ export default (props: any) => {
       width: '100px',
       titleRender: 'input',
       sorter: true,
-      render: (text) => (text === false ? 'Yes' : 'No'),
+      render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
     },
     {
       name: 'templateType',
@@ -478,42 +478,44 @@ export default (props: any) => {
           )}
 
           {!record.bviFlag ? (
-            <span onClick={(event)=>{
-              event.stopPropagation();
-            }}>
-            <Popconfirm
-              title="Are you sure?"
-              onConfirm={(event) => {
+            <span
+              onClick={(event) => {
                 event.stopPropagation();
-                if (record.bviStatus == 'Unconfirm') {
-                  toConfirm([record.id]);
-                } else {
-                  toUnconfirm([record.id]);
-                }
               }}
-              okText="Yes"
-              cancelText="Cancel"
             >
-              {record.bviStatus == 'Unconfirm' ? (
-                <Tooltip title="Confirm">
-                  <Button
-                    onClick={(event) => event.stopPropagation()}
-                    type="text"
-                    key="3"
-                    icon={<i className="gbs gbs-confirm"></i>}
-                  ></Button>
-                </Tooltip>
-              ) : (
-                <Tooltip title="Unconfirm">
-                  <Button
-                    onClick={(event) => event.stopPropagation()}
-                    type="text"
-                    key="3"
-                    icon={<i className="gbs gbs-confirm"></i>}
-                  ></Button>
-                </Tooltip>
-              )}
-            </Popconfirm>
+              <Popconfirm
+                title="Are you sure?"
+                onConfirm={(event) => {
+                  event.stopPropagation();
+                  if (record.bviStatus == 'Unconfirm') {
+                    toConfirm([record.id]);
+                  } else {
+                    toUnconfirm([record.id]);
+                  }
+                }}
+                okText="Yes"
+                cancelText="Cancel"
+              >
+                {record.bviStatus == 'Unconfirm' ? (
+                  <Tooltip title="Confirm">
+                    <Button
+                      onClick={(event) => event.stopPropagation()}
+                      type="text"
+                      key="3"
+                      icon={<i className="gbs gbs-confirm"></i>}
+                    ></Button>
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="Unconfirm">
+                    <Button
+                      onClick={(event) => event.stopPropagation()}
+                      type="text"
+                      key="3"
+                      icon={<i className="gbs gbs-confirm"></i>}
+                    ></Button>
+                  </Tooltip>
+                )}
+              </Popconfirm>
             </span>
           ) : (
             ''
@@ -681,16 +683,10 @@ export default (props: any) => {
       ...record,
       bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
       productName: record.product,
-      startMonth: record.startMonth
-        ? moment(record.startMonth)
-        : null,
+      startMonth: record.startMonth ? moment(record.startMonth) : null,
       endMonth: record.endMonth ? moment(record.endMonth) : null,
-      modifiedDate: record.modifiedDate
-        ? moment(record.modifiedDate)
-        : null,
-      createdDate: record.createdDate
-        ? moment(record.createdDate)
-        : null,
+      modifiedDate: record.modifiedDate ? moment(record.modifiedDate) : null,
+      createdDate: record.createdDate ? moment(record.createdDate) : null,
     });
     setShowBviData(true);
     setComponentDisabled(true);
@@ -770,6 +766,7 @@ export default (props: any) => {
   const selectProSure = () => {
     setShowPro(false);
     let data = selectProductRow[0];
+    console.log(data);
     formData.setFieldsValue({
       businessLine: data.businessLine,
       are: data.are,
@@ -899,9 +896,13 @@ export default (props: any) => {
               <Button type="primary" onClick={importExcel}>
                 Submit
               </Button>
-              <Button onClick={()=>{
-                setShowImport(false)
-              }}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  setShowImport(false);
+                }}
+              >
+                Cancel
+              </Button>
             </Space>
           </Form.Item>
         </Form>
@@ -1125,7 +1126,7 @@ export default (props: any) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item
                 label="Start Month"
                 name="startMonth"
@@ -1157,7 +1158,7 @@ export default (props: any) => {
                   style={{ width: '100%' }}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item label="ChargeType" name="chargeType">
                 <Input disabled />
@@ -1194,25 +1195,17 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                label="Billing ARE"
-                name="billingARE"
-                rules={[{ required: true }]}
-              >
+              <Form.Item label="Billing ARE" name="billingARE">
                 <Input disabled={isViewMark} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                label="Billing Cost Center"
-                name="billingCostCenter"
-                rules={[{ required: true }]}
-              >
+              <Form.Item label="Billing Cost Center" name="billingCostCenter">
                 <Input disabled={isViewMark} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="BVI" name="bvi" rules={[{ required: true }]}>
+              <Form.Item label="BVI" name="bvi">
                 <InputNumber
                   disabled={componentDisabled}
                   // min={0}
@@ -1220,18 +1213,17 @@ export default (props: any) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item
-                label="poPercentage"
+                label="POPercentage"
                 name="poPercentage"
-                rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item
-                label="adjustTag"
+                label="AdjustTag"
                 name="adjustTag"
                 valuePropName="checked"
               >
@@ -1329,7 +1321,7 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             {
-              <Col span={24} style={{marginTop:"20px"}}>
+              <Col span={24} style={{ marginTop: '20px' }}>
                 <Form.Item style={{ textAlign: 'center' }}>
                   <Space size={60}>
                     <Button type="primary" onClick={editDataListSaveFn}>
