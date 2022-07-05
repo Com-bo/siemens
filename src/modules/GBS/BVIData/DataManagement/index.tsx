@@ -1674,7 +1674,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/BVI_Manual Input_Template.xlsx'
+                            '/template/BVI Manual Template.xlsx'
                           }
                         >
                           BVI Manual Template
@@ -1684,7 +1684,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/R2R MD Import Data 202109.xlsx'
+                            '/template/R2R MD Template.xlsx'
                           }
                         >
                           R2R MD Template
@@ -1694,7 +1694,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/H2R BVI Uploading template-22 P3.xlsx'
+                            '/template/H2R BVI Template.xlsx'
                           }
                         >
                           H2R BVI Template
@@ -1704,7 +1704,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/H2R T&E report example.xlsx'
+                            '/template/H2R T&E Template.xlsx'
                           }
                         >
                           H2R T&E BVI Template
@@ -1714,7 +1714,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/H2R GMM Charging_Other DC_China_202201-1.xlsx'
+                            '/template/H2R GMM Template.xlsx'
                           }
                         >
                           H2R GMM Template
@@ -1724,7 +1724,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/BVI template O2C.xlsx'
+                            '/template/O2C BVI Template.xlsx'
                           }
                         >
                           O2C BVI Template
@@ -1734,7 +1734,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/BVI_O2C_TI_CompanyCo.Template.xlsx'
+                            '/template/O2C TI BVI Template.xlsx'
                           }
                         >
                           O2C TI BVI Template
