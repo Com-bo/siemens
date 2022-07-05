@@ -221,24 +221,45 @@ export default (props: any) => {
       width: '100px',
       sorter: true,
       render: (text, record, index) => {
+        let temptype=true
+        if(record.templateType=="H2R BVI Template" || record.templateType=="BVI Manual Template"){
+          temptype=true
+        }else{
+          temptype=false
+        }
         if (record.validationMsg) {
           return (
-            <BtnTextRedWrap color="red">
-              <Button
-                type="text"
-                onClick={(evt) => getCheckOriginalData(evt, record)}
-                icon={<ExclamationCircleOutlined />}
-              >
-                {text}
-              </Button>
-            </BtnTextRedWrap>
+            <Tooltip title={record.validationMsg}>
+              <BtnTextRedWrap color="red">
+                <Button
+                  type="text"
+                  onClick={(evt) => {
+                    evt.stopPropagation()
+                    if(temptype){
+                    }else{
+                      getCheckOriginalData(evt, record)
+                    }
+                  }}
+                  icon={<ExclamationCircleOutlined />}
+                >
+                  {text}
+                </Button>
+              </BtnTextRedWrap>
+            </Tooltip>
           );
         } else {
           return (
             <BtnTextRedWrap>
               <Button
                 type="text"
-                onClick={(evt) => getCheckOriginalData(evt, record)}
+                onClick={(evt) => {
+                  evt.stopPropagation()
+                  if(temptype){
+                    message.error("Check source data is not supported");
+                  }else{
+                    getCheckOriginalData(evt, record)
+                  }
+                }}
               >
                 {text}
               </Button>
@@ -994,8 +1015,12 @@ export default (props: any) => {
                         data.customerDivision !=
                           formData.getFieldValue('customerDivision')
                       ) {
-                        setCustomerDivision(data.customerDivision);
+                        setCustomerDivision(data.data.custemerDivision);
                       }
+                      value &&
+                        formData.setFieldsValue({
+                          companyCode: data.data.companyCode,
+                        });
                     }}
                     getoptions={(options) => {
                       return options?.map((x, index) => {
@@ -1005,7 +1030,7 @@ export default (props: any) => {
                             data={x}
                             value={x.costCenter}
                           >
-                            {x.costCenter}
+                            {x.costCenter}-{x.custemerDivision}
                           </Select.Option>
                         );
                       });

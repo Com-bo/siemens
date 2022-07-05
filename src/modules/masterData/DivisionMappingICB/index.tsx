@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BtnThemeWrap,
   ContentWrap,
@@ -7,16 +7,15 @@ import {
   TableTopDiv,
   TaleTitleIconDiv,
 } from '@/assets/style';
+import search from '@/assets/images/search.png';
 import TableList from '@/modules/components/TableMixInline';
 import {
   Button,
   Col,
-  DatePicker,
   Divider,
   Dropdown,
   Form,
   Input,
-  InputNumber,
   Menu,
   message,
   Modal,
@@ -24,29 +23,31 @@ import {
   Row,
   Select,
   Space,
-  Table,
   Tooltip,
   Upload,
 } from 'antd';
 import moment from 'moment';
 import './style.less';
 import DebounceSelect from '@/components/Select/debounceSelect';
-import search from '@/assets/images/search.png';
+import TableMix from '@/components/Table';
 import {
+  ClearOutlined,
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import FilterGroup from '@/modules/components/FilterGroup';
 import {
-  getServiceLineList,
-  queryBusinesslineOptionsList,
-} from '@/app/request/common';
-import { triggerFocus } from 'antd/lib/input/Input';
+  deleteCostCenterData,
+  editCostCenterDataSave,
+  exportCostCenterExcel,
+  getCostCenterData,
+  importCostCenterData,
+  logCostCenterDataQuery,
+} from '@/app/request/apiCostCenter';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
+  const [formFilter] = Form.useForm();
   const [formData] = Form.useForm();
-  const [poForm] = Form.useForm();
   const [tableData, setTableData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -54,212 +55,31 @@ export const Index = (props: any) => {
   const [current, setCurrent] = useState(1);
   const [isSearch, setIsSearch] = useState(true);
   const [pageSize, setPageSize] = useState(20);
-  const [showProData, setShowProData] = useState(false);
+  const [showLog, setShowLog] = useState(false);
+  const [logData, setLogData] = useState([]);
+  const [logSize, setLogSize] = useState(20);
+  const [logCurrent, setLogCurrent] = useState(1);
+  const [logTotal, setLogTotal] = useState(0);
+  const [logId, setLogId] = useState('');
+  const [showCostCenterData, setShowCostCenterData] = useState(false);
   const [componentDisabled, setComponentDisabled] = useState(false);
-  const [filterBusinessLine, setFilterBusinessLine] = useState('');
-  const [poData, setPoData] = useState([]);
-  const [showPO, setShowPO] = useState(false);
   const orignalCols: any = [
     {
-      name: 'businessLine',
-      title: 'Business Line',
-      width: '150px',
-      titleRender: 'input',
-      // titleRender: 'input',
-      // sorter: true,
-    },
-    {
-      name: 'serviceLine',
-      title: 'Service Line',
-      width: '150px',
+      name: 'cepcDivision',
+      title: 'CEPC Division',
+      width: '180px',
       titleRender: 'input',
     },
     {
-      name: 'customerDevision',
-      title: 'CustomerDivision',
-      width: '150px',
-      titleRender: 'input',
-    },
-    {
-      name: 'are',
-      title: 'ARE',
-      width: '100px',
-      titleRender: 'input',
-    },
-    {
-      name: 'product',
-      title: 'ProductName',
+      name: 'costCenter',
+      title: 'CostCenter',
       width: '200px',
       titleRender: 'input',
     },
     {
-      name: 'startDate',
-      title: 'StartDate',
-      width: '150px',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD')
-          : text,
-    },
-    {
-      name: 'endDate',
-      title: 'EndDate',
-      width: '150px',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD')
-          : text,
-    },
-    {
-      name: 'productNameForReport',
-      title: 'Product Name for Report',
+      title: 'Comment',
       width: '180px',
-      titleRender: 'input',
-    },
-    {
-      name: 'signed',
-      title: 'Signed',
-      width: '120px',
-      render: (text) => (text === true ? 'Yes' : 'No'),
-    },
-    {
-      title: 'SignedDate',
-      width: '120px',
-      name: 'signedDate',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD')
-          : text,
-    },
-    {
-      title: 'GSC_ID',
-      width: '180px',
-      name: 'GSC_ID',
-      titleRender: 'input',
-    },
-    {
-      title: 'BVIDescription',
-      width: '180px',
-      name: 'BVIDescription',
-      titleRender: 'input',
-    },
-    {
-      title: 'GSCDescription',
-      width: '180px',
-      name: 'GSCDescription',
-      titleRender: 'input',
-    },
-    {
-      title: 'UnitPrice',
-      width: '180px',
-      name: 'unitPrice',
-    },
-    {
-      title: 'UnitPriceCurrency',
-      width: '180px',
-      name: 'unitPriceCurrency',
-      titleRender: 'input',
-    },
-    {
-      title: 'BillingCurrency',
-      width: '180px',
-      name: 'billingCurrency',
-      titleRender: 'input',
-    },
-    {
-      title: 'Comments',
-      width: '180px',
-      name: 'comments',
-      titleRender: 'input',
-    },
-    {
-      title: 'MaterialNumber',
-      width: '180px',
-      name: 'materialNumber',
-      titleRender: 'input',
-    },
-    {
-      title: 'MandotoryBVI',
-      width: '150px',
-      name: 'mandotoryBVI',
-    },
-    {
-      title: 'SystemTag',
-      width: '150px',
-      name: 'systemTag',
-      titleRender: 'input',
-    },
-    {
-      title: 'BillingLocation',
-      width: '150px',
-      name: 'billingLocation',
-      titleRender: 'input',
-    },
-    {
-      title: 'Alt.tax classific.',
-      width: '180px',
-      name: 'altTaxClassific',
-      titleRender: 'input',
-    },
-    {
-      title: 'Sender PC',
-      width: '150px',
-      name: 'senderPC',
-      titleRender: 'input',
-    },
-    {
-      title: 'Individual Invoice',
-      width: '150px',
-      name: 'individualInvoice',
-      titleRender: 'input',
-    },
-
-    {
-      title: 'SOItemNumber',
-      width: '150px',
-      name: 'sOItemNumber',
-      titleRender: 'input',
-    },
-
-    {
-      title: 'Quarterly Charge',
-      width: '150px',
-      name: 'quarterlyCharge',
-      titleRender: 'input',
-    },
-    {
-      title: 'BillingMonthTag',
-      width: '150px',
-      name: 'billingMonthTag',
-      titleRender: 'input',
-    },
-    {
-      title: 'IsPOByPercentage',
-      width: '120px',
-      name: 'isPOByPercentage',
-    },
-    {
-      title: 'SoldToParty',
-      width: '120px',
-      name: 'soldToParty',
-      titleRender: 'input',
-    },
-    {
-      title: 'PONumber',
-      width: '120px',
-      name: 'pONumber',
-      titleRender: 'input',
-    },
-    {
-      title: 'Overhead key',
-      width: '120px',
-      name: 'Overheadkey',
-      titleRender: 'input',
-    },
-    {
-      title: 'Print. Con., Del., Inv.',
-      width: '120px',
-      name: 'pcdi',
+      name: 'comment',
       titleRender: 'input',
     },
     {
@@ -275,9 +95,11 @@ export const Index = (props: any) => {
               key="1"
               icon={<EditOutlined />}
               onClick={() => {
-                setShowProData(true);
+                setShowCostCenterData(true);
+                setComponentDisabled(false);
                 formData.setFieldsValue({
                   ...record,
+                  customerDivision: record.custemerDivision,
                 });
               }}
             ></Button>
@@ -296,11 +118,80 @@ export const Index = (props: any) => {
                 onClick={(event) => event.stopPropagation()}
               ></Button>
             </Tooltip>
-          </Popconfirm>{' '}
+          </Popconfirm>
+          <Tooltip title="Log">
+            <Button
+              type="text"
+              key="4"
+              icon={<i className="gbs gbs-logs"></i>}
+              onClick={(event) => {
+                event.stopPropagation();
+
+                toLog(record.id);
+              }}
+            ></Button>
+          </Tooltip>
         </Space>
       ),
     },
   ];
+  const columns: any = [
+    {
+      title: 'Created Date',
+      dataIndex: 'createdDate',
+      key: 'createdDate',
+      align: 'center',
+      width: '160px',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
+    },
+    {
+      title: 'Created User',
+      dataIndex: 'createdUser',
+      key: 'createdUser',
+      align: 'center',
+    },
+    {
+      title: 'Fields Name',
+      dataIndex: 'fieldsName',
+      key: 'fieldsName',
+      align: 'center',
+    },
+    {
+      title: 'Old Value',
+      dataIndex: 'oldValue',
+      key: 'oldValue',
+      align: 'center',
+    },
+    {
+      title: 'New Value',
+      dataIndex: 'newValue',
+      key: 'newValue',
+      align: 'center',
+    },
+    {
+      title: 'Modified Date',
+      dataIndex: 'modifiedDate',
+      // sorter: {
+      //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
+      // },
+      key: 'modifiedDate',
+      align: 'center',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
+    },
+    {
+      title: 'Modified User',
+      dataIndex: 'modifiedUser',
+      key: 'modifiedUser',
+      align: 'center',
+    },
+  ];
+  // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
     event.stopPropagation();
     Modal.confirm({
@@ -310,34 +201,43 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        // deleteData({
-        //   recordIdList,
-        // }).then((res) => {
-        //   if (res.isSuccess) {
-        //     message.success('Deletion succeeded!');
-        //     setSelectedRowKeys([]);
-        //     getData();
-        //     setCurrent(1);
-        //   } else {
-        //     message.error(res.msg);
-        //   }
-        // });
+        deleteCostCenterData({
+          recordIdList,
+        }).then((res) => {
+          if (res.isSuccess) {
+            message.success('Deletion succeeded!');
+            setSelectedRowKeys([]);
+            getData();
+            setCurrent(1);
+          } else {
+            message.error(res.msg);
+          }
+        });
       },
       centered: true,
     });
   };
-
   const getData = () => {
     let params = {
-      // 待定字段
-      // ...form.getFieldsValue(),
+      searchCondition: {
+        pageTop: formFilter.getFieldsValue(),
+        listHeader: form.getFieldsValue(),
+      },
+      orderCondition: {
+        //   [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
       pageIndex: current,
       pageSize: pageSize,
     };
-    setTableData([{ orgId: 1, are: 'XXXX' }]);
-    setTotal(1);
+    getCostCenterData(params).then((res) => {
+      if (res.isSuccess) {
+        setTableData(res.data);
+        setTotal(res.totalCount);
+      } else {
+        message.error(res.msg);
+      }
+    });
   };
-  const latestGroupIdRef = useRef<any>();
   useEffect(() => {
     getData();
   }, [current, pageSize]);
@@ -350,183 +250,105 @@ export const Index = (props: any) => {
   };
 
   const exportExcelAction = () => {
-    console.log(form.getFieldsValue());
     let params = {
-      // 待定字段
-      // ...form.getFieldsValue(),
+      searchCondition: {
+        pageTop: formFilter.getFieldsValue(),
+        listHeader: form.getFieldsValue(),
+      },
+      orderCondition: {
+        //   [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
       pageIndex: current,
       pageSize: pageSize,
     };
+
+    exportCostCenterExcel(params).then((res: any) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        // 设置下载文件名
+        elink.download = 'CostCenter List.xlsx';
+        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
   };
   const importExcel = (file) => {
     const fd = new FormData();
     fd.append('file', file);
-    // importProductData(fd).then((res) => {
-    //   if (res.isSuccess) {
-    //     message.success(res.msg);
-    //     getData();
-    //     setSelectedRowKeys([]);
-    //   } else {
-    //     message.error(res.msg);
-    //   }
-    // });
+    importCostCenterData(fd).then((res) => {
+      if (res.isSuccess) {
+        message.success(res.msg);
+        getData();
+        setSelectedRowKeys([]);
+      } else {
+        message.error(res.msg);
+      }
+    });
   };
-  const poCols: any = [
-    {
-      title: 'Sold-to Party',
-      dataIndex: 'soldtoparty',
-      key: 'soldtoparty',
-    },
-    {
-      title: 'Org.ID',
-      dataIndex: 'orgId',
-      key: 'orgId',
-    },
-    {
-      title: 'PO Number',
-      dataIndex: 'poNumber',
-      key: 'poNumber',
-    },
-    {
-      title: 'Percentage',
-      dataIndex: 'percentage',
-      key: 'percentage',
-    },
-    {
-      title: 'Overhead Key',
-      dataIndex: 'overheadKey',
-      key: 'overheadKey',
-    },
-    {
-      title: 'Print. Con., Del., Inv.',
-      dataIndex: 'pcdi',
-      key: 'pcdi',
-    },
-    {
-      title: 'Operation',
-      dataIndex: 'operation',
-      key: 'operation',
-      render: (text, record, index) => (
-        <Space>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={() => {}}
-            ></Button>
-          </Tooltip>
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => {}}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
-              <Button
-                type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
-              ></Button>
-            </Tooltip>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+  useEffect(() => {
+    logId && _getLogData();
+  }, [logCurrent, logId, logSize]);
+  const _getLogData = async () => {
+    const res = await logCostCenterDataQuery({
+      recordId: logId,
+      pageIndex: logCurrent,
+      pageSize: logSize,
+    });
+    if (res.isSuccess) {
+      setLogData(res.data || []);
+      setLogTotal(res.totalCount);
+    } else {
+      message.error(res.msg);
+    }
+    return res;
+  };
+  const onLogPageChange = (pagination, filters, sorter, extra) => {
+    //   翻页|排序|筛选
+    switch (extra.action) {
+      case 'paginate':
+        setLogCurrent(pagination.current);
+        break;
+      case 'sort':
+        break;
+      default:
+        break;
+    }
+  };
+  const handleLogSize = (val: number) => {
+    setLogSize(val);
+  };
+  const toLog = (recordId: string) => {
+    // 获取loglist数据
+    setLogId(recordId);
+    setShowLog(true);
+  };
+  const saveFormData = () => {
+    formData
+      .validateFields()
+      .then((values) => {
+        const params = {
+          id: formData.getFieldValue('id') || '',
+          ...formData.getFieldsValue(),
+        };
+        editCostCenterDataSave(params).then((res) => {
+          if (res.isSuccess) {
+            message.success(res.msg);
+            setShowCostCenterData(false);
+            formData.resetFields();
+            getData();
+          } else {
+            message.error(res.msg);
+          }
+        });
+      })
+      .catch((e) => {});
+  };
   return (
     <ContentWrap>
-      {/* po */}
-      <Modal
-        width="800px"
-        footer={null}
-        title={
-          <TableTopDiv style={{ margin: 0 }}>
-            <TableTitleDiv style={{ float: 'left' }}>
-              <TaleTitleIconDiv>
-                <span></span>
-              </TaleTitleIconDiv>
-              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                PO Data
-              </span>
-            </TableTitleDiv>
-          </TableTopDiv>
-        }
-        maskClosable={false}
-        visible={showPO}
-        onCancel={() => {
-          setShowPO(false);
-          poForm.resetFields();
-        }}
-      >
-        <Form form={poForm} labelCol={{ flex: '140px' }}>
-          <Row gutter={20}>
-            <Col span={12}>
-              <Form.Item
-                label="Sold-To Party"
-                name="soldToParty"
-                rules={[{ required: true }]}
-              >
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="PONumber"
-                name="pONumber"
-                rules={[{ required: true }]}
-              >
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="OrgID"
-                name="orgID"
-                rules={[{ required: true }]}
-              >
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Overhead key" name="overheadkey">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Print. Con., Del., Inv." name="Pcdi">
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={24} style={{ textAlign: 'center' }}>
-              <Space size={40}>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    poForm
-                      .validateFields()
-                      .then((valid) => {
-                        console.log('接口');
-                      })
-                      .catch((e) => {});
-                  }}
-                >
-                  Confirm
-                </Button>
-                <Button
-                  onClick={() => {
-                    setShowPO(false);
-                    poForm.resetFields();
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Space>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
+      {/* 编辑 */}
       <Modal
         maskClosable={false}
         width="1000px"
@@ -537,314 +359,109 @@ export const Index = (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                Product Data
+              DivisionMappingICB Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>
         }
-        visible={showProData}
+        visible={showCostCenterData}
         footer={null}
         onCancel={() => {
-          setShowProData(false);
+          setShowCostCenterData(false);
           formData.resetFields();
         }}
       >
         <Form form={formData} labelCol={{ flex: '120px' }}>
           <Row gutter={20}>
-            <Col span={24}>
+            <Col span={12}>
+              <Form.Item label="CEPC Division" name="cepcDivision" rules={[{ required: true }]}>
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
-                label="Product Name"
-                name="productName"
+                label="CostCenter"
+                name="costCenter"
+                rules={[{ required: true }]}
+              >
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Comment"
+                name="comment"
                 rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item
-                label="Product Name for Report"
-                name="ProductNameforReport"
-                rules={[{ required: true }]}
-              >
-                <Input disabled={componentDisabled} />
+              <Form.Item style={{ textAlign: 'center' }}>
+                <Space size={60}>
+                  {!componentDisabled ? (
+                    <Button type="primary" onClick={saveFormData}>
+                      Save
+                    </Button>
+                  ) : (
+                    ''
+                  )}
+                  <Button
+                    onClick={() => {
+                      setShowCostCenterData(false);
+                      formData.resetFields();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Space>
               </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Bussiness Line" name="businessLine">
-                <DebounceSelect
-                  initFlag
-                  onChange={(value, data) => {
-                    setFilterBusinessLine(value);
-                    formData.setFieldsValue({
-                      serviceLine: '',
-                    });
-                  }}
-                  getoptions={(options) => {
-                    return options?.map((x, index) => {
-                      return (
-                        <Select.Option key={index} data={x} value={x.value}>
-                          {x.label}
-                        </Select.Option>
-                      );
-                    });
-                  }}
-                  delegate={(e) => {
-                    return queryBusinesslineOptionsList({
-                      keywords: e,
-                    });
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Service Line" name="serviceLine">
-                <DebounceSelect
-                  initFlag
-                  onChange={(value, data) => {}}
-                  getoptions={(options) => {
-                    return options?.map((x, index) => {
-                      return (
-                        <Select.Option key={index} data={x} value={x.value}>
-                          {x.label}
-                        </Select.Option>
-                      );
-                    });
-                  }}
-                  delegate={(e) => {
-                    return getServiceLineList({
-                      businessLine: filterBusinessLine,
-                      keywords: e,
-                    });
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="ARE" name="are">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Customer Division" name="customerDivision">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Start Date"
-                name="startDate"
-                rules={[{ required: true }]}
-              >
-                <DatePicker
-                  disabled={componentDisabled}
-                  format="YYYY-MM-DD"
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="End Date"
-                name="endDate"
-                rules={[{ required: true }]}
-              >
-                <DatePicker
-                  disabled={componentDisabled}
-                  format="YYYY-MM-DD"
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Signed"
-                name="signed"
-                rules={[{ required: true }]}
-              >
-                <Select allowClear>
-                  <Select.Option value={1}>Yes</Select.Option>
-                  <Select.Option value={0}>No</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Signed Date"
-                name="signedDate"
-                rules={[{ required: true }]}
-              >
-                <DatePicker
-                  disabled={componentDisabled}
-                  format="YYYY-MM-DD"
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Material Number"
-                name="materialNumber"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-
-            <Col span={8}>
-              <Form.Item
-                label="GSC_ID"
-                name="gSC_ID"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="GSC_description"
-                name="GSC_description"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Individual Invoice"
-                name="individualInvoice"
-                rules={[{ required: true }]}
-              >
-                <Select allowClear>
-                  <Select.Option value={1}>Yes</Select.Option>
-                  <Select.Option value={0}>No</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Unit Price"
-                name="unitPrice"
-                rules={[{ required: true }]}
-              >
-                <InputNumber />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Unit Price Currency"
-                name="unitPriceCurrency"
-                rules={[{ required: true }]}
-              >
-                <Select allowClear>
-                  <Select.Option value={1}>CNY</Select.Option>
-                  <Select.Option value={0}>EUR</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Billing Currency" name="billingCurrency">
-                <Select allowClear>
-                  <Select.Option value={1}>CNY</Select.Option>
-                  <Select.Option value={0}>EUR</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="BillingLocation" name="billingLocation">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Alt.tax Classific." name="templateType">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Sender PC" name="SenderPC">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="MandotoryBVI" name="mandotoryBVI">
-                <Select allowClear>
-                  <Select.Option value={1}>Yes</Select.Option>
-                  <Select.Option value={0}>No</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="SystemTag" name="systemTag">
-                <Select allowClear>
-                  {/* <Select.Option value={1}>Yes</Select.Option>
-                                    <Select.Option value={0}>No</Select.Option> */}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Quarterly Charge" name="quarterlyCharge">
-                <Select allowClear>
-                  <Select.Option value={1}>Yes</Select.Option>
-                  <Select.Option value={0}>No</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="BillingMonth Tag" name="billingMonthTag">
-                <Select allowClear>
-                  <Select.Option value={1}>Last Month</Select.Option>
-                  {/* <Select.Option value={0}>No</Select.Option> */}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="SOItemNumber" name="sOItemNumber">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={24} style={{ marginBottom: '20px' }}>
-              <div style={{ textAlign: 'right', margin: '20px 0' }}>
-                <Button type="primary" onClick={() => setShowPO(true)}>
-                  Add PO
-                </Button>
-              </div>
-              <Table columns={poCols} dataSource={poData} />
-            </Col>
-            <Col span={24}>
-              <Form.Item label="Comment" name="comment">
-                <Input.TextArea />
-              </Form.Item>
-            </Col>
-            <Col span={24} style={{ textAlign: 'center' }}>
-              <Space size={40}>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    formData
-                      .validateFields()
-                      .then((valid) => {
-                        console.log('接口');
-                      })
-                      .catch((e) => {});
-                  }}
-                >
-                  Save
-                </Button>
-                <Button
-                  onClick={() => {
-                    setShowProData(false);
-                    formData.resetFields();
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Space>
             </Col>
           </Row>
         </Form>
       </Modal>
+
+      {/* 日志查询 */}
+      <Modal
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Log List Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        footer={null}
+        visible={showLog}
+        maskClosable={false}
+        destroyOnClose={true}
+        onCancel={() => {
+          // formImport.resetFields();
+          setShowLog(false);
+        }}
+      >
+        <div className="selfTable" style={{ margin: '0 0px 0 -24px' }}>
+          <TableMix
+            columns={columns}
+            data={logData}
+            current={logCurrent}
+            pageSize={logSize}
+            total={logTotal}
+            handlePageSize={handleLogSize}
+            rowKey="id"
+            onPageChange={onLogPageChange}
+            pagination={true}
+          />
+        </div>
+      </Modal>
       <TableList
         headerSearch={getData}
-        // form={form}
+        form={form}
         data={tableData}
         columns={orignalCols}
         selectedRowKeys={selectedRowKeys}
@@ -855,23 +472,59 @@ export const Index = (props: any) => {
           setSelectedRows(_selectedRows);
         }}
         renderFilterGroup={
-          <FilterGroup
-            moudleName="Flat Charge"
-            onSearch={(val) => {
-              latestGroupIdRef.current = val;
-              getData();
-            }}
-            onClear={() => {
-              latestGroupIdRef.current = '';
-              form.resetFields();
-              if (current != 1) {
-                setCurrent(1);
-              } else {
-                getData();
-              }
-            }}
-            exportAction={exportExcelAction}
-          />
+          <FilterGroupDiv>
+            <Form
+              form={formFilter}
+              labelCol={{ flex: '120px' }}
+              wrapperCol={{ span: 14 }}
+            >
+              <Row className="masterData">
+                <Col span={7}>
+                  <Form.Item label="CostCenter" name="costCenter">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={7}>
+                  <Form.Item label="CEPC Division" name="cepcDivision">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={4}>
+                  <Form.Item style={{ textAlign: 'right' }}>
+                    <Space size={20}>
+                      <Tooltip title="Search">
+                        <Button
+                          type="primary"
+                          icon={<i className="gbs gbs-search"></i>}
+                          onClick={getData}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title="Export">
+                        <Button
+                          icon={<i className="gbs gbs-export"></i>}
+                          onClick={exportExcelAction}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title="Clear">
+                        <Button
+                          icon={<ClearOutlined />}
+                          onClick={() => {
+                            form.resetFields();
+                            formFilter.resetFields();
+                            if (current == 1) {
+                              getData();
+                            } else {
+                              setCurrent(1);
+                            }
+                          }}
+                        ></Button>
+                      </Tooltip>
+                    </Space>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          </FilterGroupDiv>
         }
         renderBtns={
           <Space>
@@ -903,8 +556,8 @@ export const Index = (props: any) => {
                         style={{ margin: '0 10px' }}
                         type="text"
                         onClick={() => {
-                          setShowProData(true);
-                          // 获取po列表接口
+                          setShowCostCenterData(true);
+                          setComponentDisabled(false);
                         }}
                       >
                         Add
@@ -915,7 +568,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Flat Charge.xlsx">
+                        <a href="./template/Cost Center Input.xlsx">
                           Download Template
                         </a>
                       </span>
@@ -932,8 +585,8 @@ export const Index = (props: any) => {
               </Dropdown>
             </BtnThemeWrap>
             <Button
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
               disabled={selectedRowKeys.length != 1}
+              onClick={(event) => deleteInfos(selectedRowKeys, event)}
             >
               Delete
             </Button>
@@ -957,7 +610,7 @@ export const Index = (props: any) => {
         current={current}
         search={isSearch}
         rowKey="id"
-        listName="Product"
+        listName="DivisionMappingICB"
       />
     </ContentWrap>
   );

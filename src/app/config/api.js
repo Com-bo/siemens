@@ -79,4 +79,9 @@ export const Api = {
   DeleteCostCenterData: '/api/CostCenterIcb/DeleteData',
   LogCostCenterDataQuery: '/api/CostCenterIcb/QueryLogData',
   EditCostCenterDataSave: '/api/CostCenterIcb/EditDataSave', //保存数据
+
+
+   // Billing-validation report
+   BillingIntegrityDataQuery: '/api/BillingValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report 
+   BillingIntegrityDataExport: '/api/BillingValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、
 };
