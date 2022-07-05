@@ -87,5 +87,7 @@ export const Api = {
   QueryProductLogData: '/api/Product/QueryLogData', //查询产品日志
   DeleteProductData: '/api/Product/DeleteData', //删除product数据
   DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
-  EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
+  EditProductDataSave: '/api/Product/EditDataSave', //保存product接口  // Billing-validation report
+  BillingIntegrityDataQuery: '/api/BillingValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
+  BillingIntegrityDataExport: '/api/BillingValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、
 };

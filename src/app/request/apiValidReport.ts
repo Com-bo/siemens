@@ -32,3 +32,24 @@ export const detalInPercentageConfigQuery = () => {
     },
   );
 };
+
+// Billing Data - Validation Report
+export const BillingIntegrityDataQuery = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.BillingIntegrityDataQuery}`,
+    data,
+    {
+      autoLoading: true,
+    },
+  );
+};
+export const BillingIntegrityDataExport = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.BillingIntegrityDataExport}`,
+    data,
+    {
+      autoLoading: true,
+      responseType: 'blob',
+    },
+  );
+};
