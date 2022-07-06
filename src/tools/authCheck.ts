@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-export function checkAuth(functionName, authCode) {
+export function checkAuth(functionName, authCode: string[] | string) {
   if (functionName) {
     //页面名称  HomePage、CertificateList、MaterialList、ClearList
     let functionsList; // [{authCode: "CertificateReturned", authName: "通关证明被退回分页查询"}]
@@ -8,6 +8,9 @@ export function checkAuth(functionName, authCode) {
         functionName
       ];
       if (authCode && functionsList) {
+        if (Array.isArray(authCode)) {
+          return functionsList.some((item) => authCode.includes(item.authCode));
+        }
         return functionsList.some((item) => item.authCode == authCode);
       } else {
         return false;
@@ -25,7 +28,7 @@ export function checkAuth(functionName, authCode) {
 interface AuthWrapperInterface {
   functionName: string;
   authCode: string;
-  children: ReactNode | undefined;
+  children?: ReactNode | undefined;
 }
 export const AuthWrapper = (props: any) => {
   return checkAuth(props.functionName, props.authCode) ? props.children : '';

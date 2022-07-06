@@ -30,10 +30,19 @@ import {
   Switch,
   Tooltip,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
-export default (props: any) => {
+import { AuthWrapper } from '@/tools/authCheck';
+interface FilterGroupType {
+  moudleName: string; //模块标识
+  authPagename?: string; //模块权限用名称
+  customComponet?: React.ReactNode; //自定义渲染组件【ex:checkbox等
+  onSearch: (val: string | number) => void; //搜索方法
+  onClear: () => void;
+  exportAction?: () => void; //导出
+}
+export default (props: FilterGroupType) => {
   const [filterGroup, setFilterGroup] = useState('');
   const [isSetting, setSetting] = useState(false);
   const [operfields, setFields] = useState({});
@@ -666,43 +675,51 @@ export default (props: any) => {
             </Option>
           ))}
         </Select>
-        <Space size={10}>
-          {props?.customComponet}
-          <Button
-            type="primary"
-            icon={<i className="gbs gbs-search"></i>}
-            onClick={() => props.onSearch(filterGroup)}
-          ></Button>
-          <Tooltip title="Setting">
+        <AuthWrapper
+          functionName={props?.authPagename}
+          authCode={[
+            props?.authPagename + '-View',
+            props?.authPagename + '-Edit',
+          ]}
+        >
+          <Space size={10}>
+            {props?.customComponet}
             <Button
-              icon={<i className="gbs gbs-setting"></i>}
-              onClick={() => {
-                form.resetFields();
-                form.setFieldsValue({
-                  groupFieldList: [
-                    { fieldName: '', operator: '', fieldValue: '' },
-                  ],
-                });
-                setSetting(true);
-              }}
+              type="primary"
+              icon={<i className="gbs gbs-search"></i>}
+              onClick={() => props.onSearch(filterGroup)}
             ></Button>
-          </Tooltip>
-          <Tooltip title="Export">
-            <Button
-              icon={<i className="gbs gbs-export"></i>}
-              onClick={props.exportAction}
-            ></Button>
-          </Tooltip>
-          <Tooltip title="Clear">
-            <Button
-              icon={<ClearOutlined />}
-              onClick={() => {
-                setFilterGroup('');
-                props.onClear();
-              }}
-            ></Button>
-          </Tooltip>
-        </Space>
+            <Tooltip title="Setting">
+              <Button
+                icon={<i className="gbs gbs-setting"></i>}
+                onClick={() => {
+                  form.resetFields();
+                  form.setFieldsValue({
+                    groupFieldList: [
+                      { fieldName: '', operator: '', fieldValue: '' },
+                    ],
+                  });
+                  setSetting(true);
+                }}
+              ></Button>
+            </Tooltip>
+            <Tooltip title="Export">
+              <Button
+                icon={<i className="gbs gbs-export"></i>}
+                onClick={props.exportAction}
+              ></Button>
+            </Tooltip>
+            <Tooltip title="Clear">
+              <Button
+                icon={<ClearOutlined />}
+                onClick={() => {
+                  setFilterGroup('');
+                  props.onClear();
+                }}
+              ></Button>
+            </Tooltip>
+          </Space>
+        </AuthWrapper>
       </FilterGroupDiv>
     </>
   );

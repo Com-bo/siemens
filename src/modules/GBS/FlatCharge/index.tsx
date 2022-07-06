@@ -166,19 +166,28 @@ export default (props: any) => {
             </Tooltip>
           );
         }
+        // 行内数据展示，暂时不用加权限，因为i没有view权限，列表数据按 逻辑其实不可能有，为了谨慎起见，还是加了行内调用接口的屏蔽
         return text ? (
           <Button
             type="link"
             onClick={(event) => {
-              event.stopPropagation();
-              queryBVIData({ recordId: record.orgId }).then((res) => {
-                if (res.isSuccess) {
-                  setCheckData(res.data);
-                  setIsCheckOriginal(true);
-                } else {
-                  message.error(res.msg);
-                }
-              });
+              // view权限或者edit权限
+              if (
+                checkAuth(pageName, `${pageName}-Edit`) ||
+                checkAuth(pageName, `${pageName}-View`)
+              ) {
+                event.stopPropagation();
+                queryBVIData({ recordId: record.orgId }).then((res) => {
+                  if (res.isSuccess) {
+                    setCheckData(res.data);
+                    setIsCheckOriginal(true);
+                  } else {
+                    message.error(res.msg);
+                  }
+                });
+              } else {
+                message.warning('No permission temporarily');
+              }
             }}
           >
             <span style={{ textDecoration: 'underline' }}>{text}</span>
@@ -332,18 +341,23 @@ export default (props: any) => {
               ''
             )}
           </AuthWrapper>
-          <Tooltip title="Log">
-            <Button
-              type="text"
-              key="4"
-              icon={<i className="gbs gbs-logs"></i>}
-              onClick={(event) => {
-                event.stopPropagation();
-                toLog(record.orgId);
-                setShowLog(true);
-              }}
-            ></Button>
-          </Tooltip>
+          {checkAuth(pageName, `${pageName}-Edit`) ||
+          checkAuth(pageName, `${pageName}-View`) ? (
+            <Tooltip title="Log">
+              <Button
+                type="text"
+                key="4"
+                icon={<i className="gbs gbs-logs"></i>}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toLog(record.orgId);
+                  setShowLog(true);
+                }}
+              ></Button>
+            </Tooltip>
+          ) : (
+            ''
+          )}
         </Space>
       ),
     },
@@ -833,6 +847,13 @@ export default (props: any) => {
 
   // 用于获取table接口方法
   const _getData = (recordId?: any) => {
+    if (
+      !checkAuth(pageName, `${pageName}-Edit`) &&
+      !checkAuth(pageName, `${pageName}-View`)
+    ) {
+      message.warning('No permission temporarily'); //暂无权限提示
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
@@ -1635,6 +1656,7 @@ export default (props: any) => {
         renderFilterGroup={
           <FilterGroup
             moudleName="Flat Charge"
+            authPagename={pageName}
             onSearch={(val) => {
               latestGroupIdRef.current = val;
               if (current != 1) {
@@ -1669,103 +1691,120 @@ export default (props: any) => {
           />
         }
         renderBtns={
-          <Space>
+          <>
             {/* <BtnThemeWrap><Button>Export Original</Button></BtnThemeWrap> */}
-            <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item
-                      key="1"
-                      icon={<i className="gbs gbs-import"></i>}
-                    >
-                      <Upload
-                        style={{ margin: '0 10px' }}
-                        maxCount={1}
-                        showUploadList={false}
-                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                        beforeUpload={(file) => {
-                          importExcel(file);
-                          return false;
-                        }}
-                      >
-                        <Button key="import" type="text">
-                          <span>Import</span>
-                        </Button>
-                      </Upload>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
-                      <Button
-                        style={{ margin: '0 10px' }}
-                        type="text"
-                        onClick={() => {
-                          setShowFlatData(true);
-                          formData.setFieldsValue({
-                            templateType: 'Flat Charge',
-                            system: 'Flat Charge',
-                            uploadUser: sessionStorage.getItem('user'),
-                          });
-                          setComponentDisabled(false);
-                        }}
-                      >
+            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+              <Space>
+                <BtnThemeWrap>
+                  <Dropdown
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item
+                          key="1"
+                          icon={<i className="gbs gbs-import"></i>}
+                        >
+                          <Upload
+                            style={{ margin: '0 10px' }}
+                            maxCount={1}
+                            showUploadList={false}
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                            beforeUpload={(file) => {
+                              importExcel(file);
+                              return false;
+                            }}
+                          >
+                            <Button key="import" type="text">
+                              <span>Import</span>
+                            </Button>
+                          </Upload>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="2"
+                          icon={<i className="gbs gbs-add"></i>}
+                        >
+                          <Button
+                            style={{ margin: '0 10px' }}
+                            type="text"
+                            onClick={() => {
+                              setShowFlatData(true);
+                              formData.setFieldsValue({
+                                templateType: 'Flat Charge',
+                                system: 'Flat Charge',
+                                uploadUser: sessionStorage.getItem('user'),
+                              });
+                              setComponentDisabled(false);
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="3"
+                          icon={<i className="gbs gbs-download"></i>}
+                        >
+                          <span style={{ margin: '0 10px' }}>
+                            <a href="./template/Flat Charge.xlsx">
+                              Download Template
+                            </a>
+                          </span>
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
                         Add
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="3"
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Flat Charge.xlsx">
-                          Download Template
-                        </a>
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Button
+                    disabled={selectedRowKeys.length != 1}
+                    onClick={toCopy}
+                  >
+                    Copy
+                  </Button>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Button
+                    disabled={!selectedRowKeys.length}
+                    onClick={(event) => onSubmit(selectedRowKeys, event)}
+                  >
+                    Submit
+                  </Button>
+                </BtnThemeWrap>
+                <Button
+                  onClick={(event) => deleteInfos(selectedRowKeys, event)}
+                  disabled={selectedRowKeys.length == 0}
+                >
+                  Delete
                 </Button>
-              </Dropdown>
-            </BtnThemeWrap>
-            <BtnThemeWrap>
-              <Button disabled={selectedRowKeys.length != 1} onClick={toCopy}>
-                Copy
-              </Button>
-            </BtnThemeWrap>
-            <BtnThemeWrap>
+              </Space>
+            </AuthWrapper>
+            <Space>
+              <Divider
+                type="vertical"
+                style={{
+                  height: '20px',
+                  borderColor: '#999',
+                  marginLeft: '15px',
+                }}
+              />
               <Button
-                disabled={!selectedRowKeys.length}
-                onClick={(event) => onSubmit(selectedRowKeys, event)}
-              >
-                Submit
-              </Button>
-            </BtnThemeWrap>
-            <Button
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
-              disabled={selectedRowKeys.length == 0}
-            >
-              Delete
-            </Button>
-            <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
-                />
-              }
-            ></Button>
-          </Space>
+                style={{ width: '40px' }}
+                onClick={() => setIsSearch(!isSearch)}
+                icon={
+                  <img
+                    style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                    src={search}
+                  />
+                }
+              ></Button>
+            </Space>
+          </>
+          // </Space>
         }
       />
     </ContentWrap>
