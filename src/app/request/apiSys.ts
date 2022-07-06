@@ -37,12 +37,25 @@ export const queryRoleMapUsers = (roleId: string) => {
   );
 };
 // 角色管理-列表
-export const queryRolePageInfo = (formData: object) => {
-  return usePost(
-    `${Config.Api.Base}${Config.Api.QueryRolePageInfo}`,
-    formData,
-    {
-      autoLoading: true,
-    },
-  );
+export const queryRolePageInfo = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.QueryRolePageInfo}`, data, {
+    autoLoading: true,
+  });
+};
+
+export const queryUserPageInfo = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.QueryUserPageInfo}`, data, {
+    autoLoading: true,
+  });
+};
+
+export const insertUserInfo = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.InsertUserInfo}`, data, {
+    autoLoading: true,
+  });
+};
+export const modifyUserInfo = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ModifyUserInfo}`, data, {
+    autoLoading: true,
+  });
 };

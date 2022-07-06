@@ -134,7 +134,7 @@ export default (props: any) => {
       name: 'delta',
       title: 'Delta',
       width: '100px',
-      titleRender: 'input',
+      // titleRender: 'input',
     },
     {
       name: 'deltaInPercentage',

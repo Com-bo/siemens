@@ -23,6 +23,7 @@ import {
   Row,
   Select,
   Space,
+  Switch,
   Tooltip,
   Upload,
 } from 'antd';
@@ -36,6 +37,12 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
+import {
+  insertUserInfo,
+  modifyUserInfo,
+  queryRolePageInfo,
+  queryUserPageInfo,
+} from '@/app/request/apiSys';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -48,9 +55,10 @@ export const Index = (props: any) => {
   const [isSearch, setIsSearch] = useState(false);
   const [pageSize, setPageSize] = useState(20);
   const [showUserData, setShowUserData] = useState(false);
+  const [roles, setRoles] = useState([]);
   const orignalCols: any = [
     {
-      name: 'gID',
+      name: 'gid',
       title: 'GID',
       titleRender: 'input',
     },
@@ -60,8 +68,8 @@ export const Index = (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'name',
-      title: 'Name',
+      name: 'userName',
+      title: 'User Name',
       titleRender: 'input',
     },
     {
@@ -72,17 +80,28 @@ export const Index = (props: any) => {
     {
       name: 'are',
       title: 'ARE',
-      titleRender: 'input',
+      // titleRender: 'input',
     },
     {
       title: 'CustomerDivision',
       name: 'customerDivision',
-      titleRender: 'input',
+      width: '180px',
+      // titleRender: 'input',
     },
     {
       title: 'BusinessLine',
       name: 'businessLine',
-      titleRender: 'input',
+      // titleRender: 'input',
+    },
+    {
+      title: 'role',
+      name: 'Role',
+      // titleRender: 'input',
+    },
+    {
+      title: 'enable',
+      name: 'Enable',
+      // titleRender: 'input',
     },
     {
       name: 'Operate',
@@ -97,10 +116,11 @@ export const Index = (props: any) => {
               key="1"
               icon={<EditOutlined />}
               onClick={() => {
-                setShowUserData(true);
                 formData.setFieldsValue({
                   ...record,
+                  enable: record.enable === 1 ? true : false,
                 });
+                showUserDataFuc(record.roleName);
               }}
             ></Button>
           </Tooltip>
@@ -151,24 +171,18 @@ export const Index = (props: any) => {
   };
   const getData = () => {
     let params = {
-      searchCondition: {
-        pageTop: formFilter.getFieldsValue(),
-        listHeader: form.getFieldsValue(),
-      },
-      orderCondition: {
-        //   [orderField]: orderType == 'ascend' ? 0 : 1,
-      },
+      keyWord: formFilter.getFieldValue('keyWord'),
       pageIndex: current,
       pageSize: pageSize,
     };
-    // getCostCenterData(params).then((res) => {
-    //   if (res.isSuccess) {
-    //     setTableData(res.data);
-    //     setTotal(res.totalCount);
-    //   } else {
-    //     message.error(res.msg);
-    //   }
-    // });
+    queryUserPageInfo(params).then((res) => {
+      if (res.isSuccess) {
+        setTableData(res.data);
+        setTotal(res.totalCount);
+      } else {
+        message.error(res.msg);
+      }
+    });
   };
   useEffect(() => {
     getData();
@@ -184,23 +198,43 @@ export const Index = (props: any) => {
   const saveFormData = () => {
     formData
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
+          enable: formData.getFieldValue('enable') ? 1 : 0,
         };
-        // editCostCenterDataSave(params).then((res) => {
-        //   if (res.isSuccess) {
-        //     message.success(res.msg);
-        //     setShowUserData(false);
-        //     formData.resetFields();
-        //     getData();
-        //   } else {
-        //     message.error(res.msg);
-        //   }
-        // });
+        let res: any;
+        if (formData.getFieldValue('id')) {
+          // 编辑
+          res = await modifyUserInfo(params);
+        } else {
+          // 新增
+          res = await insertUserInfo(params);
+        }
+        if (res.isSuccess) {
+          message.success(res.msg);
+          setShowUserData(false);
+          formData.resetFields();
+          getData();
+        } else {
+          message.error(res.msg);
+        }
       })
       .catch((e) => {});
+  };
+  const showUserDataFuc = (roleName?: string) => {
+    setShowUserData(true);
+    // 获取角色列表
+    queryRolePageInfo({
+      roleName: roleName,
+      pageIndex: 1,
+      pageSize: 100,
+    }).then((res) => {
+      if (res.isSuccess) {
+        setRoles(res.data);
+      }
+    });
   };
   return (
     <ContentWrap className="userClass">
@@ -230,7 +264,7 @@ export const Index = (props: any) => {
         <Form form={formData} labelCol={{ flex: '140px' }}>
           <Row gutter={20}>
             <Col span={12}>
-              <Form.Item label="GID" name="gID" rules={[{ required: true }]}>
+              <Form.Item label="GID" name="gid" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
             </Col>
@@ -244,7 +278,11 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+              <Form.Item
+                label="Name"
+                name="userName"
+                rules={[{ required: true }]}
+              >
                 <Input />
               </Form.Item>
             </Col>
@@ -279,8 +317,28 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="BusinessLine" name="businessLine">
+              <Form.Item
+                label="BusinessLine"
+                name="businessLine"
+                rules={[{ required: true }]}
+              >
                 <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Role" name="role" rules={[{ required: true }]}>
+                <Select allowClear>
+                  {roles.map((item, index) => (
+                    <Select.Option key={index} value={item.roleName}>
+                      {item.roleName}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Enable" name="enable" valuePropName="checked">
+                <Switch checkedChildren="Yes" unCheckedChildren="No" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -289,7 +347,6 @@ export const Index = (props: any) => {
                   <Button type="primary" onClick={saveFormData}>
                     Save
                   </Button>
-
                   <Button
                     onClick={() => {
                       setShowUserData(false);
@@ -322,10 +379,11 @@ export const Index = (props: any) => {
             <Form form={formFilter} labelCol={{ flex: '120px' }}>
               <Row className="masterData">
                 <Col span={12}>
-                  <Form.Item label="Key words" name="keywords">
+                  <Form.Item label="Key Word" name="keyWord">
                     <Input placeholder="GID/User Name" />
                   </Form.Item>
                 </Col>
+
                 <Col span={1} offset={1}>
                   <Form.Item>
                     <Space size={20}>
@@ -382,7 +440,7 @@ export const Index = (props: any) => {
                 </Button>
               </Dropdown>
             </BtnThemeWrap> */}
-            <Button type="primary" onClick={() => setShowUserData(true)}>
+            <Button type="primary" onClick={() => showUserDataFuc}>
               Add
             </Button>
             <Button
@@ -417,3 +475,6 @@ export const Index = (props: any) => {
   );
 };
 export default Index;
+function InsertUserInfo(params: any): any {
+  throw new Error('Function not implemented.');
+}

@@ -53,10 +53,11 @@ import {
   editDataSubmit,
 } from '@/app/request/apiFlat';
 import './style.less';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
 import { getCompanyCodeDrop, getCostCenterDrop } from '@/app/request/common';
 import DebounceSelect from '@/components/Select/debounceSelect';
-
+const pageName = 'FlatCharge';
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
@@ -90,6 +91,7 @@ export default (props: any) => {
   const [orderField, setOrderField] = useState('modifiedDate');
   const [orderType, setOrderType] = useState('descend');
   const { Option } = Select;
+
   const orignalCols = [
     {
       name: 'bviBusinessLine',
@@ -127,7 +129,7 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'customerDevision',
+      name: 'customerDivision',
       title: 'Customer Division',
       width: '150px',
       titleRender: 'input',
@@ -266,68 +268,70 @@ export default (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={() => {
-                setShowFlatData(true);
-                setComponentDisabled(record.dataStatus == 'Submit');
-                formData.setFieldsValue({
-                  ...record,
-                  productName: record.product,
-                  customerDivision: record.customerDevision,
-                  startMonth: record.startMonth
-                    ? moment(record.startMonth)
-                    : null,
-                  endMonth: record.endMonth ? moment(record.endMonth) : null,
-                  modifiedDate: record.modifiedDate
-                    ? moment(record.modifiedDate)
-                    : null,
-                  createdDate: record.createdDate
-                    ? moment(record.createdDate)
-                    : null,
-                });
-              }}
-            ></Button>
-          </Tooltip>
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => deleteInfos([record.orgId], event)}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
+          <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+            <Tooltip title="Edit">
               <Button
                 type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
+                key="1"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setShowFlatData(true);
+                  setComponentDisabled(record.dataStatus == 'Submit');
+                  formData.setFieldsValue({
+                    ...record,
+                    productName: record.product,
+                    customerDivision: record.customerDivision,
+                    startMonth: record.startMonth
+                      ? moment(record.startMonth)
+                      : null,
+                    endMonth: record.endMonth ? moment(record.endMonth) : null,
+                    modifiedDate: record.modifiedDate
+                      ? moment(record.modifiedDate)
+                      : null,
+                    createdDate: record.createdDate
+                      ? moment(record.createdDate)
+                      : null,
+                  });
+                }}
               ></Button>
             </Tooltip>
-          </Popconfirm>
-          {record.dataStatus !== 'Submit' ? (
             <Popconfirm
-              title="Confirm submission?"
-              onConfirm={(event) => {
-                onSubmit([record.orgId], event);
-              }}
+              title="Confirm to delete?"
+              onConfirm={(event) => deleteInfos([record.orgId], event)}
               okText="Confirm"
               cancelText="Cancel"
             >
-              <Tooltip title="Submit">
+              <Tooltip title="Delete">
                 <Button
                   type="text"
-                  key="3"
-                  icon={<i className="gbs gbs-submit"></i>}
+                  key="2"
+                  icon={<i className="gbs gbs-delete"></i>}
                   onClick={(event) => event.stopPropagation()}
                 ></Button>
               </Tooltip>
             </Popconfirm>
-          ) : (
-            ''
-          )}
+            {record.dataStatus !== 'Submit' ? (
+              <Popconfirm
+                title="Confirm submission?"
+                onConfirm={(event) => {
+                  onSubmit([record.orgId], event);
+                }}
+                okText="Confirm"
+                cancelText="Cancel"
+              >
+                <Tooltip title="Submit">
+                  <Button
+                    type="text"
+                    key="3"
+                    icon={<i className="gbs gbs-submit"></i>}
+                    onClick={(event) => event.stopPropagation()}
+                  ></Button>
+                </Tooltip>
+              </Popconfirm>
+            ) : (
+              ''
+            )}
+          </AuthWrapper>
           <Tooltip title="Log">
             <Button
               type="text"
@@ -600,8 +604,8 @@ export default (props: any) => {
     {
       title: 'Customer Division',
       width: '150px',
-      dataIndex: 'customerDevision',
-      key: 'customerDevision',
+      dataIndex: 'customerDivision',
+      key: 'customerDivision',
       align: 'center',
     },
     {
@@ -1222,7 +1226,7 @@ export default (props: any) => {
             <Col span={8}>
               <Form.Item
                 label="Customer Division"
-                name="customerDevision"
+                name="customerDivision"
                 rules={[{ required: true }]}
               >
                 <Input />

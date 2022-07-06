@@ -99,4 +99,7 @@ export const Api = {
   QueryRoleMapAuthTrees: '/api/System/QueryRoleMapAuthTrees', // 角色管理-功能授权树
   RoleBingAuth: '/api/System/RoleBingAuth', // 角色管理-功能授权
   QueryRolePageInfo: '/api/System/QueryRolePageInfo', // 角色管理-列表
+  QueryUserPageInfo: '/api/System/QueryUserPageInfo', //用户列表
+  InsertUserInfo: '/api/System/InsertUserInfo', //新增用户
+  ModifyUserInfo: '​/api​/System​/ModifyUserInfo', //编辑用户
 };

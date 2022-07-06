@@ -55,7 +55,7 @@ export const Index = (props: any) => {
   const [roleId, setRoleId] = useState('');
   const orignalCols: any = [
     {
-      name: 'role',
+      name: 'roleName',
       title: 'Role',
       titleRender: 'input',
       width: '20%',
@@ -71,7 +71,15 @@ export const Index = (props: any) => {
       name: 'enable',
       titleRender: 'input',
       width: '15%',
+      render: (text) => (text === 1 ? 'Enable' : text === 0 ? 'Disable' : text),
     },
+    // {
+    //     title: 'adminFlag',
+    //     name: 'IsAdmin',
+    //     titleRender: 'input',
+    //     width: '15%',
+    //     render: (text) => text === 1 ? "Yes" : text === 0 ? "No" : text
+    // },
     {
       name: 'Operate',
       title: 'Operate',
@@ -155,13 +163,8 @@ export const Index = (props: any) => {
   };
   const getData = () => {
     let params = {
-      searchCondition: {
-        pageTop: formFilter.getFieldsValue(),
-        listHeader: form.getFieldsValue(),
-      },
-      orderCondition: {
-        //   [orderField]: orderType == 'ascend' ? 0 : 1,
-      },
+      roleName: formFilter.getFieldValue('keywords'),
+      adminFlag: 1,
       pageIndex: current,
       pageSize: pageSize,
     };
