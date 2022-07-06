@@ -137,13 +137,13 @@ export default (props: any) => {
     {
       name: 'bviBusinessLine',
       title: 'BVI Business Line',
-      width: '120px',
+      width: '150px',
       sorter: true,
     },
     {
       name: 'businessLine',
       title: 'Business Line',
-      width: '100px',
+      width: '150px',
       sorter: true,
     },
     {
@@ -163,55 +163,55 @@ export default (props: any) => {
     {
       name: 'are',
       title: 'ARE',
-      width: '100px',
+      width: '150px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'billingARE',
       title: 'Billing ARE',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'companyCode',
       title: 'Company Code',
-      width: '120px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'customerDivision',
       title: 'Customer Division',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'productUnitPrice',
       title: 'Product Unit Price',
-      width: '100px',
+      width: '200px',
       sorter: true,
     },
     {
       name: 'productUnitPriceCurrency',
       title: 'Product Unit Price Currency',
-      width: '150px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'costCenter',
       title: 'Cost Center',
-      width: '100px',
+      width: '150px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'billingCostCenter',
       title: 'Billing Cost Center',
-      width: '150px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
@@ -274,13 +274,13 @@ export default (props: any) => {
     {
       name: 'totalAmount',
       title: 'Total Amount(Unit Price Currency)',
-      width: '180px',
+      width: '200px',
       sorter: true,
     },
     {
       name: 'billingCurrency',
       title: 'Billing Currency',
-      width: '100px',
+      width: '200px',
       sorter: true,
     },
     {
@@ -293,7 +293,7 @@ export default (props: any) => {
     {
       name: 'poPercentage',
       title: 'PO Percentage',
-      width: '150px',
+      width: '200px',
       sorter: true,
     },
     {
@@ -313,19 +313,19 @@ export default (props: any) => {
     {
       name: 'system',
       title: 'System',
-      width: '100px',
+      width: '200px',
       sorter: true,
     },
     {
       name: 'idH',
       title: 'ID_H',
-      width: '100px',
+      width: '200px',
       sorter: true,
     },
     {
       name: 'chargeType',
       title: 'ChargeType',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
@@ -340,14 +340,14 @@ export default (props: any) => {
     {
       name: 'templateType',
       title: 'Template Type',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'IsPOByPercentage',
       title: 'IsPOByPercentage',
-      width: '160px',
+      width: '200px',
       sorter: true,
     },
     {
@@ -357,16 +357,22 @@ export default (props: any) => {
       sorter: true,
     },
     {
+      name: 'customerNumber',
+      title: 'Customer Number Allocation',
+      width: '240px',
+      sorter: true,
+    },
+    {
       name: 'modifiedUser',
       title: 'Modified User',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'modifiedDate',
       title: 'Modified Date',
-      width: '100px',
+      width: '200px',
       sorter: true,
       render: (text) =>
         text && moment(text).isValid()
@@ -382,21 +388,21 @@ export default (props: any) => {
     {
       name: 'salesOrder',
       title: 'Sales Order',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'billingDoc',
       title: 'Billing Doc.',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
     {
       name: 'billingStatus',
       title: 'Billing Status',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
@@ -408,13 +414,13 @@ export default (props: any) => {
     },
     {
       title: 'Amount in Currecy',
-      width: '150px',
+      width: '200px',
       name: 'amountInCurrecy',
       sorter: true,
     },
     {
       title: 'Currency in SAP',
-      width: '150px',
+      width: '200px',
       name: 'currencyInSAP',
       sorter: true,
     },
@@ -501,7 +507,7 @@ export default (props: any) => {
             ''
           )}
 
-          {!record.bviFlag ? (
+          {!record.error ? (
             <span
               onClick={(event) => {
                 event.stopPropagation();
@@ -1601,11 +1607,18 @@ export default (props: any) => {
                   let recordList = selectedRows.filter(
                     (item) => item.bviStatus == 'Unconfirm',
                   );
-                  if (!recordList || !recordList.length) {
-                    message.error('No data to confirm is selected');
-                    return;
-                  } else {
-                    toConfirm(selectedRowKeys);
+                  let errorMark = selectedRows.filter(
+                    (item) => item.error != null,
+                  );
+                  if(!errorMark || errorMark.length!=0){
+                      message.error('Contains incorrect data');
+                  }else{
+                    if (!recordList || !recordList.length) {
+                      message.error('No data to confirm is selected');
+                      return;
+                    } else {
+                      toConfirm(selectedRowKeys);
+                    }
                   }
                 }}
               >
@@ -1619,11 +1632,18 @@ export default (props: any) => {
                   let recordList = selectedRows.filter(
                     (item) => item.bviStatus == 'confirm',
                   );
-                  if (!recordList || !recordList.length) {
-                    message.error('No data to unconfirm is selected');
-                    return;
-                  } else {
-                    toUnconfirm(selectedRowKeys);
+                  let errorMark = selectedRows.filter(
+                    (item) => item.error != null,
+                  );
+                  if(!errorMark || errorMark.length!=0){
+                    message.error('Contains incorrect data');
+                  }else{
+                    if (!recordList || !recordList.length) {
+                      message.error('No data to unconfirm is selected');
+                      return;
+                    } else {
+                      toUnconfirm(selectedRowKeys);
+                    }
                   }
                 }}
               >

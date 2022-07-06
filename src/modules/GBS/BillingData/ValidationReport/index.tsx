@@ -23,6 +23,9 @@ import {
   //
   BillingIntegrityDataQuery,
   BillingIntegrityDataExport,
+  BillingDeferenceDataQuery,
+  BillingDeferenceDataExport,
+  BillingDetalInPercentageConfigQuery
 } from '@/app/request/apiValidReport';
 import moment from 'moment';
 
@@ -163,7 +166,7 @@ export default (props: any) => {
   }, [current, pageSize]);
   useEffect(() => {
     if (first) {
-      detalInPercentageConfigQuery().then((res) => {
+      BillingDetalInPercentageConfigQuery().then((res) => {
         if (res.isSuccess) {
           // 默认配置
           setDeltaInPercentage(res.data);
@@ -221,7 +224,7 @@ export default (props: any) => {
       pageIndex: diffCurrent,
       pageSize: diffPageSize,
     };
-    getDiffData(params).then((res) => {
+    BillingDeferenceDataQuery(params).then((res) => {
       if (res.isSuccess) {
         setDiffData(res.data?.dataList || []);
         if (res.data?.monthList) {
@@ -231,7 +234,7 @@ export default (props: any) => {
                 name: item,
                 title: item,
                 width: '120px',
-                render: (text, record) => record?.monthOfBVI[index],
+                // render: (text, record) => record?.monthOfBVI[index],
               };
             }),
           );
@@ -297,7 +300,7 @@ export default (props: any) => {
       pageSize: diffPageSize,
     };
 
-    deferenceDataExport(params).then((res: any) => {
+    BillingDeferenceDataExport(params).then((res: any) => {
       if (res.response.status == 200) {
         let elink = document.createElement('a');
         // 设置下载文件名
