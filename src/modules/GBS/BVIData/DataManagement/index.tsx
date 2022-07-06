@@ -221,24 +221,48 @@ export default (props: any) => {
       width: '100px',
       sorter: true,
       render: (text, record, index) => {
+        let temptype = true;
+        if (
+          record.templateType == 'H2R BVI Template' ||
+          record.templateType == 'BVI Manual Template'
+        ) {
+          temptype = true;
+        } else {
+          temptype = false;
+        }
         if (record.validationMsg) {
           return (
-            <BtnTextRedWrap color="red">
-              <Button
-                type="text"
-                onClick={(evt) => getCheckOriginalData(evt, record)}
-                icon={<ExclamationCircleOutlined />}
-              >
-                {text}
-              </Button>
-            </BtnTextRedWrap>
+            <Tooltip title={record.validationMsg}>
+              <BtnTextRedWrap color="red">
+                <Button
+                  type="text"
+                  onClick={(evt) => {
+                    evt.stopPropagation();
+                    if (temptype) {
+                    } else {
+                      getCheckOriginalData(evt, record);
+                    }
+                  }}
+                  icon={<ExclamationCircleOutlined />}
+                >
+                  {text}
+                </Button>
+              </BtnTextRedWrap>
+            </Tooltip>
           );
         } else {
           return (
             <BtnTextRedWrap>
               <Button
                 type="text"
-                onClick={(evt) => getCheckOriginalData(evt, record)}
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  if (temptype) {
+                    message.error('Check source data is not supported');
+                  } else {
+                    getCheckOriginalData(evt, record);
+                  }
+                }}
               >
                 {text}
               </Button>
@@ -994,8 +1018,12 @@ export default (props: any) => {
                         data.customerDivision !=
                           formData.getFieldValue('customerDivision')
                       ) {
-                        setCustomerDivision(data.customerDivision);
+                        setCustomerDivision(data.data.custemerDivision);
                       }
+                      value &&
+                        formData.setFieldsValue({
+                          companyCode: data.data.companyCode,
+                        });
                     }}
                     getoptions={(options) => {
                       return options?.map((x, index) => {
@@ -1005,7 +1033,7 @@ export default (props: any) => {
                             data={x}
                             value={x.costCenter}
                           >
-                            {x.costCenter}
+                            {x.costCenter}-{x.custemerDivision}
                           </Select.Option>
                         );
                       });
@@ -1646,7 +1674,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/BVI_Manual Input_Template.xlsx'
+                            '/template/BVI Manual Template.xlsx'
                           }
                         >
                           BVI Manual Template
@@ -1656,7 +1684,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/R2R MD Import Data 202109.xlsx'
+                            '/template/R2R MD Template.xlsx'
                           }
                         >
                           R2R MD Template
@@ -1666,7 +1694,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/H2R BVI Uploading template-22 P3.xlsx'
+                            '/template/H2R BVI Template.xlsx'
                           }
                         >
                           H2R BVI Template
@@ -1676,7 +1704,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/H2R T&E report example.xlsx'
+                            '/template/H2R T&E Template.xlsx'
                           }
                         >
                           H2R T&E BVI Template
@@ -1686,7 +1714,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/H2R GMM Charging_Other DC_China_202201-1.xlsx'
+                            '/template/H2R GMM Template.xlsx'
                           }
                         >
                           H2R GMM Template
@@ -1696,7 +1724,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/BVI template O2C.xlsx'
+                            '/template/O2C BVI Template.xlsx'
                           }
                         >
                           O2C BVI Template
@@ -1706,7 +1734,7 @@ export default (props: any) => {
                         <a
                           href={
                             process.env.WEB_URL +
-                            '/template/BVI_O2C_TI_CompanyCo.Template.xlsx'
+                            '/template/O2C TI BVI Template.xlsx'
                           }
                         >
                           O2C TI BVI Template

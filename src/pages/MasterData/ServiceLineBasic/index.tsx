@@ -1,5 +1,4 @@
 import React from 'react';
-
-export default (props: any) => {
-  return <div>DataManagement</div>;
-};
+import Product from '@/modules/masterData/ServiceLineBasic';
+export const Index = (props: any) => <Product {...props} />;
+export default Index;
