@@ -53,3 +53,32 @@ export const BillingIntegrityDataExport = (data: Object) => {
     },
   );
 };
+export const BillingDeferenceDataQuery = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.BillingDeferenceDataQuery}`,
+    data,
+    {
+      autoLoading: true,
+    },
+  );
+};
+
+export const BillingDeferenceDataExport = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.BillingDeferenceDataExport}`,
+    data,
+    {
+      autoLoading: true,
+      responseType: 'blob',
+    },
+  );
+};
+export const BillingDetalInPercentageConfigQuery = () => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.BillingDetalInPercentageConfigQuery}`,
+    {},
+    {
+      autoLoading: true,
+    },
+  );
+};
