@@ -25,6 +25,10 @@ export const Api = {
   ImportH2RGMM: '/api/ImportH2RGMM/ImportDataSave', //导入ImportH2RGMM
   ImportO2C: '/api/ImportO2C/ImportDataSave', //导入ImportO2C
   ImportO2CTI: '/api/ImportO2CTI/ImportDataSave', //导入ImportO2CTI
+  SyncDataSave: '/api/ImportP2PBCS/SyncDataSave', //
+
+
+
   GetAbnormalOriginDataByBVI: '/api/BVIDataManage/GetOriginDataByBVI',
   ExportOriginalData: '/api/BVIDataManage/ExportOriginalData',
   BviGroupQuery: '/api/BVIDataManage/ListGroupQuery', //数据查询group

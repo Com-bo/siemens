@@ -24,6 +24,9 @@ export const importDataSave = (data: object, type: number) => {
     case 7:
       url = Config.Api.ImportO2CTI;
       break;
+    case 8:
+      url = Config.Api.SyncDataSave;
+      break;
     default:
       url = Config.Api.ImportDataSave;
       break;

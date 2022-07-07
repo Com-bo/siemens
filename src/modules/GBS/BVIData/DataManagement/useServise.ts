@@ -432,7 +432,6 @@ export default (props: any) => {
       .then((values) => {
         getProductData({
           ...values,
-          systemTag: 'Flat Charge',
           pageIndex: proCurrent,
           pageSize: proSize,
         }).then((res) => {
