@@ -54,6 +54,8 @@ import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 import { forEach } from 'lodash';
 import Item from 'antd/lib/list/Item';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+const pageName = 'BVIData';
 export default (props: any) => {
   const {
     form,
@@ -484,7 +486,7 @@ export default (props: any) => {
               }}
             ></Button>
           </Tooltip>
-          {record.bviStatus == 'Unconfirm' ? (
+          {record.bviStatus.toLowerCase() == 'unconfirm' ? (
             <Popconfirm
               title="Are you sure?"
               onConfirm={(event) => {
@@ -517,7 +519,7 @@ export default (props: any) => {
                 title="Are you sure?"
                 onConfirm={(event) => {
                   event.stopPropagation();
-                  if (record.bviStatus == 'Unconfirm') {
+                  if (record.bviStatus.toLowerCase() == 'unconfirm') {
                     toConfirm([record.id]);
                   } else {
                     toUnconfirm([record.id]);
@@ -526,7 +528,7 @@ export default (props: any) => {
                 okText="Yes"
                 cancelText="Cancel"
               >
-                {record.bviStatus == 'Unconfirm' ? (
+                {record.bviStatus.toLowerCase() == 'unconfirm' ? (
                   <Tooltip title="Confirm">
                     <Button
                       onClick={(event) => event.stopPropagation()}
@@ -892,7 +894,7 @@ export default (props: any) => {
               <Radio value={5}>H2R GMM</Radio>
               <Radio value={6}>O2C BVI</Radio>
               <Radio value={7}>O2C TI BVI</Radio>
-              <Radio value={8}>p2p</Radio>
+              <Radio value={8}>P2P BCS</Radio>
             </Radio.Group>
           </Form.Item>
           {isP2PMark ? (
@@ -1550,9 +1552,15 @@ export default (props: any) => {
         renderFilterGroup={
           <FilterGroup
             moudleName="BVI Data"
+            authPagename={pageName}
             onSearch={(val) => {
               latestGroupIdRef.current = val;
-              getData(val);
+              // getData(val);
+              if (current != 1) {
+                setCurrent(1);
+              } else {
+                getData(val);
+              }
             }}
             onClear={() => {
               setErrorChecked(false);
@@ -1605,7 +1613,7 @@ export default (props: any) => {
                 disabled={!selectedRowKeys.length}
                 onClick={() => {
                   let recordList = selectedRows.filter(
-                    (item) => item.bviStatus == 'Unconfirm',
+                    (item) => item.bviStatus.toLowerCase() == 'unconfirm',
                   );
                   let errorMark = selectedRows.filter(
                     (item) => item.error != null,
@@ -1630,7 +1638,7 @@ export default (props: any) => {
                 disabled={!selectedRowKeys.length}
                 onClick={() => {
                   let recordList = selectedRows.filter(
-                    (item) => item.bviStatus == 'confirm',
+                    (item) => item.bviStatus.toLowerCase() == 'confirm',
                   );
                   let errorMark = selectedRows.filter(
                     (item) => item.error != null,
@@ -1801,7 +1809,7 @@ export default (props: any) => {
                   cancelText: 'Cancel',
                   onOk: () => {
                     let recordList = selectedRows.filter(
-                      (item) => item.bviStatus == 'Unconfirm',
+                      (item) => item.bviStatus.toLowerCase() == 'unconfirm',
                     );
                     if (!recordList || !recordList.length) {
                       message.error('No data to delete is selected');
