@@ -53,6 +53,7 @@ import useService from './useServise';
 import TableMix from '@/components/Table';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
+const pageName = 'BillingDataManagement';
 import { forEach } from 'lodash';
 import Item from 'antd/lib/list/Item';
 export default (props: any) => {
@@ -764,6 +765,7 @@ export default (props: any) => {
         renderFilterGroup={
           <FilterGroup
             moudleName="Billing Data"
+            authPagename={pageName}
             onSearch={(val) => {
               latestGroupIdRef.current = val;
               getData(val);
