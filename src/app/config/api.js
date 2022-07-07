@@ -27,8 +27,6 @@ export const Api = {
   ImportO2CTI: '/api/ImportO2CTI/ImportDataSave', //导入ImportO2CTI
   SyncDataSave: '/api/ImportP2PBCS/SyncDataSave', //
 
-
-
   GetAbnormalOriginDataByBVI: '/api/BVIDataManage/GetOriginDataByBVI',
   ExportOriginalData: '/api/BVIDataManage/ExportOriginalData',
   BviGroupQuery: '/api/BVIDataManage/ListGroupQuery', //数据查询group
@@ -93,6 +91,8 @@ export const Api = {
   DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
   EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
   // Billing-validation report
+  BillingIntegrityDataQuery: '/api/BillingValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
+  BillingIntegrityDataExport: '/api/BillingValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、
   // 系统设置
   InsertRole: '/api/System/InsertRole', //新建角色
   ModifyRole: '/api/System/ModifyRole', //编辑角色
