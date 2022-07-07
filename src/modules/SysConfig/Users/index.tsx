@@ -5,6 +5,7 @@ import {
   FilterGroupDiv,
   TableTitleDiv,
   TableTopDiv,
+  TableWrapDiv,
   TaleTitleIconDiv,
 } from '@/assets/style';
 import search from '@/assets/images/search.png';
@@ -43,10 +44,12 @@ import {
   queryRolePageInfo,
   queryUserPageInfo,
 } from '@/app/request/apiSys';
+import Table from '@/components/Table';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
   const [formData] = Form.useForm();
+  const [roleForm] = Form.useForm();
   const [tableData, setTableData] = useState([{ id: 111, gID: 'SS' }]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -55,7 +58,12 @@ export const Index = (props: any) => {
   const [isSearch, setIsSearch] = useState(false);
   const [pageSize, setPageSize] = useState(20);
   const [showUserData, setShowUserData] = useState(false);
-  const [roles, setRoles] = useState([]);
+  const [isRoles, setIsRoles] = useState(false);
+  const [roles, setRoleData] = useState([]);
+  const [roleCurrent, setRoleCurent] = useState(1);
+  const [roleTotal, setRoleTotal] = useState(0);
+  const [rolePageSize, setRolePageSize] = useState(20);
+  const [selectRole, setSelectedRoles] = useState([]);
   const orignalCols: any = [
     {
       name: 'gid',
@@ -94,13 +102,13 @@ export const Index = (props: any) => {
       // titleRender: 'input',
     },
     {
-      title: 'role',
-      name: 'Role',
+      title: 'Role',
+      name: 'role',
       // titleRender: 'input',
     },
     {
-      title: 'enable',
-      name: 'Enable',
+      title: 'Enable',
+      name: 'enable',
       // titleRender: 'input',
     },
     {
@@ -143,8 +151,30 @@ export const Index = (props: any) => {
       ),
     },
   ];
+
+  const roleCols: any = [
+    {
+      dataIndex: 'roleName',
+      title: 'Role',
+      key: 'roleName',
+      align: 'center',
+    },
+    {
+      dataIndex: 'remark',
+      title: 'Remark',
+      key: 'remark',
+      align: 'center',
+    },
+    {
+      title: 'Enable',
+      dataIndex: 'enable',
+      key: 'enable',
+      align: 'center',
+      render: (text) => (text === 1 ? 'Enable' : text === 0 ? 'Disable' : text),
+    },
+  ];
   // 删除接口
-  const deleteInfos = (recordIdList: Array<any>, event) => {
+  const deleteInfos = (ids: Array<any>, event) => {
     event.stopPropagation();
     Modal.confirm({
       title: 'Tips',
@@ -153,8 +183,8 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        // deleteCostCenterData({
-        //   recordIdList,
+        // deleUser({
+        //   id,
         // }).then((res) => {
         //   if (res.isSuccess) {
         //     message.success('Deletion succeeded!');
@@ -226,18 +256,131 @@ export const Index = (props: any) => {
   const showUserDataFuc = (roleName?: string) => {
     setShowUserData(true);
     // 获取角色列表
-    queryRolePageInfo({
-      roleName: roleName,
-      pageIndex: 1,
-      pageSize: 100,
-    }).then((res) => {
+    // queryRolePageInfo({
+    //   roleName: roleName,
+    //   pageIndex: 1,
+    //   pageSize: 100,
+    // }).then((res) => {
+    //   if (res.isSuccess) {
+    //     setRoles(res.data);
+    //   }
+    // });
+  };
+
+  // 人员维护搜索
+  const roleSearch = () => {
+    let params = {
+      roleName: formFilter.getFieldValue('roleName'),
+      // adminFlag: 1,
+      pageIndex: current,
+      pageSize: pageSize,
+    };
+    queryRolePageInfo(params).then((res) => {
       if (res.isSuccess) {
-        setRoles(res.data);
+        setRoleData(res.data);
+        setRoleTotal(res.totalCount);
+      } else {
+        message.error(res.msg);
       }
     });
   };
+  const roleFunc = async (_role: string) => {
+    setIsRoles(true);
+    if (roleCurrent == 1) {
+      await roleSearch();
+      _role && setSelectedRoles(_role?.split(','));
+    } else {
+      setRoleCurent(1);
+    }
+  };
+  useEffect(() => {
+    roleSearch();
+  }, [roleCurrent, rolePageSize]);
+  const onRolePageChange = (pagination) => {
+    setRoleCurent(pagination.current);
+  };
+  const handlerRolePageSize = (val: number) => {
+    setRolePageSize(val);
+  };
+  // 人员维护绑定
+  const handleRoleOk = () => {
+    // selectRole
+    formData.setFieldsValue({
+      role: selectRole.join(','),
+    });
+    setIsRoles(false);
+    setSelectedRoles([]);
+    setIsRoles(false);
+  };
+  const handleRoleCancel = () => {
+    setIsRoles(false);
+    roleForm.resetFields();
+    setSelectedRoles([]);
+  };
   return (
     <ContentWrap className="userClass">
+      <Modal
+        maskClosable={false}
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Role List Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={isRoles}
+        footer={null}
+        onCancel={handleRoleCancel}
+      >
+        <TableWrapDiv className="user_wrap">
+          <Form form={roleForm}>
+            <Row>
+              <Col span={20}>
+                <Form.Item label="Role" name="role">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={3} offset={1}>
+                <Button type="primary" onClick={roleSearch}>
+                  Search
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          <Table
+            columns={roleCols}
+            data={roles}
+            type="radio"
+            current={roleCurrent}
+            pageSize={rolePageSize}
+            total={roleTotal}
+            onChange={(_selectedRowKeys, _selectedRows) => {
+              // (_selectedRowKeys);
+              setSelectedRoles(_selectedRowKeys);
+            }}
+            pagination={true}
+            rowKey="roleName"
+            selection={true}
+            selectedRowKeys={selectRole}
+            onPageChange={onRolePageChange}
+            handlePageSize={handlerRolePageSize}
+          />
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <Space size={60}>
+              <Button type="primary" onClick={handleRoleOk}>
+                Save
+              </Button>
+              <Button onClick={handleRoleCancel}>Cancel</Button>
+            </Space>
+          </div>
+        </TableWrapDiv>
+      </Modal>
       {/* 编辑 */}
       <Modal
         maskClosable={false}
@@ -327,13 +470,18 @@ export const Index = (props: any) => {
             </Col>
             <Col span={12}>
               <Form.Item label="Role" name="role" rules={[{ required: true }]}>
-                <Select allowClear>
+                <Input.Search
+                  readOnly
+                  onSearch={() => roleFunc(form.getFieldValue('role') || '')}
+                />
+                {/* <Button type="primary">Submit</Button> */}
+                {/* <Select allowClear>
                   {roles.map((item, index) => (
                     <Select.Option key={index} value={item.roleName}>
                       {item.roleName}
                     </Select.Option>
                   ))}
-                </Select>
+                </Select> */}
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -440,7 +588,7 @@ export const Index = (props: any) => {
                 </Button>
               </Dropdown>
             </BtnThemeWrap> */}
-            <Button type="primary" onClick={() => showUserDataFuc}>
+            <Button type="primary" onClick={() => showUserDataFuc()}>
               Add
             </Button>
             <Button

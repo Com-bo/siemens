@@ -5,6 +5,7 @@ import {
   FilterGroupDiv,
   TableTitleDiv,
   TableTopDiv,
+  TableWrapDiv,
   TaleTitleIconDiv,
 } from '@/assets/style';
 import search from '@/assets/images/search.png';
@@ -24,6 +25,7 @@ import {
   Select,
   Space,
   Switch,
+  Tag,
   Tooltip,
   Tree,
   Upload,
@@ -31,14 +33,20 @@ import {
 import './style.less';
 import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
+  delRole,
   queryRoleMapAuthTrees,
+  queryRoleMapUsers,
   queryRolePageInfo,
+  queryUserPageInfo,
+  roleBingUser,
   updateRole,
 } from '@/app/request/apiSys';
+import Table from '@/components/Table';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
   const [formData] = Form.useForm();
+  const [userForm] = Form.useForm();
   const [tableData, setTableData] = useState([{ id: 111, role: 'SS' }]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -53,6 +61,33 @@ export const Index = (props: any) => {
     useState<React.Key[]>();
   const [isFunModalVisible, setIsFunModalVisible] = useState(false);
   const [roleId, setRoleId] = useState('');
+  const [roleName, setRoleName] = useState('');
+  const [isUsers, setIsUsers] = useState(false);
+  const [userData, setUserData] = useState([]);
+  const [userCurrent, setUserCurent] = useState(1);
+  const [userTotal, setUserTotal] = useState(0);
+  const [userPageSize, setUserPageSize] = useState(20);
+  const [selectUser, setSelectedUsers] = useState([]);
+  const userCols: any = [
+    {
+      title: 'User Name',
+      dataIndex: 'userName',
+      key: 'userName',
+      align: 'center',
+    },
+    {
+      title: 'GID',
+      dataIndex: 'gid',
+      key: 'gid',
+      align: 'center',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      align: 'center',
+    },
+  ];
   const orignalCols: any = [
     {
       name: 'roleName',
@@ -93,21 +128,21 @@ export const Index = (props: any) => {
               key="1"
               icon={<EditOutlined />}
               onClick={() => {
-                setShowRoleData(true);
                 formData.setFieldsValue({
                   ...record,
                 });
+                showRoleDataFunc(record.enable == 1 ? true : false);
               }}
             ></Button>
           </Tooltip>
-          <Tooltip title="Maintenance user">
-            <Button
-              type="text"
-              key="3"
-              icon={<span className="gbs gbs-users"></span>}
-              onClick={() => {}}
-            ></Button>
-          </Tooltip>
+          {/* <Tooltip title="Maintenance user">
+                        <Button
+                            type="text"
+                            key="3"
+                            icon={<span className="gbs gbs-users"></span>}
+                            onClick={()=>personAuth(record)}
+                        ></Button>
+                    </Tooltip> */}
           <Tooltip title="Function authorization">
             <Button
               type="text"
@@ -145,17 +180,17 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        // deleteCostCenterData({
-        //   recordIdList,
+        // delRole({
+        //     recordIdList,
         // }).then((res) => {
-        //   if (res.isSuccess) {
-        //     message.success('Deletion succeeded!');
-        //     setSelectedRowKeys([]);
-        //     getData();
-        //     setCurrent(1);
-        //   } else {
-        //     message.error(res.msg);
-        //   }
+        //     if (res.isSuccess) {
+        //         message.success('Deletion succeeded!');
+        //         setSelectedRowKeys([]);
+        //         getData();
+        //         setCurrent(1);
+        //     } else {
+        //         message.error(res.msg);
+        //     }
         // });
       },
       centered: true,
@@ -164,7 +199,7 @@ export const Index = (props: any) => {
   const getData = () => {
     let params = {
       roleName: formFilter.getFieldValue('keywords'),
-      adminFlag: 1,
+      // adminFlag: 1,
       pageIndex: current,
       pageSize: pageSize,
     };
@@ -191,6 +226,9 @@ export const Index = (props: any) => {
   useEffect(() => {
     getData();
   }, [current, pageSize]);
+  useEffect(() => {
+    // ();
+  }, [current, pageSize]);
   const onPageChange = (pagination, filters, sorter, extra) => {
     setCurrent(pagination.current);
   };
@@ -208,6 +246,7 @@ export const Index = (props: any) => {
   // 功能授权弹窗开
   const funAuth = (row) => {
     setRoleId(row.id);
+    setRoleName(row.roleName);
     setIsFunModalVisible(true);
     queryRoleMapAuthTrees(row.id).then((res) => {
       if (res.isSuccess) {
@@ -228,6 +267,7 @@ export const Index = (props: any) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
+          enable: formData.getFieldValue('enable') ? 1 : 0,
         };
         updateRole(params).then((res) => {
           if (res.isSuccess) {
@@ -249,10 +289,144 @@ export const Index = (props: any) => {
     setCheckedParentFunKeys(checkedKeys);
     setCheckedFunKeys(checkedKeysValue);
   };
+  const showRoleDataFunc = (enable?: number | boolean) => {
+    setShowRoleData(true);
+    formData.setFieldsValue({
+      enable,
+    });
+  };
+
+  // 人员维护搜索
+  const personSearch = () => {
+    const params = {
+      keyWord: userForm.getFieldValue('userName'),
+      pageIndex: userCurrent,
+      pageSize: userPageSize,
+    };
+    return queryUserPageInfo(params)
+      .then((res) => {
+        if (res.isSuccess) {
+          setUserData(res.data || []);
+        } else {
+          message.error(res.msg);
+        }
+        return res;
+      })
+      .catch((e) => e);
+  };
+  // 人员维护弹窗开
+  const personAuth = async (row) => {
+    setRoleId(row.id);
+    setIsUsers(true);
+    if (userCurrent == 1) {
+      await personSearch();
+      getUserSelectRows(row.id);
+    } else {
+      setUserCurent(1);
+      getUserSelectRows(row.id);
+    }
+  };
+  const getUserSelectRows = async (id: string) => {
+    if (!id) return;
+    const res = await queryRoleMapUsers(id);
+    if (res.isSuccess) {
+      let data = res.data || [];
+      setSelectedUsers(data);
+    } else {
+      message.error(res.msg);
+    }
+  };
+  useEffect(() => {
+    personSearch();
+  }, [userCurrent, userPageSize]);
+  const onPersonPageChange = (pagination) => {
+    setUserCurent(pagination.current);
+  };
+  const handleruserPageSize = (val: number) => {
+    setUserPageSize(val);
+  };
+  // 人员维护绑定
+  const handlePersonOk = () => {
+    let data = {
+      roleId: roleId,
+      userList: [...selectUser],
+    };
+    roleBingUser(data).then((res) => {
+      if (res.isSuccess) {
+        message.success(res.msg);
+        handlePersonCancel();
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const handlePersonCancel = () => {
+    setIsUsers(false);
+    userForm.resetFields();
+  };
   return (
     <ContentWrap>
       {/* 编辑 */}
-
+      <Modal
+        maskClosable={false}
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Maintenance user Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={isUsers}
+        footer={null}
+        onCancel={handlePersonCancel}
+      >
+        <TableWrapDiv className="user_wrap">
+          <Form form={userForm}>
+            <Row>
+              <Col span={20}>
+                <Form.Item label="User Name" name="userName">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={3} offset={1}>
+                <Button type="primary" onClick={personSearch}>
+                  Search
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          <Table
+            columns={userCols}
+            data={userData}
+            current={userCurrent}
+            pageSize={userPageSize}
+            total={userTotal}
+            onChange={(_selectedRowKeys, _selectedRows) => {
+              // (_selectedRowKeys);
+              setSelectedUsers(_selectedRowKeys);
+            }}
+            rowKey="id"
+            selection={true}
+            selectedRowKeys={selectUser}
+            onPageChange={onPersonPageChange}
+            handlePageSize={handleruserPageSize}
+          />
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <Space size={60}>
+              <Button type="primary" onClick={handlePersonOk}>
+                Save
+              </Button>
+              <Button onClick={handlePersonCancel}>Cancel</Button>
+            </Space>
+          </div>
+        </TableWrapDiv>
+      </Modal>
       <Modal
         maskClosable={false}
         width="1000px"
@@ -274,6 +448,11 @@ export const Index = (props: any) => {
           setIsFunModalVisible(false);
         }}
       >
+        <div style={{ margin: '20px 0' }}>
+          Current Role:{' '}
+          <Input value={roleName} disabled style={{ width: '300px' }} />
+        </div>
+        <Divider />
         <Tree
           checkable
           defaultExpandAll
@@ -325,7 +504,11 @@ export const Index = (props: any) => {
         <Form form={formData} labelCol={{ flex: '140px' }}>
           <Row gutter={20}>
             <Col span={12}>
-              <Form.Item label="Role" name="role" rules={[{ required: true }]}>
+              <Form.Item
+                label="Role"
+                name="roleName"
+                rules={[{ required: true }]}
+              >
                 <Input />
               </Form.Item>
             </Col>
@@ -437,7 +620,7 @@ export const Index = (props: any) => {
                 </Button>
               </Dropdown>
             </BtnThemeWrap> */}
-            <Button type="primary" onClick={() => setShowRoleData(true)}>
+            <Button type="primary" onClick={() => showRoleDataFunc()}>
               Add
             </Button>
             <Button

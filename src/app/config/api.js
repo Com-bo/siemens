@@ -100,4 +100,7 @@ export const Api = {
   QueryUserPageInfo: '/api/System/QueryUserPageInfo', //用户列表
   InsertUserInfo: '/api/System/InsertUserInfo', //新增用户
   ModifyUserInfo: '​/api​/System​/ModifyUserInfo', //编辑用户
+  RoleBingUser: '/api/System/RoleBingUser', // 角色管理-角色绑定人员
+  DelRole: '/api/System/DelRole', //删除角色
+  DeleUser: '/api/System/DeleUser',
 };

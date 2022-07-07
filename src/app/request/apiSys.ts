@@ -59,3 +59,19 @@ export const modifyUserInfo = (data: object) => {
     autoLoading: true,
   });
 };
+// 角色管理-角色绑定人员
+export const roleBingUser = (formData: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.RoleBingUser}`, formData, {
+    autoLoading: true,
+  });
+};
+export const delRole = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.DelRole}`, data, {
+    autoLoading: true,
+  });
+};
+export const deleUser = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.DeleUser}`, data, {
+    autoLoading: true,
+  });
+};
