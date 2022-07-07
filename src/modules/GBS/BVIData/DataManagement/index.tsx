@@ -55,7 +55,7 @@ import moment from 'moment';
 import { forEach } from 'lodash';
 import Item from 'antd/lib/list/Item';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
-const pageName = 'BVIData';
+const pageName = 'DataManagement';
 export default (props: any) => {
   const {
     form,
