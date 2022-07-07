@@ -180,18 +180,18 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        // delRole({
-        //     recordIdList,
-        // }).then((res) => {
-        //     if (res.isSuccess) {
-        //         message.success('Deletion succeeded!');
-        //         setSelectedRowKeys([]);
-        //         getData();
-        //         setCurrent(1);
-        //     } else {
-        //         message.error(res.msg);
-        //     }
-        // });
+        delRole({
+          roleList: recordIdList,
+        }).then((res) => {
+          if (res.isSuccess) {
+            message.success('Deletion succeeded!');
+            setSelectedRowKeys([]);
+            getData();
+            setCurrent(1);
+          } else {
+            message.error(res.msg);
+          }
+        });
       },
       centered: true,
     });
@@ -624,7 +624,7 @@ export const Index = (props: any) => {
               Add
             </Button>
             <Button
-              disabled={selectedRowKeys.length != 1}
+              disabled={!selectedRowKeys.length}
               onClick={(event) => deleteInfos(selectedRowKeys, event)}
             >
               Delete

@@ -39,6 +39,7 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
+  deleUser,
   insertUserInfo,
   modifyUserInfo,
   queryRolePageInfo,
@@ -183,18 +184,18 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        // deleUser({
-        //   id,
-        // }).then((res) => {
-        //   if (res.isSuccess) {
-        //     message.success('Deletion succeeded!');
-        //     setSelectedRowKeys([]);
-        //     getData();
-        //     setCurrent(1);
-        //   } else {
-        //     message.error(res.msg);
-        //   }
-        // });
+        deleUser({
+          userList: ids,
+        }).then((res) => {
+          if (res.isSuccess) {
+            message.success('Deletion succeeded!');
+            setSelectedRowKeys([]);
+            getData();
+            setCurrent(1);
+          } else {
+            message.error(res.msg);
+          }
+        });
       },
       centered: true,
     });
@@ -592,7 +593,7 @@ export const Index = (props: any) => {
               Add
             </Button>
             <Button
-              disabled={selectedRowKeys.length != 1}
+              disabled={!selectedRowKeys.length}
               onClick={(event) => deleteInfos(selectedRowKeys, event)}
             >
               Delete
