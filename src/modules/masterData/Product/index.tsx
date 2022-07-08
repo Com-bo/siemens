@@ -41,6 +41,7 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import FilterGroup from '@/modules/components/FilterGroup';
+const pageName = 'Product';
 import {
   getServiceLineList,
   ProductPoDrop,
@@ -1331,6 +1332,7 @@ export const Index = (props: any) => {
         renderFilterGroup={
           <FilterGroup
             moudleName="Product"
+            authPagename={pageName}
             onSearch={(val) => {
               latestGroupIdRef.current = val;
               getData();

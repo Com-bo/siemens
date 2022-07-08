@@ -22,7 +22,7 @@ import {
   detalInPercentageConfigQuery,
 } from '@/app/request/apiValidReport';
 import moment from 'moment';
-
+const pageName = 'BVIValidationReport';
 const { Text } = Typography;
 export default (props: any) => {
   const [form] = Form.useForm();
@@ -332,6 +332,7 @@ export default (props: any) => {
             renderFilterGroup={
               <FilterGroup
                 moudleName="BVI Integrity Report"
+                authPagename={pageName}
                 onSearch={(val) => {
                   latestGroupIdRef.current = val;
                   _getData();

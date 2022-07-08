@@ -90,6 +90,15 @@ export const Api = {
   DeleteProductData: '/api/Product/DeleteData', //删除product数据
   DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
   EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
+  
+  // masterdata
+  CurrencyImportData: '/api/Currency/ImportData', 
+  DivisionMappingICBImportData: '/api/DivisionMappingICB/ImportData', 
+  DivMappingOcQueryPageDropListData: '/api/DivMappingOc/QueryPageDropListData',
+  DivMappingOcImportData: '/api/DivMappingOc/ImportData', 
+  SpecialDivisionImportData: '/api/SpecialDivision/ImportData', 
+
+  
   // Billing-validation report
   BillingIntegrityDataQuery: '/api/BillingValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
   BillingIntegrityDataExport: '/api/BillingValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、

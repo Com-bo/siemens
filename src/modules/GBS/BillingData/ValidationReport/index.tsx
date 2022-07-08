@@ -28,7 +28,7 @@ import {
   BillingDetalInPercentageConfigQuery,
 } from '@/app/request/apiValidReport';
 import moment from 'moment';
-
+const pageName = 'BillingValidationReport';
 const { Text } = Typography;
 export default (props: any) => {
   const [form] = Form.useForm();
@@ -338,6 +338,7 @@ export default (props: any) => {
             renderFilterGroup={
               <FilterGroup
                 moudleName="BVI Integrity Report"
+                authPagename={pageName}
                 onSearch={(val) => {
                   latestGroupIdRef.current = val;
                   _getData();
@@ -427,6 +428,7 @@ export default (props: any) => {
             renderFilterGroup={
               <FilterGroup
                 moudleName="BVI Difference Report"
+                authPagename={pageName}
                 onSearch={(val) => {
                   latestDiffGroupIdRef.current = val;
                   _getDiffData();

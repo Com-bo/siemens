@@ -36,6 +36,7 @@ import {
 } from '@/assets/style';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
+const pageName = 'ImportLogs';
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [form] = Form.useForm();
