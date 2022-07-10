@@ -54,6 +54,7 @@ import TableMix from '@/components/Table';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 const pageName = 'BillingDataManagement';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import { forEach } from 'lodash';
 import Item from 'antd/lib/list/Item';
 export default (props: any) => {
@@ -215,7 +216,7 @@ export default (props: any) => {
       width: '100px',
       sorter: true,
       render: (text, record, index) => {
-        if (record.validationMsg) {
+        if (record.error) {
           return (
             <BtnTextRedWrap color="red">
               <Button
@@ -455,6 +456,7 @@ export default (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
+          <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
           <Button
             type="text"
             key="1"
@@ -477,6 +479,7 @@ export default (props: any) => {
               }
             }}
           ></Button>
+          </AuthWrapper>
         </Space>
       ),
     },
@@ -524,7 +527,7 @@ export default (props: any) => {
           <span
             style={{ margin: '0 10px' }}
             onClick={() => {
-              setStatusFun(index);
+              setStatusFun(index+1);
             }}
           >
             {item.label}
@@ -626,7 +629,7 @@ export default (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                BILLING Data
+                Billing Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>
@@ -641,7 +644,7 @@ export default (props: any) => {
         <Form
           requiredMark={!componentDisabled}
           form={formDataEdit}
-          labelCol={{ flex: '120px' }}
+          labelCol={{ flex: '200px' }}
         >
           <Row gutter={20}>
             {isSingelEdit ? (
@@ -811,6 +814,7 @@ export default (props: any) => {
         }
         renderBtns={
           <Space>
+            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
             <BtnOrangeWrap>
               <Button onClick={freezeData}>Freeze</Button>
             </BtnOrangeWrap>
@@ -820,25 +824,26 @@ export default (props: any) => {
                 onClick={() => {
                   setEditListMark(true);
                   setSuccessMark(true);
-                  if (selectedRowKeys.length == 1) {
-                    setIsSingelEdits(true);
-                    formDataEdit.setFieldsValue({
-                      ...selectedRows[0],
-                      billingDate: selectedRows[0].billingDate
-                        ? moment(selectedRows[0].billingDate)
-                        : null,
-                    });
-                    if (
-                      formDataEdit.getFieldValue('billingStatus') ==
-                      'Successful'
-                    ) {
-                      setSuccessMark(false);
-                    } else {
-                      setSuccessMark(true);
-                    }
-                  } else {
-                    setIsSingelEdits(false);
-                  }
+                  // if (selectedRowKeys.length == 1) {
+                  //   setIsSingelEdits(true);
+                  //   formDataEdit.setFieldsValue({
+                  //     ...selectedRows[0],
+                  //     billingDate: selectedRows[0].billingDate
+                  //       ? moment(selectedRows[0].billingDate)
+                  //       : null,
+                  //   });
+                  //   if (
+                  //     formDataEdit.getFieldValue('billingStatus') ==
+                  //     'Successful'
+                  //   ) {
+                  //     setSuccessMark(false);
+                  //   } else {
+                  //     setSuccessMark(true);
+                  //   }
+                  // } else {
+                  //   setIsSingelEdits(false);
+                  // }
+                  setIsSingelEdits(false);
                 }}
               >
                 Quick Edit
@@ -915,6 +920,7 @@ export default (props: any) => {
             <BtnThemeWrap>
               <Button>Generate Customer Report</Button>
             </BtnThemeWrap>
+            </AuthWrapper>
             <Divider
               type="vertical"
               style={{ height: '20px', borderColor: '#999' }}

@@ -74,11 +74,11 @@ export default (props: any) => {
       title: 'Upload User',
       width: '100px',
     },
-    // {
-    //   name: 'Upload Result',
-    //   title: 'Upload Result',
-    //   width: '100px',
-    // },
+    {
+      name: 'uploadResult',
+      title: 'Upload Result',
+      width: '100px',
+    },
     {
       name: 'status',
       title: 'Status',

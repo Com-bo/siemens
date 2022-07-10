@@ -94,6 +94,16 @@ export default (props: FilterGroupType) => {
         { value: '0', label: 'No' },
       ],
     },
+    'Billing Integrity Report': {
+      isThereBilling: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      MandatoryBVI: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+    },
     Product: {
       BillingMonthTag: [
         { value: 'Last Month', label: 'Last Month' },

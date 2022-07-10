@@ -663,7 +663,7 @@ export const Index = (props: any) => {
               </Dropdown>
             </BtnThemeWrap>
             <Button
-              disabled={selectedRowKeys.length != 1}
+              disabled={selectedRowKeys.length == 0}
               onClick={(event) => deleteInfos(selectedRowKeys, event)}
             >
               Delete

@@ -24,14 +24,16 @@ export const importDataSave = (data: object, type: number) => {
     case 7:
       url = Config.Api.ImportO2CTI;
       break;
-    case 8:
-      url = Config.Api.SyncDataSave;
-      break;
     default:
       url = Config.Api.ImportDataSave;
       break;
   }
   return usePost(`${Config.Api.Base}${url}`, data, {
+    autoLoading: true,
+  });
+};
+export const SyncDataSave = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.SyncDataSave}`, data, {
     autoLoading: true,
   });
 };

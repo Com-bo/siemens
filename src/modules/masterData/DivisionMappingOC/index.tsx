@@ -37,13 +37,15 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
-  deleteCostCenterData,
-  editCostCenterDataSave,
-  exportCostCenterExcel,
-  getCostCenterData,
-  importCostCenterData,
-  logCostCenterDataQuery,
-} from '@/app/request/apiCostCenter';
+  // exportCostCenterExcel,
+  // logCostCenterDataQuery,
+  // 
+  DivMappingOcImportData,
+  // DivMappingOcQueryPageDropListData,
+  DivMappingOcQueryListData, 
+  DivMappingOcEditDataSave, 
+  DivMappingOcDeleteData, 
+} from '@/app/request/apiDivMappingOc';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -104,8 +106,7 @@ export const Index = (props: any) => {
                 setShowCostCenterData(true);
                 setComponentDisabled(false);
                 formData.setFieldsValue({
-                  ...record,
-                  customerDivision: record.custemerDivision,
+                  ...record
                 });
               }}
             ></Button>
@@ -125,7 +126,7 @@ export const Index = (props: any) => {
               ></Button>
             </Tooltip>
           </Popconfirm>
-          <Tooltip title="Log">
+          {/* <Tooltip title="Log">
             <Button
               type="text"
               key="4"
@@ -136,7 +137,7 @@ export const Index = (props: any) => {
                 toLog(record.id);
               }}
             ></Button>
-          </Tooltip>
+          </Tooltip> */}
         </Space>
       ),
     },
@@ -207,7 +208,7 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteCostCenterData({
+        DivMappingOcDeleteData({
           recordIdList,
         }).then((res) => {
           if (res.isSuccess) {
@@ -235,7 +236,7 @@ export const Index = (props: any) => {
       pageIndex: current,
       pageSize: pageSize,
     };
-    getCostCenterData(params).then((res) => {
+    DivMappingOcQueryListData(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);
@@ -268,23 +269,23 @@ export const Index = (props: any) => {
       pageSize: pageSize,
     };
 
-    exportCostCenterExcel(params).then((res: any) => {
-      if (res.response.status == 200) {
-        let elink = document.createElement('a');
-        // 设置下载文件名
-        elink.download = 'CostCenter List.xlsx';
-        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
-        elink.click();
-        window.URL.revokeObjectURL(elink.href);
-      } else {
-        message.error(res.response.statusText);
-      }
-    });
+    // exportCostCenterExcel(params).then((res: any) => {
+    //   if (res.response.status == 200) {
+    //     let elink = document.createElement('a');
+    //     // 设置下载文件名
+    //     elink.download = 'CostCenter List.xlsx';
+    //     elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+    //     elink.click();
+    //     window.URL.revokeObjectURL(elink.href);
+    //   } else {
+    //     message.error(res.response.statusText);
+    //   }
+    // });
   };
   const importExcel = (file) => {
     const fd = new FormData();
     fd.append('file', file);
-    importCostCenterData(fd).then((res) => {
+    DivMappingOcImportData(fd).then((res) => {
       if (res.isSuccess) {
         message.success(res.msg);
         getData();
@@ -298,18 +299,18 @@ export const Index = (props: any) => {
     logId && _getLogData();
   }, [logCurrent, logId, logSize]);
   const _getLogData = async () => {
-    const res = await logCostCenterDataQuery({
-      recordId: logId,
-      pageIndex: logCurrent,
-      pageSize: logSize,
-    });
-    if (res.isSuccess) {
-      setLogData(res.data || []);
-      setLogTotal(res.totalCount);
-    } else {
-      message.error(res.msg);
-    }
-    return res;
+    // const res = await logCostCenterDataQuery({
+    //   recordId: logId,
+    //   pageIndex: logCurrent,
+    //   pageSize: logSize,
+    // });
+    // if (res.isSuccess) {
+    //   setLogData(res.data || []);
+    //   setLogTotal(res.totalCount);
+    // } else {
+    //   message.error(res.msg);
+    // }
+    // return res;
   };
   const onLogPageChange = (pagination, filters, sorter, extra) => {
     //   翻页|排序|筛选
@@ -339,7 +340,7 @@ export const Index = (props: any) => {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
         };
-        editCostCenterDataSave(params).then((res) => {
+        DivMappingOcEditDataSave(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
             setShowCostCenterData(false);
@@ -377,7 +378,7 @@ export const Index = (props: any) => {
           formData.resetFields();
         }}
       >
-        <Form form={formData} labelCol={{ flex: '120px' }}>
+        <Form form={formData} labelCol={{ flex: '150px' }}>
           <Row gutter={20}>
             <Col span={12}>
               <Form.Item label="ARE" name="are" rules={[{ required: true }]}>
@@ -394,13 +395,13 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="CustomerDivision" name="customerDivision">
-                <Input disabled={true} />
+              <Form.Item label="CustomerDivision" name="custemerDivision" rules={[{ required: true }]}>
+                <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="SETag" name="seTag">
-                <Input disabled={true} />
+              <Form.Item label="SETag" name="seTag" rules={[{ required: true }]}>
+                <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -486,7 +487,7 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                <Col span={7}>
+                {/* <Col span={7}>
                   <Form.Item label="CostCenter" name="costCenter">
                     <Input />
                   </Form.Item>
@@ -495,7 +496,7 @@ export const Index = (props: any) => {
                   <Form.Item label="CEPC Division" name="cepcDivision">
                     <Input />
                   </Form.Item>
-                </Col>
+                </Col> */}
                 <Col span={4}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
@@ -592,7 +593,7 @@ export const Index = (props: any) => {
               </Dropdown>
             </BtnThemeWrap>
             <Button
-              disabled={selectedRowKeys.length != 1}
+              disabled={selectedRowKeys.length == 0}
               onClick={(event) => deleteInfos(selectedRowKeys, event)}
             >
               Delete

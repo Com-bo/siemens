@@ -76,8 +76,8 @@ export default (props: any) => {
       value: 'Freeze',
     },
     {
-      label: 'Unfreeze',
-      value: 'Unfreeze',
+      label: 'Successful',
+      value: 'Successful',
     },
     {
       label: 'Auto To SAP',
@@ -96,12 +96,21 @@ export default (props: any) => {
       value: 'PostPone',
     },
     {
+      label: 'Unfreeze',
+      value: 'Unfreeze',
+    },
+    {
       label: 'Obsolete',
       value: 'Obsolete',
     },
+    
     {
-      label: 'Successful',
-      value: 'Successful',
+      label: 'Cancel',
+      value: 'Cancel',
+    },
+    {
+      label: 'Error',
+      value: 'Error',
     },
   ]);
   //
@@ -109,7 +118,7 @@ export default (props: any) => {
     let _columns = [];
     for (let _key in cols) {
       if (_key) {
-        let start = _key[0].toLowerCase();
+        let start = _key[0];
         let end = _key.slice(1);
         let colKey = start + end;
         _columns.push({
@@ -515,15 +524,9 @@ export default (props: any) => {
       recordIdList: selectedRowKeys,
     };
     switch (statusIndex) {
-      case 0:
-        break;
       case 1:
         break;
       case 2:
-        if (statusMark) {
-          message.error('Please repeat the selection');
-          return;
-        }
         break;
       case 3:
         if (statusMark) {
@@ -532,12 +535,24 @@ export default (props: any) => {
         }
         break;
       case 4:
+        if (statusMark) {
+          message.error('Please repeat the selection');
+          return;
+        }
         break;
       case 5:
         break;
       case 6:
         break;
       case 7:
+        break;
+      case 8:
+        break;
+      case 9:
+        params.billingStatus=0
+        break;
+        case 10:
+        params.billingStatus=-1
         break;
     }
     SetStatusSave(params).then((res) => {

@@ -84,14 +84,14 @@ export default (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'systemTagOfBVI',
-      title: 'System Tag of BVI',
+      name: 'systemTagOfBilling',
+      title: 'System Tag of Billing',
       width: '180px',
       titleRender: 'input',
     },
     {
-      name: 'isThereBVI',
-      title: 'IS There BVI',
+      name: 'isThereBilling',
+      title: 'Is There Billing',
       width: '100px',
       render: (text) => (text == 1 ? 'Yes' : 'No'),
     },
@@ -102,8 +102,8 @@ export default (props: any) => {
       render: (text) => (text == 1 ? 'Yes' : 'No'),
     },
     {
-      name: 'bviMonth',
-      title: 'BVI Month',
+      name: 'billingMonth',
+      title: 'Billing Month',
       width: '100px',
       render: (text) =>
         text && moment(text).isValid() ? moment(text).format('YYYYMM') : text,
@@ -337,7 +337,7 @@ export default (props: any) => {
             listName="Validation Report"
             renderFilterGroup={
               <FilterGroup
-                moudleName="BVI Integrity Report"
+                moudleName="Billing Integrity Report"
                 authPagename={pageName}
                 onSearch={(val) => {
                   latestGroupIdRef.current = val;

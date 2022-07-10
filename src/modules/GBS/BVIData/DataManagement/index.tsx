@@ -133,6 +133,7 @@ export default (props: any) => {
     setIsP2PMark,
     isViewMark,
     setIsViewMark,
+    SyncDataSave
   } = useService(props);
 
   const orignalCols = [
@@ -232,9 +233,9 @@ export default (props: any) => {
         } else {
           temptype = false;
         }
-        if (record.validationMsg) {
+        if (record.error) {
           return (
-            <Tooltip title={record.validationMsg}>
+            <Tooltip title={record.error}>
               <BtnTextRedWrap color="red">
                 <Button
                   type="text"
@@ -347,10 +348,11 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'IsPOByPercentage',
+      name: 'isPOByPercentage',
       title: 'IsPOByPercentage',
       width: '200px',
       sorter: true,
+      render: (text) => (text == 0 ? 'No' :  'Yes'),
     },
     {
       name: 'bviStatus',
@@ -451,6 +453,7 @@ export default (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
+          <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
           <Tooltip title="Edit">
             <Button
               type="text"
@@ -538,6 +541,8 @@ export default (props: any) => {
                     ></Button>
                   </Tooltip>
                 ) : (
+                  <>
+                  {record.templateType=="Flat Charge"?(""):(
                   <Tooltip title="Unconfirm">
                     <Button
                       onClick={(event) => event.stopPropagation()}
@@ -546,12 +551,15 @@ export default (props: any) => {
                       icon={<i className="gbs gbs-confirm"></i>}
                     ></Button>
                   </Tooltip>
+                  )}
+                  </>
                 )}
               </Popconfirm>
             </span>
           ) : (
             ''
           )}
+          </AuthWrapper>
         </Space>
       ),
     },
@@ -771,17 +779,24 @@ export default (props: any) => {
     });
   };
   const toRecheck = () => {
-    Modal.confirm({
-      title: 'Tips',
-      icon: <ExclamationCircleOutlined />,
-      content: 'Are you sure to recheck the selected data?',
-      okText: 'Confirm',
-      cancelText: 'Cancel',
-      onOk: () => {
-        recheckDataAction();
-      },
-      centered: true,
-    });
+    const recheckMark=selectedRows.some((item)=>{
+      return item.error==null
+    })
+    if(recheckMark){
+      message.error('Please select "Error" data to recheck!')
+    }else{
+      Modal.confirm({
+        title: 'Tips',
+        icon: <ExclamationCircleOutlined />,
+        content: 'Are you sure to recheck the selected data?',
+        okText: 'Confirm',
+        cancelText: 'Cancel',
+        onOk: () => {
+          recheckDataAction();
+        },
+        centered: true,
+      });
+    }
   };
 
   //
@@ -925,7 +940,23 @@ export default (props: any) => {
           )}
           <Form.Item style={{ textAlign: 'center' }}>
             <Space size={60}>
-              <Button type="primary" onClick={importExcel}>
+              <Button type="primary" onClick={
+                ()=>{
+                  if(isP2PMark){
+                    SyncDataSave({}).then((res) => {
+                      setShowImport(false);
+                      if (res.isSuccess) {
+                        message.success('Submit success!');
+                        getData();
+                      } else {
+                        message.error(res.msg);
+                      }
+                    });
+                  }else{
+                    importExcel()
+                  }
+                }
+                }>
                 Submit
               </Button>
               <Button
@@ -1603,6 +1634,7 @@ export default (props: any) => {
         }
         renderBtns={
           <Space>
+            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
             <BtnOrangeWrap>
               <Button disabled={!selectedRowKeys.length} onClick={toRecheck}>
                 Recheck
@@ -1663,7 +1695,18 @@ export default (props: any) => {
               style={{ height: '20px', borderColor: '#999' }}
             />
             <BtnThemeWrap>
-              <Button onClick={onExport} disabled={!selectedRowKeys.length}>
+              <Button onClick={()=>{
+                const recheckMark=selectedRows.some((item)=>{
+                  return item.templateType=="H2R BVI Template" || item.templateType=="BVI Manual Template"
+                })
+                if(recheckMark){
+                  message.error("no source data")
+                }else{
+
+                  onExport()
+                }
+              }
+                } disabled={!selectedRowKeys.length}>
                 Export Original
               </Button>
             </BtnThemeWrap>
@@ -1824,6 +1867,8 @@ export default (props: any) => {
             >
               Delete
             </Button>
+            </AuthWrapper>
+
             <Divider
               type="vertical"
               style={{ height: '20px', borderColor: '#999' }}

@@ -13,6 +13,7 @@ import {
   EditDataListSave,
   getAbnormalOriginDataByBVI,
   exportOriginalData,
+  SyncDataSave
 } from '@/app/request/apiBVI';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
@@ -63,7 +64,7 @@ export default (props: any) => {
     let _columns = [];
     for (let _key in cols) {
       if (_key) {
-        let start = _key[0].toLowerCase();
+        let start = _key[0];
         let end = _key.slice(1);
         let colKey = start + end;
         _columns.push({
@@ -523,5 +524,6 @@ export default (props: any) => {
     setIsP2PMark,
     isViewMark,
     setIsViewMark,
+    SyncDataSave
   };
 };

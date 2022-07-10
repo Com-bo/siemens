@@ -1409,7 +1409,7 @@ export const Index = (props: any) => {
             </BtnThemeWrap>
             <Button
               onClick={(event) => deleteInfos(selectedRowKeys, event)}
-              disabled={selectedRowKeys.length != 1}
+              disabled={selectedRowKeys.length == 0}
             >
               Delete
             </Button>
