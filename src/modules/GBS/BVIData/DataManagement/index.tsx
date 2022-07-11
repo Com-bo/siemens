@@ -928,6 +928,7 @@ export default (props: any) => {
               rules={[{ required: true }]}
             >
               <Upload
+                showUploadList={false}
                 maxCount={1}
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                 {...uploadProps}
@@ -992,10 +993,10 @@ export default (props: any) => {
           setShowBviData(false);
           setIsViewMark(false);
           formData.resetFields();
+          setCustomerDivision('');
         }}
       >
         <Form
-          requiredMark={!componentDisabled}
           form={formData}
           labelCol={{ flex: '120px' }}
         >
@@ -1164,14 +1165,15 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="PO" name="po" rules={[{ required: true }]}>
+              <Form.Item labelCol={{span:"100px"}} label="PO" name="po" rules={[{ required: true }]}>
                 <DebounceSelect
+                
                   initFlag
                   disabled={componentDisabled}
                   getoptions={(options) => {
                     return options?.map((x, index) => {
                       return (
-                        <Select.Option key={index} data={x} value={x.poNumber}>
+                        <Select.Option style={{ width: '100%' }} key={index} data={x} value={x.poNumber}>
                           {x.poNumber}
                         </Select.Option>
                       );
@@ -1449,7 +1451,7 @@ export default (props: any) => {
             <Col span={8}>
               <Form.Item
                 label="Customer Division"
-                name="customerDevision"
+                name="customerDivision"
                 rules={[{ required: true }]}
               >
                 <Input />
