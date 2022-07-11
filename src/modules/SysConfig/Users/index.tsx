@@ -46,6 +46,10 @@ import {
   queryUserPageInfo,
 } from '@/app/request/apiSys';
 import Table from '@/components/Table';
+import {
+  getCustemerDivisionList,
+  queryBusinesslineOptionsList,
+} from '@/app/request/common';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -457,7 +461,25 @@ export const Index = (props: any) => {
                 name="customerDivision"
                 rules={[{ required: true }]}
               >
-                <Input />
+                <DebounceSelect
+                  initFlag
+                  // mode="multiple"
+                  onChange={(value, data) => {}}
+                  getoptions={(options) => {
+                    return options?.map((x, index) => {
+                      return (
+                        <Select.Option key={index} data={x} value={x.value}>
+                          {x.label}
+                        </Select.Option>
+                      );
+                    });
+                  }}
+                  delegate={(e) => {
+                    return getCustemerDivisionList({
+                      keywords: e,
+                    });
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -466,7 +488,25 @@ export const Index = (props: any) => {
                 name="businessLine"
                 rules={[{ required: true }]}
               >
-                <Input />
+                <DebounceSelect
+                  initFlag
+                  mode="multiple"
+                  onChange={(value, data) => {}}
+                  getoptions={(options) => {
+                    return options?.map((x, index) => {
+                      return (
+                        <Select.Option key={index} data={x} value={x.value}>
+                          {x.label}
+                        </Select.Option>
+                      );
+                    });
+                  }}
+                  delegate={(e) => {
+                    return queryBusinesslineOptionsList({
+                      keywords: e,
+                    });
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -516,6 +556,7 @@ export const Index = (props: any) => {
         form={form}
         data={tableData}
         columns={orignalCols}
+        scrollX="2800px"
         selectedRowKeys={selectedRowKeys}
         total={total}
         onPageChange={onPageChange}

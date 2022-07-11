@@ -60,7 +60,7 @@ export const TableMixDiv = styled.div<{ data: any }>`
       margin-right: 20px;
     }
   }
-  label {
+  .ant-table-thead label {
     margin-right: 10px;
   }
   .ant-select {

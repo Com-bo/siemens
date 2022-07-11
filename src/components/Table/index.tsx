@@ -69,7 +69,7 @@ export default (_props: TableOptions) => {
                       <span className="total">
                         Total: <strong>{total}</strong>
                       </span>
-                      <label>Items</label>
+                      <label style={{ marginRight: '10px' }}>Items</label>
                       <Select
                         value={_pageSize}
                         onChange={(val) => {

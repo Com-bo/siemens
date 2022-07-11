@@ -25,6 +25,7 @@ import {
   Space,
   Tooltip,
   Upload,
+  Switch,
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -44,6 +45,7 @@ import {
   importCostCenterData,
   logCostCenterDataQuery,
 } from '@/app/request/apiCostCenter';
+
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -99,6 +101,7 @@ export const Index = (props: any) => {
       title: 'LockIndicator',
       width: '180px',
       titleRender: 'input',
+      render: (text) => (text ? 'Locked' : 'Unlock'),
     },
     {
       title: 'CustomerDivision',
@@ -368,6 +371,7 @@ export const Index = (props: any) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
+          lockIndicator: formData.getFieldValue('lockIndicator') ? 'X' : '',
         };
         editCostCenterDataSave(params).then((res) => {
           if (res.isSuccess) {
@@ -454,9 +458,9 @@ export const Index = (props: any) => {
               <Form.Item
                 label="LockIndicator"
                 name="lockIndicator"
-                rules={[{ required: true }]}
+                valuePropName="checked"
               >
-                <Input disabled={componentDisabled} />
+                <Switch />
               </Form.Item>
             </Col>
             <Col span={12}>

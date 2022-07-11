@@ -1,9 +1,24 @@
 import React from 'react';
-import Home from '@/modules/home';
+// import Home from '@/modules/home';
+import { ContentWrap } from '@/assets/style';
 
 // export default (props: any) => {
 //   return <Home {...props} />;
 // };
+import noData from '@/assets/images/noData.png';
 export default (props: any) => {
-  return <div>开发中...</div>;
+  return (
+    <ContentWrap>
+      {' '}
+      <p
+        style={{
+          paddingTop: '200px',
+          textAlign: 'center',
+        }}
+      >
+        {' '}
+        <img src={noData} />
+      </p>
+    </ContentWrap>
+  );
 };

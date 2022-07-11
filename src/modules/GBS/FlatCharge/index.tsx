@@ -1443,7 +1443,7 @@ export default (props: any) => {
                             data={x}
                             value={x.costCenter}
                           >
-                            {x.costCenter}-{x.custemerDivision}
+                            {x.costCenter}
                           </Select.Option>
                         );
                       });
@@ -1459,6 +1459,7 @@ export default (props: any) => {
                       return getCostCenterDrop({
                         are: formData.getFieldValue('are'),
                         costCenter: e,
+                        isOnlyUnlocked: true,
                       });
                     }}
                   />
