@@ -578,7 +578,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={()=>{
+                            setCurrent(1);
+                            getData()
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">

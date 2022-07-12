@@ -73,45 +73,45 @@ export default (props: any) => {
   const [billingStatusGroup, setBillingStatusGroup] = useState([
     {
       label: 'Freeze',
-      value: 'Freeze',
+      value: '1',
     },
     {
-      label: 'Successful',
-      value: 'Successful',
-    },
-    {
-      label: 'Auto To SAP',
-      value: 'AutoToSAP',
+      label: 'Successfully',
+      value: '2',
     },
     {
       label: 'Manual To SAP',
-      value: 'ManualToSAP',
+      value: '3',
+    },
+    {
+      label: 'Auto To SAP',
+      value: '4',
     },
     {
       label: 'Waiting For SAP',
-      value: 'WaitingForSAP',
+      value: '5',
     },
     {
       label: 'PostPone',
-      value: 'PostPone',
+      value: '6',
     },
     {
       label: 'Unfreeze',
-      value: 'Unfreeze',
+      value: '7',
     },
     {
       label: 'Obsolete',
-      value: 'Obsolete',
+      value: '8',
     },
     
-    {
-      label: 'Cancel',
-      value: 'Cancel',
-    },
-    {
-      label: 'Error',
-      value: 'Error',
-    },
+    // {
+    //   label: 'Cancel',
+    //   value: 'Cancel',
+    // },
+    // {
+    //   label: 'Error',
+    //   value: 'Error',
+    // },
   ]);
   //
   const _generateHead = (cols: any) => {

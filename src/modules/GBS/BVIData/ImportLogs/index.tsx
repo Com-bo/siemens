@@ -205,7 +205,7 @@ export default (props: any) => {
         changePageSize={changePageSize}
         current={current}
         rowKey="uploadDate"
-        listName="Logs"
+        listName="Import Logs"
         renderFilterGroup={
           <FilterGroupDiv>
             <Form form={form} labelCol={{ flex: '120px' }}>

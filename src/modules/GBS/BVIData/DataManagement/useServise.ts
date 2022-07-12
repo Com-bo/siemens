@@ -193,6 +193,7 @@ export default (props: any) => {
           } else {
             message.error(res.msg);
           }
+          formImport.resetFields();
         });
       })
       .catch((error) => {});

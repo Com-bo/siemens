@@ -70,25 +70,21 @@ export const Index = (props: any) => {
       name: 'are',
       title: 'ARE',
       width: '100px',
-      titleRender: 'input',
     },
     {
       name: 'companyCode',
       title: 'CompanyCode',
       width: '150px',
-      titleRender: 'input',
     },
     {
       title: 'CustomerDivision',
       width: '180px',
       name: 'custemerDivision',
-      titleRender: 'input',
     },
     {
       name: 'seTag',
       title: 'SETag',
       width: '150px',
-      titleRender: 'input',
     },
     {
       name: 'Operate',
@@ -483,20 +479,15 @@ export const Index = (props: any) => {
           <FilterGroupDiv>
             <Form
               form={formFilter}
-              labelCol={{ flex: '120px' }}
+              labelCol={{ flex: '50px' }}
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                {/* <Col span={7}>
-                  <Form.Item label="CostCenter" name="costCenter">
+                <Col span={7}>
+                  <Form.Item label="ARE" name="are">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={7}>
-                  <Form.Item label="CEPC Division" name="cepcDivision">
-                    <Input />
-                  </Form.Item>
-                </Col> */}
                 <Col span={4}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
@@ -504,7 +495,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={()=>{
+                            setCurrent(1);
+                            getData()
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">
@@ -576,7 +570,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/DivisionMapping-OC.xlsx">
                           Download Template
                         </a>
                       </span>
