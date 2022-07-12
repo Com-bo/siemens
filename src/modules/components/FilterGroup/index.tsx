@@ -94,6 +94,12 @@ export default (props: FilterGroupType) => {
         { value: '0', label: 'No' },
       ],
     },
+    'Billing Data': {
+      AdjustTag: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+    },
     'Billing Integrity Report': {
       isThereBilling: [
         { value: '1', label: 'Yes' },

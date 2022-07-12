@@ -90,33 +90,35 @@ export const Api = {
   DeleteProductData: '/api/Product/DeleteData', //删除product数据
   DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
   EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
-  
-  // masterdata
-  CurrencyImportData: '/api/Currency/ImportData', 
-  CurrencyQueryListData: '/api/Currency/QueryListData', 
-  CurrencyEditDataSave: '/api/Currency/EditDataSave', 
-  CurrencyDeleteData: '/api/Currency/DeleteData', 
 
-  DivisionMappingICBImportData: '/api/DivisionMappingICB/ImportData', 
-  DivisionMappingICBQueryListData: '/api/DivisionMappingICB/QueryListData', 
-  DivisionMappingICBEditDataSave: '/api/DivisionMappingICB/EditDataSave', 
-  DivisionMappingICBDeleteData: '/api/DivisionMappingICB/DeleteData', 
+  // masterdata
+  CurrencyImportData: '/api/Currency/ImportData',
+  CurrencyQueryListData: '/api/Currency/QueryListData',
+  CurrencyEditDataSave: '/api/Currency/EditDataSave',
+  CurrencyDeleteData: '/api/Currency/DeleteData',
+
+  DivisionMappingICBImportData: '/api/DivisionMappingICB/ImportData',
+  DivisionMappingICBQueryListData: '/api/DivisionMappingICB/QueryListData',
+  DivisionMappingICBEditDataSave: '/api/DivisionMappingICB/EditDataSave',
+  DivisionMappingICBDeleteData: '/api/DivisionMappingICB/DeleteData',
 
   DivMappingOcQueryPageDropListData: '/api/DivMappingOc/QueryPageDropListData',
-  DivMappingOcImportData: '/api/DivMappingOc/ImportData', 
-  DivMappingOcQueryListData: '/api/DivMappingOc/QueryListData', 
-  DivMappingOcEditDataSave: '/api/DivMappingOc/EditDataSave', 
-  DivMappingOcDeleteData: '/api/DivMappingOc/DeleteData', 
+  DivMappingOcImportData: '/api/DivMappingOc/ImportData',
+  DivMappingOcQueryListData: '/api/DivMappingOc/QueryListData',
+  DivMappingOcEditDataSave: '/api/DivMappingOc/EditDataSave',
+  DivMappingOcDeleteData: '/api/DivMappingOc/DeleteData',
 
-  SpecialDivisionImportData: '/api/SpecialDivision/ImportData', 
-  SpecialDivisionQueryListData: '/api/SpecialDivision/QueryListData', 
-  SpecialDivisionEditDataSave: '/api/SpecialDivision/EditDataSave', 
-  SpecialDivisionDeleteData: '/api/SpecialDivision/DeleteData', 
-
-  
+  SpecialDivisionImportData: '/api/SpecialDivision/ImportData',
+  SpecialDivisionQueryListData: '/api/SpecialDivision/QueryListData',
+  SpecialDivisionEditDataSave: '/api/SpecialDivision/EditDataSave',
+  SpecialDivisionDeleteData: '/api/SpecialDivision/DeleteData',
   // Billing-validation report
   BillingIntegrityDataQuery: '/api/BillingValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
   BillingIntegrityDataExport: '/api/BillingValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、
+  BillingDeferenceDataQuery: '/api/BillingValidateReport/DeferenceDataQuery',
+  BillingDetalInPercentageConfigQuery:
+    '/api/BillingValidateReport/DetalInPercentageConfigQuery',
+  BillingDeferenceDataExport: '/api/BillingValidateReport/DeferenceDataExport',
   // 系统设置
   InsertRole: '/api/System/InsertRole', //新建角色
   ModifyRole: '/api/System/ModifyRole', //编辑角色
@@ -127,7 +129,7 @@ export const Api = {
   QueryRolePageInfo: '/api/System/QueryRolePageInfo', // 角色管理-列表
   QueryUserPageInfo: '/api/System/QueryUserPageInfo', //用户列表
   InsertUserInfo: '/api/System/InsertUserInfo', //新增用户
-  ModifyUserInfo: '​/api​/System​/ModifyUserInfo', //编辑用户
+  ModifyUserInfo: '/api/System/ModifyUserInfo', //编辑用户
   RoleBingUser: '/api/System/RoleBingUser', // 角色管理-角色绑定人员
   DelRole: '/api/System/DelRole', //删除角色
   DeleUser: '/api/System/DeleUser',

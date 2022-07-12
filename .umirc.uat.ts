@@ -4,8 +4,8 @@ export default {
     'process.env.TENANTID': '5dbf1add-202a-4b8d-815b-bf0fb024e033',
     'process.env.SCOPE':
       'api://4839a57f-9979-47a3-9c92-a372700137e6/user_impersonation',
-    'process.env.WEB_URL': 'https://bvi-billing-system.siemens.com.cn:8081',
-    'process.env.BASE_URL': 'https://bvi-billing-system.siemens.com.cn:8081',
+    'process.env.WEB_URL': 'https://bvi-billing-system.siemens.com.cn',
+    'process.env.BASE_URL': 'https://bvi-billing-system.siemens.com.cn',
     'process.env.REDIRECT_URL':
       'https://bvi-billing-system.siemens.com.cn/callback.html',
     'process.env.IDENTITY': 'https://bvi-billing-system.siemens.com.cn:8081',

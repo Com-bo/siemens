@@ -483,11 +483,7 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="BusinessLine"
-                name="businessLine"
-                rules={[{ required: true }]}
-              >
+              <Form.Item label="BusinessLine" name="businessLine">
                 <DebounceSelect
                   initFlag
                   mode="multiple"

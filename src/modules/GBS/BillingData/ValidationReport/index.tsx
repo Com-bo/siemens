@@ -234,7 +234,7 @@ export default (props: any) => {
                 name: item,
                 title: item,
                 width: '120px',
-                // render: (text, record) => record?.monthOfBVI[index],
+                render: (text, record) => record?.monthOfTotalAmout[index],
               };
             }),
           );
@@ -243,7 +243,7 @@ export default (props: any) => {
           setMonths([]);
         }
         setDiffTotal(res.totalCount);
-        setTotalSum(res.data?.monthOfTotalBVI || []);
+        setTotalSum(res.data?.monthOfSummaryTotalAmout || []);
       } else {
         message.error(res.msg);
       }
@@ -427,7 +427,7 @@ export default (props: any) => {
             )}
             renderFilterGroup={
               <FilterGroup
-                moudleName="BVI Difference Report"
+                moudleName="Billing Difference Report"
                 authPagename={pageName}
                 onSearch={(val) => {
                   latestDiffGroupIdRef.current = val;

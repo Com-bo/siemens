@@ -2,8 +2,8 @@ import { message } from 'antd';
 import { MessageType } from 'antd/lib/message';
 
 const INFO_DURATION = 3;
-const WARN_DURATION = 30;
-const ERROR_DURATION = 30;
+const WARN_DURATION = 3;
+const ERROR_DURATION = 3;
 
 /** message重写，根据不同提示类似设置关闭时间 */
 let error = message.error;
