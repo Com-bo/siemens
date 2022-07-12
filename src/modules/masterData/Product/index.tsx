@@ -1319,7 +1319,7 @@ export const Index = (props: any) => {
       </Modal>
       <TableList
         headerSearch={getData}
-        // form={form}
+        form={form}
         data={tableData}
         columns={orignalCols}
         selectedRowKeys={selectedRowKeys}

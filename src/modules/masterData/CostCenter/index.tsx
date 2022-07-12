@@ -165,7 +165,6 @@ export const Index = (props: any) => {
               icon={<i className="gbs gbs-logs"></i>}
               onClick={(event) => {
                 event.stopPropagation();
-
                 toLog(record.id);
               }}
             ></Button>
@@ -203,32 +202,34 @@ export const Index = (props: any) => {
       dataIndex: 'oldValue',
       key: 'oldValue',
       align: 'center',
+      render: (text) => (text ? 'Locked' : 'Unlock'),
     },
     {
       title: 'New Value',
       dataIndex: 'newValue',
       key: 'newValue',
       align: 'center',
+      render: (text) => (text ? 'Locked' : 'Unlock'),
     },
-    {
-      title: 'Modified Date',
-      dataIndex: 'modifiedDate',
-      // sorter: {
-      //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
-      // },
-      key: 'modifiedDate',
-      align: 'center',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
-    },
-    {
-      title: 'Modified User',
-      dataIndex: 'modifiedUser',
-      key: 'modifiedUser',
-      align: 'center',
-    },
+    // {
+    //   title: 'Modified Date',
+    //   dataIndex: 'modifiedDate',
+    //   // sorter: {
+    //   //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
+    //   // },
+    //   key: 'modifiedDate',
+    //   align: 'center',
+    //   render: (text) =>
+    //     text && moment(text).isValid()
+    //       ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+    //       : text,
+    // },
+    // {
+    //   title: 'Modified User',
+    //   dataIndex: 'modifiedUser',
+    //   key: 'modifiedUser',
+    //   align: 'center',
+    // },
   ];
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
@@ -362,6 +363,9 @@ export const Index = (props: any) => {
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId);
+    if (recordId == logId) {
+      _getLogData();
+    }
     setShowLog(true);
   };
   const saveFormData = () => {

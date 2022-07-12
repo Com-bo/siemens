@@ -382,6 +382,8 @@ export default (props: FilterGroupType) => {
               item.fieldValue = moment(item.fieldValue).format('YYYYMM');
               break;
             case 'ModifiedDate':
+            case 'EndDate':
+            case 'StartDate':
               item.fieldValue = moment(item.fieldValue).format(
                 'YYYY-MM-DD HH:mm:ss',
               );
@@ -414,7 +416,6 @@ export default (props: FilterGroupType) => {
           },
           groupFieldList: groupFieldList,
         };
-        console.log(params);
         saveFilterGroupData(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
@@ -424,7 +425,9 @@ export default (props: FilterGroupType) => {
           }
         });
       })
-      .catch((e) => {});
+      .catch((e) => {
+        setRequireMark(false);
+      });
   };
   const deleteFilterGroup = () => {
     form
@@ -487,7 +490,11 @@ export default (props: FilterGroupType) => {
         }
         footer={null}
         visible={isSetting}
-        onCancel={() => setSetting(false)}
+        onCancel={() => {
+          setSetting(false);
+          form.resetFields();
+          setRequireMark(false);
+        }}
         width={1000}
       >
         <Form labelCol={{ span: 4 }} form={form}>

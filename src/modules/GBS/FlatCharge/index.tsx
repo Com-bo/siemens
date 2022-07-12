@@ -975,6 +975,9 @@ export default (props: any) => {
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId);
+    if (recordId == logId) {
+      _getLogData();
+    }
     setLogCurrent(1);
   };
   useEffect(() => {

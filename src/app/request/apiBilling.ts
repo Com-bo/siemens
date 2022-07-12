@@ -98,6 +98,7 @@ export const QueryData = (data: Object) => {
 export const ExportBillingData = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.ExportBillingData}`, data, {
     autoLoading: true,
+    responseType: 'blob',
   });
 };
 export const FreezeData = (data: Object) => {
