@@ -58,6 +58,7 @@ import {
   queryProductListData,
   queryProductLogData,
 } from '@/app/request/apiProduct';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import FormTable from '@/components/FormTable/formTable';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
@@ -273,6 +274,7 @@ export const Index = (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
+          {/* <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} ></AuthWrapper> */}
           <Tooltip title="Edit">
             <Button
               type="text"

@@ -36,7 +36,7 @@ export const TableMixDiv = styled.div<{ data: any }>`
   .ant-table-thead > tr > th {
     right: ${(props) => {
       // console.log(props.data);
-      return !props.data || !props.data.length ? '0px !important' : '0px';
+      return !props.data ? '0px !important' : '0px';
     }};
   }
   .ant-table-tbody > tr.ant-table-row-selected > td {

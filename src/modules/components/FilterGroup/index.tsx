@@ -33,7 +33,7 @@ import {
 import React, { ReactNode, useEffect, useState } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
-import { AuthWrapper } from '@/tools/authCheck';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 interface FilterGroupType {
   moudleName: string; //模块标识
   authPagename?: string; //模块权限用名称
@@ -712,20 +712,25 @@ export default (props: FilterGroupType) => {
               icon={<i className="gbs gbs-search"></i>}
               onClick={() => props.onSearch(filterGroup)}
             ></Button>
-            <Tooltip title="Setting">
-              <Button
-                icon={<i className="gbs gbs-setting"></i>}
-                onClick={() => {
-                  form.resetFields();
-                  form.setFieldsValue({
-                    groupFieldList: [
-                      { fieldName: '', operator: '', fieldValue: '' },
-                    ],
-                  });
-                  setSetting(true);
-                }}
-              ></Button>
-            </Tooltip>
+            {checkAuth(props?.authPagename, props?.authPagename + '-Edit') ? (
+              <Tooltip title="Setting">
+                <Button
+                  icon={<i className="gbs gbs-setting"></i>}
+                  onClick={() => {
+                    form.resetFields();
+                    form.setFieldsValue({
+                      groupFieldList: [
+                        { fieldName: '', operator: '', fieldValue: '' },
+                      ],
+                    });
+                    setSetting(true);
+                  }}
+                ></Button>
+              </Tooltip>
+            ) : (
+              ''
+            )}
+
             <Tooltip title="Export">
               <Button
                 icon={<i className="gbs gbs-export"></i>}

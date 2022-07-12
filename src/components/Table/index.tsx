@@ -32,7 +32,7 @@ export default (_props: TableOptions) => {
   const [_pageSize, setPageSize] = useState(20);
 
   return (
-    <TableMixDiv data={_props.data}>
+    <TableMixDiv data={_props.data ? _props.data.length : 0}>
       <Table
         dataSource={_props.data}
         rowSelection={

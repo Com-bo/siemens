@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Key } from 'react';
 import {
   BtnThemeWrap,
   ContentWrap,
@@ -100,7 +100,7 @@ export const Index = (props: any) => {
       name: 'lockIndicator',
       title: 'LockIndicator',
       width: '180px',
-      titleRender: 'input',
+      // titleRender: 'input',
       render: (text) => (text ? 'Locked' : 'Unlock'),
     },
     {
@@ -202,14 +202,24 @@ export const Index = (props: any) => {
       dataIndex: 'oldValue',
       key: 'oldValue',
       align: 'center',
-      render: (text) => (text ? 'Locked' : 'Unlock'),
+      render: (text, record) =>
+        record.fieldsName == 'LockIndicator'
+          ? text
+            ? 'Locked'
+            : 'Unlock'
+          : text,
     },
     {
       title: 'New Value',
       dataIndex: 'newValue',
       key: 'newValue',
       align: 'center',
-      render: (text) => (text ? 'Locked' : 'Unlock'),
+      render: (text, record) =>
+        record.fieldsName == 'LockIndicator'
+          ? text
+            ? 'Locked'
+            : 'Unlock'
+          : text,
     },
     // {
     //   title: 'Modified Date',
@@ -586,7 +596,7 @@ export const Index = (props: any) => {
           <FilterGroupDiv>
             <Form
               form={formFilter}
-              labelCol={{ flex: '120px' }}
+              labelCol={{ flex: '100px' }}
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
@@ -600,7 +610,19 @@ export const Index = (props: any) => {
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={7}>
+                  <Form.Item label="lockIndicator" name="isLocked">
+                    <Select allowClear>
+                      <Select.Option value={true as unknown as Key}>
+                        Locked
+                      </Select.Option>
+                      <Select.Option value={false as unknown as Key}>
+                        UnLock
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={3}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
                       <Tooltip title="Search">
