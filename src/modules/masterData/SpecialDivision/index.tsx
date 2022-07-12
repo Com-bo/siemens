@@ -69,19 +69,16 @@ export const Index = (props: any) => {
       name: 'profitCenter',
       title: 'ProfitCenter',
       width: '150px',
-      titleRender: 'input',
     },
     {
       title: 'CustomerDivision',
       width: '180px',
       name: 'customerDivision',
-      titleRender: 'input',
     },
     {
       title: 'BU',
       width: '180px',
       name: 'bu',
-      titleRender: 'input',
     },
     {
       name: 'Operate',
@@ -479,16 +476,11 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                {/* <Col span={7}>
-                  <Form.Item label="CostCenter" name="costCenter">
+                <Col span={7}>
+                  <Form.Item label="ProfitCenter" name="profitCenter">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={7}>
-                  <Form.Item label="CEPC Division" name="cepcDivision">
-                    <Input />
-                  </Form.Item>
-                </Col> */}
                 <Col span={4}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
@@ -496,7 +488,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={()=>{
+                            setCurrent(1);
+                            getData()
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">
@@ -568,7 +563,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/SpecialDivision.xlsx">
                           Download Template
                         </a>
                       </span>

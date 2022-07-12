@@ -69,19 +69,19 @@ export const Index = (props: any) => {
       name: 'cepcDivision',
       title: 'CEPC Division',
       width: '180px',
-      titleRender: 'input',
+    
     },
     {
       name: 'customerDivision',
       title: 'CustomerDivision',
       width: '200px',
-      titleRender: 'input',
+
     },
     {
       title: 'Comment',
       width: '180px',
       name: 'comment',
-      titleRender: 'input',
+
     },
     {
       name: 'Operate',
@@ -483,16 +483,11 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                {/* <Col span={7}>
-                  <Form.Item label="CostCenter" name="costCenter">
-                    <Input />
-                  </Form.Item>
-                </Col>
                 <Col span={7}>
                   <Form.Item label="CEPC Division" name="cepcDivision">
                     <Input />
                   </Form.Item>
-                </Col> */}
+                </Col>
                 <Col span={4}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
@@ -500,7 +495,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={()=>{
+                            setCurrent(1);
+                            getData()
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">
@@ -572,7 +570,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/DivisionMapping-ICB.xlsx">
                           Download Template
                         </a>
                       </span>

@@ -69,31 +69,26 @@ export const Index = (props: any) => {
       name: 'exchangeRateType',
       title: 'ExchangeRateType',
       width: '100px',
-      titleRender: 'input',
     },
     {
       name: 'fromCurrency',
       title: 'FromCurrency',
       width: '200px',
-      titleRender: 'input',
     },
     {
       name: 'toCurrency',
       title: 'ToCurrency',
       width: '150px',
-      titleRender: 'input',
     },
     {
       name: 'validFrom',
       title: 'ValidFrom',
       width: '150px',
-      titleRender: 'input',
     },
     {
       name: 'exchangeRate',
       title: 'ExchangeRate',
       width: '180px',
-      titleRender: 'input',
     },
     {
       name: 'Operate',
@@ -515,16 +510,21 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                {/* <Col span={7}>
-                  <Form.Item label="CostCenter" name="costCenter">
+                <Col span={5}>
+                  <Form.Item label="FromCurrency" name="fromCurrency">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={7}>
-                  <Form.Item label="CEPC Division" name="cepcDivision">
+                <Col span={5}>
+                  <Form.Item label="ToCurrency" name="toCurrency">
                     <Input />
                   </Form.Item>
-                </Col> */}
+                </Col>
+                <Col span={5}>
+                  <Form.Item label="ValidFrom" name="validFrom">
+                    <Input />
+                  </Form.Item>
+                </Col>
                 <Col span={4}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
@@ -532,7 +532,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={()=>{
+                            setCurrent(1);
+                            getData()
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">
@@ -604,7 +607,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/Currency.xlsx">
                           Download Template
                         </a>
                       </span>

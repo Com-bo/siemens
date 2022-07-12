@@ -928,7 +928,7 @@ export default (props: any) => {
               rules={[{ required: true }]}
             >
               <Upload
-                showUploadList={false}
+                // showUploadList={false}
                 maxCount={1}
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                 {...uploadProps}
@@ -1010,16 +1010,16 @@ export default (props: any) => {
                 <Input disabled={true} />
               </Form.Item>
             </Col>
-
-            {formData.getFieldValue('id') ? (
-              ''
-            ) : (
+             
+            {
+            !formData.getFieldValue('id')|| formData.getFieldValue('templateType')=="BVI Manual Template" ?
+             (
               <Col span={4}>
                 <Button type="primary" onClick={() => setShowPro(true)}>
                   Search Product
                 </Button>
               </Col>
-            )}
+            ):("")}
             <Col span={8}>
               <Form.Item label="Bussiness Line" name="businessLine">
                 <Input disabled={true} />
@@ -1073,7 +1073,8 @@ export default (props: any) => {
                             data={x}
                             value={x.costCenter}
                           >
-                            {x.costCenter}-{x.custemerDivision}
+                            {x.costCenter}
+                            {/* {x.costCenter}-{x.custemerDivision} */}
                           </Select.Option>
                         );
                       });
@@ -1089,6 +1090,7 @@ export default (props: any) => {
                       return getCostCenterDrop({
                         are: formData.getFieldValue('are'),
                         costCenter: e,
+                        isOnlyUnlocked: true,
                       });
                     }}
                   />
@@ -1165,7 +1167,7 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item labelCol={{span:"100px"}} label="PO" name="po" rules={[{ required: true }]}>
+              <Form.Item labelCol={{flex:"50px"}} label="PO" name="po" rules={[{ required: true }]}>
                 <DebounceSelect
                 
                   initFlag
@@ -1635,8 +1637,9 @@ export default (props: any) => {
           />
         }
         renderBtns={
-          <Space>
+          <>
             <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+            <Space>
             <BtnOrangeWrap>
               <Button disabled={!selectedRowKeys.length} onClick={toRecheck}>
                 Recheck
@@ -1869,8 +1872,9 @@ export default (props: any) => {
             >
               Delete
             </Button>
+              </Space>
             </AuthWrapper>
-
+              <Space>
             <Divider
               type="vertical"
               style={{ height: '20px', borderColor: '#999' }}
@@ -1886,6 +1890,7 @@ export default (props: any) => {
               }
             ></Button>
           </Space>
+          </>
         }
       />
     </ContentWrap>
