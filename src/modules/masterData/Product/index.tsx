@@ -456,11 +456,35 @@ export const Index = (props: any) => {
     fd.append('file', file);
     importProductData(fd).then((res) => {
       if (res.isSuccess) {
-        message.success(res.msg);
+        message.success(
+          <>
+            {res.msg}
+            <Divider type="vertical" />
+            Success:{res.data?.successCount || 0}
+            <Divider type="vertical" />
+            No import required:{res.data?.notRequiredCount || 0}
+            <Divider type="vertical" />
+            Error:{res.data?.errorCount || 0}
+            <Divider type="vertical" />
+            Total:{res.data?.totalCount || 0}
+          </>,
+        );
         getData();
         setSelectedRowKeys([]);
       } else {
-        message.error(res.msg);
+        message.error(
+          <>
+            {res.msg}
+            <Divider type="vertical" />
+            Success:{res.data?.successCount || 0}
+            <Divider type="vertical" />
+            No import required:{res.data?.notRequiredCount || 0}
+            <Divider type="vertical" />
+            Error:{res.data?.errorCount || 0}
+            <Divider type="vertical" />
+            Total:{res.data?.totalCount || 0}
+          </>,
+        );
       }
     });
   };
