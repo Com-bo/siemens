@@ -850,6 +850,11 @@ export const Index = (props: any) => {
       productInfo: {
         id: formData.getFieldValue('id') || null,
         ...formData.getFieldsValue(),
+        startDate: moment(form.getFieldValue('startDate')).format('YYYY-MM-DD'),
+        endDate: moment(form.getFieldValue('endDate')).format('YYYY-MM-DD'),
+        signedDate: moment(form.getFieldValue('signedDate')).format(
+          'YYYY-MM-DD',
+        ),
       },
       productPoList: poData,
     }).then((res) => {
