@@ -200,8 +200,7 @@ export default (props: any) => {
             onClick={(event) => {
               // view权限或者edit权限
               if (
-                checkAuth(pageName, `${pageName}-Edit`) ||
-                checkAuth(pageName, `${pageName}-View`)
+                checkAuth(pageName, [`${pageName}-Edit`, `${pageName}-View`])
               ) {
                 event.stopPropagation();
                 queryBVIData({ recordId: record.orgId }).then((res) => {
@@ -898,6 +897,7 @@ export default (props: any) => {
 
     getFlatChargeData(params).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
@@ -927,12 +927,15 @@ export default (props: any) => {
     setProCurrent(pagination.current);
   };
   const changePageSize = (val: number) => {
+    setCurrent(1);
     setPageSize(val);
   };
   const handleLogSize = (val: number) => {
+    setLogCurrent(1);
     setLogSize(val);
   };
   const handleProSize = (val: number) => {
+    setProCurrent(1);
     setProSize(val);
   };
   // 删除接口
@@ -950,7 +953,6 @@ export default (props: any) => {
         }).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
-            setSelectedRowKeys([]);
             _getData();
             setCurrent(1);
           } else {
@@ -968,7 +970,6 @@ export default (props: any) => {
       recordIdList: data,
     }).then((res) => {
       if (res.isSuccess) {
-        setSelectedRowKeys([]);
         _getData();
         message.success(res.msg);
       } else {
@@ -989,7 +990,6 @@ export default (props: any) => {
         }).then((res) => {
           if (res.isSuccess) {
             _getData();
-            setSelectedRowKeys([]);
             message.success(res.msg);
           } else {
             message.error(res.msg);
@@ -1002,17 +1002,18 @@ export default (props: any) => {
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId);
-    if (recordId == logId) {
-      _getLogData();
+    if (logCurrent !== 1) {
+      setLogCurrent(1);
+    } else {
+      _getLogData(recordId);
     }
-    setLogCurrent(1);
   };
   useEffect(() => {
     logId && _getLogData();
-  }, [logCurrent, logId, logSize]);
-  const _getLogData = async () => {
+  }, [logCurrent, logSize]);
+  const _getLogData = async (_id?: string) => {
     const res = await logDataQuery({
-      recordId: logId,
+      recordId: _id || logId,
       pageIndex: logCurrent,
       pageSize: logSize,
     });
@@ -1044,7 +1045,6 @@ export default (props: any) => {
       if (res.isSuccess) {
         message.success(res.msg);
         _getData();
-        setSelectedRowKeys([]);
       } else {
         message.error(res.msg);
       }
@@ -1061,6 +1061,7 @@ export default (props: any) => {
           pageSize: proSize,
         }).then((res) => {
           if (res.isSuccess) {
+            setSelectProKeys([]);
             setProductData(res.data);
             setProTotal(res.totalCount);
           } else {
@@ -1245,6 +1246,7 @@ export default (props: any) => {
     setcostcenterData([]);
   };
   const handlerCostCenterPageSize = (_size: number) => {
+    setCostCenterCurrent(1);
     setCostcenterPageSize(_size);
   };
   const oncostCenterPageChange = (pagination) => {
@@ -1500,8 +1502,8 @@ export default (props: any) => {
             current={logCurrent}
             pageSize={logSize}
             total={logTotal}
+            scrollY="calc(100vh - 420px)"
             handlePageSize={handleLogSize}
-            rowKey="id"
             onPageChange={onLogPageChange}
             pagination={true}
           />

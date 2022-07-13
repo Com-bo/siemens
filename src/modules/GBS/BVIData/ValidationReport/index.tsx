@@ -21,6 +21,7 @@ import {
   getIntergrityReportData,
   detalInPercentageConfigQuery,
 } from '@/app/request/apiValidReport';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
 const pageName = 'BVIValidationReport';
 const { Text } = Typography;
@@ -251,9 +252,11 @@ export default (props: any) => {
     setDiffCurrent(pagination.current);
   };
   const changePageSize = (val: number) => {
+    setCurrent(1);
     setPageSize(val);
   };
   const changeDiffPageSize = (val: number) => {
+    setDiffCurrent(1);
     setDiffPageSize(val);
   };
   const exportExcelAction = () => {
@@ -369,6 +372,7 @@ export default (props: any) => {
           <TableList
             headerSearch={_getDiffData}
             form={diffForm}
+            authPagename={pageName}
             data={differenceData.map((item) => {
               return {
                 ...item,

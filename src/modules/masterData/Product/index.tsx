@@ -60,6 +60,7 @@ import {
 } from '@/app/request/apiProduct';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import FormTable from '@/components/FormTable/formTable';
+import { _GraphQueryableInstance } from '@pnp/graph/graphqueryable';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formData] = Form.useForm();
@@ -355,7 +356,6 @@ export const Index = (props: any) => {
         }).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
-            setSelectedRowKeys([]);
             if (current == 1) {
               getData();
             } else {
@@ -388,6 +388,7 @@ export const Index = (props: any) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);
+        setSelectedRowKeys([]);
       } else {
         message.error(res.msg);
       }
@@ -402,17 +403,25 @@ export const Index = (props: any) => {
   };
 
   const changePageSize = (val: number) => {
+    setCurrent(1);
     setPageSize(val);
   };
   const toLog = (id: string) => {
     // 日志列表接口
     setLogId(id);
-    setLogCurrent(1);
+    if (logCurrent !== 1) {
+      setLogCurrent(1);
+    } else {
+      _getLogData(id);
+    }
     setShowLog(true);
   };
-  const _getLogData = () => {
+  const _getLogData = (_id?: string) => {
+    if (!_id && !logId) {
+      return;
+    }
     queryProductLogData({
-      recordId: logId,
+      recordId: _id || logId,
       pageIndex: logCurrent,
       pageSize: logSize,
     }).then((res) => {
@@ -472,7 +481,6 @@ export const Index = (props: any) => {
           </>,
         );
         getData();
-        setSelectedRowKeys([]);
       } else {
         message.error(
           <>
@@ -745,32 +753,12 @@ export const Index = (props: any) => {
       key: 'newValue',
       align: 'center',
     },
-    {
-      title: 'Modified Date',
-      dataIndex: 'modifiedDate',
-      // sorter: {
-      //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
-      // },
-      key: 'modifiedDate',
-      align: 'center',
-      width: '140px',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
-    },
-    {
-      title: 'Modified User',
-      dataIndex: 'modifiedUser',
-      key: 'modifiedUser',
-      width: '120px',
-      align: 'center',
-    },
   ];
   useEffect(() => {
-    logId && _getLogData();
-  }, [logCurrent, logId, logSize]);
+    _getLogData();
+  }, [logCurrent, logSize]);
   const handleLogSize = (val: number) => {
+    setLogCurrent(1);
     setLogSize(val);
   };
   const onLogPageChange = (pagination, filters, sorter, extra) => {
@@ -850,9 +838,11 @@ export const Index = (props: any) => {
       productInfo: {
         id: formData.getFieldValue('id') || null,
         ...formData.getFieldsValue(),
-        startDate: moment(form.getFieldValue('startDate')).format('YYYY-MM-DD'),
-        endDate: moment(form.getFieldValue('endDate')).format('YYYY-MM-DD'),
-        signedDate: moment(form.getFieldValue('signedDate')).format(
+        startDate: moment(formData.getFieldValue('startDate')).format(
+          'YYYY-MM-DD',
+        ),
+        endDate: moment(formData.getFieldValue('endDate')).format('YYYY-MM-DD'),
+        signedDate: moment(formData.getFieldValue('signedDate')).format(
           'YYYY-MM-DD',
         ),
       },
@@ -897,18 +887,19 @@ export const Index = (props: any) => {
       >
         <div className="selfTable" style={{ margin: '0 0px 0 -24px' }}>
           <TableMix
-            columns={columns.map((item) => {
+            columns={columns}
+            data={logData.map((item) => {
               return {
                 key: Math.random(),
                 ...item,
               };
             })}
-            data={logData}
             current={logCurrent}
             pageSize={logSize}
             total={logTotal}
             handlePageSize={handleLogSize}
             onPageChange={onLogPageChange}
+            scrollY="calc(100vh - 420px)"
             pagination={true}
           />
         </div>
