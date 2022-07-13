@@ -1108,12 +1108,7 @@ export default (props: any) => {
       customerDivision: data.customerDivision,
       productName: data.productName,
     });
-    if (data.are != 5547) {
-      // 获取compamycode下拉选择
-      // getCompanyCodeDrop()
-    } else {
-      // 获取costcenter下拉接口
-    }
+    handlerCancelProSearch();
   };
   const validCostCenterRequired = (rule, value, callback) => {
     if (formData.getFieldValue('are') == '5547' && !value) {
@@ -1270,6 +1265,12 @@ export default (props: any) => {
     });
     cancelCostCenter();
   };
+  const handlerCancelProSearch = () => {
+    proForm.resetFields();
+    setShowPro(false);
+    setProductData([]);
+    setProCurrent(1);
+  };
 
   return (
     <ContentWrap>
@@ -1374,7 +1375,7 @@ export default (props: any) => {
       </Modal>
       {/* 产品列表 */}
       <Modal
-        width="1200px"
+        width="1250px"
         title={
           <TableTopDiv style={{ margin: 0 }}>
             <TableTitleDiv style={{ float: 'left' }}>
@@ -1391,12 +1392,9 @@ export default (props: any) => {
         visible={showPro}
         maskClosable={false}
         destroyOnClose={true}
-        onCancel={() => {
-          // formImport.resetFields();
-          setShowPro(false);
-        }}
+        onCancel={handlerCancelProSearch}
       >
-        <Form form={proForm} labelCol={{ flex: '120px' }}>
+        <Form form={proForm} labelCol={{ flex: '130px' }}>
           <Row gutter={20}>
             <Col span={8}>
               <Form.Item label="Business Line" name="businessLine">
