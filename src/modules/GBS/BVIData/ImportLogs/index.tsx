@@ -66,7 +66,7 @@ export default (props: any) => {
       width: '100px',
       render: (text) =>
         text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          ? moment(text).format('YYYY-MM-DD')
           : text,
     },
     {
@@ -163,12 +163,20 @@ export default (props: any) => {
 
   const businessLineData = [
     {
-      label: 'R2R',
-      value: 'R2R',
+      label: 'H2R',
+      value: 'H2R',
     },
     {
       label: 'O2C',
       value: 'O2C',
+    },
+    {
+      label: 'P2P',
+      value: 'P2P',
+    },
+    {
+      label: 'R2R',
+      value: 'R2R',
     },
   ];
   const templateTypeData = [
@@ -178,7 +186,7 @@ export default (props: any) => {
     { value: 'H2R T&E BVI Template', label: 'H2R T&E BVI Template' },
     { value: 'H2R GMM Template', label: 'H2R GMM Template' },
     { value: 'O2C BVI Template', label: 'O2C BVI Template' },
-    { value: 'O2C T1 BVI Template', label: 'O2C T1 BVI Template' },
+    { value: 'O2C TI BVI Template', label: 'O2C TI BVI Template' },
     { value: 'P2P BCS Template', label: 'P2P BCS Template' },
   ];
   const { Option } = Select;

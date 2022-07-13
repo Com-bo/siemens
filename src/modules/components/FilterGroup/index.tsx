@@ -66,7 +66,7 @@ export default (props: FilterGroupType) => {
         { value: 'H2R T&E BVI Template', label: 'H2R T&E BVI Template' },
         { value: 'H2R GMM Template', label: 'H2R GMM Template' },
         { value: 'O2C BVI Template', label: 'O2C BVI Template' },
-        { value: 'O2C T1 BVI Template', label: 'O2C T1 BVI Template' },
+        { value: 'O2C TI BVI Template', label: 'O2C TI BVI Template' },
         { value: 'P2P BCS Template', label: 'P2P BCS Template' },
       ],
       ChargeType: [

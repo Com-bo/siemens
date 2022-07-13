@@ -21,6 +21,7 @@ import {
   Modal,
   Popconfirm,
   Row,
+  DatePicker,
   Select,
   Space,
   Tooltip,
@@ -104,11 +105,13 @@ export const Index = (props: any) => {
               icon={<EditOutlined />}
               onClick={() => {
                 console.log(record)
+                console.log(moment(record.validFrom).isValid())
                 setShowCostCenterData(true);
                 setComponentDisabled(false);
                 formData.setFieldsValue({
                   ...record,
                   customerDivision: record.custemerDivision,
+                  validFrom: moment(record.validFrom,'DD.MM.YYYY')
                 });
               }}
             ></Button>
@@ -341,6 +344,7 @@ export const Index = (props: any) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
+          validFrom:formData.getFieldValue("validFrom")? moment(formData.getFieldValue("validFrom")).format('DD.MM.YYYY'): "",
         };
         CurrencyEditDataSave(params).then((res) => {
           if (res.isSuccess) {
@@ -415,7 +419,10 @@ export const Index = (props: any) => {
                 name="validFrom"
                 rules={[{ required: true }]}
               >
-                <Input disabled={componentDisabled} />
+                <DatePicker 
+                disabled={componentDisabled}
+                type="Date" format="DD.MM.YYYY" 
+                style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
