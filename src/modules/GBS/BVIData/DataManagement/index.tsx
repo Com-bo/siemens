@@ -46,6 +46,7 @@ import {
   getCostCenterDrop,
   ProductPoDrop,
 } from '@/app/request/common';
+import { getCostCenterData } from '@/app/request/apiCostCenter';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
@@ -133,7 +134,18 @@ export default (props: any) => {
     setIsP2PMark,
     isViewMark,
     setIsViewMark,
-    SyncDataSave
+    SyncDataSave,
+    // 
+     // 
+     costcenterCols,
+     showCostcenter, setShowCostcenter,
+     costcenterData, setcostcenterData,
+     costCenterVal, setCostCenterVal,
+     selectCostCenterkeys, setSelectCostCenterkeys,
+     selectCostCenterRows, setSelectCostCenterRows,
+     costcenterCurrent, setCostCenterCurrent,
+     costcenterPageSize, setCostcenterPageSize,
+     costcenterTotal, setCostcenterTotal
   } = useService(props);
 
   const orignalCols = [
@@ -462,7 +474,7 @@ export default (props: any) => {
               onClick={(event) => {
                 event.stopPropagation();
                 console.log(record);
-                if (record.templateType == 'BVI Manual Template') {
+                if (record.templateType == 'BVI Manual Template' && record.bviStatus=="Unconfirm" ) {
                   formData.setFieldsValue({
                     ...record,
                     bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
@@ -801,7 +813,7 @@ export default (props: any) => {
 
   //
   const checkOriginalOptions = {
-    validationMsg: '300px',
+    validationMsg: '100px',
     productName: '200px',
   };
   const handleProSize = (val: number) => {
@@ -812,6 +824,8 @@ export default (props: any) => {
   };
   const selectProSure = () => {
     setShowPro(false);
+    setProductData([])
+    proForm.resetFields();
     let data = selectProductRow[0];
     console.log(data);
     formData.setFieldsValue({
@@ -871,10 +885,143 @@ export default (props: any) => {
       setIsP2PMark(false);
     }
   };
-
+  // 
+  useEffect(() => {
+    showCostcenter && _getCostCenterData();
+  }, [costcenterCurrent, costcenterPageSize]);
+  // 获取costcenter
+  const _getCostCenterData = () => {
+    let params = {
+      searchCondition: {
+        pageTop: {
+          isLocked: false,
+        },
+        listHeader: {
+          are: formData.getFieldValue('are'),
+          costCenter: costCenterVal,
+        },
+      },
+      orderCondition: {
+        //   [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      pageIndex: costcenterCurrent,
+      pageSize: costcenterPageSize,
+    };
+    getCostCenterData(params).then((res) => {
+      if (res.isSuccess) {
+        setcostcenterData(res.data);
+        setCostcenterTotal(res.totalCount);
+      } else {
+        setcostcenterData([]);
+        message.success(res.msg);
+      }
+    });
+  };
+  const cancelCostCenter = () => {
+    setShowCostcenter(false);
+    setCostCenterVal('');
+    setSelectCostCenterRows([]);
+    setSelectCostCenterkeys([]);
+    setcostcenterData([]);
+  };
+  const handlerCostCenterPageSize = (_size: number) => {
+    setCostcenterPageSize(_size);
+  };
+  const oncostCenterPageChange = (pagination) => {
+    setCostCenterCurrent(pagination.current);
+  };
+  // 确认选中costcenter
+  const confirmCostCenterAction = () => {
+    // 同步costcenter数据
+    // console.log(selectCostCenterRows)
+    let _data = selectCostCenterRows[0];
+    if (_data.custemerDivision != formData.getFieldValue('customerDivision')) {
+      message.warning(
+        'Customer division conflict, this cost center is unabled;',
+      );
+      return;
+    }
+    formData.setFieldsValue({
+      costCenter: _data.costCenter,
+      customerDivision: _data.custemerDivision,
+      companyCode: _data.companyCode,
+    });
+    cancelCostCenter();
+  };
   //
   return (
     <ContentWrap>
+       {/* 选择costcenter */}
+       <Modal
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Cost center Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        footer={null}
+        visible={showCostcenter}
+        maskClosable={false}
+        destroyOnClose={true}
+        onCancel={cancelCostCenter}
+      >
+        <Form>
+          <Row>
+            <Col span={20}>
+              <Form.Item label="Cost Center">
+                <Input value={costCenterVal} onChange={(e)=>{
+                  setCostCenterVal(e.target.value)
+                }} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={3} offset={1}>
+              <Button type="primary" onClick={_getCostCenterData}>
+                Search
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+        <TableWrapDiv className="costcenter_wrap">
+          <TableMix
+            columns={costcenterCols}
+            data={costcenterData}
+            type="radio"
+            selectedRowKeys={selectCostCenterkeys}
+            current={costcenterCurrent}
+            pageSize={costcenterPageSize}
+            total={costcenterTotal}
+            onChange={(_selectedRowKeys, _selectedRows) => {
+              setSelectCostCenterRows(_selectedRows);
+              setSelectCostCenterkeys(_selectedRowKeys);
+            }}
+            pagination={true}
+            rowKey="id"
+            scrollY={'calc(100vh - 450px)'}
+            selection={true}
+            onPageChange={oncostCenterPageChange}
+            handlePageSize={handlerCostCenterPageSize}
+          />
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <Space size={60}>
+              <Button
+                type="primary"
+                onClick={confirmCostCenterAction}
+                disabled={!selectCostCenterRows.length}
+              >
+                Confirm
+              </Button>
+              <Button onClick={cancelCostCenter}>Cancel</Button>
+            </Space>
+          </div>
+        </TableWrapDiv>
+      </Modal>
       {/* 导入 */}
       <Modal
         width="800px"
@@ -1012,7 +1159,8 @@ export default (props: any) => {
             </Col>
              
             {
-            !formData.getFieldValue('id')|| formData.getFieldValue('templateType')=="BVI Manual Template" ?
+
+            !formData.getFieldValue('id')|| formData.getFieldValue('templateType')=="BVI Manual Template"?
              (
               <Col span={4}>
                 <Button type="primary" onClick={() => setShowPro(true)}>
@@ -1050,48 +1198,58 @@ export default (props: any) => {
               >
                 {formData.getFieldValue('are') == '5547' &&
                 formData.getFieldValue('productName') ? (
-                  <DebounceSelect
-                    initFlag
-                    onChange={(value, data) => {
-                      if (
-                        value &&
-                        data.customerDivision !=
-                          formData.getFieldValue('customerDivision')
-                      ) {
-                        setCustomerDivision(data.data.custemerDivision);
+                  // <DebounceSelect
+                  //   initFlag
+                  //   onChange={(value, data) => {
+                  //     if (
+                  //       value &&
+                  //       data.customerDivision !=
+                  //         formData.getFieldValue('customerDivision')
+                  //     ) {
+                  //       setCustomerDivision(data.data.custemerDivision);
+                  //     }
+                  //     value &&
+                  //       formData.setFieldsValue({
+                  //         companyCode: data.data.companyCode,
+                  //       });
+                  //   }}
+                  //   getoptions={(options) => {
+                  //     return options?.map((x, index) => {
+                  //       return (
+                  //         <Select.Option
+                  //           key={index}
+                  //           data={x}
+                  //           value={x.costCenter}
+                  //         >
+                  //           {x.costCenter}
+                  //         </Select.Option>
+                  //       );
+                  //     });
+                  //   }}
+                  //   delegate={(e) => {
+                  //     if (!formData.getFieldValue('are')) {
+                  //       return Promise.resolve({
+                  //         code: 200,
+                  //         isSuccess: true,
+                  //         data: [],
+                  //       });
+                  //     }
+                  //     return getCostCenterDrop({
+                  //       are: formData.getFieldValue('are'),
+                  //       costCenter: e,
+                  //       isOnlyUnlocked: true,
+                  //     });
+                  //   }}
+                  // />
+                  <Input.Search
+                    readOnly
+                    onSearch={() => {
+                      setShowCostcenter(true);
+                      if (costcenterCurrent != 1) {
+                        setCostCenterCurrent(1);
+                      } else {
+                        _getCostCenterData();
                       }
-                      value &&
-                        formData.setFieldsValue({
-                          companyCode: data.data.companyCode,
-                        });
-                    }}
-                    getoptions={(options) => {
-                      return options?.map((x, index) => {
-                        return (
-                          <Select.Option
-                            key={index}
-                            data={x}
-                            value={x.costCenter}
-                          >
-                            {x.costCenter}
-                            {/* {x.costCenter}-{x.custemerDivision} */}
-                          </Select.Option>
-                        );
-                      });
-                    }}
-                    delegate={(e) => {
-                      if (!formData.getFieldValue('are')) {
-                        return Promise.resolve({
-                          code: 200,
-                          isSuccess: true,
-                          data: [],
-                        });
-                      }
-                      return getCostCenterDrop({
-                        are: formData.getFieldValue('are'),
-                        costCenter: e,
-                        isOnlyUnlocked: true,
-                      });
                     }}
                   />
                 ) : (
@@ -1434,7 +1592,7 @@ export default (props: any) => {
         maskClosable={false}
         destroyOnClose={true}
         onCancel={() => {
-          // formImport.resetFields();
+          proForm.resetFields();
           setShowPro(false);
         }}
       >

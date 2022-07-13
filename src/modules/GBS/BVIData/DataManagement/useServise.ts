@@ -59,7 +59,33 @@ export default (props: any) => {
   const [customerDivision, setCustomerDivision] = useState(''); //用于比对
   const [formDataEdit] = Form.useForm();
   const [isViewMark, setIsViewMark] = useState(false);
-  //
+  // 针对costcenter数据
+  const [showCostcenter, setShowCostcenter] = useState(false);
+  const [costcenterData, setcostcenterData] = useState([]);
+  const [costCenterVal, setCostCenterVal] = useState(''); //用于检索的字段
+  const [selectCostCenterkeys, setSelectCostCenterkeys] = useState([]);
+  const [selectCostCenterRows, setSelectCostCenterRows] = useState([]); //选中的costcenter行
+  const [costcenterCurrent, setCostCenterCurrent] = useState(1);
+  const [costcenterPageSize, setCostcenterPageSize] = useState(20);
+  const [costcenterTotal, setCostcenterTotal] = useState(0);
+  const costcenterCols: any = [
+    {
+      title: 'Cost Center',
+      dataIndex: 'costCenter',
+      key: 'costCenter',
+    },
+    {
+      dataIndex: 'companyCode',
+      title: 'CompanyCode',
+      key: 'CompanyCode',
+    },
+    {
+      title: 'CustomerDivision',
+      dataIndex: 'custemerDivision',
+      key: 'custemerDivision',
+    },
+  ];
+
   const _generateHead = (cols: any) => {
     let _columns = [];
     for (let _key in cols) {
@@ -525,6 +551,16 @@ export default (props: any) => {
     setIsP2PMark,
     isViewMark,
     setIsViewMark,
-    SyncDataSave
+    SyncDataSave,
+    // 
+    costcenterCols,
+    showCostcenter, setShowCostcenter,
+    costcenterData, setcostcenterData,
+    costCenterVal, setCostCenterVal,
+    selectCostCenterkeys, setSelectCostCenterkeys,
+    selectCostCenterRows, setSelectCostCenterRows,
+    costcenterCurrent, setCostCenterCurrent,
+    costcenterPageSize, setCostcenterPageSize,
+    costcenterTotal, setCostcenterTotal
   };
 };
