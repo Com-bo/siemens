@@ -133,4 +133,10 @@ export const Api = {
   RoleBingUser: '/api/System/RoleBingUser', // 角色管理-角色绑定人员
   DelRole: '/api/System/DelRole', //删除角色
   DeleUser: '/api/System/DeleUser',
+  // masterdata-O2CUserID
+  QueryO2CUserIDListData: '/api/O2CUserID/QueryListData',
+  ExportO2CUserIDData: '/api/O2CUserID/ExportData',
+  EditO2CUserIDDataSave: '/api/O2CUserID/EditDataSave',
+  DeleteO2CUserIDData: '/api/O2CUserID/DeleteData',
+  QueryO2CUserIDLogData: '/api/O2CUserID/QueryLogData',
 };

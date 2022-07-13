@@ -28,7 +28,6 @@ import {
 } from 'antd';
 import moment from 'moment';
 import './style.less';
-import DebounceSelect from '@/components/Select/debounceSelect';
 import TableMix from '@/components/Table';
 import {
   ClearOutlined,
@@ -37,14 +36,16 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
-  deleteCostCenterData,
-  editCostCenterDataSave,
-  exportCostCenterExcel,
-  getCostCenterData,
-  importCostCenterData,
-  logCostCenterDataQuery,
-} from '@/app/request/apiCostCenter';
+  deleteO2CUserIDData,
+  editO2CUserIDDataSave,
+  exportO2CUserIDData,
+  getO2CUserIDListData,
+  queryO2CUserIDLogData,
+} from '@/app/request/apiO2CUserID';
+
 export const Index = (props: any) => {
+  const [orderField, setOrderField] = useState('modifiedDate');
+  const [orderType, setOrderType] = useState('descend');
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
   const [formData] = Form.useForm();
@@ -65,14 +66,9 @@ export const Index = (props: any) => {
   const [componentDisabled, setComponentDisabled] = useState(false);
   const orignalCols: any = [
     {
-      name: 'businessLine',
-      title: 'BusinessLine',
-      width: '100px',
-      titleRender: 'input',
-    },
-    {
       name: 'gid',
       title: 'GID',
+      // sorter: true,
       width: '200px',
       titleRender: 'input',
     },
@@ -120,7 +116,6 @@ export const Index = (props: any) => {
               icon={<i className="gbs gbs-logs"></i>}
               onClick={(event) => {
                 event.stopPropagation();
-
                 toLog(record.id);
               }}
             ></Button>
@@ -195,7 +190,7 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteCostCenterData({
+        deleteO2CUserIDData({
           recordIdList,
         }).then((res) => {
           if (res.isSuccess) {
@@ -218,12 +213,12 @@ export const Index = (props: any) => {
         listHeader: form.getFieldsValue(),
       },
       orderCondition: {
-        //   [orderField]: orderType == 'ascend' ? 0 : 1,
+        [orderField]: orderType == 'ascend' ? 0 : 1,
       },
       pageIndex: current,
       pageSize: pageSize,
     };
-    getCostCenterData(params).then((res) => {
+    getO2CUserIDListData(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);
@@ -235,7 +230,12 @@ export const Index = (props: any) => {
   useEffect(() => {
     getData();
   }, [current, pageSize]);
-  const onPageChange = (pagination, filters, sorter, extra) => {
+  const onPageChange = (
+    pagination,
+    filters,
+    { column, columnKey, field, order },
+    { currentDataSource, action },
+  ) => {
     setCurrent(pagination.current);
   };
 
@@ -256,11 +256,11 @@ export const Index = (props: any) => {
       pageSize: pageSize,
     };
 
-    exportCostCenterExcel(params).then((res: any) => {
+    exportO2CUserIDData(params).then((res: any) => {
       if (res.response.status == 200) {
         let elink = document.createElement('a');
         // 设置下载文件名
-        elink.download = 'CostCenter List.xlsx';
+        elink.download = 'O2CUserID  List.xlsx';
         elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
         elink.click();
         window.URL.revokeObjectURL(elink.href);
@@ -269,24 +269,11 @@ export const Index = (props: any) => {
       }
     });
   };
-  const importExcel = (file) => {
-    const fd = new FormData();
-    fd.append('file', file);
-    importCostCenterData(fd).then((res) => {
-      if (res.isSuccess) {
-        message.success(res.msg);
-        getData();
-        setSelectedRowKeys([]);
-      } else {
-        message.error(res.msg);
-      }
-    });
-  };
   useEffect(() => {
     logId && _getLogData();
   }, [logCurrent, logId, logSize]);
   const _getLogData = async () => {
-    const res = await logCostCenterDataQuery({
+    const res = await queryO2CUserIDLogData({
       recordId: logId,
       pageIndex: logCurrent,
       pageSize: logSize,
@@ -317,6 +304,10 @@ export const Index = (props: any) => {
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId);
+    setLogCurrent(1);
+    if (logCurrent == 1) {
+      _getLogData();
+    }
     setShowLog(true);
   };
   const saveFormData = () => {
@@ -327,7 +318,7 @@ export const Index = (props: any) => {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
         };
-        editCostCenterDataSave(params).then((res) => {
+        editO2CUserIDDataSave(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
             setShowCostCenterData(false);
@@ -345,7 +336,7 @@ export const Index = (props: any) => {
       {/* 编辑 */}
       <Modal
         maskClosable={false}
-        width="1000px"
+        width="500px"
         title={
           <TableTopDiv style={{ margin: 0 }}>
             <TableTitleDiv style={{ float: 'left' }}>
@@ -365,32 +356,20 @@ export const Index = (props: any) => {
           formData.resetFields();
         }}
       >
-        <Form form={formData} labelCol={{ flex: '120px' }}>
+        <Form form={formData} labelCol={{ flex: '80px' }}>
           <Row gutter={20}>
-            <Col span={12}>
-              <Form.Item
-                label="BusinessLine"
-                name="businessLine"
-                rules={[{ required: true }]}
-              >
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item label="GID" name="gid" rules={[{ required: true }]}>
-                <Input disabled={componentDisabled} />
+                <Input />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item style={{ textAlign: 'center' }}>
+              <Form.Item style={{ textAlign: 'center', marginTop: '20px' }}>
                 <Space size={60}>
-                  {!componentDisabled ? (
-                    <Button type="primary" onClick={saveFormData}>
-                      Save
-                    </Button>
-                  ) : (
-                    ''
-                  )}
+                  <Button type="primary" onClick={saveFormData}>
+                    Save
+                  </Button>
+
                   <Button
                     onClick={() => {
                       setShowCostCenterData(false);
@@ -464,16 +443,6 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                <Col span={7}>
-                  <Form.Item label="CostCenter" name="costCenter">
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={7}>
-                  <Form.Item label="CEPC Division" name="cepcDivision">
-                    <Input />
-                  </Form.Item>
-                </Col>
                 <Col span={4}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
@@ -517,25 +486,6 @@ export const Index = (props: any) => {
               <Dropdown
                 overlay={() => (
                   <Menu>
-                    <Menu.Item
-                      key="1"
-                      icon={<i className="gbs gbs-import"></i>}
-                    >
-                      <Upload
-                        style={{ margin: '0 10px' }}
-                        maxCount={1}
-                        showUploadList={false}
-                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                        beforeUpload={(file) => {
-                          importExcel(file);
-                          return false;
-                        }}
-                      >
-                        <Button key="import" type="text">
-                          <span>Import</span>
-                        </Button>
-                      </Upload>
-                    </Menu.Item>
                     <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
                       <Button
                         style={{ margin: '0 10px' }}
