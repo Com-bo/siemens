@@ -372,7 +372,6 @@ export default (props: any) => {
           <TableList
             headerSearch={_getDiffData}
             form={diffForm}
-            authPagename={pageName}
             data={differenceData.map((item) => {
               return {
                 ...item,
@@ -426,6 +425,7 @@ export default (props: any) => {
             renderFilterGroup={
               <FilterGroup
                 moudleName="BVI Difference Report"
+                authPagename={pageName}
                 onSearch={(val) => {
                   latestDiffGroupIdRef.current = val;
                   _getDiffData();
