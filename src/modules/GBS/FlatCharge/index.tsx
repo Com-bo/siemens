@@ -1227,6 +1227,8 @@ export default (props: any) => {
       if (res.isSuccess) {
         setcostcenterData(res.data);
         setCostcenterTotal(res.totalCount);
+        setSelectCostCenterkeys([]);
+        setSelectCostCenterRows([]);
       } else {
         setcostcenterData([]);
         message.success(res.msg);
@@ -1299,9 +1301,13 @@ export default (props: any) => {
           <Row>
             <Col span={20}>
               <Form.Item label="Cost Center">
-                <Input value={costCenterVal} onChange={(e)=>{
-                  setCostCenterVal(e.target.value)
-                }} style={{ width: '100%' }} />
+                <Input
+                  value={costCenterVal}
+                  onChange={(e) => {
+                    setCostCenterVal(e.target.value);
+                  }}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={3} offset={1}>

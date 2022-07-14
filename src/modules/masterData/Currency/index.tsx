@@ -40,11 +40,11 @@ import {
 import {
   // exportCostCenterExcel,
   // logCostCenterDataQuery,
-  // 
+  //
   CurrencyImportData,
-  CurrencyQueryListData, 
-  CurrencyEditDataSave, 
-  CurrencyDeleteData, 
+  CurrencyQueryListData,
+  CurrencyEditDataSave,
+  CurrencyDeleteData,
 } from '@/app/request/apiCurrency';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
@@ -104,14 +104,14 @@ export const Index = (props: any) => {
               key="1"
               icon={<EditOutlined />}
               onClick={() => {
-                console.log(record)
-                console.log(moment(record.validFrom).isValid())
+                console.log(record);
+                console.log(moment(record.validFrom).isValid());
                 setShowCostCenterData(true);
                 setComponentDisabled(false);
                 formData.setFieldsValue({
                   ...record,
                   customerDivision: record.custemerDivision,
-                  validFrom: moment(record.validFrom,'DD.MM.YYYY')
+                  validFrom: moment(record.validFrom, 'DD.MM.YYYY'),
                 });
               }}
             ></Button>
@@ -344,7 +344,9 @@ export const Index = (props: any) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
-          validFrom:formData.getFieldValue("validFrom")? moment(formData.getFieldValue("validFrom")).format('DD.MM.YYYY'): "",
+          validFrom: formData.getFieldValue('validFrom')
+            ? moment(formData.getFieldValue('validFrom')).format('DD.MM.YYYY')
+            : '',
         };
         CurrencyEditDataSave(params).then((res) => {
           if (res.isSuccess) {
@@ -419,10 +421,11 @@ export const Index = (props: any) => {
                 name="validFrom"
                 rules={[{ required: true }]}
               >
-                <DatePicker 
-                disabled={componentDisabled}
-                type="Date" format="DD.MM.YYYY" 
-                style={{ width: '100%' }} />
+                <DatePicker
+                  disabled={componentDisabled}
+                  format="DD.MM.YYYY"
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -539,9 +542,9 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={()=>{
+                          onClick={() => {
                             setCurrent(1);
-                            getData()
+                            getData();
                           }}
                         ></Button>
                       </Tooltip>
@@ -614,9 +617,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Currency.xlsx">
-                          Download Template
-                        </a>
+                        <a href="./template/Currency.xlsx">Download Template</a>
                       </span>
                     </Menu.Item>
                   </Menu>
