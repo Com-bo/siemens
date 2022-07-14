@@ -103,7 +103,7 @@ export default (props: any) => {
       label: 'Obsolete',
       value: '8',
     },
-    
+
     // {
     //   label: 'Cancel',
     //   value: 'Cancel',
@@ -549,10 +549,10 @@ export default (props: any) => {
       case 8:
         break;
       case 9:
-        params.billingStatus=0
+        params.billingStatus = 0;
         break;
-        case 10:
-        params.billingStatus=-1
+      case 10:
+        params.billingStatus = -1;
         break;
     }
     SetStatusSave(params).then((res) => {
@@ -573,20 +573,20 @@ export default (props: any) => {
     });
   };
   const ImportFlieFn = (index) => {
-    let date = `yyyyMM=${new Date().getFullYear()}${new Date().getMonth()}`;
+    // let date = `yyyyMM=${new Date().getFullYear()}${new Date().getMonth()+1}`;
     switch (index) {
       case 1:
-        BatchFileManual(date).then((res) => {
+        BatchFileManual({}).then((res) => {
           exportFun(res, 'BatchFileManual');
         });
         break;
       case 2:
-        BatchFileAuto(date).then((res) => {
+        BatchFileAuto({}).then((res) => {
           exportFun(res, 'BatchFileAuto');
         });
         break;
       case 3:
-        AllocationFile(date).then((res) => {
+        AllocationFile({}).then((res) => {
           exportFun(res, 'AllocationFile');
         });
         break;
@@ -600,6 +600,7 @@ export default (props: any) => {
       elink.href = window.URL.createObjectURL(
         new Blob([res.response.data as unknown as BlobPart]),
       );
+      // elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
       elink.click();
       window.URL.revokeObjectURL(elink.href);
     } else {

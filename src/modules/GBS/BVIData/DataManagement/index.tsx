@@ -135,17 +135,25 @@ export default (props: any) => {
     isViewMark,
     setIsViewMark,
     SyncDataSave,
-    // 
-     // 
-     costcenterCols,
-     showCostcenter, setShowCostcenter,
-     costcenterData, setcostcenterData,
-     costCenterVal, setCostCenterVal,
-     selectCostCenterkeys, setSelectCostCenterkeys,
-     selectCostCenterRows, setSelectCostCenterRows,
-     costcenterCurrent, setCostCenterCurrent,
-     costcenterPageSize, setCostcenterPageSize,
-     costcenterTotal, setCostcenterTotal
+    //
+    //
+    costcenterCols,
+    showCostcenter,
+    setShowCostcenter,
+    costcenterData,
+    setcostcenterData,
+    costCenterVal,
+    setCostCenterVal,
+    selectCostCenterkeys,
+    setSelectCostCenterkeys,
+    selectCostCenterRows,
+    setSelectCostCenterRows,
+    costcenterCurrent,
+    setCostCenterCurrent,
+    costcenterPageSize,
+    setCostcenterPageSize,
+    costcenterTotal,
+    setCostcenterTotal,
   } = useService(props);
 
   const orignalCols = [
@@ -364,7 +372,7 @@ export default (props: any) => {
       title: 'IsPOByPercentage',
       width: '200px',
       sorter: true,
-      render: (text) => (text == 0 ? 'No' :  'Yes'),
+      render: (text) => (text == 0 ? 'No' : 'Yes'),
     },
     {
       name: 'bviStatus',
@@ -466,111 +474,120 @@ export default (props: any) => {
       render: (text, record, index) => (
         <Space>
           <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={(event) => {
-                event.stopPropagation();
-                console.log(record);
-                if (record.templateType == 'BVI Manual Template' && record.bviStatus=="Unconfirm" ) {
-                  formData.setFieldsValue({
-                    ...record,
-                    bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
-                    productName: record.product,
-                    startMonth: record.startMonth
-                      ? moment(record.startMonth)
-                      : null,
-                    endMonth: record.endMonth ? moment(record.endMonth) : null,
-                    modifiedDate: record.modifiedDate
-                      ? moment(record.modifiedDate)
-                      : null,
-                    createdDate: record.createdDate
-                      ? moment(record.createdDate)
-                      : null,
-                  });
-                  setComponentDisabled(false);
-                  setShowBviData(true);
-                } else {
-                  setEditListMark(true);
-                  formDataEdit.setFieldsValue({
-                    ...record,
-                  });
-                }
-              }}
-            ></Button>
-          </Tooltip>
-          {record.bviStatus.toLowerCase() == 'unconfirm' ? (
-            <Popconfirm
-              title="Are you sure?"
-              onConfirm={(event) => {
-                event.stopPropagation();
-                deleteInfos([record.id], event);
-              }}
-              okText="Yes"
-              cancelText="Cancel"
-            >
-              <Tooltip title="Delete">
-                <Button
-                  type="text"
-                  key="2"
-                  onClick={(event) => event.stopPropagation()}
-                  icon={<i className="gbs gbs-delete"></i>}
-                ></Button>
-              </Tooltip>
-            </Popconfirm>
-          ) : (
-            ''
-          )}
-
-          {!record.error ? (
-            <span
-              onClick={(event) => {
-                event.stopPropagation();
-              }}
-            >
+            <Tooltip title="Edit">
+              <Button
+                type="text"
+                key="1"
+                icon={<EditOutlined />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  console.log(record);
+                  if (
+                    record.templateType == 'BVI Manual Template' &&
+                    record.bviStatus.toLowerCase() == 'unconfirm'
+                  ) {
+                    formData.setFieldsValue({
+                      ...record,
+                      bviMonth: record.bviMonth
+                        ? moment(record.bviMonth)
+                        : null,
+                      productName: record.product,
+                      startMonth: record.startMonth
+                        ? moment(record.startMonth)
+                        : null,
+                      endMonth: record.endMonth
+                        ? moment(record.endMonth)
+                        : null,
+                      modifiedDate: record.modifiedDate
+                        ? moment(record.modifiedDate)
+                        : null,
+                      createdDate: record.createdDate
+                        ? moment(record.createdDate)
+                        : null,
+                    });
+                    setComponentDisabled(false);
+                    setShowBviData(true);
+                  } else {
+                    setEditListMark(true);
+                    formDataEdit.setFieldsValue({
+                      ...record,
+                    });
+                  }
+                }}
+              ></Button>
+            </Tooltip>
+            {record.bviStatus.toLowerCase() == 'unconfirm' ? (
               <Popconfirm
                 title="Are you sure?"
                 onConfirm={(event) => {
                   event.stopPropagation();
-                  if (record.bviStatus.toLowerCase() == 'unconfirm') {
-                    toConfirm([record.id]);
-                  } else {
-                    toUnconfirm([record.id]);
-                  }
+                  deleteInfos([record.id], event);
                 }}
                 okText="Yes"
                 cancelText="Cancel"
               >
-                {record.bviStatus.toLowerCase() == 'unconfirm' ? (
-                  <Tooltip title="Confirm">
-                    <Button
-                      onClick={(event) => event.stopPropagation()}
-                      type="text"
-                      key="3"
-                      icon={<i className="gbs gbs-confirm"></i>}
-                    ></Button>
-                  </Tooltip>
-                ) : (
-                  <>
-                  {record.templateType=="Flat Charge"?(""):(
-                  <Tooltip title="Unconfirm">
-                    <Button
-                      onClick={(event) => event.stopPropagation()}
-                      type="text"
-                      key="3"
-                      icon={<i className="gbs gbs-confirm"></i>}
-                    ></Button>
-                  </Tooltip>
-                  )}
-                  </>
-                )}
+                <Tooltip title="Delete">
+                  <Button
+                    type="text"
+                    key="2"
+                    onClick={(event) => event.stopPropagation()}
+                    icon={<i className="gbs gbs-delete"></i>}
+                  ></Button>
+                </Tooltip>
               </Popconfirm>
-            </span>
-          ) : (
-            ''
-          )}
+            ) : (
+              ''
+            )}
+
+            {!record.error ? (
+              <span
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+              >
+                <Popconfirm
+                  title="Are you sure?"
+                  onConfirm={(event) => {
+                    event.stopPropagation();
+                    if (record.bviStatus.toLowerCase() == 'unconfirm') {
+                      toConfirm([record.id]);
+                    } else {
+                      toUnconfirm([record.id]);
+                    }
+                  }}
+                  okText="Yes"
+                  cancelText="Cancel"
+                >
+                  {record.bviStatus.toLowerCase() == 'unconfirm' ? (
+                    <Tooltip title="Confirm">
+                      <Button
+                        onClick={(event) => event.stopPropagation()}
+                        type="text"
+                        key="3"
+                        icon={<i className="gbs gbs-confirm"></i>}
+                      ></Button>
+                    </Tooltip>
+                  ) : (
+                    <>
+                      {record.templateType == 'Flat Charge' ? (
+                        ''
+                      ) : (
+                        <Tooltip title="Unconfirm">
+                          <Button
+                            onClick={(event) => event.stopPropagation()}
+                            type="text"
+                            key="3"
+                            icon={<i className="gbs gbs-confirm"></i>}
+                          ></Button>
+                        </Tooltip>
+                      )}
+                    </>
+                  )}
+                </Popconfirm>
+              </span>
+            ) : (
+              ''
+            )}
           </AuthWrapper>
         </Space>
       ),
@@ -791,12 +808,12 @@ export default (props: any) => {
     });
   };
   const toRecheck = () => {
-    const recheckMark=selectedRows.some((item)=>{
-      return item.error==null
-    })
-    if(recheckMark){
-      message.error('Please select "Error" data to recheck!')
-    }else{
+    const recheckMark = selectedRows.some((item) => {
+      return item.error == null;
+    });
+    if (recheckMark) {
+      message.error('Please select "Error" data to recheck!');
+    } else {
       Modal.confirm({
         title: 'Tips',
         icon: <ExclamationCircleOutlined />,
@@ -824,7 +841,7 @@ export default (props: any) => {
   };
   const selectProSure = () => {
     setShowPro(false);
-    setProductData([])
+    setProductData([]);
     proForm.resetFields();
     let data = selectProductRow[0];
     console.log(data);
@@ -885,7 +902,7 @@ export default (props: any) => {
       setIsP2PMark(false);
     }
   };
-  // 
+  //
   useEffect(() => {
     showCostcenter && _getCostCenterData();
   }, [costcenterCurrent, costcenterPageSize]);
@@ -951,8 +968,8 @@ export default (props: any) => {
   //
   return (
     <ContentWrap>
-       {/* 选择costcenter */}
-       <Modal
+      {/* 选择costcenter */}
+      <Modal
         width="1000px"
         title={
           <TableTopDiv style={{ margin: 0 }}>
@@ -961,7 +978,7 @@ export default (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                Cost center Data
+                Cost Center Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>
@@ -976,9 +993,13 @@ export default (props: any) => {
           <Row>
             <Col span={20}>
               <Form.Item label="Cost Center">
-                <Input value={costCenterVal} onChange={(e)=>{
-                  setCostCenterVal(e.target.value)
-                }} style={{ width: '100%' }} />
+                <Input
+                  value={costCenterVal}
+                  onChange={(e) => {
+                    setCostCenterVal(e.target.value);
+                  }}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={3} offset={1}>
@@ -1088,9 +1109,10 @@ export default (props: any) => {
           )}
           <Form.Item style={{ textAlign: 'center' }}>
             <Space size={60}>
-              <Button type="primary" onClick={
-                ()=>{
-                  if(isP2PMark){
+              <Button
+                type="primary"
+                onClick={() => {
+                  if (isP2PMark) {
                     SyncDataSave({}).then((res) => {
                       setShowImport(false);
                       if (res.isSuccess) {
@@ -1100,11 +1122,11 @@ export default (props: any) => {
                         message.error(res.msg);
                       }
                     });
-                  }else{
-                    importExcel()
+                  } else {
+                    importExcel();
                   }
-                }
-                }>
+                }}
+              >
                 Submit
               </Button>
               <Button
@@ -1143,10 +1165,7 @@ export default (props: any) => {
           setCustomerDivision('');
         }}
       >
-        <Form
-          form={formData}
-          labelCol={{ flex: '120px' }}
-        >
+        <Form form={formData} labelCol={{ flex: '120px' }}>
           <Row gutter={20}>
             <Col span={20}>
               <Form.Item
@@ -1157,17 +1176,17 @@ export default (props: any) => {
                 <Input disabled={true} />
               </Form.Item>
             </Col>
-             
-            {
 
-            !formData.getFieldValue('id')|| formData.getFieldValue('templateType')=="BVI Manual Template"?
-             (
+            {!formData.getFieldValue('id') ||
+            formData.getFieldValue('templateType') == 'BVI Manual Template' ? (
               <Col span={4}>
                 <Button type="primary" onClick={() => setShowPro(true)}>
                   Search Product
                 </Button>
               </Col>
-            ):("")}
+            ) : (
+              ''
+            )}
             <Col span={8}>
               <Form.Item label="Bussiness Line" name="businessLine">
                 <Input disabled={true} />
@@ -1325,15 +1344,24 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item labelCol={{flex:"50px"}} label="PO" name="po" rules={[{ required: true }]}>
+              <Form.Item
+                labelCol={{ flex: '50px' }}
+                label="PO"
+                name="po"
+                rules={[{ required: true }]}
+              >
                 <DebounceSelect
-                
                   initFlag
                   disabled={componentDisabled}
                   getoptions={(options) => {
                     return options?.map((x, index) => {
                       return (
-                        <Select.Option style={{ width: '100%' }} key={index} data={x} value={x.poNumber}>
+                        <Select.Option
+                          style={{ width: '100%' }}
+                          key={index}
+                          data={x}
+                          value={x.poNumber}
+                        >
                           {x.poNumber}
                         </Select.Option>
                       );
@@ -1593,6 +1621,7 @@ export default (props: any) => {
         destroyOnClose={true}
         onCancel={() => {
           proForm.resetFields();
+          setProductData([]);
           setShowPro(false);
         }}
       >
@@ -1797,257 +1826,266 @@ export default (props: any) => {
         renderBtns={
           <>
             <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
-            <Space>
-            <BtnOrangeWrap>
-              <Button disabled={!selectedRowKeys.length} onClick={toRecheck}>
-                Recheck
-              </Button>
-            </BtnOrangeWrap>
-            <BtnGreenWrap>
-              <Button
-                disabled={!selectedRowKeys.length}
-                onClick={() => {
-                  let recordList = selectedRows.filter(
-                    (item) => item.bviStatus.toLowerCase() == 'unconfirm',
-                  );
-                  let errorMark = selectedRows.filter(
-                    (item) => item.error != null,
-                  );
-                  if (!errorMark || errorMark.length != 0) {
-                    message.error('Contains incorrect data');
-                  } else {
-                    if (!recordList || !recordList.length) {
-                      message.error('No data to confirm is selected');
-                      return;
-                    } else {
-                      toConfirm(selectedRowKeys);
-                    }
-                  }
-                }}
-              >
-                Confirm
-              </Button>
-            </BtnGreenWrap>
-            <BtnBlueWrap>
-              <Button
-                disabled={!selectedRowKeys.length}
-                onClick={() => {
-                  let recordList = selectedRows.filter(
-                    (item) => item.bviStatus.toLowerCase() == 'confirm',
-                  );
-                  let errorMark = selectedRows.filter(
-                    (item) => item.error != null,
-                  );
-                  if (!errorMark || errorMark.length != 0) {
-                    message.error('Contains incorrect data');
-                  } else {
-                    if (!recordList || !recordList.length) {
-                      message.error('No data to unconfirm is selected');
-                      return;
-                    } else {
-                      toUnconfirm(selectedRowKeys);
-                    }
-                  }
-                }}
-              >
-                Unconfirm
-              </Button>
-            </BtnBlueWrap>
-            <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <BtnThemeWrap>
-              <Button onClick={()=>{
-                const recheckMark=selectedRows.some((item)=>{
-                  return item.templateType=="H2R BVI Template" || item.templateType=="BVI Manual Template"
-                })
-                if(recheckMark){
-                  message.error("no source data")
-                }else{
-
-                  onExport()
-                }
-              }
-                } disabled={!selectedRowKeys.length}>
-                Export Original
-              </Button>
-            </BtnThemeWrap>
-            <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item
-                      key="1"
-                      icon={<i className="gbs gbs-import"></i>}
-                      onClick={() => setShowImport(true)}
-                    >
-                      <span style={{ margin: '0 10px' }}>Import</span>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="2"
-                      icon={<i className="gbs gbs-add"></i>}
-                      onClick={() => {
-                        setShowBviData(true);
-                        setEditListMark(false);
-                        setComponentDisabled(false);
-                        formData.setFieldsValue({
-                          adjustTag: false,
-                          uploadUser: sessionStorage.getItem('user'),
-                        });
-                      }}
-                    >
-                      <span style={{ margin: '0 10px' }}>Add</span>
-                    </Menu.Item>
-                    <Menu.SubMenu
-                      key="3"
-                      title={<span style={{ margin: '0 10px' }}>Template</span>}
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <Menu.Item key="manual">
-                        <a
-                          href={
-                            process.env.WEB_URL +
-                            '/template/BVI Manual Template.xlsx'
-                          }
+              <Space>
+                <BtnOrangeWrap>
+                  <Button
+                    disabled={!selectedRowKeys.length}
+                    onClick={toRecheck}
+                  >
+                    Recheck
+                  </Button>
+                </BtnOrangeWrap>
+                <BtnGreenWrap>
+                  <Button
+                    disabled={!selectedRowKeys.length}
+                    onClick={() => {
+                      let recordList = selectedRows.filter(
+                        (item) => item.bviStatus.toLowerCase() == 'unconfirm',
+                      );
+                      let errorMark = selectedRows.filter(
+                        (item) => item.error != null,
+                      );
+                      if (!errorMark || errorMark.length != 0) {
+                        message.error('Contains incorrect data');
+                      } else {
+                        if (!recordList || !recordList.length) {
+                          message.error('No data to confirm is selected');
+                          return;
+                        } else {
+                          toConfirm(selectedRowKeys);
+                        }
+                      }
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </BtnGreenWrap>
+                <BtnBlueWrap>
+                  <Button
+                    disabled={!selectedRowKeys.length}
+                    onClick={() => {
+                      let recordList = selectedRows.filter(
+                        (item) => item.bviStatus.toLowerCase() == 'confirm',
+                      );
+                      let errorMark = selectedRows.filter(
+                        (item) => item.error != null,
+                      );
+                      if (!errorMark || errorMark.length != 0) {
+                        message.error('Contains incorrect data');
+                      } else {
+                        if (!recordList || !recordList.length) {
+                          message.error('No data to unconfirm is selected');
+                          return;
+                        } else {
+                          toUnconfirm(selectedRowKeys);
+                        }
+                      }
+                    }}
+                  >
+                    Unconfirm
+                  </Button>
+                </BtnBlueWrap>
+                <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
+                />
+                <BtnThemeWrap>
+                  <Button
+                    onClick={() => {
+                      const recheckMark = selectedRows.some((item) => {
+                        return (
+                          item.templateType == 'H2R BVI Template' ||
+                          item.templateType == 'BVI Manual Template'
+                        );
+                      });
+                      if (recheckMark) {
+                        message.error('no source data');
+                      } else {
+                        onExport();
+                      }
+                    }}
+                    disabled={!selectedRowKeys.length}
+                  >
+                    Export Original
+                  </Button>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Dropdown
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item
+                          key="1"
+                          icon={<i className="gbs gbs-import"></i>}
+                          onClick={() => setShowImport(true)}
                         >
-                          BVI Manual Template
-                        </a>
-                      </Menu.Item>
-                      <Menu.Item key="md">
-                        <a
-                          href={
-                            process.env.WEB_URL +
-                            '/template/R2R MD Template.xlsx'
-                          }
+                          <span style={{ margin: '0 10px' }}>Import</span>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="2"
+                          icon={<i className="gbs gbs-add"></i>}
+                          onClick={() => {
+                            setShowBviData(true);
+                            setEditListMark(false);
+                            setComponentDisabled(false);
+                            formData.setFieldsValue({
+                              adjustTag: false,
+                              uploadUser: sessionStorage.getItem('user'),
+                            });
+                          }}
                         >
-                          R2R MD Template
-                        </a>
-                      </Menu.Item>
-                      <Menu.Item key="BVI">
-                        <a
-                          href={
-                            process.env.WEB_URL +
-                            '/template/H2R BVI Template.xlsx'
+                          <span style={{ margin: '0 10px' }}>Add</span>
+                        </Menu.Item>
+                        <Menu.SubMenu
+                          key="3"
+                          title={
+                            <span style={{ margin: '0 10px' }}>Template</span>
                           }
+                          icon={<i className="gbs gbs-download"></i>}
                         >
-                          H2R BVI Template
-                        </a>
-                      </Menu.Item>
-                      <Menu.Item key="T&E">
-                        <a
-                          href={
-                            process.env.WEB_URL +
-                            '/template/H2R T&E Template.xlsx'
-                          }
-                        >
-                          H2R T&E BVI Template
-                        </a>
-                      </Menu.Item>
-                      <Menu.Item key="GMM">
-                        <a
-                          href={
-                            process.env.WEB_URL +
-                            '/template/H2R GMM Template.xlsx'
-                          }
-                        >
-                          H2R GMM Template
-                        </a>
-                      </Menu.Item>
-                      <Menu.Item key="O2C">
-                        <a
-                          href={
-                            process.env.WEB_URL +
-                            '/template/O2C BVI Template.xlsx'
-                          }
-                        >
-                          O2C BVI Template
-                        </a>
-                      </Menu.Item>
-                      <Menu.Item key="TI">
-                        <a
-                          href={
-                            process.env.WEB_URL +
-                            '/template/O2C TI BVI Template.xlsx'
-                          }
-                        >
-                          O2C TI BVI Template
-                        </a>
-                      </Menu.Item>
-                    </Menu.SubMenu>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
+                          <Menu.Item key="manual">
+                            <a
+                              href={
+                                process.env.WEB_URL +
+                                '/template/BVI Manual Template.xlsx'
+                              }
+                            >
+                              BVI Manual Template
+                            </a>
+                          </Menu.Item>
+                          <Menu.Item key="md">
+                            <a
+                              href={
+                                process.env.WEB_URL +
+                                '/template/R2R MD Template.xlsx'
+                              }
+                            >
+                              R2R MD Template
+                            </a>
+                          </Menu.Item>
+                          <Menu.Item key="BVI">
+                            <a
+                              href={
+                                process.env.WEB_URL +
+                                '/template/H2R BVI Template.xlsx'
+                              }
+                            >
+                              H2R BVI Template
+                            </a>
+                          </Menu.Item>
+                          <Menu.Item key="T&E">
+                            <a
+                              href={
+                                process.env.WEB_URL +
+                                '/template/H2R T&E Template.xlsx'
+                              }
+                            >
+                              H2R T&E BVI Template
+                            </a>
+                          </Menu.Item>
+                          <Menu.Item key="GMM">
+                            <a
+                              href={
+                                process.env.WEB_URL +
+                                '/template/H2R GMM Template.xlsx'
+                              }
+                            >
+                              H2R GMM Template
+                            </a>
+                          </Menu.Item>
+                          <Menu.Item key="O2C">
+                            <a
+                              href={
+                                process.env.WEB_URL +
+                                '/template/O2C BVI Template.xlsx'
+                              }
+                            >
+                              O2C BVI Template
+                            </a>
+                          </Menu.Item>
+                          <Menu.Item key="TI">
+                            <a
+                              href={
+                                process.env.WEB_URL +
+                                '/template/O2C TI BVI Template.xlsx'
+                              }
+                            >
+                              O2C TI BVI Template
+                            </a>
+                          </Menu.Item>
+                        </Menu.SubMenu>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
+                        Add
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Button
+                    disabled={selectedRowKeys.length !== 1}
+                    onClick={copyData}
+                  >
+                    Copy
+                  </Button>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Button
+                    disabled={!selectedRowKeys.length}
+                    onClick={() => {
+                      setEditListMark(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </BtnThemeWrap>
+                <Button
+                  disabled={!selectedRowKeys.length}
+                  onClick={() => {
+                    Modal.confirm({
+                      title: 'Tips',
+                      icon: <ExclamationCircleOutlined />,
+                      content: 'Confirm delete selected data?',
+                      okText: 'Confirm',
+                      cancelText: 'Cancel',
+                      onOk: () => {
+                        let recordList = selectedRows.filter(
+                          (item) => item.bviStatus.toLowerCase() == 'unconfirm',
+                        );
+                        if (!recordList || !recordList.length) {
+                          message.error('No data to delete is selected');
+                          return;
+                        } else {
+                          deleteInfos(selectedRowKeys, event);
+                        }
+                      },
+                      centered: true,
+                    });
+                  }}
+                >
+                  Delete
                 </Button>
-              </Dropdown>
-            </BtnThemeWrap>
-            <BtnThemeWrap>
-              <Button
-                disabled={selectedRowKeys.length !== 1}
-                onClick={copyData}
-              >
-                Copy
-              </Button>
-            </BtnThemeWrap>
-            <BtnThemeWrap>
-              <Button
-                disabled={!selectedRowKeys.length}
-                onClick={() => {
-                  setEditListMark(true);
-                }}
-              >
-                Edit
-              </Button>
-            </BtnThemeWrap>
-            <Button
-              disabled={!selectedRowKeys.length}
-              onClick={() => {
-                Modal.confirm({
-                  title: 'Tips',
-                  icon: <ExclamationCircleOutlined />,
-                  content: 'Confirm delete selected data?',
-                  okText: 'Confirm',
-                  cancelText: 'Cancel',
-                  onOk: () => {
-                    let recordList = selectedRows.filter(
-                      (item) => item.bviStatus.toLowerCase() == 'unconfirm',
-                    );
-                    if (!recordList || !recordList.length) {
-                      message.error('No data to delete is selected');
-                      return;
-                    } else {
-                      deleteInfos(selectedRowKeys, event);
-                    }
-                  },
-                  centered: true,
-                });
-              }}
-            >
-              Delete
-            </Button>
               </Space>
             </AuthWrapper>
-              <Space>
-            <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
-                />
-              }
-            ></Button>
-          </Space>
+            <Space>
+              <Divider
+                type="vertical"
+                style={{ height: '20px', borderColor: '#999' }}
+              />
+              <Button
+                style={{ width: '40px' }}
+                onClick={() => setIsSearch(!isSearch)}
+                icon={
+                  <img
+                    style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                    src={search}
+                  />
+                }
+              ></Button>
+            </Space>
           </>
         }
       />

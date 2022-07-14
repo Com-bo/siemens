@@ -425,7 +425,7 @@ export const Index = (props: any) => {
                   disabled={componentDisabled}
                   format="DD.MM.YYYY"
                   style={{ width: '100%' }}
-                />
+                />{' '}
               </Form.Item>
             </Col>
             <Col span={12}>

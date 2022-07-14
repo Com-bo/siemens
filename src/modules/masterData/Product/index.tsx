@@ -563,7 +563,7 @@ export const Index = (props: any) => {
       renderT: (inputRef, save, record, dataIndex) => {
         return (
           <Form.Item
-            rules={[{ required: true, message: '' }]}
+            // rules={[{ required: true, message: '' }]}
             style={{ margin: 0 }}
             name="orgID"
           >
