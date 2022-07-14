@@ -43,7 +43,7 @@ import {
   getCostCenterData,
   importCostCenterData,
   logCostCenterDataQuery,
-} from '@/app/request/apiMasterData';
+} from '@/app/request/apiBusinessLine';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();

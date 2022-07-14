@@ -474,7 +474,7 @@ export default (props: any) => {
               onClick={(event) => {
                 event.stopPropagation();
                 console.log(record);
-                if (record.templateType == 'BVI Manual Template' && record.bviStatus=="Unconfirm" ) {
+                if (record.templateType == 'BVI Manual Template' && record.bviStatus.toLowerCase()=="unconfirm" ) {
                   formData.setFieldsValue({
                     ...record,
                     bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
@@ -961,7 +961,7 @@ export default (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                Cost center Data
+                Cost Center Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>
@@ -1593,6 +1593,7 @@ export default (props: any) => {
         destroyOnClose={true}
         onCancel={() => {
           proForm.resetFields();
+          setProductData([])
           setShowPro(false);
         }}
       >

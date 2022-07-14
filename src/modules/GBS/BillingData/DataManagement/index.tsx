@@ -383,7 +383,7 @@ export default (props: any) => {
       width: '100px',
       titleRender: 'input',
       sorter: true,
-      render: (text) => (text === false ? 'Yes' : 'No'),
+      render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
     },
     {
       name: 'quarterlyCharge',

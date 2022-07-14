@@ -421,7 +421,7 @@ export const Index = (props: any) => {
               >
                 <DatePicker 
                 disabled={componentDisabled}
-                type="Date" format="DD.MM.YYYY" 
+                 format="DD.MM.YYYY" 
                 style={{ width: '100%' }} />
               </Form.Item>
             </Col>

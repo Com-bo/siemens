@@ -753,6 +753,7 @@ export default (props: any) => {
       width: '150px',
       key: 'adjustTag',
       align: 'center',
+      render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
     },
     {
       title: 'Template Type',
@@ -1281,7 +1282,7 @@ export default (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                Cost center Data
+                Cost Center Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>

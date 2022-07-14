@@ -66,7 +66,7 @@ export default (props: any) => {
       width: '100px',
       render: (text) =>
         text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD')
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
           : text,
     },
     {
