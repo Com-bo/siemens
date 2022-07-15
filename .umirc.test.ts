@@ -10,4 +10,5 @@ export default {
     'process.env.REDIRECT_URL': 'http://192.168.30.241:8821/callback.html',
     'process.env.IDENTITY': 'http://192.168.30.241:8989/',
   },
+  outputPath: 'wwwroot',
 };
