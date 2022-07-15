@@ -24,6 +24,7 @@ import {
   Select,
   Space,
   Tooltip,
+  Switch,
   Upload,
 } from 'antd';
 import moment from 'moment';
@@ -37,13 +38,13 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
-  deleteCostCenterData,
-  editCostCenterDataSave,
-  exportCostCenterExcel,
-  getCostCenterData,
-  importCostCenterData,
-  logCostCenterDataQuery,
-} from '@/app/request/apiCostCenter';
+  ServiceLineBasicQueryListData,
+  ServiceLineBasicExportData,
+  ServiceLineBasicDeleteData,
+  ServiceLineBasicQueryLogData,
+  ServiceLineBasicEditDataSave
+
+} from '@/app/request/apiServiceLineBasic';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -68,67 +69,67 @@ export const Index = (props: any) => {
       name: 'chargeType',
       title: 'ChargeType',
       width: '100px',
-      titleRender: 'input',
+  
     },
     {
       name: 'billingLocation',
       title: 'Billing Location',
       width: '100px',
-      titleRender: 'input',
+   
     },
     {
-      name: 'businessline',
+      name: 'businessLine',
       title: 'Businessline',
       width: '200px',
-      titleRender: 'input',
+     
     },
     {
-      name: 'GLAccount',
+      name: 'glAccount',
       title: 'GLAccount',
       width: '150px',
-      titleRender: 'input',
+ 
     },
     {
       name: 'saleOrg',
       title: 'SaleOrg',
       width: '150px',
-      titleRender: 'input',
+  
     },
     {
       name: 'distributionChannel',
       title: 'Distribution Channel',
       width: '180px',
-      titleRender: 'input',
+
     },
     {
       name: 'division',
       title: 'Division',
       width: '180px',
-      titleRender: 'input',
+ 
     },
     {
       title: 'Sales Office',
       width: '180px',
       name: 'salesOffice',
-      titleRender: 'input',
+
     },
     {
       title: 'Sales Group',
       width: '180px',
       name: 'salesGroup',
-      titleRender: 'input',
+  
     },
     {
       title: 'Sales Revenue Type',
       width: '150px',
       name: 'salesRevenueType',
-      titleRender: 'input',
+
     },
     {
       title: 'Is MVC',
       width: '150px',
       name: 'isMVC',
-      titleRender: 'input',
+      render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
     },
     {
       name: 'Operate',
@@ -249,7 +250,7 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteCostCenterData({
+        ServiceLineBasicDeleteData({
           recordIdList,
         }).then((res) => {
           if (res.isSuccess) {
@@ -277,7 +278,7 @@ export const Index = (props: any) => {
       pageIndex: current,
       pageSize: pageSize,
     };
-    getCostCenterData(params).then((res) => {
+    ServiceLineBasicQueryListData(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);
@@ -310,11 +311,11 @@ export const Index = (props: any) => {
       pageSize: pageSize,
     };
 
-    exportCostCenterExcel(params).then((res: any) => {
+    ServiceLineBasicExportData(params).then((res: any) => {
       if (res.response.status == 200) {
         let elink = document.createElement('a');
         // 设置下载文件名
-        elink.download = 'CostCenter List.xlsx';
+        elink.download = 'ServiceLineBasic List.xlsx';
         elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
         elink.click();
         window.URL.revokeObjectURL(elink.href);
@@ -323,24 +324,24 @@ export const Index = (props: any) => {
       }
     });
   };
-  const importExcel = (file) => {
-    const fd = new FormData();
-    fd.append('file', file);
-    importCostCenterData(fd).then((res) => {
-      if (res.isSuccess) {
-        message.success(res.msg);
-        getData();
-        setSelectedRowKeys([]);
-      } else {
-        message.error(res.msg);
-      }
-    });
-  };
+  // const importExcel = (file) => {
+  //   const fd = new FormData();
+  //   fd.append('file', file);
+  //   importCostCenterData(fd).then((res) => {
+  //     if (res.isSuccess) {
+  //       message.success(res.msg);
+  //       getData();
+  //       setSelectedRowKeys([]);
+  //     } else {
+  //       message.error(res.msg);
+  //     }
+  //   });
+  // };
   useEffect(() => {
     logId && _getLogData();
   }, [logCurrent, logId, logSize]);
   const _getLogData = async () => {
-    const res = await logCostCenterDataQuery({
+    const res = await ServiceLineBasicQueryLogData({
       recordId: logId,
       pageIndex: logCurrent,
       pageSize: logSize,
@@ -381,7 +382,7 @@ export const Index = (props: any) => {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
         };
-        editCostCenterDataSave(params).then((res) => {
+        ServiceLineBasicEditDataSave(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
             setShowCostCenterData(false);
@@ -432,7 +433,7 @@ export const Index = (props: any) => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Businessline"
+                label="Billing Location"
                 name="billingLocation"
                 rules={[{ required: true }]}
               >
@@ -441,8 +442,17 @@ export const Index = (props: any) => {
             </Col>
             <Col span={12}>
               <Form.Item
+                label="Businessline"
+                name="businessLine"
+                rules={[{ required: true }]}
+              >
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
                 label="GLAccount"
-                name="GLAccount"
+                name="glAccount"
                 rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
@@ -476,23 +486,28 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Sales Office" name="salesOffice">
-                <Input disabled={true} />
+              <Form.Item label="Sales Office" name="salesOffice" rules={[{ required: true }]}>
+                <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Sales Group" name="salesGroup">
-                <Input disabled={true} />
+              <Form.Item label="Sales Group" name="salesGroup" rules={[{ required: true }]}>
+                <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Sales Revenue Type" name="salesRevenueType">
-                <Input disabled={true} />
+                <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
+            {/* <Col span={12}>
+              <Form.Item label="Is MVC" name="isMVC" rules={[{ required: true }]}>
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col> */}
             <Col span={12}>
-              <Form.Item label="Is MVC" name="isMVC">
-                <Input disabled={true} />
+              <Form.Item label="Is MVC" name="isMVC" valuePropName="checked">
+                <Switch checkedChildren="Yes" unCheckedChildren="No" />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -578,13 +593,18 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                <Col span={7}>
-                  <Form.Item label="CostCenter" name="costCenter">
+                <Col span={5}>
+                  <Form.Item label="ChargeType" name="chargeType">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={7}>
-                  <Form.Item label="CEPC Division" name="cepcDivision">
+                <Col span={5}>
+                  <Form.Item label="Billing Location" name="billingLocation">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={5}>
+                  <Form.Item label="Businessline" name="businessLine">
                     <Input />
                   </Form.Item>
                 </Col>
@@ -595,7 +615,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={() => {
+                            setCurrent(1);
+                            getData();
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">
@@ -631,7 +654,7 @@ export const Index = (props: any) => {
               <Dropdown
                 overlay={() => (
                   <Menu>
-                    <Menu.Item
+                    {/* <Menu.Item
                       key="1"
                       icon={<i className="gbs gbs-import"></i>}
                     >
@@ -649,7 +672,7 @@ export const Index = (props: any) => {
                           <span>Import</span>
                         </Button>
                       </Upload>
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
                       <Button
                         style={{ margin: '0 10px' }}
@@ -667,7 +690,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/ServiceLineBasic.xlsx">
                           Download Template
                         </a>
                       </span>

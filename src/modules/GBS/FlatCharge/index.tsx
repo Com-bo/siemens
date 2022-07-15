@@ -200,8 +200,7 @@ export default (props: any) => {
             onClick={(event) => {
               // view权限或者edit权限
               if (
-                checkAuth(pageName, `${pageName}-Edit`) ||
-                checkAuth(pageName, `${pageName}-View`)
+                checkAuth(pageName, [`${pageName}-Edit`, `${pageName}-View`])
               ) {
                 event.stopPropagation();
                 queryBVIData({ recordId: record.orgId }).then((res) => {
@@ -899,6 +898,7 @@ export default (props: any) => {
 
     getFlatChargeData(params).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
@@ -928,12 +928,15 @@ export default (props: any) => {
     setProCurrent(pagination.current);
   };
   const changePageSize = (val: number) => {
+    setCurrent(1);
     setPageSize(val);
   };
   const handleLogSize = (val: number) => {
+    setLogCurrent(1);
     setLogSize(val);
   };
   const handleProSize = (val: number) => {
+    setProCurrent(1);
     setProSize(val);
   };
   // 删除接口
@@ -951,7 +954,6 @@ export default (props: any) => {
         }).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
-            setSelectedRowKeys([]);
             _getData();
             setCurrent(1);
           } else {
@@ -969,7 +971,6 @@ export default (props: any) => {
       recordIdList: data,
     }).then((res) => {
       if (res.isSuccess) {
-        setSelectedRowKeys([]);
         _getData();
         message.success(res.msg);
       } else {
@@ -990,7 +991,6 @@ export default (props: any) => {
         }).then((res) => {
           if (res.isSuccess) {
             _getData();
-            setSelectedRowKeys([]);
             message.success(res.msg);
           } else {
             message.error(res.msg);
@@ -1003,17 +1003,18 @@ export default (props: any) => {
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId);
-    if (recordId == logId) {
-      _getLogData();
+    if (logCurrent !== 1) {
+      setLogCurrent(1);
+    } else {
+      _getLogData(recordId);
     }
-    setLogCurrent(1);
   };
   useEffect(() => {
     logId && _getLogData();
-  }, [logCurrent, logId, logSize]);
-  const _getLogData = async () => {
+  }, [logCurrent, logSize]);
+  const _getLogData = async (_id?: string) => {
     const res = await logDataQuery({
-      recordId: logId,
+      recordId: _id || logId,
       pageIndex: logCurrent,
       pageSize: logSize,
     });
@@ -1045,7 +1046,6 @@ export default (props: any) => {
       if (res.isSuccess) {
         message.success(res.msg);
         _getData();
-        setSelectedRowKeys([]);
       } else {
         message.error(res.msg);
       }
@@ -1062,6 +1062,7 @@ export default (props: any) => {
           pageSize: proSize,
         }).then((res) => {
           if (res.isSuccess) {
+            setSelectProKeys([]);
             setProductData(res.data);
             setProTotal(res.totalCount);
           } else {
@@ -1108,12 +1109,7 @@ export default (props: any) => {
       customerDivision: data.customerDivision,
       productName: data.productName,
     });
-    if (data.are != 5547) {
-      // 获取compamycode下拉选择
-      // getCompanyCodeDrop()
-    } else {
-      // 获取costcenter下拉接口
-    }
+    handlerCancelProSearch();
   };
   const validCostCenterRequired = (rule, value, callback) => {
     if (formData.getFieldValue('are') == '5547' && !value) {
@@ -1232,6 +1228,8 @@ export default (props: any) => {
       if (res.isSuccess) {
         setcostcenterData(res.data);
         setCostcenterTotal(res.totalCount);
+        setSelectCostCenterkeys([]);
+        setSelectCostCenterRows([]);
       } else {
         setcostcenterData([]);
         message.success(res.msg);
@@ -1246,6 +1244,7 @@ export default (props: any) => {
     setcostcenterData([]);
   };
   const handlerCostCenterPageSize = (_size: number) => {
+    setCostCenterCurrent(1);
     setCostcenterPageSize(_size);
   };
   const oncostCenterPageChange = (pagination) => {
@@ -1268,6 +1267,12 @@ export default (props: any) => {
       companyCode: _data.companyCode,
     });
     cancelCostCenter();
+  };
+  const handlerCancelProSearch = () => {
+    proForm.resetFields();
+    setShowPro(false);
+    setProductData([]);
+    setProCurrent(1);
   };
 
   return (
@@ -1297,9 +1302,13 @@ export default (props: any) => {
           <Row>
             <Col span={20}>
               <Form.Item label="Cost Center">
-                <Input value={costCenterVal} onChange={(e)=>{
-                  setCostCenterVal(e.target.value)
-                }} style={{ width: '100%' }} />
+                <Input
+                  value={costCenterVal}
+                  onChange={(e) => {
+                    setCostCenterVal(e.target.value);
+                  }}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={3} offset={1}>
@@ -1375,7 +1384,7 @@ export default (props: any) => {
       </Modal>
       {/* 产品列表 */}
       <Modal
-        width="1200px"
+        width="1250px"
         title={
           <TableTopDiv style={{ margin: 0 }}>
             <TableTitleDiv style={{ float: 'left' }}>
@@ -1392,12 +1401,9 @@ export default (props: any) => {
         visible={showPro}
         maskClosable={false}
         destroyOnClose={true}
-        onCancel={() => {
-          // formImport.resetFields();
-          setShowPro(false);
-        }}
+        onCancel={handlerCancelProSearch}
       >
-        <Form form={proForm} labelCol={{ flex: '120px' }}>
+        <Form form={proForm} labelCol={{ flex: '130px' }}>
           <Row gutter={20}>
             <Col span={8}>
               <Form.Item label="Business Line" name="businessLine">
@@ -1503,8 +1509,8 @@ export default (props: any) => {
             current={logCurrent}
             pageSize={logSize}
             total={logTotal}
+            scrollY="calc(100vh - 420px)"
             handlePageSize={handleLogSize}
-            rowKey="id"
             onPageChange={onLogPageChange}
             pagination={true}
           />

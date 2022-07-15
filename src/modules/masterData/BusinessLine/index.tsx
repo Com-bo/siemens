@@ -37,12 +37,11 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
-  deleteCostCenterData,
-  editCostCenterDataSave,
-  exportCostCenterExcel,
-  getCostCenterData,
-  importCostCenterData,
-  logCostCenterDataQuery,
+  BusinessLineQueryListData,
+  BusinessLineExportData,
+  BusinessLineEditDataSave,
+  BusinessLineDeleteData,
+  BusinessLineQueryLogData,
 } from '@/app/request/apiBusinessLine';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
@@ -68,7 +67,7 @@ export const Index = (props: any) => {
       name: 'businessLine',
       title: 'Business Line',
       width: '150px',
-      titleRender: 'input',
+      // titleRender: 'input',
       // titleRender: 'input',
       // sorter: true,
     },
@@ -76,7 +75,7 @@ export const Index = (props: any) => {
       name: 'serviceLine',
       title: 'Service Line',
       width: '150px',
-      titleRender: 'input',
+      // titleRender: 'input',
     },
     {
       name: 'Operate',
@@ -197,7 +196,7 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteCostCenterData({
+        BusinessLineDeleteData({
           recordIdList,
         }).then((res) => {
           if (res.isSuccess) {
@@ -225,7 +224,7 @@ export const Index = (props: any) => {
       pageIndex: current,
       pageSize: pageSize,
     };
-    getCostCenterData(params).then((res) => {
+    BusinessLineQueryListData(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);
@@ -258,11 +257,11 @@ export const Index = (props: any) => {
       pageSize: pageSize,
     };
 
-    exportCostCenterExcel(params).then((res: any) => {
+    BusinessLineExportData(params).then((res: any) => {
       if (res.response.status == 200) {
         let elink = document.createElement('a');
         // 设置下载文件名
-        elink.download = 'CostCenter List.xlsx';
+        elink.download = 'BusinessLine List.xlsx';
         elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
         elink.click();
         window.URL.revokeObjectURL(elink.href);
@@ -271,24 +270,24 @@ export const Index = (props: any) => {
       }
     });
   };
-  const importExcel = (file) => {
-    const fd = new FormData();
-    fd.append('file', file);
-    importCostCenterData(fd).then((res) => {
-      if (res.isSuccess) {
-        message.success(res.msg);
-        getData();
-        setSelectedRowKeys([]);
-      } else {
-        message.error(res.msg);
-      }
-    });
-  };
+  // const importExcel = (file) => {
+  //   const fd = new FormData();
+  //   fd.append('file', file);
+  //   importCostCenterData(fd).then((res) => {
+  //     if (res.isSuccess) {
+  //       message.success(res.msg);
+  //       getData();
+  //       setSelectedRowKeys([]);
+  //     } else {
+  //       message.error(res.msg);
+  //     }
+  //   });
+  // };
   useEffect(() => {
     logId && _getLogData();
   }, [logCurrent, logId, logSize]);
   const _getLogData = async () => {
-    const res = await logCostCenterDataQuery({
+    const res = await BusinessLineQueryLogData({
       recordId: logId,
       pageIndex: logCurrent,
       pageSize: logSize,
@@ -329,7 +328,7 @@ export const Index = (props: any) => {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
         };
-        editCostCenterDataSave(params).then((res) => {
+        BusinessLineEditDataSave(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
             setShowCostCenterData(false);
@@ -382,7 +381,6 @@ export const Index = (props: any) => {
               <Form.Item
                 label="Service Line"
                 name="serviceLine"
-                rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
@@ -482,7 +480,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={() => {
+                            setCurrent(1);
+                            getData();
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">
@@ -518,7 +519,7 @@ export const Index = (props: any) => {
               <Dropdown
                 overlay={() => (
                   <Menu>
-                    <Menu.Item
+                    {/* <Menu.Item
                       key="1"
                       icon={<i className="gbs gbs-import"></i>}
                     >
@@ -536,7 +537,7 @@ export const Index = (props: any) => {
                           <span>Import</span>
                         </Button>
                       </Upload>
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
                       <Button
                         style={{ margin: '0 10px' }}
@@ -554,7 +555,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/BusinessLine.xlsx">
                           Download Template
                         </a>
                       </span>

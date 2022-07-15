@@ -38,6 +38,7 @@ export const Api = {
   InsertBVIData: '/api/BVIDataManage/InsertData', //添加数据
   EditBVIData: '/api/BVIDataManage/EditData', //编辑数据
   EditDataListSave: '/api/BVIDataManage/EditDataListSave', //批量编辑数据
+  ReCheckDataBVIData: '/api/BVIDataManage/ReCheckData', 
 
   QueryImportLog: '/api/BVIDataManage/QueryImportLog', //查询日志
   // Flat Charge
@@ -112,6 +113,25 @@ export const Api = {
   SpecialDivisionQueryListData: '/api/SpecialDivision/QueryListData',
   SpecialDivisionEditDataSave: '/api/SpecialDivision/EditDataSave',
   SpecialDivisionDeleteData: '/api/SpecialDivision/DeleteData',
+  
+  BusinessLineQueryListData: '/api/BusinessLine/QueryListData',
+  BusinessLineExportData: '/api/BusinessLine/ExportData',
+  BusinessLineEditDataSave: '/api/BusinessLine/EditDataSave',
+  BusinessLineDeleteData: '/api/BusinessLine/DeleteData',
+  BusinessLineQueryLogData: '/api/BusinessLine/QueryLogData',
+  
+  ICBCustomerInfoQueryListData: '/api/ICBCustomerInfo/QueryListData',
+  ICBCustomerInfoExportData: '/api/ICBCustomerInfo/ExportData',
+  ICBCustomerInfoEditDataSave: '/api/ICBCustomerInfo/EditDataSave',
+  ICBCustomerInfoDeleteData: '/api/ICBCustomerInfo/DeleteData',
+  ICBCustomerInfoQueryLogData: '/api/ICBCustomerInfo/QueryLogData',
+  
+  ServiceLineBasicQueryListData: '/api/ServiceLineBasic/QueryListData',
+  ServiceLineBasicExportData: '/api/ServiceLineBasic/ExportData',
+  ServiceLineBasicEditDataSave: '/api/ServiceLineBasic/EditDataSave',
+  ServiceLineBasicDeleteData: '/api/ServiceLineBasic/DeleteData',
+  ServiceLineBasicQueryLogData: '/api/ServiceLineBasic/QueryLogData',
+
   // Billing-validation report
   BillingIntegrityDataQuery: '/api/BillingValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
   BillingIntegrityDataExport: '/api/BillingValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、

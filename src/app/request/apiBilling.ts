@@ -134,27 +134,19 @@ export const BatchFileManual = (data) => {
     data,
     {
       autoLoading: true,
-      responseType:"blob"
+      responseType: 'blob',
     },
   );
 };
 export const BatchFileAuto = (data: Object) => {
-  return usePost(
-    `${Config.Api.Base}${Config.Api.BatchFileAuto}`,
-    data,
-    {
-      autoLoading: true,
-      responseType:"blob"
-    },
-  );
+  return usePost(`${Config.Api.Base}${Config.Api.BatchFileAuto}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
 };
 export const AllocationFile = (data: Object) => {
-  return usePost(
-    `${Config.Api.Base}${Config.Api.AllocationFile}`,
-    data,
-    {
-      autoLoading: true,
-      responseType:"blob"
-    },
-  );
+  return usePost(`${Config.Api.Base}${Config.Api.AllocationFile}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
 };

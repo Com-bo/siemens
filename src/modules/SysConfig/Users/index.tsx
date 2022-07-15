@@ -463,7 +463,7 @@ export const Index = (props: any) => {
               >
                 <DebounceSelect
                   initFlag
-                  // mode="multiple"
+                  mode="multiple"
                   onChange={(value, data) => {}}
                   getoptions={(options) => {
                     return options?.map((x, index) => {

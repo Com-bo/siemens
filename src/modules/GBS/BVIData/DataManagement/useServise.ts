@@ -13,7 +13,8 @@ import {
   EditDataListSave,
   getAbnormalOriginDataByBVI,
   exportOriginalData,
-  SyncDataSave
+  SyncDataSave,
+  ReCheckDataBVIData
 } from '@/app/request/apiBVI';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
@@ -247,8 +248,18 @@ export default (props: any) => {
       message.warning('No information selected!');
       return;
     }
-    message.success('Operation succeeded!');
-    setSelectedRowKeys([]);
+    let params = {
+      recordIdList: selectedRowKeys,
+    };
+    ReCheckDataBVIData(params).then((res) => {
+      if (res.isSuccess) {
+        getData();
+        setSelectedRowKeys([]);
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
   };
   const confirmDataAction = (recordIdList) => {
     confirmData({ recordIdList }).then((res) => {

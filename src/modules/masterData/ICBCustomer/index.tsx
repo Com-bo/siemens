@@ -37,13 +37,12 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import {
-  deleteCostCenterData,
-  editCostCenterDataSave,
-  exportCostCenterExcel,
-  getCostCenterData,
-  importCostCenterData,
-  logCostCenterDataQuery,
-} from '@/app/request/apiCostCenter';
+  ICBCustomerInfoQueryListData,
+  ICBCustomerInfoExportData,
+  ICBCustomerInfoDeleteData,
+  ICBCustomerInfoQueryLogData,
+  ICBCustomerInfoEditDataSave
+} from '@/app/request/apiICBCustomerInfo';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -68,19 +67,19 @@ export const Index = (props: any) => {
       name: 'customerDivision',
       title: 'CustomerDivision',
       width: '100px',
-      titleRender: 'input',
+      // titleRender: 'input',
     },
     {
       name: 'customerNumberBatch',
       title: 'CustomerNumberBatch',
       width: '200px',
-      titleRender: 'input',
+      // titleRender: 'input',
     },
     {
       name: 'customerNumberAllocation',
       title: 'CustomerNumberAllocation',
       width: '150px',
-      titleRender: 'input',
+      // titleRender: 'input',
     },
     {
       name: 'Operate',
@@ -99,7 +98,7 @@ export const Index = (props: any) => {
                 setComponentDisabled(false);
                 formData.setFieldsValue({
                   ...record,
-                  customerDivision: record.custemerDivision,
+                  // customerDivision: record.custemerDivision,
                 });
               }}
             ></Button>
@@ -201,7 +200,7 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteCostCenterData({
+        ICBCustomerInfoDeleteData({
           recordIdList,
         }).then((res) => {
           if (res.isSuccess) {
@@ -229,7 +228,7 @@ export const Index = (props: any) => {
       pageIndex: current,
       pageSize: pageSize,
     };
-    getCostCenterData(params).then((res) => {
+    ICBCustomerInfoQueryListData(params).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);
@@ -262,11 +261,11 @@ export const Index = (props: any) => {
       pageSize: pageSize,
     };
 
-    exportCostCenterExcel(params).then((res: any) => {
+    ICBCustomerInfoExportData(params).then((res: any) => {
       if (res.response.status == 200) {
         let elink = document.createElement('a');
         // 设置下载文件名
-        elink.download = 'CostCenter List.xlsx';
+        elink.download = 'ICBCustomer List.xlsx';
         elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
         elink.click();
         window.URL.revokeObjectURL(elink.href);
@@ -275,24 +274,24 @@ export const Index = (props: any) => {
       }
     });
   };
-  const importExcel = (file) => {
-    const fd = new FormData();
-    fd.append('file', file);
-    importCostCenterData(fd).then((res) => {
-      if (res.isSuccess) {
-        message.success(res.msg);
-        getData();
-        setSelectedRowKeys([]);
-      } else {
-        message.error(res.msg);
-      }
-    });
-  };
+  // const importExcel = (file) => {
+  //   const fd = new FormData();
+  //   fd.append('file', file);
+  //   importCostCenterData(fd).then((res) => {
+  //     if (res.isSuccess) {
+  //       message.success(res.msg);
+  //       getData();
+  //       setSelectedRowKeys([]);
+  //     } else {
+  //       message.error(res.msg);
+  //     }
+  //   });
+  // };
   useEffect(() => {
     logId && _getLogData();
   }, [logCurrent, logId, logSize]);
   const _getLogData = async () => {
-    const res = await logCostCenterDataQuery({
+    const res = await ICBCustomerInfoQueryLogData({
       recordId: logId,
       pageIndex: logCurrent,
       pageSize: logSize,
@@ -333,7 +332,7 @@ export const Index = (props: any) => {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
         };
-        editCostCenterDataSave(params).then((res) => {
+        ICBCustomerInfoEditDataSave(params).then((res) => {
           if (res.isSuccess) {
             message.success(res.msg);
             setShowCostCenterData(false);
@@ -371,7 +370,7 @@ export const Index = (props: any) => {
           formData.resetFields();
         }}
       >
-        <Form form={formData} labelCol={{ flex: '120px' }}>
+        <Form form={formData} labelCol={{ flex: '180px' }}>
           <Row gutter={20}>
             <Col span={12}>
               <Form.Item
@@ -386,7 +385,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="CustomerNumberBatch"
                 name="customerNumberBatch"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
@@ -395,7 +394,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="CustomerNumberAllocation"
                 name="customerNumberAllocation"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
@@ -483,13 +482,18 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                <Col span={7}>
-                  <Form.Item label="CostCenter" name="costCenter">
+                <Col span={5}>
+                  <Form.Item label="Division" name="customerDivision">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={7}>
-                  <Form.Item label="CEPC Division" name="cepcDivision">
+                <Col span={5}>
+                  <Form.Item label="NumberBatch" name="customerNumberBatch">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={5}>
+                  <Form.Item label="NumberAllocation" name="customerNumberAllocation">
                     <Input />
                   </Form.Item>
                 </Col>
@@ -500,7 +504,10 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={getData}
+                          onClick={() => {
+                            setCurrent(1);
+                            getData();
+                          }}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Export">
@@ -536,7 +543,7 @@ export const Index = (props: any) => {
               <Dropdown
                 overlay={() => (
                   <Menu>
-                    <Menu.Item
+                    {/* <Menu.Item
                       key="1"
                       icon={<i className="gbs gbs-import"></i>}
                     >
@@ -554,7 +561,7 @@ export const Index = (props: any) => {
                           <span>Import</span>
                         </Button>
                       </Upload>
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
                       <Button
                         style={{ margin: '0 10px' }}
@@ -572,7 +579,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/ICBCustomer.xlsx">
                           Download Template
                         </a>
                       </span>

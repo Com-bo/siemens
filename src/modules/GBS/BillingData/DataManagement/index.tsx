@@ -457,28 +457,30 @@ export default (props: any) => {
       render: (text, record, index) => (
         <Space>
           <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
-          <Button
-            type="text"
-            key="1"
-            icon={<EditOutlined />}
-            onClick={(event) => {
-              event.stopPropagation();
-              console.log(record);
-              setEditListMark(true);
-              setIsSingelEdits(true);
-              formDataEdit.setFieldsValue({
-                ...record,
-                billingDate: record.billingDate
-                  ? moment(record.billingDate)
-                  : null,
-              });
-              if (formDataEdit.getFieldValue('billingStatus') == 'Successful') {
-                setSuccessMark(false);
-              } else {
-                setSuccessMark(true);
-              }
-            }}
-          ></Button>
+            <Button
+              type="text"
+              key="1"
+              icon={<EditOutlined />}
+              onClick={(event) => {
+                event.stopPropagation();
+                console.log(record);
+                setEditListMark(true);
+                setIsSingelEdits(true);
+                formDataEdit.setFieldsValue({
+                  ...record,
+                  billingDate: record.billingDate
+                    ? moment(record.billingDate)
+                    : null,
+                });
+                if (
+                  formDataEdit.getFieldValue('billingStatus') == 'Successful'
+                ) {
+                  setSuccessMark(false);
+                } else {
+                  setSuccessMark(true);
+                }
+              }}
+            ></Button>
           </AuthWrapper>
         </Space>
       ),
@@ -610,6 +612,7 @@ export default (props: any) => {
               <Button
                 onClick={() => {
                   setShowImport(false);
+                  formImport.resetFields();
                 }}
               >
                 Cancel
@@ -815,116 +818,115 @@ export default (props: any) => {
         renderBtns={
           <>
             <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
-            <Space>
-            
-              <BtnOrangeWrap>
-                <Button onClick={freezeData}>Freeze</Button>
-              </BtnOrangeWrap>
-              <BtnThemeWrap color="grass">
-                <Button
-                  disabled={!selectedRowKeys.length}
-                  onClick={() => {
-                    setEditListMark(true);
-                    setSuccessMark(true);
-                    // if (selectedRowKeys.length == 1) {
-                    //   setIsSingelEdits(true);
-                    //   formDataEdit.setFieldsValue({
-                    //     ...selectedRows[0],
-                    //     billingDate: selectedRows[0].billingDate
-                    //       ? moment(selectedRows[0].billingDate)
-                    //       : null,
-                    //   });
-                    //   if (
-                    //     formDataEdit.getFieldValue('billingStatus') ==
-                    //     'Successful'
-                    //   ) {
-                    //     setSuccessMark(false);
-                    //   } else {
-                    //     setSuccessMark(true);
-                    //   }
-                    // } else {
-                    //   setIsSingelEdits(false);
-                    // }
-                    setIsSingelEdits(false);
-                  }}
-                >
-                  Quick Edit
-                </Button>
-              </BtnThemeWrap>
-              <BtnThemeWrap color="blue">
-                <Dropdown
-                  trigger={['click']}
-                  overlay={() => (
-                    <Menu>{renderMenuOption(billingStatusGroup)}</Menu>
-                  )}
-                >
-                  <Button>
-                    <Space>
-                      Set Status
-                      <DownOutlined />
-                    </Space>
-                  </Button>
-                </Dropdown>
-              </BtnThemeWrap>
-              <Divider
-                type="vertical"
-                style={{ height: '20px', borderColor: '#999' }}
-              />
-              <BtnThemeWrap color="blue">
-                <Dropdown
-                  trigger={['click']}
-                  overlay={() => (
-                    <Menu>
-                      <Menu.Item key="1">
-                        <span
-                          style={{ margin: '0 10px' }}
-                          onClick={() => {
-                            ImportFlieFn(1);
-                          }}
-                        >
-                          Batch File-Manual
-                        </span>
-                      </Menu.Item>
-                      <Menu.Item key="2">
-                        <span
-                          style={{ margin: '0 10px' }}
-                          onClick={() => {
-                            ImportFlieFn(2);
-                          }}
-                        >
-                          Batch File-Auto
-                        </span>
-                      </Menu.Item>
-                      <Menu.Item key="3">
-                        <span
-                          style={{ margin: '0 10px' }}
-                          onClick={() => {
-                            ImportFlieFn(3);
-                          }}
-                        >
-                          Allocation File
-                        </span>
-                      </Menu.Item>
-                    </Menu>
-                  )}
-                >
-                  <Button>
-                    <Space>
-                      Generate Report
-                      <DownOutlined />
-                    </Space>
-                  </Button>
-                </Dropdown>
-              </BtnThemeWrap>
-              <BtnThemeWrap>
-                <Button onClick={() => setShowImport(true)}>Import</Button>
-              </BtnThemeWrap>
-              <BtnThemeWrap>
-                <Button>Generate Customer Report</Button>
-              </BtnThemeWrap>
-              </Space>
-              </AuthWrapper>
               <Space>
+                <BtnOrangeWrap>
+                  <Button onClick={freezeData}>Freeze</Button>
+                </BtnOrangeWrap>
+                <BtnThemeWrap color="grass">
+                  <Button
+                    disabled={!selectedRowKeys.length}
+                    onClick={() => {
+                      setEditListMark(true);
+                      setSuccessMark(true);
+                      // if (selectedRowKeys.length == 1) {
+                      //   setIsSingelEdits(true);
+                      //   formDataEdit.setFieldsValue({
+                      //     ...selectedRows[0],
+                      //     billingDate: selectedRows[0].billingDate
+                      //       ? moment(selectedRows[0].billingDate)
+                      //       : null,
+                      //   });
+                      //   if (
+                      //     formDataEdit.getFieldValue('billingStatus') ==
+                      //     'Successful'
+                      //   ) {
+                      //     setSuccessMark(false);
+                      //   } else {
+                      //     setSuccessMark(true);
+                      //   }
+                      // } else {
+                      //   setIsSingelEdits(false);
+                      // }
+                      setIsSingelEdits(false);
+                    }}
+                  >
+                    Quick Edit
+                  </Button>
+                </BtnThemeWrap>
+                <BtnThemeWrap color="blue">
+                  <Dropdown
+                    trigger={['click']}
+                    overlay={() => (
+                      <Menu>{renderMenuOption(billingStatusGroup)}</Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
+                        Set Status
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap>
+                <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
+                />
+                <BtnThemeWrap color="blue">
+                  <Dropdown
+                    trigger={['click']}
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item key="1">
+                          <span
+                            style={{ margin: '0 10px' }}
+                            onClick={() => {
+                              ImportFlieFn(1);
+                            }}
+                          >
+                            Batch File-Manual
+                          </span>
+                        </Menu.Item>
+                        <Menu.Item key="2">
+                          <span
+                            style={{ margin: '0 10px' }}
+                            onClick={() => {
+                              ImportFlieFn(2);
+                            }}
+                          >
+                            Batch File-Auto
+                          </span>
+                        </Menu.Item>
+                        <Menu.Item key="3">
+                          <span
+                            style={{ margin: '0 10px' }}
+                            onClick={() => {
+                              ImportFlieFn(3);
+                            }}
+                          >
+                            Allocation File
+                          </span>
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
+                        Generate Report
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Button onClick={() => setShowImport(true)}>Import</Button>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Button>Generate Customer Report</Button>
+                </BtnThemeWrap>
+              </Space>
+            </AuthWrapper>
+            <Space>
               <Divider
                 type="vertical"
                 style={{ height: '20px', borderColor: '#999' }}

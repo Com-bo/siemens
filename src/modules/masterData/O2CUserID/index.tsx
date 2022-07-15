@@ -160,25 +160,6 @@ export const Index = (props: any) => {
       key: 'newValue',
       align: 'center',
     },
-    {
-      title: 'Modified Date',
-      dataIndex: 'modifiedDate',
-      // sorter: {
-      //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
-      // },
-      key: 'modifiedDate',
-      align: 'center',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
-    },
-    {
-      title: 'Modified User',
-      dataIndex: 'modifiedUser',
-      key: 'modifiedUser',
-      align: 'center',
-    },
   ];
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
@@ -195,7 +176,6 @@ export const Index = (props: any) => {
         }).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
-            setSelectedRowKeys([]);
             getData();
             setCurrent(1);
           } else {
@@ -220,6 +200,7 @@ export const Index = (props: any) => {
     };
     getO2CUserIDListData(params).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
@@ -240,6 +221,7 @@ export const Index = (props: any) => {
   };
 
   const changePageSize = (val: number) => {
+    setCurrent(1);
     setPageSize(val);
   };
 
@@ -271,10 +253,10 @@ export const Index = (props: any) => {
   };
   useEffect(() => {
     logId && _getLogData();
-  }, [logCurrent, logId, logSize]);
-  const _getLogData = async () => {
+  }, [logCurrent, logSize]);
+  const _getLogData = async (_id?: string) => {
     const res = await queryO2CUserIDLogData({
-      recordId: logId,
+      recordId: _id || logId,
       pageIndex: logCurrent,
       pageSize: logSize,
     });
@@ -299,14 +281,16 @@ export const Index = (props: any) => {
     }
   };
   const handleLogSize = (val: number) => {
+    setLogCurrent(1);
     setLogSize(val);
   };
   const toLog = (recordId: string) => {
     // 获取loglist数据
     setLogId(recordId);
-    setLogCurrent(1);
-    if (logCurrent == 1) {
-      _getLogData();
+    if (logCurrent !== 1) {
+      setLogCurrent(1);
+    } else {
+      _getLogData(recordId);
     }
     setShowLog(true);
   };
@@ -412,13 +396,18 @@ export const Index = (props: any) => {
         <div className="selfTable" style={{ margin: '0 0px 0 -24px' }}>
           <TableMix
             columns={columns}
-            data={logData}
+            data={logData.map((item) => {
+              return {
+                key: Math.random(),
+                ...item,
+              };
+            })}
             current={logCurrent}
             pageSize={logSize}
             total={logTotal}
             handlePageSize={handleLogSize}
-            rowKey="id"
             onPageChange={onLogPageChange}
+            scrollY="calc(100vh - 420px)"
             pagination={true}
           />
         </div>
@@ -503,7 +492,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/O2CUserID.xlsx">
                           Download Template
                         </a>
                       </span>

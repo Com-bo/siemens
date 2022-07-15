@@ -111,5 +111,10 @@ export const QueryImportLog = (data: Object) => {
     autoLoading: true,
   });
 };
+export const ReCheckDataBVIData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ReCheckDataBVIData}`, data, {
+    autoLoading: true,
+  });
+};
 
 //

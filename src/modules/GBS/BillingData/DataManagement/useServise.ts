@@ -103,7 +103,7 @@ export default (props: any) => {
       label: 'Obsolete',
       value: '8',
     },
-    
+
     // {
     //   label: 'Cancel',
     //   value: 'Cancel',
@@ -231,6 +231,7 @@ export default (props: any) => {
         objectToFormData(values.file[0], fd, 'file');
         importDataSave(fd, values.type).then((res) => {
           setShowImport(false);
+          formImport.resetFields();
           if (res.isSuccess) {
             message.success('Submit success!');
             getData();
@@ -549,10 +550,10 @@ export default (props: any) => {
       case 8:
         break;
       case 9:
-        params.billingStatus=0
+        params.billingStatus = 0;
         break;
-        case 10:
-        params.billingStatus=-1
+      case 10:
+        params.billingStatus = -1;
         break;
     }
     SetStatusSave(params).then((res) => {
