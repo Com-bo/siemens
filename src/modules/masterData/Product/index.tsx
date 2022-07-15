@@ -797,10 +797,10 @@ export const Index = (props: any) => {
         message.warning(`Index ${i + 1} ,please input Sold-to Party `);
         return;
       }
-      if (!_product.orgID) {
-        message.warning(`Index ${i + 1} ,please input Org.ID`);
-        return;
-      }
+      // if (!_product.orgID) {
+      //   message.warning(`Index ${i + 1} ,please input Org.ID`);
+      //   return;
+      // }
       if (!_product.poNumber) {
         message.warning(`Index ${i + 1} ,please input PO Number`);
         return;

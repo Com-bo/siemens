@@ -231,6 +231,7 @@ export default (props: any) => {
         objectToFormData(values.file[0], fd, 'file');
         importDataSave(fd, values.type).then((res) => {
           setShowImport(false);
+          formImport.resetFields();
           if (res.isSuccess) {
             message.success('Submit success!');
             getData();

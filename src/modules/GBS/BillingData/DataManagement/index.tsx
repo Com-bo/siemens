@@ -612,6 +612,7 @@ export default (props: any) => {
               <Button
                 onClick={() => {
                   setShowImport(false);
+                  formImport.resetFields();
                 }}
               >
                 Cancel

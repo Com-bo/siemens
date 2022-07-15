@@ -253,7 +253,7 @@ export default (props: any) => {
         } else {
           temptype = false;
         }
-        if (record.error) {
+        if (record?.error) {
           return (
             <Tooltip title={record.error}>
               <BtnTextRedWrap color="red">

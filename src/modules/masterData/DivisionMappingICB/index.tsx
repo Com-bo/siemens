@@ -250,17 +250,18 @@ export const Index = (props: any) => {
   };
 
   const exportExcelAction = () => {
-    let params = {
-      searchCondition: {
-        pageTop: formFilter.getFieldsValue(),
-        listHeader: form.getFieldsValue(),
-      },
-      orderCondition: {
-        //   [orderField]: orderType == 'ascend' ? 0 : 1,
-      },
-      pageIndex: current,
-      pageSize: pageSize,
-    };
+    message.error("暂未开发")
+    // let params = {
+    //   searchCondition: {
+    //     pageTop: formFilter.getFieldsValue(),
+    //     listHeader: form.getFieldsValue(),
+    //   },
+    //   orderCondition: {
+    //     //   [orderField]: orderType == 'ascend' ? 0 : 1,
+    //   },
+    //   pageIndex: current,
+    //   pageSize: pageSize,
+    // };
 
     // exportCostCenterExcel(params).then((res: any) => {
     //   if (res.response.status == 200) {

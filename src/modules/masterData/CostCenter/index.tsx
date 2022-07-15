@@ -693,7 +693,7 @@ export const Index = (props: any) => {
                       icon={<i className="gbs gbs-download"></i>}
                     >
                       <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
+                        <a href="./template/CostCenter.xlsx">
                           Download Template
                         </a>
                       </span>
