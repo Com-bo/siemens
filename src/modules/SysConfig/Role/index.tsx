@@ -38,6 +38,7 @@ import {
   queryRoleMapUsers,
   queryRolePageInfo,
   queryUserPageInfo,
+  roleBingAuth,
   roleBingUser,
   updateRole,
 } from '@/app/request/apiSys';
@@ -283,6 +284,27 @@ export const Index = (props: any) => {
       .catch((e) => {});
   };
 
+  // 功能授权请求
+  const handleFunOk = () => {
+    let data = {
+      roleId: roleId,
+      authList: [...checkedParentFunKeys],
+    };
+    roleBingAuth(data).then((res) => {
+      if (res.isSuccess) {
+        message.success(res.msg);
+        handleFunCancel();
+        getData();
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const handleFunCancel = () => {
+    setIsFunModalVisible(false);
+    setCheckedFunKeys([]);
+    setRoleId('');
+  };
   const onFunCheck = (checkedKeysValue, e) => {
     const { halfCheckedKeys } = e;
     let checkedKeys = [...checkedKeysValue, ...halfCheckedKeys];
@@ -444,9 +466,7 @@ export const Index = (props: any) => {
         }
         visible={isFunModalVisible}
         footer={null}
-        onCancel={() => {
-          setIsFunModalVisible(false);
-        }}
+        onCancel={handleFunCancel}
       >
         <div style={{ margin: '20px 0' }}>
           Current Role:{' '}
@@ -464,17 +484,10 @@ export const Index = (props: any) => {
         />
         <div style={{ textAlign: 'center' }}>
           <Space size={60}>
-            <Button type="primary" onClick={saveFormData}>
+            <Button type="primary" onClick={handleFunOk}>
               Save
             </Button>
-            <Button
-              onClick={() => {
-                setShowRoleData(false);
-                formData.resetFields();
-              }}
-            >
-              Cancel
-            </Button>
+            <Button onClick={handleFunCancel}>Cancel</Button>
           </Space>
         </div>
       </Modal>
