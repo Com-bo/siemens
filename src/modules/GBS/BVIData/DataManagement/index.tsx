@@ -247,7 +247,7 @@ export default (props: any) => {
         let temptype = true;
         if (
           record.templateType == 'H2R BVI Template' ||
-          record.templateType == 'BVI Manual Template'
+          record.templateType == 'BVI Manual Template' || (record.templateType == 'P2P BCS Template' && record.userno!="ROBOT_MICHAEL")
         ) {
           temptype = true;
         } else {
@@ -504,9 +504,12 @@ export default (props: any) => {
                       createdDate: record.createdDate
                         ? moment(record.createdDate)
                         : null,
+                      unitPrice:record.productUnitPrice,
+                      initialunitPrice:record.productUnitPrice
                     });
                     setComponentDisabled(false);
                     setShowBviData(true);
+                    message.info('Please choose whether to adjust the account first',10);
                   } else {
                     setEditListMark(true);
                     formDataEdit.setFieldsValue({
@@ -853,6 +856,8 @@ export default (props: any) => {
       productName: data.productName,
       productId: data.id,
       po: null,
+      unitPrice:data.unitPrice,
+      initialunitPrice:data.unitPrice
     });
   };
 
@@ -1325,6 +1330,58 @@ export default (props: any) => {
             </Col>
             <Col span={8}>
               <Form.Item
+                label="AdjustTag"
+                name="adjustTag"
+                valuePropName="checked"
+              >
+                <Switch
+                  checkedChildren="Yes" unCheckedChildren="No"
+                  disabled={componentDisabled}
+                  onChange={(val) => {
+                    formData.setFieldsValue({
+                      adjustTag: val,
+                    });
+                    if(val){
+                      formData.setFieldsValue({
+                        bvi: "",
+                        unitPrice:""
+                      });
+                    }else{
+                      formData.setFieldsValue({
+                        unitPrice:formData.getFieldValue("initialunitPrice")
+                      });
+                    }
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="BVI" name="bvi">
+                <InputNumber
+                  disabled={componentDisabled}
+                  // min={0}
+                  style={{ width: '100%' }}
+                  onChange={(val) => {
+                    console.log(val)
+                    val=(val==""?0:Number(val))
+                    formData.setFieldsValue({
+                      totalAmount: val*formData.getFieldValue("unitPrice"),
+                    });
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Unit Price" name="unitPrice">
+                <InputNumber
+                  disabled={true}
+                  // min={0}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
                 label="Total Amount"
                 name="totalAmount"
                 rules={[
@@ -1459,39 +1516,6 @@ export default (props: any) => {
             <Col span={8}>
               <Form.Item label="Billing Cost Center" name="billingCostCenter">
                 <Input disabled={isViewMark} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="BVI" name="bvi">
-                <InputNumber
-                  disabled={componentDisabled}
-                  // min={0}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </Col>
-            {/* <Col span={8}>
-              <Form.Item
-                label="POPercentage"
-                name="poPercentage"
-              >
-                <Input disabled={componentDisabled} />
-              </Form.Item>
-            </Col> */}
-            <Col span={8}>
-              <Form.Item
-                label="AdjustTag"
-                name="adjustTag"
-                valuePropName="checked"
-              >
-                <Switch
-                  disabled={componentDisabled}
-                  onChange={(val) => {
-                    formData.setFieldsValue({
-                      adjustTag: val,
-                    });
-                  }}
-                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -1740,7 +1764,11 @@ export default (props: any) => {
               };
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
-            dataSource={checkData}
+            dataSource={checkData?.map((_item)=>{
+              return {
+                ..._item
+              }
+            })}
             rowKey="id"
             pagination={false}
             scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
@@ -1895,11 +1923,12 @@ export default (props: any) => {
                       const recheckMark = selectedRows.some((item) => {
                         return (
                           item.templateType == 'H2R BVI Template' ||
-                          item.templateType == 'BVI Manual Template'
-                        );
-                      });
-                      if (recheckMark) {
-                        message.error('no source data');
+                          item.templateType == 'BVI Manual Template' ||
+                          (item.templateType == 'P2P BCS Template' && item.userno!="ROBOT_MICHAEL")
+                          );
+                        });
+                        if (recheckMark) {
+                        message.error('Export of source data is not supported');
                       } else {
                         onExport();
                       }
@@ -1931,6 +1960,7 @@ export default (props: any) => {
                               adjustTag: false,
                               uploadUser: sessionStorage.getItem('user'),
                             });
+                            message.info('Please choose whether to adjust the account first',10);
                           }}
                         >
                           <span style={{ margin: '0 10px' }}>Add</span>

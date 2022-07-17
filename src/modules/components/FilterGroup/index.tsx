@@ -29,9 +29,8 @@ import {
   Space,
   Switch,
   Tooltip,
-  useImperativeHandle
 } from 'antd';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
@@ -44,7 +43,11 @@ interface FilterGroupType {
   onClear: () => void;
   exportAction?: () => void; //导出
 }
-export default (props: FilterGroupType) => {
+export default forwardRef((props: FilterGroupType,ref) => {
+  useImperativeHandle(ref, () => ({
+    BusinessLine,
+    setBusinessLine,
+  }))
   const [filterGroup, setFilterGroup] = useState('');
   const [BusinessLine, setBusinessLine] = useState('');
   const [isSetting, setSetting] = useState(false);
@@ -777,4 +780,4 @@ export default (props: FilterGroupType) => {
       </FilterGroupDiv>
     </>
   );
-};
+});

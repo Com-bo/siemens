@@ -191,7 +191,7 @@ export default (props: any) => {
     },
     {
       name: 'soldToParty',
-      title: 'sold-to party',
+      title: 'Sold-To Party',
       width: '200px',
       titleRender: 'input',
       sorter: true,
@@ -205,7 +205,7 @@ export default (props: any) => {
     },
     {
       name: 'materialNumber',
-      title: 'Material number',
+      title: 'Material Number',
       width: '200px',
       titleRender: 'input',
       sorter: true,
@@ -272,7 +272,7 @@ export default (props: any) => {
     },
     {
       name: 'altTaxClassific',
-      title: 'Alt.tax classific',
+      title: 'Alt.tax Classific',
       width: '200px',
       sorter: true,
     },
@@ -293,7 +293,7 @@ export default (props: any) => {
     {
       name: 'materialSalesTextCustomerTextZ003',
       title: 'Material Sales Text & Customer Text (z003)',
-      width: '250px',
+      width: '350px',
       titleRender: 'input',
       sorter: true,
     },
@@ -320,7 +320,7 @@ export default (props: any) => {
     },
     {
       name: 'billingErrorMsg',
-      title: 'billing Error Message',
+      title: 'Billing Error Message',
       width: '200px',
       sorter: true,
     },
@@ -355,7 +355,7 @@ export default (props: any) => {
       sorter: true,
       render: (text) =>
         text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          ? moment(text).format('YYYY-MM-DD')
           : text,
     },
     {
@@ -404,10 +404,10 @@ export default (props: any) => {
       title: 'Billing Month',
       width: '200px',
       sorter: true,
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
+      // render: (text) =>
+      //   text && moment(text).isValid()
+      //     ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+      //     : text,
     },
     {
       name: 'period',

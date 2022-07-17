@@ -101,6 +101,8 @@ export default (props: any) => {
   const [costcenterPageSize, setCostcenterPageSize] = useState(20);
   const [costcenterTotal, setCostcenterTotal] = useState(0);
 
+  
+
   const costcenterCols: any = [
     {
       title: 'Cost Center',
@@ -867,6 +869,7 @@ export default (props: any) => {
     },
   ];
   const latestGroupIdRef = useRef<any>();
+  const filterBusiness=useRef()
   const errorCheckedRef = useRef<any>(false);
   useEffect(() => {
     _getData();
@@ -874,7 +877,9 @@ export default (props: any) => {
 
   // 用于获取table接口方法
   const _getData = (recordId?: any) => {
-    // console.log(BusinessLine)
+    console.log("------------------")
+    console.log(latestGroupIdRef)
+    console.log(errorCheckedRef)
     if (
       !checkAuth(pageName, `${pageName}-Edit`) &&
       !checkAuth(pageName, `${pageName}-View`)

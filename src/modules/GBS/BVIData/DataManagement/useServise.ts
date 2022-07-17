@@ -377,6 +377,7 @@ export default (props: any) => {
           billingCostCenter: formData.getFieldValue('billingCostCenter'),
           templateType: formData.getFieldValue('templateType'),
           batchNo: formData.getFieldValue('batchNo'),
+          businessLine: formData.getFieldValue('businessLine'),
         };
 
         InsertBVIData(params).then((res) => {
@@ -419,6 +420,7 @@ export default (props: any) => {
               billingCostCenter: formData.getFieldValue('billingCostCenter'),
               templateType: formData.getFieldValue('templateType'),
               batchNo: formData.getFieldValue('batchNo'),
+              businessLine: formData.getFieldValue('businessLine'),
             },
           ],
         };

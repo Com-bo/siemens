@@ -40,7 +40,7 @@ export const FilterGroupDiv = styled.div`
   padding: 22px;
   border-bottom: 1px solid #e3e5e5;
   .ant-select {
-    width: 300px !important;
+    width: 200px !important;
     margin: 0 20px 0 10px;
   }
   .ant-space .ant-btn {
