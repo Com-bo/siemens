@@ -54,7 +54,7 @@ export const Index = (props: any) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
-  const [isSearch, setIsSearch] = useState(true);
+  const [isSearch, setIsSearch] = useState(false);
   const [pageSize, setPageSize] = useState(20);
   const [showLog, setShowLog] = useState(false);
   const [logData, setLogData] = useState([]);
@@ -712,7 +712,7 @@ export const Index = (props: any) => {
             >
               Delete
             </Button>
-            <Divider
+            {/* <Divider
               type="vertical"
               style={{ height: '20px', borderColor: '#999' }}
             />
@@ -725,7 +725,7 @@ export const Index = (props: any) => {
                   src={search}
                 />
               }
-            ></Button>
+            ></Button> */}
           </Space>
         }
         changePageSize={changePageSize}

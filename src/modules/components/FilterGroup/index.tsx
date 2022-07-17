@@ -29,11 +29,13 @@ import {
   Space,
   Switch,
   Tooltip,
+  useImperativeHandle
 } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+
 interface FilterGroupType {
   moudleName: string; //模块标识
   authPagename?: string; //模块权限用名称
@@ -44,6 +46,7 @@ interface FilterGroupType {
 }
 export default (props: FilterGroupType) => {
   const [filterGroup, setFilterGroup] = useState('');
+  const [BusinessLine, setBusinessLine] = useState('');
   const [isSetting, setSetting] = useState(false);
   const [operfields, setFields] = useState({});
   const [operList, setOperList] = useState([]);
@@ -136,6 +139,9 @@ export default (props: FilterGroupType) => {
 
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
+  };
+  const changeBusinessLine = (val) => {
+    setBusinessLine(val);
   };
   const [form] = Form.useForm();
 
@@ -685,6 +691,25 @@ export default (props: FilterGroupType) => {
         </Form>
       </Modal>
       <FilterGroupDiv id="filterGroup">
+        <label>Business Line:</label>
+        <DebounceSelect
+          initFlag
+          onChange={(value, data) => {changeBusinessLine}}
+          getoptions={(options) => {
+            return options?.map((x, index) => {
+              return (
+                <Select.Option key={index} data={x} value={x.value}>
+                  {x.label}
+                </Select.Option>
+              );
+            });
+          }}
+          delegate={(e) => {
+            return queryBusinesslineOptionsList({
+              keywords: e,
+            });
+          }}
+        />
         <label>Filter Group:</label>
         <Select
           value={filterGroup}
@@ -742,6 +767,7 @@ export default (props: FilterGroupType) => {
                 icon={<ClearOutlined />}
                 onClick={() => {
                   setFilterGroup('');
+                  setBusinessLine('');
                   props.onClear();
                 }}
               ></Button>

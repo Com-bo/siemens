@@ -874,6 +874,7 @@ export default (props: any) => {
 
   // 用于获取table接口方法
   const _getData = (recordId?: any) => {
+    // console.log(BusinessLine)
     if (
       !checkAuth(pageName, `${pageName}-Edit`) &&
       !checkAuth(pageName, `${pageName}-View`)
@@ -883,6 +884,9 @@ export default (props: any) => {
     }
     let params = {
       searchCondition: {
+        userBusinessLineList: [
+          "string"
+        ],
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
