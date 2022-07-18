@@ -889,9 +889,6 @@ export default (props: any) => {
     }
     let params = {
       searchCondition: {
-        userBusinessLineList: [
-          "string"
-        ],
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
