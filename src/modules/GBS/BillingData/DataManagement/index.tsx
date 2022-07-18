@@ -292,7 +292,7 @@ export default (props: any) => {
     },
     {
       name: 'materialSalesTextCustomerTextZ003',
-      title: 'Material Sales Text & Customer Text (z003)',
+      title: 'Material Sales Text & Customer Text (Z003)',
       width: '350px',
       titleRender: 'input',
       sorter: true,
@@ -473,7 +473,7 @@ export default (props: any) => {
                     : null,
                 });
                 if (
-                  formDataEdit.getFieldValue('billingStatus') == 'Successful'
+                  formDataEdit.getFieldValue('billingStatus') == '2'
                 ) {
                   setSuccessMark(false);
                 } else {
@@ -540,7 +540,8 @@ export default (props: any) => {
     return options;
   };
   const handleChangebus = (val: string) => {
-    if (val == 'Successful') {
+    if (val == '2') {
+      message.info("Please fill in the SAP recharge data")
       setSuccessMark(false);
     } else {
       setSuccessMark(true);

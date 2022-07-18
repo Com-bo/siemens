@@ -16,6 +16,10 @@ export const Api = {
     '/api/BusinessLine/QueryBusinesslineOptionsList', //数据查询 - 【Business Line】页面Options列表数据【Label : Name / Value : Name】
   QueryDictionaryInfo: '/api/System/QueryDictionaryInfo', //数据字典
   ProductPoDrop: '/api/ProductPo/QueryPageDropListData', //Product下拉
+  // other data
+  OtherMasterDataQueryAREOCOptionsList: '/api/OtherMasterData/QueryAREOCOptionsList', 
+  OtherMasterDataQueryCustemerDivisionSLCOptionsList: '/api/OtherMasterData/QueryCustemerDivisionSLCOptionsList', 
+  
   // BVI
   ImportDataSave: '/api/ImportR2R/ImportDataSave', //导入R2r
   ImportManualDataSave: '/api/ImportManual/ImportDataSave', //导入ImportManual

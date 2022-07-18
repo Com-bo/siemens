@@ -75,3 +75,14 @@ export const deleUser = (data: object) => {
     autoLoading: true,
   });
 };
+// 
+export const OtherMasterDataQueryAREOCOptionsList = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.OtherMasterDataQueryAREOCOptionsList}`, data, {
+    autoLoading: true,
+  });
+};
+export const OtherMasterDataQueryCustemerDivisionSLCOptionsList = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.OtherMasterDataQueryCustemerDivisionSLCOptionsList}`, data, {
+    autoLoading: true,
+  });
+};

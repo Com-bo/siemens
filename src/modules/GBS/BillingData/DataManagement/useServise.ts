@@ -520,6 +520,10 @@ export default (props: any) => {
     const statusMark = selectedRows.some((item) => {
       return item.totalAmout < 0 && item.chargeType == 'ICC';
     });
+    const statusUNfreezzMark = selectedRows.some((item) => {
+      return item.billingStatus == "Successfully" || item.billingStatus == 'Cancel';
+    });
+    console.log(statusUNfreezzMark)
     let params = {
       billingStatus: statusIndex,
       recordIdList: selectedRowKeys,
@@ -546,6 +550,10 @@ export default (props: any) => {
       case 6:
         break;
       case 7:
+        if(statusUNfreezzMark){
+          message.error('Please repeat the selection');
+          return;
+        }
         break;
       case 8:
         break;

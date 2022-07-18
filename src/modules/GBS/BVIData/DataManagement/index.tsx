@@ -155,7 +155,6 @@ export default (props: any) => {
     costcenterTotal,
     setCostcenterTotal,
   } = useService(props);
-
   const orignalCols = [
     {
       name: 'bviBusinessLine',
@@ -246,6 +245,7 @@ export default (props: any) => {
       render: (text, record, index) => {
         let temptype = true;
         if (
+          record.templateType == 'Flat Charge' ||
           record.templateType == 'H2R BVI Template' ||
           record.templateType == 'BVI Manual Template' || (record.templateType == 'P2P BCS Template' && record.userno!="ROBOT_MICHAEL")
         ) {
@@ -329,7 +329,7 @@ export default (props: any) => {
     {
       name: 'bviMonth',
       title: 'BVI Month',
-      width: '100px',
+      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
@@ -509,7 +509,7 @@ export default (props: any) => {
                     });
                     setComponentDisabled(false);
                     setShowBviData(true);
-                    message.info('Please choose whether to adjust the account first',10);
+                    message.info('Please choose whether to adjust the account first');
                   } else {
                     setEditListMark(true);
                     formDataEdit.setFieldsValue({
@@ -572,9 +572,7 @@ export default (props: any) => {
                     </Tooltip>
                   ) : (
                     <>
-                      {record.templateType == 'Flat Charge' ? (
-                        ''
-                      ) : (
+                    {record.bviStatus.toLowerCase() == 'confirm' && record.templateType != 'Flat Charge' ? (
                         <Tooltip title="Unconfirm">
                           <Button
                             onClick={(event) => event.stopPropagation()}
@@ -583,7 +581,7 @@ export default (props: any) => {
                             icon={<i className="gbs gbs-confirm"></i>}
                           ></Button>
                         </Tooltip>
-                      )}
+                      ):("")}
                     </>
                   )}
                 </Popconfirm>
@@ -1401,11 +1399,12 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
+              
               <Form.Item
                 labelCol={{ flex: '50px' }}
                 label="PO"
                 name="po"
-                rules={[{ required: true }]}
+                rules={[{ required: formData.getFieldValue("are")!="5547" }]}
               >
                 <DebounceSelect
                   initFlag
@@ -1757,9 +1756,19 @@ export default (props: any) => {
                     return (
                       <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
                     );
-                  } else {
+                  }else if((_item.dataIndex == 'postingDate' || 
+                  _item.dataIndex=="entryDate" || 
+                  _item.dataIndex=="documentDate" || 
+                  _item.dataIndex=="netDueDate" ||
+                  _item.dataIndex=="billingDate" 
+                  )){
+                      return moment(text).format('YYYY-MM-DD')
+  
+                  }
+                   else {
                     return text;
                   }
+                  
                 },
               };
             })}
@@ -1922,6 +1931,7 @@ export default (props: any) => {
                     onClick={() => {
                       const recheckMark = selectedRows.some((item) => {
                         return (
+                          item.templateType == 'Flat Charge' ||
                           item.templateType == 'H2R BVI Template' ||
                           item.templateType == 'BVI Manual Template' ||
                           (item.templateType == 'P2P BCS Template' && item.userno!="ROBOT_MICHAEL")
@@ -1960,7 +1970,7 @@ export default (props: any) => {
                               adjustTag: false,
                               uploadUser: sessionStorage.getItem('user'),
                             });
-                            message.info('Please choose whether to adjust the account first',10);
+                            message.info('Please choose whether to adjust the account first');
                           }}
                         >
                           <span style={{ margin: '0 10px' }}>Add</span>

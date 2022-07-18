@@ -574,6 +574,6 @@ export default (props: any) => {
     selectCostCenterRows, setSelectCostCenterRows,
     costcenterCurrent, setCostCenterCurrent,
     costcenterPageSize, setCostcenterPageSize,
-    costcenterTotal, setCostcenterTotal
+    costcenterTotal, setCostcenterTotal,
   };
 };
