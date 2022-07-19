@@ -104,6 +104,7 @@ export default (props: any) => {
     insertFormData,
     editFormData,
     latestGroupIdRef,
+    latestBusinessRef,
     errorCheckedRef,
     UnconfirmDataRef,
     setCurrent,
@@ -1399,12 +1400,12 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              
-              <Form.Item
+              {formData.getFieldValue("are")!="5547"?(
+                <Form.Item
                 labelCol={{ flex: '50px' }}
                 label="PO"
                 name="po"
-                rules={[{ required: formData.getFieldValue("are")!="5547" }]}
+                rules={[{ required: true }]}
               >
                 <DebounceSelect
                   initFlag
@@ -1438,6 +1439,18 @@ export default (props: any) => {
                   }}
                 />
               </Form.Item>
+              ):(
+                <Form.Item
+                labelCol={{ flex: '50px' }}
+                label="PO"
+                name="po"
+                >
+                <InputNumber
+                  // min={0}
+                  style={{ width: '100%' }}
+                />
+                </Form.Item>
+              )}
             </Col>
             {/* <Col span={8}>
               <Form.Item
@@ -1773,11 +1786,7 @@ export default (props: any) => {
               };
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
-            dataSource={checkData?.map((_item)=>{
-              return {
-                ..._item
-              }
-            })}
+            dataSource={checkData}
             rowKey="id"
             pagination={false}
             scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
@@ -1812,8 +1821,10 @@ export default (props: any) => {
           <FilterGroup
             moudleName="BVI Data"
             authPagename={pageName}
-            onSearch={(val) => {
+            onSearch={(lineVal,val) => {
               latestGroupIdRef.current = val;
+              latestBusinessRef.current = lineVal;
+              console.log(latestBusinessRef.current)
               // getData(val);
               if (current != 1) {
                 setCurrent(1);

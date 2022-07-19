@@ -473,7 +473,7 @@ export default (props: any) => {
                     : null,
                 });
                 if (
-                  formDataEdit.getFieldValue('billingStatus') == '2'
+                  formDataEdit.getFieldValue('billingStatus') == 'Successfully'
                 ) {
                   setSuccessMark(false);
                 } else {

@@ -523,44 +523,44 @@ export default (props: any) => {
     const statusUNfreezzMark = selectedRows.some((item) => {
       return item.billingStatus == "Successfully" || item.billingStatus == 'Cancel';
     });
-    console.log(statusUNfreezzMark)
+    
     let params = {
       billingStatus: statusIndex,
       recordIdList: selectedRowKeys,
     };
     switch (statusIndex) {
-      case 1:
+      case "1":
         break;
-      case 2:
+      case "2":
         break;
-      case 3:
+      case "3":
         if (statusMark) {
           message.error('Please repeat the selection');
           return;
         }
         break;
-      case 4:
+      case "4":
         if (statusMark) {
           message.error('Please repeat the selection');
           return;
         }
         break;
-      case 5:
+      case "5":
         break;
-      case 6:
+      case "6":
         break;
-      case 7:
+      case "7":
         if(statusUNfreezzMark){
-          message.error('Please repeat the selection');
+          message.error('Unchangeable');
           return;
         }
         break;
-      case 8:
+      case "8":
         break;
-      case 9:
+      case "9":
         params.billingStatus = 0;
         break;
-      case 10:
+      case "10":
         params.billingStatus = -1;
         break;
     }
@@ -569,11 +569,18 @@ export default (props: any) => {
         getData();
         setSelectedRowKeys([]);
         message.success(res.msg);
-        if (statusIndex == 7) {
+        if (statusIndex == "7") {
           notification.open({
             message: 'Tip',
             description:
               'Please add the relevant information about SAP recharge',
+          });
+        }
+        if (statusIndex == "2") {
+          notification.open({
+            message: 'Tip',
+            description:
+              'Please fill in the SAP recharge data',
           });
         }
       } else {

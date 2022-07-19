@@ -39,15 +39,11 @@ interface FilterGroupType {
   moudleName: string; //模块标识
   authPagename?: string; //模块权限用名称
   customComponet?: React.ReactNode; //自定义渲染组件【ex:checkbox等
-  onSearch: (val: string | number) => void; //搜索方法
+  onSearch: (lineVal:any,val: string | number) => void; //搜索方法
   onClear: () => void;
   exportAction?: () => void; //导出
 }
-export default forwardRef((props: FilterGroupType,ref) => {
-  useImperativeHandle(ref, () => ({
-    BusinessLine,
-    setBusinessLine,
-  }))
+export default (props: FilterGroupType,ref) => {
   const [filterGroup, setFilterGroup] = useState('');
   const [BusinessLine, setBusinessLine] = useState('');
   const [isSetting, setSetting] = useState(false);
@@ -143,8 +139,9 @@ export default forwardRef((props: FilterGroupType,ref) => {
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
   };
-  const changeBusinessLine = (val) => {
-    setBusinessLine(val);
+  const changeBusinessLine = (value,data) => {
+    // console.log(value,data)
+    setBusinessLine(value);
   };
   const [form] = Form.useForm();
 
@@ -697,7 +694,7 @@ export default forwardRef((props: FilterGroupType,ref) => {
         <label>Business Line:</label>
         <DebounceSelect
           initFlag
-          onChange={(value, data) => {changeBusinessLine}}
+          onChange={(value, data) => {changeBusinessLine(value,data)}}
           getoptions={(options) => {
             return options?.map((x, index) => {
               return (
@@ -738,7 +735,7 @@ export default forwardRef((props: FilterGroupType,ref) => {
             <Button
               type="primary"
               icon={<i className="gbs gbs-search"></i>}
-              onClick={() => props.onSearch(filterGroup)}
+              onClick={() => props.onSearch(BusinessLine,filterGroup)}
             ></Button>
             {checkAuth(props?.authPagename, props?.authPagename + '-Edit') ? (
               <Tooltip title="Setting">
@@ -780,4 +777,4 @@ export default forwardRef((props: FilterGroupType,ref) => {
       </FilterGroupDiv>
     </>
   );
-});
+};

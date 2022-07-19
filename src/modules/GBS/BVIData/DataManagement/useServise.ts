@@ -45,6 +45,7 @@ export default (props: any) => {
   const [orderField, setOrderField] = useState('modifiedDate');
   const [orderType, setOrderType] = useState('descend');
   const latestGroupIdRef = useRef<any>();
+  const latestBusinessRef = useRef<any>();
   const errorCheckedRef = useRef<any>(false);
   const UnconfirmDataRef = useRef<any>(false);
   const [showPro, setShowPro] = useState(false);
@@ -533,6 +534,7 @@ export default (props: any) => {
     insertFormData,
     editFormData,
     latestGroupIdRef,
+    latestBusinessRef,
     errorCheckedRef,
     UnconfirmDataRef,
     setCurrent,
