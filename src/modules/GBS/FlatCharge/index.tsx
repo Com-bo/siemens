@@ -55,7 +55,7 @@ import {
 import './style.less';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
-import { getCompanyCodeDrop } from '@/app/request/common';
+import { getCompanyCodeDrop,ProductPoDrop } from '@/app/request/common';
 import { getCostCenterData } from '@/app/request/apiCostCenter';
 import DebounceSelect from '@/components/Select/debounceSelect';
 const pageName = 'FlatCharge';
@@ -869,7 +869,7 @@ export default (props: any) => {
     },
   ];
   const latestGroupIdRef = useRef<any>();
-  const filterBusiness=useRef()
+  const filterBusinessRef=useRef()
   const errorCheckedRef = useRef<any>(false);
   useEffect(() => {
     _getData();
@@ -890,7 +890,7 @@ export default (props: any) => {
     let params = {
       searchCondition: {
         userBusinessLineList: [
-          "string"
+          filterBusinessRef.current
         ],
         filterGroup: {
           recordId: latestGroupIdRef.current,
@@ -1117,6 +1117,7 @@ export default (props: any) => {
       serviceLine: data.serviceLine,
       customerDivision: data.customerDivision,
       productName: data.productName,
+      productId: data.id,
     });
     handlerCancelProSearch();
   };
@@ -1428,7 +1429,7 @@ export default (props: any) => {
               <Form.Item
                 label="Customer Division"
                 name="customerDivision"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>
@@ -1721,9 +1722,56 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="PO" name="po" rules={[{ required: true }]}>
-                <Input disabled={componentDisabled} />
+              {formData.getFieldValue("are")!="5547"?(
+                <Form.Item
+                labelCol={{ flex: '50px' }}
+                label="PO"
+                name="po"
+                rules={[{ required: true }]}
+              >
+                <DebounceSelect
+                  initFlag
+                  disabled={componentDisabled}
+                  getoptions={(options) => {
+                    return options?.map((x, index) => {
+                      return (
+                        <Select.Option
+                          style={{ width: '100%' }}
+                          key={index}
+                          data={x}
+                          value={x.poNumber}
+                        >
+                          {x.poNumber}
+                        </Select.Option>
+                      );
+                    });
+                  }}
+                  delegate={(e) => {
+                    if (!formData.getFieldValue('productId')) {
+                      return Promise.resolve({
+                        code: 200,
+                        isSuccess: true,
+                        data: [],
+                      });
+                    }
+                    return ProductPoDrop({
+                      productId: formData.getFieldValue('productId'),
+                      poNumber: e,
+                    });
+                  }}
+                />
               </Form.Item>
+              ):(
+                <Form.Item
+                labelCol={{ flex: '50px' }}
+                label="PO"
+                name="po"
+                >
+                <Input
+                  style={{ width: '100%' }}
+                />
+                </Form.Item>
+              )}
             </Col>
             <Col span={8}>
               <Form.Item
@@ -1850,7 +1898,7 @@ export default (props: any) => {
             moudleName="Flat Charge"
             authPagename={pageName}
             onSearch={(lineVal,val) => {
-              console.log(lineVal)
+              filterBusinessRef.current= lineVal;
               latestGroupIdRef.current = val;
               if (current != 1) {
                 setCurrent(1);

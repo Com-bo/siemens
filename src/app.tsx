@@ -127,6 +127,7 @@ export async function render(oldRender) {
   getLoginUser().then((res: any) => {
     if (res.isSuccess) {
       sessionStorage.setItem('user', res.data?.realName);
+      sessionStorage.setItem('businessLines', JSON.stringify(res.data?.businessLines));
       parseTree(res.data.auhtList, _routes);
       console.log(authBtnCodes);
       console.log(_routes);

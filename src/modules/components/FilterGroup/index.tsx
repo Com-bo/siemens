@@ -50,6 +50,7 @@ export default (props: FilterGroupType,ref) => {
   const [operfields, setFields] = useState({});
   const [operList, setOperList] = useState([]);
   const [filterGropList, setFilterGroupList] = useState([]);
+  const [BusinessLineList, setBusinessLineList] = useState(JSON.parse(sessionStorage.getItem("businessLines")));
   const [requireMark, setRequireMark] = useState(false);
   const [filterGroupInfoById, setFilterGroupInfoById] = useState({});
   const { Option } = Select;
@@ -139,9 +140,9 @@ export default (props: FilterGroupType,ref) => {
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
   };
-  const changeBusinessLine = (value,data) => {
+  const changeBusinessLine = (val) => {
     // console.log(value,data)
-    setBusinessLine(value);
+    setBusinessLine(val);
   };
   const [form] = Form.useForm();
 
@@ -691,25 +692,21 @@ export default (props: FilterGroupType,ref) => {
         </Form>
       </Modal>
       <FilterGroupDiv id="filterGroup">
+
         <label>Business Line:</label>
-        <DebounceSelect
-          initFlag
-          onChange={(value, data) => {changeBusinessLine(value,data)}}
-          getoptions={(options) => {
-            return options?.map((x, index) => {
-              return (
-                <Select.Option key={index} data={x} value={x.value}>
-                  {x.label}
-                </Select.Option>
-              );
-            });
-          }}
-          delegate={(e) => {
-            return queryBusinesslineOptionsList({
-              keywords: e,
-            });
-          }}
-        />
+        <Select
+          value={BusinessLine}
+          style={{ minWidth: '300px' }}
+          onChange={changeBusinessLine}
+          // allowClear
+        >
+          {BusinessLineList.map((item, i) => (
+            <Option key={i} value={item}>
+              {item}
+            </Option>
+          ))}
+        </Select>
+        
         <label>Filter Group:</label>
         <Select
           value={filterGroup}

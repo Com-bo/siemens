@@ -368,7 +368,7 @@ export const Index = (props: any) => {
           <Table
             columns={roleCols}
             data={roles}
-            type="radio"
+            type="checkbox"
             current={roleCurrent}
             pageSize={rolePageSize}
             total={roleTotal}
@@ -529,20 +529,21 @@ export const Index = (props: any) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={10}>
+            <Col span={12}>
               <Form.Item label="Role" name="role" rules={[{ required: true }]}>
-                    <Select
-                    mode="multiple"
+                {/* <Input.Search
+                    readOnly
+                    onSearch={() => roleFunc(form.getFieldValue('role') || '')}
+                  /> */}
+                  <Select
+                    // ref={selectref}
                     open={false}
+                    mode="multiple"
                     allowClear
-                    style={{ width: '100%' }}
-                    placeholder="Please select"
-                  >
-                  </Select>
+                    placeholder="Select a person"
+                    onFocus={() => roleFunc(form.getFieldValue('role') || '')}
+                  ></Select>
               </Form.Item>
-            </Col>
-            <Col span={2}>
-                <Button type="primary" onClick={() => roleFunc(form.getFieldValue('role') || '')}>Pick</Button>
             </Col>
             {/* <Col span={12}>
               <Form.Item label="Enable" name="enable" valuePropName="checked">

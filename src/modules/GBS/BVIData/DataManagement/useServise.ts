@@ -45,7 +45,7 @@ export default (props: any) => {
   const [orderField, setOrderField] = useState('modifiedDate');
   const [orderType, setOrderType] = useState('descend');
   const latestGroupIdRef = useRef<any>();
-  const latestBusinessRef = useRef<any>();
+  const latestBusinessRef = useRef();
   const errorCheckedRef = useRef<any>(false);
   const UnconfirmDataRef = useRef<any>(false);
   const [showPro, setShowPro] = useState(false);
@@ -150,6 +150,9 @@ export default (props: any) => {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
+        userBusinessLineList: [
+          latestBusinessRef.current
+        ],
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
         isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
@@ -376,8 +379,8 @@ export default (props: any) => {
           isTag: formData.getFieldValue('adjustTag'),
           billingARE: formData.getFieldValue('billingARE'),
           billingCostCenter: formData.getFieldValue('billingCostCenter'),
-          templateType: formData.getFieldValue('templateType'),
-          batchNo: formData.getFieldValue('batchNo'),
+          templateType: formData.getFieldValue('templateType') || "",
+          batchNo: formData.getFieldValue('batchNo') || "",
           businessLine: formData.getFieldValue('businessLine'),
         };
 
