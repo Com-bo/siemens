@@ -83,7 +83,7 @@ export const Index = (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'userName',
+      name: 'name',
       title: 'User Name',
       titleRender: 'input',
     },
@@ -95,28 +95,29 @@ export const Index = (props: any) => {
     {
       name: 'are',
       title: 'ARE',
-      // titleRender: 'input',
+      render: (text) => (text && Array.isArray(text) ? text.join(',') : text),
     },
     {
       title: 'CustomerDivision',
       name: 'customerDivision',
       width: '180px',
-      // titleRender: 'input',
+      render: (text) => (text && Array.isArray(text) ? text.join(',') : text),
     },
     {
       title: 'BusinessLine',
       name: 'businessLine',
-      // titleRender: 'input',
+      render: (text) => (text && Array.isArray(text) ? text.join(',') : text),
     },
     {
       title: 'Role',
       name: 'role',
+      render: (text) => (text && Array.isArray(text) ? text.join(',') : text),
       // titleRender: 'input',
     },
     {
       title: 'Enable',
       name: 'enable',
-      // titleRender: 'input',
+      render: (text) => (text != 0 ? 'Yes' : 'No'),
     },
     {
       name: 'Operate',
@@ -133,7 +134,15 @@ export const Index = (props: any) => {
               onClick={() => {
                 formData.setFieldsValue({
                   ...record,
-                  // enable: record.enable === 1 ? true : false,
+                  role: record.role ? record.role.join(',') : '',
+                  are: record.are ? record.are.join(',') : '',
+                  customerDivision: record.customerDivision
+                    ? record.customerDivision.join(',')
+                    : '',
+                  businessLine: record.businessLine
+                    ? record.businessLine.join(',')
+                    : '',
+                  enable: record.enable === 1 ? true : false,
                 });
                 showUserDataFuc(record.roleName);
               }}
@@ -317,8 +326,8 @@ export const Index = (props: any) => {
   const handleRoleOk = () => {
     // selectRole
     formData.setFieldsValue({
-      role: formData.getFieldValue('role').concat(selectRole),
-      // role: selectRole.join(',')
+      // role: formData.getFieldValue('role').concat(selectRole),
+      role: selectRole.join(','),
     });
     setIsRoles(false);
     setSelectedRoles([]);
@@ -528,18 +537,10 @@ export const Index = (props: any) => {
             </Col>
             <Col span={12}>
               <Form.Item label="Role" name="role" rules={[{ required: true }]}>
-                {/* <Input.Search
-                    readOnly
-                    onSearch={() => roleFunc(form.getFieldValue('role') || '')}
-                  /> */}
-                <Select
-                  // ref={selectref}
-                  open={false}
-                  mode="multiple"
-                  allowClear
-                  placeholder="Select a person"
-                  onFocus={() => roleFunc(form.getFieldValue('role') || '')}
-                ></Select>
+                <Input.Search
+                  readOnly
+                  onSearch={() => roleFunc(form.getFieldValue('role') || '')}
+                />
               </Form.Item>
             </Col>
             {/* <Col span={12}>

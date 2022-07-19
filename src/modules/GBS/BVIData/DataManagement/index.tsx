@@ -1451,10 +1451,6 @@ export default (props: any) => {
                 </Form.Item>
               ) : (
                 <Form.Item labelCol={{ flex: '50px' }} label="PO" name="po">
-                  <InputNumber
-                    // min={0}
-                    style={{ width: '100%' }}
-                  />
                   <Input style={{ width: '100%' }} />
                 </Form.Item>
               )}
