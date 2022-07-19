@@ -38,12 +38,20 @@ interface FilterGroupType {
   moudleName: string; //模块标识
   authPagename?: string; //模块权限用名称
   customComponet?: React.ReactNode; //自定义渲染组件【ex:checkbox等
+<<<<<<< Updated upstream
   onSearch: (val: string | number) => void; //搜索方法
+=======
+  onSearch: (lineVal: any, val: string | number) => void; //搜索方法
+>>>>>>> Stashed changes
   onClear: () => void;
   exportAction?: () => void; //导出
   businessLineRender?: React.ReactNode;
 }
+<<<<<<< Updated upstream
 export default (props: FilterGroupType) => {
+=======
+export default (props: FilterGroupType, ref) => {
+>>>>>>> Stashed changes
   const [filterGroup, setFilterGroup] = useState('');
   const [isSetting, setSetting] = useState(false);
   const [operfields, setFields] = useState({});
@@ -229,7 +237,7 @@ export default (props: FilterGroupType) => {
           <DebounceSelect
             initFlag
             mode="multiple"
-            onChange={(value, data) => {}}
+            onChange={(value, data) => { }}
             getoptions={(options) => {
               return options?.map((x, index) => {
                 return (
@@ -259,7 +267,7 @@ export default (props: FilterGroupType) => {
           <DebounceSelect
             initFlag
             mode="multiple"
-            onChange={(value, data) => {}}
+            onChange={(value, data) => { }}
             getoptions={(options) => {
               return options?.map((x, index) => {
                 return (
@@ -289,7 +297,7 @@ export default (props: FilterGroupType) => {
           <DebounceSelect
             initFlag
             mode="multiple"
-            onChange={(value, data) => {}}
+            onChange={(value, data) => { }}
             getoptions={(options) => {
               return options?.map((x, index) => {
                 return (
@@ -309,6 +317,7 @@ export default (props: FilterGroupType) => {
       case 'StartMonth':
       case 'EndMonth':
       case 'BVIMonth':
+      case 'BillingMonth':
         if (typeof arra[index].fieldValue == 'string') {
           arra[index].fieldValue =
             arra[index].fieldValue && moment(arra[index].fieldValue).isValid()
@@ -381,6 +390,7 @@ export default (props: FilterGroupType) => {
             case 'StartMonth':
             case 'EndMonth':
             case 'BVIMonth':
+            case 'BillingMonth':
               item.fieldValue = moment(item.fieldValue).format('YYYYMM');
               break;
             case 'ModifiedDate':
@@ -411,8 +421,8 @@ export default (props: FilterGroupType) => {
             groupName: type
               ? form.getFieldValue('groupName')
               : filterGropList.find(
-                  (item) => item.value == form.getFieldValue('id'),
-                ).label,
+                (item) => item.value == form.getFieldValue('id'),
+              ).label,
             moduleName: props.moudleName,
             conditionRelationship: form.getFieldValue('conditionRelationship'),
           },
@@ -462,7 +472,7 @@ export default (props: FilterGroupType) => {
           });
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
   const validGroupName = (rule, value, callback) => {
     if (form.getFieldValue('isNew') && !value) {
@@ -687,6 +697,7 @@ export default (props: FilterGroupType) => {
         </Form>
       </Modal>
       <FilterGroupDiv id="filterGroup">
+<<<<<<< Updated upstream
         <Space size={0}>
           {props?.businessLineRender}
           <label>Filter Group:</label>
@@ -742,6 +753,52 @@ export default (props: FilterGroupType) => {
                 ></Button>
               </Tooltip>
               <Tooltip title="Clear">
+=======
+
+        <label>Business Line:</label>
+        <Select
+          value={BusinessLine}
+          style={{ minWidth: '300px' }}
+          onChange={changeBusinessLine}
+        // allowClear
+        >
+          {BusinessLineList.map((item, i) => (
+            <Option key={i} value={item}>
+              {item}
+            </Option>
+          ))}
+        </Select>
+
+        <label>Filter Group:</label>
+        <Select
+          value={filterGroup}
+          style={{ minWidth: '300px' }}
+          onChange={changeFilterGroup}
+        // allowClear
+        >
+          {filterGropList.map((item, i) => (
+            <Option key={i} value={item?.value}>
+              {item?.label}
+            </Option>
+          ))}
+        </Select>
+        <AuthWrapper
+          functionName={props?.authPagename}
+          authCode={[
+            props?.authPagename + '-View',
+            props?.authPagename + '-Edit',
+          ]}
+        >
+          <Space size={10}>
+            {props?.customComponet}
+            <Button
+              type="primary"
+              icon={<i className="gbs gbs-search"></i>}
+              onClick={() => props.onSearch(BusinessLine, filterGroup)}
+            ></Button>
+            {checkAuth(props?.authPagename, props?.authPagename + '-Edit') ? (
+              <Tooltip title="Setting">
+>>>>>>> Stashed changes
                 <Button
                   icon={<ClearOutlined />}
                   onClick={() => {

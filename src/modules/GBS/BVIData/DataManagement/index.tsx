@@ -2077,7 +2077,7 @@ export default (props: any) => {
                             <a
                               href={
                                 process.env.WEB_URL +
-                                '/template/O2C TI BVI Template.xlsx'
+                                '/template/O2C TI BVI Template.xls'
                               }
                             >
                               O2C TI BVI Template

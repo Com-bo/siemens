@@ -581,7 +581,7 @@ export const Index = (props: any) => {
       renderT: (inputRef, save, record, dataIndex) => {
         return (
           <Form.Item
-            rules={[{ required: true, message: '' }]}
+            // rules={[{ required: true, message: '' }]}
             style={{ margin: 0 }}
             name="poNumber"
           >
@@ -805,10 +805,10 @@ export const Index = (props: any) => {
         message.warning(`Index ${i + 1} ,please input PO Number`);
         return;
       }
-      if (ponums.indexOf(_product.poNumber) != -1) {
-        message.warning(`Index ${i + 1} ,PO Number should not be repeated `);
-        return;
-      }
+      // if (ponums.indexOf(_product.poNumber) != -1) {
+      //   message.warning(`Index ${i + 1} ,PO Number should not be repeated `);
+      //   return;
+      // }
       if (_product.poPercentage === 0) {
         message.warning(
           `Index ${
@@ -1108,7 +1108,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="GSC_description"
                 name="gscDescription"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>
