@@ -30,11 +30,10 @@ import {
   Switch,
   Tooltip,
 } from 'antd';
-import React, { ReactNode, useEffect, useState, useImperativeHandle, forwardRef } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
-
 interface FilterGroupType {
   moudleName: string; //模块标识
   authPagename?: string; //模块权限用名称
@@ -42,14 +41,10 @@ interface FilterGroupType {
   onSearch: (val: string | number) => void; //搜索方法
   onClear: () => void;
   exportAction?: () => void; //导出
+  businessLineRender?: React.ReactNode;
 }
-export default forwardRef((props: FilterGroupType,ref) => {
-  useImperativeHandle(ref, () => ({
-    BusinessLine,
-    setBusinessLine,
-  }))
+export default (props: FilterGroupType) => {
   const [filterGroup, setFilterGroup] = useState('');
-  const [BusinessLine, setBusinessLine] = useState('');
   const [isSetting, setSetting] = useState(false);
   const [operfields, setFields] = useState({});
   const [operList, setOperList] = useState([]);
@@ -142,9 +137,6 @@ export default forwardRef((props: FilterGroupType,ref) => {
 
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
-  };
-  const changeBusinessLine = (val) => {
-    setBusinessLine(val);
   };
   const [form] = Form.useForm();
 
@@ -694,90 +686,73 @@ export default forwardRef((props: FilterGroupType,ref) => {
         </Form>
       </Modal>
       <FilterGroupDiv id="filterGroup">
-        <label>Business Line:</label>
-        <DebounceSelect
-          initFlag
-          onChange={(value, data) => {changeBusinessLine}}
-          getoptions={(options) => {
-            return options?.map((x, index) => {
-              return (
-                <Select.Option key={index} data={x} value={x.value}>
-                  {x.label}
-                </Select.Option>
-              );
-            });
-          }}
-          delegate={(e) => {
-            return queryBusinesslineOptionsList({
-              keywords: e,
-            });
-          }}
-        />
-        <label>Filter Group:</label>
-        <Select
-          value={filterGroup}
-          style={{ minWidth: '300px' }}
-          onChange={changeFilterGroup}
-          // allowClear
-        >
-          {filterGropList.map((item, i) => (
-            <Option key={i} value={item?.value}>
-              {item?.label}
-            </Option>
-          ))}
-        </Select>
-        <AuthWrapper
-          functionName={props?.authPagename}
-          authCode={[
-            props?.authPagename + '-View',
-            props?.authPagename + '-Edit',
-          ]}
-        >
-          <Space size={10}>
-            {props?.customComponet}
-            <Button
-              type="primary"
-              icon={<i className="gbs gbs-search"></i>}
-              onClick={() => props.onSearch(filterGroup)}
-            ></Button>
-            {checkAuth(props?.authPagename, props?.authPagename + '-Edit') ? (
-              <Tooltip title="Setting">
+        <Space size={0}>
+          {props?.businessLineRender}
+          <label>Filter Group:</label>
+          <Select
+            value={filterGroup}
+            // style={{ minWidth: '300px' }}
+            onChange={changeFilterGroup}
+            // allowClear
+          >
+            {filterGropList.map((item, i) => (
+              <Option key={i} value={item?.value}>
+                {item?.label}
+              </Option>
+            ))}
+          </Select>
+          <AuthWrapper
+            functionName={props?.authPagename}
+            authCode={[
+              props?.authPagename + '-View',
+              props?.authPagename + '-Edit',
+            ]}
+          >
+            <Space size={10}>
+              {props?.customComponet}
+              <Button
+                type="primary"
+                icon={<i className="gbs gbs-search"></i>}
+                onClick={() => props.onSearch(filterGroup)}
+              ></Button>
+              {checkAuth(props?.authPagename, props?.authPagename + '-Edit') ? (
+                <Tooltip title="Setting">
+                  <Button
+                    icon={<i className="gbs gbs-setting"></i>}
+                    onClick={() => {
+                      form.resetFields();
+                      form.setFieldsValue({
+                        groupFieldList: [
+                          { fieldName: '', operator: '', fieldValue: '' },
+                        ],
+                      });
+                      setSetting(true);
+                    }}
+                  ></Button>
+                </Tooltip>
+              ) : (
+                ''
+              )}
+              {/* 导出 */}
+              <Tooltip title="Export">
                 <Button
-                  icon={<i className="gbs gbs-setting"></i>}
+                  icon={<i className="gbs gbs-export"></i>}
+                  onClick={props.exportAction}
+                ></Button>
+              </Tooltip>
+              <Tooltip title="Clear">
+                <Button
+                  icon={<ClearOutlined />}
                   onClick={() => {
-                    form.resetFields();
-                    form.setFieldsValue({
-                      groupFieldList: [
-                        { fieldName: '', operator: '', fieldValue: '' },
-                      ],
-                    });
-                    setSetting(true);
+                    setFilterGroup('');
+                    props.onClear();
                   }}
                 ></Button>
               </Tooltip>
-            ) : (
-              ''
-            )}
-
-            <Tooltip title="Export">
-              <Button
-                icon={<i className="gbs gbs-export"></i>}
-                onClick={props.exportAction}
-              ></Button>
-            </Tooltip>
-            <Tooltip title="Clear">
-              <Button
-                icon={<ClearOutlined />}
-                onClick={() => {
-                  setFilterGroup('');
-                  setBusinessLine('');
-                  props.onClear();
-                }}
-              ></Button>
-            </Tooltip>
-          </Space>
-        </AuthWrapper>
+            </Space>
+          </AuthWrapper>
+        </Space>
       </FilterGroupDiv>
     </>
   );
-});
+};

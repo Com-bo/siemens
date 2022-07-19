@@ -53,8 +53,7 @@ import useService from './useServise';
 import TableMix from '@/components/Table';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
-import { forEach } from 'lodash';
-import Item from 'antd/lib/list/Item';
+
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 const pageName = 'BVIDataManage';
 export default (props: any) => {
@@ -154,6 +153,9 @@ export default (props: any) => {
     setCostcenterPageSize,
     costcenterTotal,
     setCostcenterTotal,
+    businesslineOptions,
+    business,
+    setBusiness,
   } = useService(props);
   const orignalCols = [
     {
@@ -247,7 +249,9 @@ export default (props: any) => {
         if (
           record.templateType == 'Flat Charge' ||
           record.templateType == 'H2R BVI Template' ||
-          record.templateType == 'BVI Manual Template' || (record.templateType == 'P2P BCS Template' && record.userno!="ROBOT_MICHAEL")
+          record.templateType == 'BVI Manual Template' ||
+          (record.templateType == 'P2P BCS Template' &&
+            record.userno != 'ROBOT_MICHAEL')
         ) {
           temptype = true;
         } else {
@@ -504,12 +508,14 @@ export default (props: any) => {
                       createdDate: record.createdDate
                         ? moment(record.createdDate)
                         : null,
-                      unitPrice:record.productUnitPrice,
-                      initialunitPrice:record.productUnitPrice
+                      unitPrice: record.productUnitPrice,
+                      initialunitPrice: record.productUnitPrice,
                     });
                     setComponentDisabled(false);
                     setShowBviData(true);
-                    message.info('Please choose whether to adjust the account first');
+                    message.info(
+                      'Please choose whether to adjust the account first',
+                    );
                   } else {
                     setEditListMark(true);
                     formDataEdit.setFieldsValue({
@@ -572,7 +578,8 @@ export default (props: any) => {
                     </Tooltip>
                   ) : (
                     <>
-                    {record.bviStatus.toLowerCase() == 'confirm' && record.templateType != 'Flat Charge' ? (
+                      {record.bviStatus.toLowerCase() == 'confirm' &&
+                      record.templateType != 'Flat Charge' ? (
                         <Tooltip title="Unconfirm">
                           <Button
                             onClick={(event) => event.stopPropagation()}
@@ -581,7 +588,9 @@ export default (props: any) => {
                             icon={<i className="gbs gbs-confirm"></i>}
                           ></Button>
                         </Tooltip>
-                      ):("")}
+                      ) : (
+                        ''
+                      )}
                     </>
                   )}
                 </Popconfirm>
@@ -854,8 +863,8 @@ export default (props: any) => {
       productName: data.productName,
       productId: data.id,
       po: null,
-      unitPrice:data.unitPrice,
-      initialunitPrice:data.unitPrice
+      unitPrice: data.unitPrice,
+      initialunitPrice: data.unitPrice,
     });
   };
 
@@ -1333,20 +1342,21 @@ export default (props: any) => {
                 valuePropName="checked"
               >
                 <Switch
-                  checkedChildren="Yes" unCheckedChildren="No"
+                  checkedChildren="Yes"
+                  unCheckedChildren="No"
                   disabled={componentDisabled}
                   onChange={(val) => {
                     formData.setFieldsValue({
                       adjustTag: val,
                     });
-                    if(val){
+                    if (val) {
                       formData.setFieldsValue({
-                        bvi: "",
-                        unitPrice:""
+                        bvi: '',
+                        unitPrice: '',
                       });
-                    }else{
+                    } else {
                       formData.setFieldsValue({
-                        unitPrice:formData.getFieldValue("initialunitPrice")
+                        unitPrice: formData.getFieldValue('initialunitPrice'),
                       });
                     }
                   }}
@@ -1360,10 +1370,10 @@ export default (props: any) => {
                   // min={0}
                   style={{ width: '100%' }}
                   onChange={(val) => {
-                    console.log(val)
-                    val=(val==""?0:Number(val))
+                    console.log(val);
+                    val = val == '' ? 0 : Number(val);
                     formData.setFieldsValue({
-                      totalAmount: val*formData.getFieldValue("unitPrice"),
+                      totalAmount: val * formData.getFieldValue('unitPrice'),
                     });
                   }}
                 />
@@ -1399,12 +1409,11 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              
               <Form.Item
                 labelCol={{ flex: '50px' }}
                 label="PO"
                 name="po"
-                rules={[{ required: formData.getFieldValue("are")!="5547" }]}
+                rules={[{ required: formData.getFieldValue('are') != '5547' }]}
               >
                 <DebounceSelect
                   initFlag
@@ -1756,27 +1765,25 @@ export default (props: any) => {
                     return (
                       <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
                     );
-                  }else if((_item.dataIndex == 'postingDate' || 
-                  _item.dataIndex=="entryDate" || 
-                  _item.dataIndex=="documentDate" || 
-                  _item.dataIndex=="netDueDate" ||
-                  _item.dataIndex=="billingDate" 
-                  )){
-                      return moment(text).format('YYYY-MM-DD')
-  
-                  }
-                   else {
+                  } else if (
+                    _item.dataIndex == 'postingDate' ||
+                    _item.dataIndex == 'entryDate' ||
+                    _item.dataIndex == 'documentDate' ||
+                    _item.dataIndex == 'netDueDate' ||
+                    _item.dataIndex == 'billingDate'
+                  ) {
+                    return moment(text).format('YYYY-MM-DD');
+                  } else {
                     return text;
                   }
-                  
                 },
               };
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
-            dataSource={checkData?.map((_item)=>{
+            dataSource={checkData?.map((_item) => {
               return {
-                ..._item
-              }
+                ..._item,
+              };
             })}
             rowKey="id"
             pagination={false}
@@ -1810,6 +1817,24 @@ export default (props: any) => {
         listName="Data Management"
         renderFilterGroup={
           <FilterGroup
+            businessLineRender={
+              <>
+                <label>BVI Business Line:</label>
+                <Select
+                  placeholder="Please select"
+                  value={business}
+                  onChange={(val) => {
+                    setBusiness(val);
+                  }}
+                >
+                  {businesslineOptions?.map((item, index) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </>
+            }
             moudleName="BVI Data"
             authPagename={pageName}
             onSearch={(val) => {
@@ -1934,10 +1959,11 @@ export default (props: any) => {
                           item.templateType == 'Flat Charge' ||
                           item.templateType == 'H2R BVI Template' ||
                           item.templateType == 'BVI Manual Template' ||
-                          (item.templateType == 'P2P BCS Template' && item.userno!="ROBOT_MICHAEL")
-                          );
-                        });
-                        if (recheckMark) {
+                          (item.templateType == 'P2P BCS Template' &&
+                            item.userno != 'ROBOT_MICHAEL')
+                        );
+                      });
+                      if (recheckMark) {
                         message.error('Export of source data is not supported');
                       } else {
                         onExport();
@@ -1970,7 +1996,9 @@ export default (props: any) => {
                               adjustTag: false,
                               uploadUser: sessionStorage.getItem('user'),
                             });
-                            message.info('Please choose whether to adjust the account first');
+                            message.info(
+                              'Please choose whether to adjust the account first',
+                            );
                           }}
                         >
                           <span style={{ margin: '0 10px' }}>Add</span>

@@ -50,13 +50,9 @@ import {
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
-import TableMix from '@/components/Table';
-import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 const pageName = 'BillingDataManagement';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
-import { forEach } from 'lodash';
-import Item from 'antd/lib/list/Item';
 export default (props: any) => {
   const {
     form,
@@ -106,31 +102,13 @@ export default (props: any) => {
     errorCheckedRef,
     UnconfirmDataRef,
     setCurrent,
-    showPro,
-    setShowPro,
-    proForm,
-    proCurrent,
-    setProCurrent,
-    proSize,
-    setProSize,
-    productData,
-    setProductData,
-    proTotal,
-    setProTotal,
-    _getProduct,
-    selectProKeys,
-    setSelectProKeys,
-    selectProductRow,
-    setSelectProductRow,
+
     editDataListSaveFn,
     editListMark,
     setEditListMark,
     customerDivision,
     setCustomerDivision,
     formDataEdit,
-    onExportOriginal,
-
-    //
     successMark,
     setSuccessMark,
     freezeDataMethod,
@@ -140,6 +118,10 @@ export default (props: any) => {
 
     ImportFlieFn,
     billingStatusGroup,
+    // -----
+    setBusiness,
+    business,
+    businesslineOptions,
   } = useService(props);
   const orignalCols = [
     {
@@ -472,9 +454,7 @@ export default (props: any) => {
                     ? moment(record.billingDate)
                     : null,
                 });
-                if (
-                  formDataEdit.getFieldValue('billingStatus') == '2'
-                ) {
+                if (formDataEdit.getFieldValue('billingStatus') == '2') {
                   setSuccessMark(false);
                 } else {
                   setSuccessMark(true);
@@ -486,9 +466,6 @@ export default (props: any) => {
       ),
     },
   ];
-  const savefilterGroup = () => {
-    console.log('please save  filter group interface');
-  };
 
   const uploadProps = {
     beforeUpload: () => {
@@ -541,7 +518,7 @@ export default (props: any) => {
   };
   const handleChangebus = (val: string) => {
     if (val == '2') {
-      message.info("Please fill in the SAP recharge data")
+      message.info('Please fill in the SAP recharge data');
       setSuccessMark(false);
     } else {
       setSuccessMark(true);
@@ -771,6 +748,25 @@ export default (props: any) => {
         listName="Data Management"
         renderFilterGroup={
           <FilterGroup
+            businessLineRender={
+              <>
+                <label>Business Line:</label>
+                <Select
+                  placeholder="Please select"
+                  value={business}
+                  mode="multiple"
+                  onChange={(val) => {
+                    setBusiness(val);
+                  }}
+                >
+                  {businesslineOptions?.map((item, index) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </>
+            }
             moudleName="Billing Data"
             authPagename={pageName}
             onSearch={(val) => {

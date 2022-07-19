@@ -17,13 +17,16 @@ export const Api = {
   QueryDictionaryInfo: '/api/System/QueryDictionaryInfo', //数据字典
   ProductPoDrop: '/api/ProductPo/QueryPageDropListData', //Product下拉
   // other data
-  OtherMasterDataQueryAREOCOptionsList: '/api/OtherMasterData/QueryAREOCOptionsList', 
-  OtherMasterDataQueryCustemerDivisionSLCOptionsList: '/api/OtherMasterData/QueryCustemerDivisionSLCOptionsList', 
-  
+  OtherMasterDataQueryAREOCOptionsList:
+    '/api/OtherMasterData/QueryAREOCOptionsList',
+  OtherMasterDataQueryCustemerDivisionSLCOptionsList:
+    '/api/OtherMasterData/QueryCustemerDivisionSLCOptionsList',
+
   // BVI
   ImportDataSave: '/api/ImportR2R/ImportDataSave', //导入R2r
   ImportManualDataSave: '/api/ImportManual/ImportDataSave', //导入ImportManual
   ImportH2RTE: '/api/ImportH2RTE/ImportDataSave', //导入ImportH2RTE
+  GetUserOperateTemplate: '/api/System/GetUserOperateTemplate', //根据用户获取模板
 
   ImportH2R: '/api/ImportH2R/ImportDataSave', //导入ImportH2R
   ImportH2RGMM: '/api/ImportH2RGMM/ImportDataSave', //导入ImportH2RGMM
@@ -42,7 +45,7 @@ export const Api = {
   InsertBVIData: '/api/BVIDataManage/InsertData', //添加数据
   EditBVIData: '/api/BVIDataManage/EditData', //编辑数据
   EditDataListSave: '/api/BVIDataManage/EditDataListSave', //批量编辑数据
-  ReCheckDataBVIData: '/api/BVIDataManage/ReCheckData', 
+  ReCheckDataBVIData: '/api/BVIDataManage/ReCheckData',
 
   QueryImportLog: '/api/BVIDataManage/QueryImportLog', //查询日志
   // Flat Charge
@@ -117,19 +120,19 @@ export const Api = {
   SpecialDivisionQueryListData: '/api/SpecialDivision/QueryListData',
   SpecialDivisionEditDataSave: '/api/SpecialDivision/EditDataSave',
   SpecialDivisionDeleteData: '/api/SpecialDivision/DeleteData',
-  
+
   BusinessLineQueryListData: '/api/BusinessLine/QueryListData',
   BusinessLineExportData: '/api/BusinessLine/ExportData',
   BusinessLineEditDataSave: '/api/BusinessLine/EditDataSave',
   BusinessLineDeleteData: '/api/BusinessLine/DeleteData',
   BusinessLineQueryLogData: '/api/BusinessLine/QueryLogData',
-  
+
   ICBCustomerInfoQueryListData: '/api/ICBCustomerInfo/QueryListData',
   ICBCustomerInfoExportData: '/api/ICBCustomerInfo/ExportData',
   ICBCustomerInfoEditDataSave: '/api/ICBCustomerInfo/EditDataSave',
   ICBCustomerInfoDeleteData: '/api/ICBCustomerInfo/DeleteData',
   ICBCustomerInfoQueryLogData: '/api/ICBCustomerInfo/QueryLogData',
-  
+
   ServiceLineBasicQueryListData: '/api/ServiceLineBasic/QueryListData',
   ServiceLineBasicExportData: '/api/ServiceLineBasic/ExportData',
   ServiceLineBasicEditDataSave: '/api/ServiceLineBasic/EditDataSave',

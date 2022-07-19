@@ -4,6 +4,7 @@ import {
   Form,
   InputNumber,
   message,
+  Select,
   Table,
   Tabs,
   Typography,
@@ -15,11 +16,6 @@ import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
 import { TabWrapDiv } from './style';
 import {
-  deferenceDataExport,
-  detalInPercentageConfigQuery,
-  getDiffData,
-  getIntergrityReportData,
-  exportIntergrityReport,
   //
   BillingIntegrityDataQuery,
   BillingIntegrityDataExport,
@@ -29,6 +25,7 @@ import {
 } from '@/app/request/apiValidReport';
 import moment from 'moment';
 const pageName = 'BillingValidationReport';
+const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 const { Text } = Typography;
 export default (props: any) => {
   const [form] = Form.useForm();
@@ -52,6 +49,8 @@ export default (props: any) => {
     minusColorCode: '',
   });
   const [first, setFirst] = useState(true);
+  const [business, setBusiness] = useState([businesslineOptions[0]]);
+  const [businessDiff, setBusinessDiff] = useState([businesslineOptions[0]]);
   const orignalCols = [
     {
       name: 'businessLine',
@@ -183,12 +182,17 @@ export default (props: any) => {
   const latestDiffGroupIdRef = useRef<any>();
   const latestGroupIdRef = useRef<any>();
   const _getData = async () => {
+    if (!business || !business.length) {
+      message.warning('Please select [Bussiness Line]!'); //暂无权限提示
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
+        userBusinessLineList: business,
       },
       pageIndex: current,
       pageSize: pageSize,
@@ -207,6 +211,10 @@ export default (props: any) => {
     plusColorCode: string;
     minusColorCode: string;
   }) => {
+    if (!businessDiff || !businessDiff.length) {
+      message.warning('Please select [Bussiness Line]!'); //暂无权限提示
+      return;
+    }
     let _deltaInPercentage = {};
     if (deltaParam) {
       _deltaInPercentage = deltaParam;
@@ -220,6 +228,7 @@ export default (props: any) => {
         },
         listHeader: diffForm.getFieldsValue(),
         deltaInPercentage: _deltaInPercentage,
+        userBusinessLineList: businessDiff,
       },
       pageIndex: diffCurrent,
       pageSize: diffPageSize,
@@ -337,6 +346,25 @@ export default (props: any) => {
             listName="Validation Report"
             renderFilterGroup={
               <FilterGroup
+                businessLineRender={
+                  <>
+                    <label>Business Line:</label>
+                    <Select
+                      placeholder="Please select"
+                      mode="multiple"
+                      value={business}
+                      onChange={(val) => {
+                        setBusiness(val);
+                      }}
+                    >
+                      {businesslineOptions.map((item, index) => (
+                        <Select.Option key={index} value={item}>
+                          {item}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </>
+                }
                 moudleName="Billing Integrity Report"
                 authPagename={pageName}
                 onSearch={(val) => {
@@ -427,6 +455,25 @@ export default (props: any) => {
             )}
             renderFilterGroup={
               <FilterGroup
+                businessLineRender={
+                  <>
+                    <label>Business Line:</label>
+                    <Select
+                      placeholder="Please select"
+                      mode="multiple"
+                      value={businessDiff}
+                      onChange={(val) => {
+                        setBusinessDiff(val);
+                      }}
+                    >
+                      {businesslineOptions.map((item, index) => (
+                        <Select.Option key={index} value={item}>
+                          {item}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </>
+                }
                 moudleName="Billing Difference Report"
                 authPagename={pageName}
                 onSearch={(val) => {

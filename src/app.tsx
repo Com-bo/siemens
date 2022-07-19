@@ -3,7 +3,7 @@ import Mgr from '@/services/SecurityService';
 import { message, notification, Modal } from 'antd';
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 import '@/app/framework';
-import { getLoginUser } from '@/app/request/apiUser'
+import { getLoginUser } from '@/app/request/apiUser';
 let authBtnCodes = {};
 let sysRoutes = [];
 const parseTree = (datas, resultData) => {
@@ -38,7 +38,7 @@ const parseTree = (datas, resultData) => {
         if (
           datas[i].subTree &&
           datas[i].subTree.length &&
-          !datas[i].subTree[0].path 
+          !datas[i].subTree[0].path
         ) {
           sysRoutes.push(datas[i].path);
           resultData[i].routes = [];
@@ -106,7 +106,6 @@ export function patchRoutes({ routes }) {
   // });
 }
 
-
 let modalPrivacy: any;
 let _routes = [];
 export async function render(oldRender) {
@@ -127,6 +126,10 @@ export async function render(oldRender) {
   getLoginUser().then((res: any) => {
     if (res.isSuccess) {
       sessionStorage.setItem('user', res.data?.realName);
+      sessionStorage.setItem(
+        'businessLines',
+        JSON.stringify(res.data?.businessLines),
+      );
       parseTree(res.data.auhtList, _routes);
       console.log(authBtnCodes);
       console.log(_routes);
@@ -145,8 +148,6 @@ export async function render(oldRender) {
       });
     }
   });
-
-  
 }
 
 // 路由变化
@@ -167,7 +168,7 @@ export function onRouteChange({ location, routes, action }) {
     //   if (
     //     sysroutes.indexOf(location.pathname) == -1 &&
     //     location.pathname != '/404' &&
-    //     location.pathname != '/logout' 
+    //     location.pathname != '/logout'
     //   ) {
     //     history.replace('/404');
     //   }

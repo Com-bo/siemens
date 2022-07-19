@@ -20,26 +20,15 @@ const { RangePicker } = DatePicker;
 import moment from 'moment';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import { QueryImportLog } from '@/app/request/apiBVI';
-import {
-  DownOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
-import {
-  BtnTextRedWrap,
-  BtnBlueWrap,
-  BtnGreenWrap,
-  BtnOrangeWrap,
-  BtnThemeWrap,
-  ContentWrap,
-  FilterGroupDiv,
-} from '@/assets/style';
-import search from '@/assets/images/search.png';
-import FilterGroup from '@/modules/components/FilterGroup';
+import { ContentWrap, FilterGroupDiv } from '@/assets/style';
+import './style.less';
+
 const pageName = 'ImportLogs';
+const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [form] = Form.useForm();
+  const [formSearch] = Form.useForm();
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -86,38 +75,46 @@ export default (props: any) => {
     },
   ];
   useEffect(() => {
-    formDataSearch.setFieldsValue({
-      businessLine: businessLineData[0].value,
-      templateType: templateTypeData[0].value,
-      startUploadDate: '',
-      endUploadDate: '',
-      uploadUser: '',
+    formSearch.setFieldsValue({
+      businessLine:
+        businesslineOptions && businesslineOptions.length
+          ? businesslineOptions[0]
+          : null,
     });
   }, []);
   useEffect(() => {
     getData();
   }, [current, pageSize]);
-  const savefilterGroup = () => {
-    console.log('please save  filter group interface');
-  };
   const getData = (recordId?: any) => {
-    let params = {
-      businessLine: formDataSearch.getFieldValue('businessLine'),
-      templateType: formDataSearch.getFieldValue('templateType'),
-      startUploadDate: formDataSearch.getFieldValue('startUploadDate'),
-      endUploadDate: formDataSearch.getFieldValue('endUploadDate'),
-      uploadUser: formDataSearch.getFieldValue('uploadUser'),
-      pageIndex: current,
-      pageSize: pageSize,
-    };
-    QueryImportLog(params).then((res) => {
-      if (res.isSuccess) {
-        setTableData(res.data);
-        setTotal(res.totalCount);
-      } else {
-        message.error(res.msg);
-      }
-    });
+    formSearch
+      .validateFields()
+      .then((valid) => {
+        let startDate = '';
+        let endDate = '';
+        let uploadDate = formSearch.getFieldValue('uploadDate');
+        if (uploadDate && uploadDate.length) {
+          startDate = uploadDate[0];
+          endDate = uploadDate[1];
+        }
+        let params = {
+          businessLine: formSearch.getFieldValue('businessLine'),
+          templateType: formSearch.getFieldValue('templateType'),
+          startUploadDate: startDate,
+          endUploadDate: endDate,
+          uploadUser: formSearch.getFieldValue('uploadUser'),
+          pageIndex: current,
+          pageSize: pageSize,
+        };
+        QueryImportLog(params).then((res) => {
+          if (res.isSuccess) {
+            setTableData(res.data);
+            setTotal(res.totalCount);
+          } else {
+            message.error(res.msg);
+          }
+        });
+      })
+      .catch((e) => {});
   };
   const onPageChange = (pagination, filters, sorter, extra) => {
     //   翻页|排序|筛选
@@ -135,50 +132,6 @@ export default (props: any) => {
   const changePageSize = (val: number) => {
     setPageSize(val);
   };
-
-  const handleChangebus = (val: string) => {
-    formDataSearch.setFieldsValue({
-      businessLine: val,
-    });
-  };
-  const handleChangetemp = (val: string) => {
-    formDataSearch.setFieldsValue({
-      templateType: val,
-    });
-  };
-
-  const onChange = (
-    value: DatePickerProps['value'] | RangePickerProps['value'],
-    dateString: [string, string] | string,
-  ) => {
-    formDataSearch.setFieldsValue({
-      startUploadDate: dateString[0],
-      endUploadDate: dateString[1],
-    });
-  };
-
-  const onOk = (
-    value: DatePickerProps['value'] | RangePickerProps['value'],
-  ) => {};
-
-  const businessLineData = [
-    {
-      label: 'H2R',
-      value: 'H2R',
-    },
-    {
-      label: 'O2C',
-      value: 'O2C',
-    },
-    {
-      label: 'P2P',
-      value: 'P2P',
-    },
-    {
-      label: 'R2R',
-      value: 'R2R',
-    },
-  ];
   const templateTypeData = [
     { value: 'BVI Manual Template', label: 'BVI Manual Template' },
     { value: 'R2R MD Import Template', label: 'R2R MD Import Template' },
@@ -216,44 +169,31 @@ export default (props: any) => {
         listName="Import Logs"
         renderFilterGroup={
           <FilterGroupDiv>
-            <Form form={form} labelCol={{ flex: '120px' }}>
-              <Row className="masterData" gutter={10}>
-                <Col span={6}>
-                  <Form.Item label="Business Line" name="businessLine">
-                    <Select
-                      defaultValue={businessLineData[0].value}
-                      onChange={handleChangebus}
-                    >
-                      {renderOption(businessLineData)}
+            <Form form={formSearch} labelCol={{ flex: '120px' }}>
+              <Row className="importData">
+                <Col span={10}>
+                  <Form.Item
+                    label="Business Line"
+                    name="businessLine"
+                    rules={[{ required: true, message: 'Please select' }]}
+                  >
+                    <Select>
+                      {businesslineOptions.map((item, index) => (
+                        <Select.Option key={index} value={item}>
+                          {item}
+                        </Select.Option>
+                      ))}
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={6}>
+                <Col span={10}>
                   <Form.Item label="Template Type" name="templateType">
-                    <Select
-                      defaultValue={templateTypeData[0].value}
-                      onChange={handleChangetemp}
-                    >
+                    <Select style={{ width: '100%' }}>
                       {renderOption(templateTypeData)}
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={5}>
-                  <Form.Item label="Upload Date" name="uploadDate">
-                    <RangePicker
-                      showTime={{ format: 'HH:mm:ss' }}
-                      format="YYYY-MM-DD HH:mm:ss"
-                      onChange={onChange}
-                      onOk={onOk}
-                    />
-                  </Form.Item>
-                </Col>
                 <Col span={4}>
-                  <Form.Item label="Upload User" name="uploadUser">
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={2}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space>
                       <Button
@@ -264,64 +204,20 @@ export default (props: any) => {
                     </Space>
                   </Form.Item>
                 </Col>
+                <Col span={10} className="form_unMargin">
+                  <Form.Item label="Upload Date" name="uploadDate">
+                    <RangePicker format="YYYY-MM-DD" />
+                  </Form.Item>
+                </Col>
+                <Col span={10} className="form_unMargin">
+                  <Form.Item label="Upload User" name="uploadUser">
+                    <Input />
+                  </Form.Item>
+                </Col>
               </Row>
             </Form>
           </FilterGroupDiv>
         }
-        //   renderBtns={
-        //     <Space>
-        //       <Form
-        //         form={formDataSearch}
-        //         labelCol={{ flex: '120px' }}
-        //       >
-        //         <Row gutter={24}>
-        //           <Col span={5}>
-        //             <Form.Item label="Business Line" name="businessLine">
-        //               <Select
-        //                 defaultValue={businessLineData[0].value}
-        //                 onChange={handleChangebus}
-        //               >
-        //                 {renderOption(businessLineData)}
-        //               </Select>
-        //             </Form.Item>
-        //           </Col>
-        //           <Col span={7}>
-        //             <Form.Item label="Template Type" name="templateType">
-        //               <Select
-        //                 defaultValue={templateTypeData[0].value}
-        //                 onChange={handleChangetemp}
-        //               >
-        //                 {renderOption(templateTypeData)}
-        //               </Select>
-        //             </Form.Item>
-        //           </Col>
-        //           <Col span={7}>
-        //             <Form.Item label="Upload Date" name="uploadDate">
-        //               <RangePicker
-        //                 showTime={{ format: 'HH:mm:ss' }}
-        //                 format="YYYY-MM-DD HH:mm:ss"
-        //                 onChange={onChange}
-        //                 onOk={onOk}
-        //               />
-        //             </Form.Item>
-        //           </Col>
-        //           <Col span={5}>
-        //             <Form.Item label="Upload User" name="uploadUser">
-        //               <Input />
-        //             </Form.Item>
-        //           </Col>
-        //         </Row>
-        //       </Form>
-        //       <Button
-        //       type="primary"
-        //         onClick={() => {
-        //           getData();
-        //         }}
-        //       >
-        //         Search
-        //       </Button>
-        //     </Space>
-        //   }
       />
     </ContentWrap>
   );

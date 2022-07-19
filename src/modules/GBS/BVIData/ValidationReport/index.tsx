@@ -4,6 +4,7 @@ import {
   Form,
   InputNumber,
   message,
+  Select,
   Table,
   Tabs,
   Typography,
@@ -23,6 +24,7 @@ import {
 } from '@/app/request/apiValidReport';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
+const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 const pageName = 'BVIValidationReport';
 const { Text } = Typography;
 export default (props: any) => {
@@ -47,6 +49,9 @@ export default (props: any) => {
     minusColorCode: '',
   });
   const [first, setFirst] = useState(true);
+  const [business, setBusiness] = useState([businesslineOptions[0]]);
+  const [businessDiff, setBusinessDiff] = useState([businesslineOptions[0]]);
+
   const orignalCols = [
     {
       name: 'businessLine',
@@ -178,12 +183,17 @@ export default (props: any) => {
   const latestDiffGroupIdRef = useRef<any>();
   const latestGroupIdRef = useRef<any>();
   const _getData = async () => {
+    if (!business || !business.length) {
+      message.warning('Please select [BVI Bussiness Line]!');
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
+        userBusinessLineList: business,
       },
       pageIndex: current,
       pageSize: pageSize,
@@ -202,12 +212,17 @@ export default (props: any) => {
     plusColorCode: string;
     minusColorCode: string;
   }) => {
+    if (!businessDiff || !businessDiff.length) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      return;
+    }
     let _deltaInPercentage = {};
     if (deltaParam) {
       _deltaInPercentage = deltaParam;
     } else {
       _deltaInPercentage = deltaInPercentage;
     }
+
     let params = {
       searchCondition: {
         filterGroup: {
@@ -215,6 +230,7 @@ export default (props: any) => {
         },
         listHeader: diffForm.getFieldsValue(),
         deltaInPercentage: _deltaInPercentage,
+        userBusinessLineList: businessDiff,
       },
       pageIndex: diffCurrent,
       pageSize: diffPageSize,
@@ -260,11 +276,16 @@ export default (props: any) => {
     setDiffPageSize(val);
   };
   const exportExcelAction = () => {
+    if (!business || !business.length) {
+      message.warning('Please select [BVI Bussiness Line]!');
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
+        userBusinessLineList: business,
         listHeader: form.getFieldsValue(),
       },
       pageIndex: current,
@@ -285,11 +306,16 @@ export default (props: any) => {
     });
   };
   const exportExcelDiffAction = () => {
+    if (!businessDiff || !businessDiff.length) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestDiffGroupIdRef.current,
         },
+        userBusinessLineList: businessDiff,
         listHeader: diffForm.getFieldsValue(),
         deltaInPercentage,
       },
@@ -334,6 +360,25 @@ export default (props: any) => {
             listName="Validation Report"
             renderFilterGroup={
               <FilterGroup
+                businessLineRender={
+                  <>
+                    <label>BVI Business Line:</label>
+                    <Select
+                      placeholder="Please select"
+                      mode="multiple"
+                      value={business}
+                      onChange={(val) => {
+                        setBusiness(val);
+                      }}
+                    >
+                      {businesslineOptions.map((item, index) => (
+                        <Select.Option key={index} value={item}>
+                          {item}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </>
+                }
                 moudleName="BVI Integrity Report"
                 authPagename={pageName}
                 onSearch={(val) => {
@@ -425,6 +470,25 @@ export default (props: any) => {
             renderFilterGroup={
               <FilterGroup
                 moudleName="BVI Difference Report"
+                businessLineRender={
+                  <>
+                    <label>BVI Business Line:</label>
+                    <Select
+                      placeholder="Please select"
+                      mode="multiple"
+                      value={businessDiff}
+                      onChange={(val) => {
+                        setBusinessDiff(val);
+                      }}
+                    >
+                      {businesslineOptions.map((item, index) => (
+                        <Select.Option key={index} value={item}>
+                          {item}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </>
+                }
                 authPagename={pageName}
                 onSearch={(val) => {
                   latestDiffGroupIdRef.current = val;

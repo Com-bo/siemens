@@ -55,9 +55,13 @@ import {
 import './style.less';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
-import { getCompanyCodeDrop } from '@/app/request/common';
+import {
+  getCompanyCodeDrop,
+  queryBusinesslineOptionsList,
+} from '@/app/request/common';
 import { getCostCenterData } from '@/app/request/apiCostCenter';
 import DebounceSelect from '@/components/Select/debounceSelect';
+const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 const pageName = 'FlatCharge';
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
@@ -100,9 +104,7 @@ export default (props: any) => {
   const [costcenterCurrent, setCostCenterCurrent] = useState(1);
   const [costcenterPageSize, setCostcenterPageSize] = useState(20);
   const [costcenterTotal, setCostcenterTotal] = useState(0);
-
-  
-
+  const [business, setBusiness] = useState(businesslineOptions[0]);
   const costcenterCols: any = [
     {
       title: 'Cost Center',
@@ -868,8 +870,8 @@ export default (props: any) => {
           : text,
     },
   ];
+
   const latestGroupIdRef = useRef<any>();
-  const filterBusiness=useRef()
   const errorCheckedRef = useRef<any>(false);
   useEffect(() => {
     _getData();
@@ -877,9 +879,6 @@ export default (props: any) => {
 
   // 用于获取table接口方法
   const _getData = (recordId?: any) => {
-    console.log("------------------")
-    console.log(latestGroupIdRef)
-    console.log(errorCheckedRef)
     if (
       !checkAuth(pageName, `${pageName}-Edit`) &&
       !checkAuth(pageName, `${pageName}-View`)
@@ -887,16 +886,18 @@ export default (props: any) => {
       message.warning('No permission temporarily'); //暂无权限提示
       return;
     }
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      return;
+    }
     let params = {
       searchCondition: {
-        userBusinessLineList: [
-          "string"
-        ],
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
+        userBusinessLineList: [business],
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -1083,11 +1084,16 @@ export default (props: any) => {
   };
 
   const exportExcelAction = () => {
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!');
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
+        userBusinessLineList: [business],
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
       },
@@ -1847,6 +1853,24 @@ export default (props: any) => {
         listName="Flat Charge"
         renderFilterGroup={
           <FilterGroup
+            businessLineRender={
+              <>
+                <label>BVI Business Line:</label>
+                <Select
+                  placeholder="Please select"
+                  value={business}
+                  onChange={(val) => {
+                    setBusiness(val);
+                  }}
+                >
+                  {businesslineOptions.map((item, index) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </>
+            }
             moudleName="Flat Charge"
             authPagename={pageName}
             onSearch={(val) => {
@@ -1854,7 +1878,7 @@ export default (props: any) => {
               if (current != 1) {
                 setCurrent(1);
               } else {
-                _getData(val);
+                _getData();
               }
             }}
             onClear={() => {

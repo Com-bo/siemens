@@ -116,5 +116,12 @@ export const ReCheckDataBVIData = (data: Object) => {
     autoLoading: true,
   });
 };
-
-//
+export const GetUserOperateTemplate = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.GetUserOperateTemplate}`,
+    data,
+    {
+      autoLoading: true,
+    },
+  );
+};

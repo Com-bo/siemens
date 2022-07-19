@@ -27,7 +27,7 @@ import {
 } from '@/app/request/apiBilling';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal, notification } from 'antd';
-
+const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
@@ -113,6 +113,7 @@ export default (props: any) => {
     //   value: 'Error',
     // },
   ]);
+  const [business, setBusiness] = useState([businesslineOptions[0]]);
   //
   const _generateHead = (cols: any) => {
     let _columns = [];
@@ -161,6 +162,10 @@ export default (props: any) => {
     });
   };
   const getData = (recordId?: any) => {
+    if (!business || !business.length) {
+      message.warning('Please select [Bussiness Line]!');
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
@@ -169,6 +174,7 @@ export default (props: any) => {
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
         isOnlyQueryUncompleteData: UnconfirmDataRef.current,
+        userBusinessLineList: business,
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -318,11 +324,16 @@ export default (props: any) => {
     // });
   };
   const exportExcelAction = () => {
+    if (!business || !business.length) {
+      message.warning('Please select [Bussiness Line]!');
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
+        userBusinessLineList: business,
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
         isOnlyQueryUncompleteData: UnconfirmDataRef.current,
@@ -521,9 +532,11 @@ export default (props: any) => {
       return item.totalAmout < 0 && item.chargeType == 'ICC';
     });
     const statusUNfreezzMark = selectedRows.some((item) => {
-      return item.billingStatus == "Successfully" || item.billingStatus == 'Cancel';
+      return (
+        item.billingStatus == 'Successfully' || item.billingStatus == 'Cancel'
+      );
     });
-    console.log(statusUNfreezzMark)
+    console.log(statusUNfreezzMark);
     let params = {
       billingStatus: statusIndex,
       recordIdList: selectedRowKeys,
@@ -550,7 +563,7 @@ export default (props: any) => {
       case 6:
         break;
       case 7:
-        if(statusUNfreezzMark){
+        if (statusUNfreezzMark) {
           message.error('Please repeat the selection');
           return;
         }
@@ -698,5 +711,8 @@ export default (props: any) => {
     setStatusFun,
     ImportFlieFn,
     billingStatusGroup,
+    business,
+    setBusiness,
+    businesslineOptions,
   };
 };

@@ -14,11 +14,11 @@ import {
   getAbnormalOriginDataByBVI,
   exportOriginalData,
   SyncDataSave,
-  ReCheckDataBVIData
+  ReCheckDataBVIData,
 } from '@/app/request/apiBVI';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
-
+const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
@@ -69,6 +69,7 @@ export default (props: any) => {
   const [costcenterCurrent, setCostCenterCurrent] = useState(1);
   const [costcenterPageSize, setCostcenterPageSize] = useState(20);
   const [costcenterTotal, setCostcenterTotal] = useState(0);
+  const [business, setBusiness] = useState(businesslineOptions[0]);
   const costcenterCols: any = [
     {
       title: 'Cost Center',
@@ -143,7 +144,10 @@ export default (props: any) => {
     // if (conditions) {
     //   params.groupId = conditions.groupId || null;
     // }
-
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
@@ -152,6 +156,7 @@ export default (props: any) => {
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
         isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+        userBusinessLineList: [business],
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -202,9 +207,15 @@ export default (props: any) => {
         break;
     }
   };
+
   useEffect(() => {
     getData();
-  }, [current, pageSize, orderField, orderType]);
+  }, [current, pageSize, orderField, orderType, business]);
+  // useEffect(() => {
+  //   let _lst = sessionStorage.getItem("businessLines")
+  //   setBusinesslineOptions(JSON.parse(_lst))
+  //   setBusiness(JSON.parse(_lst)[0])
+  // }, [])
   // }导入数据
   const importExcel = () => {
     formImport
@@ -312,6 +323,10 @@ export default (props: any) => {
     // });
   };
   const exportExcelAction = () => {
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      return;
+    }
     let params = {
       searchCondition: {
         filterGroup: {
@@ -320,6 +335,7 @@ export default (props: any) => {
         listHeader: form.getFieldsValue(),
         isOnlyQueryErrorData: errorCheckedRef.current,
         isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+        userBusinessLineList: [business],
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -565,15 +581,26 @@ export default (props: any) => {
     isViewMark,
     setIsViewMark,
     SyncDataSave,
-    // 
+    //
     costcenterCols,
-    showCostcenter, setShowCostcenter,
-    costcenterData, setcostcenterData,
-    costCenterVal, setCostCenterVal,
-    selectCostCenterkeys, setSelectCostCenterkeys,
-    selectCostCenterRows, setSelectCostCenterRows,
-    costcenterCurrent, setCostCenterCurrent,
-    costcenterPageSize, setCostcenterPageSize,
-    costcenterTotal, setCostcenterTotal,
+    showCostcenter,
+    setShowCostcenter,
+    costcenterData,
+    setcostcenterData,
+    costCenterVal,
+    setCostCenterVal,
+    selectCostCenterkeys,
+    setSelectCostCenterkeys,
+    selectCostCenterRows,
+    setSelectCostCenterRows,
+    costcenterCurrent,
+    setCostCenterCurrent,
+    costcenterPageSize,
+    setCostcenterPageSize,
+    costcenterTotal,
+    setCostcenterTotal,
+    businesslineOptions,
+    business,
+    setBusiness,
   };
 };
