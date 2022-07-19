@@ -45,7 +45,7 @@ import {
   queryRolePageInfo,
   queryUserPageInfo,
   OtherMasterDataQueryAREOCOptionsList,
-  OtherMasterDataQueryCustemerDivisionSLCOptionsList
+  OtherMasterDataQueryCustemerDivisionSLCOptionsList,
 } from '@/app/request/apiSys';
 import Table from '@/components/Table';
 import {
@@ -241,7 +241,7 @@ export const Index = (props: any) => {
           ...formData.getFieldsValue(),
           // enable: formData.getFieldValue('enable') ? 1 : 0,
         };
-        console.log(params)
+        console.log(params);
         let res: any;
         if (formData.getFieldValue('id')) {
           // 编辑
@@ -264,8 +264,8 @@ export const Index = (props: any) => {
   const showUserDataFuc = (roleName?: string) => {
     setShowUserData(true);
     formData.setFieldsValue({
-      role:[]
-    })
+      role: [],
+    });
     // 获取角色列表
     // queryRolePageInfo({
     //   roleName: roleName,
@@ -317,7 +317,7 @@ export const Index = (props: any) => {
   const handleRoleOk = () => {
     // selectRole
     formData.setFieldsValue({
-      role: formData.getFieldValue("role").concat(selectRole),
+      role: formData.getFieldValue('role').concat(selectRole),
       // role: selectRole.join(',')
     });
     setIsRoles(false);
@@ -368,7 +368,7 @@ export const Index = (props: any) => {
           <Table
             columns={roleCols}
             data={roles}
-            type="radio"
+            type="checkbox"
             current={roleCurrent}
             pageSize={rolePageSize}
             total={roleTotal}
@@ -460,31 +460,28 @@ export const Index = (props: any) => {
             <Col span={12}>
               <Form.Item label="ARE(OC)" name="are">
                 <DebounceSelect
-                    initFlag
-                    mode="multiple"
-                    onChange={(value, data) => {}}
-                    getoptions={(options) => {
-                      return options?.map((x, index) => {
-                        return (
-                          <Select.Option key={index} data={x} value={x.value}>
-                            {x.label}
-                          </Select.Option>
-                        );
-                      });
-                    }}
-                    delegate={(e) => {
-                      return OtherMasterDataQueryAREOCOptionsList({
-                        keywords: e,
-                      });
-                    }}
-                  />
+                  initFlag
+                  mode="multiple"
+                  onChange={(value, data) => {}}
+                  getoptions={(options) => {
+                    return options?.map((x, index) => {
+                      return (
+                        <Select.Option key={index} data={x} value={x.value}>
+                          {x.label}
+                        </Select.Option>
+                      );
+                    });
+                  }}
+                  delegate={(e) => {
+                    return OtherMasterDataQueryAREOCOptionsList({
+                      keywords: e,
+                    });
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="CustomerDivision(SLC)"
-                name="customerDivision"
-              >
+              <Form.Item label="CustomerDivision(SLC)" name="customerDivision">
                 <DebounceSelect
                   initFlag
                   mode="multiple"
@@ -529,20 +526,21 @@ export const Index = (props: any) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={10}>
+            <Col span={12}>
               <Form.Item label="Role" name="role" rules={[{ required: true }]}>
-                    <Select
-                    mode="multiple"
-                    open={false}
-                    allowClear
-                    style={{ width: '100%' }}
-                    placeholder="Please select"
-                  >
-                  </Select>
+                {/* <Input.Search
+                    readOnly
+                    onSearch={() => roleFunc(form.getFieldValue('role') || '')}
+                  /> */}
+                <Select
+                  // ref={selectref}
+                  open={false}
+                  mode="multiple"
+                  allowClear
+                  placeholder="Select a person"
+                  onFocus={() => roleFunc(form.getFieldValue('role') || '')}
+                ></Select>
               </Form.Item>
-            </Col>
-            <Col span={2}>
-                <Button type="primary" onClick={() => roleFunc(form.getFieldValue('role') || '')}>Pick</Button>
             </Col>
             {/* <Col span={12}>
               <Form.Item label="Enable" name="enable" valuePropName="checked">

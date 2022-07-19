@@ -865,6 +865,8 @@ export default (props: any) => {
       po: null,
       unitPrice: data.unitPrice,
       initialunitPrice: data.unitPrice,
+      poPercentage: 1,
+      // batchNo:
     });
   };
 
@@ -1394,16 +1396,15 @@ export default (props: any) => {
                 name="totalAmount"
                 rules={[
                   { required: true, message: 'Total Amount is Required;' },
-                  // {
-                  //   pattern:
-                  //     /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
-                  //   message: 'Greater than zero and two decimal places at most',
-                  // },
+                  {
+                    pattern:
+                      /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
+                    message: 'Greater than zero and two decimal places at most',
+                  },
                 ]}
               >
                 <InputNumber
                   disabled={componentDisabled}
-                  // min={0}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1454,6 +1455,7 @@ export default (props: any) => {
                     // min={0}
                     style={{ width: '100%' }}
                   />
+                  <Input style={{ width: '100%' }} />
                 </Form.Item>
               )}
             </Col>
@@ -1682,7 +1684,7 @@ export default (props: any) => {
               <Form.Item
                 label="Customer Division"
                 name="customerDivision"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>

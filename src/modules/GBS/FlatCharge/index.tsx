@@ -55,10 +55,7 @@ import {
 import './style.less';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
-import {
-  getCompanyCodeDrop,
-  queryBusinesslineOptionsList,
-} from '@/app/request/common';
+import { getCompanyCodeDrop, ProductPoDrop } from '@/app/request/common';
 import { getCostCenterData } from '@/app/request/apiCostCenter';
 import DebounceSelect from '@/components/Select/debounceSelect';
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
@@ -1123,6 +1120,7 @@ export default (props: any) => {
       serviceLine: data.serviceLine,
       customerDivision: data.customerDivision,
       productName: data.productName,
+      productId: data.id,
     });
     handlerCancelProSearch();
   };
@@ -1434,7 +1432,7 @@ export default (props: any) => {
               <Form.Item
                 label="Customer Division"
                 name="customerDivision"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>
@@ -1727,9 +1725,50 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="PO" name="po" rules={[{ required: true }]}>
-                <Input disabled={componentDisabled} />
-              </Form.Item>
+              {formData.getFieldValue('are') != '5547' ? (
+                <Form.Item
+                  labelCol={{ flex: '50px' }}
+                  label="PO"
+                  name="po"
+                  rules={[{ required: true }]}
+                >
+                  <DebounceSelect
+                    initFlag
+                    disabled={componentDisabled}
+                    getoptions={(options) => {
+                      return options?.map((x, index) => {
+                        return (
+                          <Select.Option
+                            style={{ width: '100%' }}
+                            key={index}
+                            data={x}
+                            value={x.poNumber}
+                          >
+                            {x.poNumber}
+                          </Select.Option>
+                        );
+                      });
+                    }}
+                    delegate={(e) => {
+                      if (!formData.getFieldValue('productId')) {
+                        return Promise.resolve({
+                          code: 200,
+                          isSuccess: true,
+                          data: [],
+                        });
+                      }
+                      return ProductPoDrop({
+                        productId: formData.getFieldValue('productId'),
+                        poNumber: e,
+                      });
+                    }}
+                  />
+                </Form.Item>
+              ) : (
+                <Form.Item labelCol={{ flex: '50px' }} label="PO" name="po">
+                  <Input style={{ width: '100%' }} />
+                </Form.Item>
+              )}
             </Col>
             <Col span={8}>
               <Form.Item

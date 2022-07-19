@@ -391,8 +391,8 @@ export default (props: any) => {
           isTag: formData.getFieldValue('adjustTag'),
           billingARE: formData.getFieldValue('billingARE'),
           billingCostCenter: formData.getFieldValue('billingCostCenter'),
-          templateType: formData.getFieldValue('templateType'),
-          batchNo: formData.getFieldValue('batchNo'),
+          templateType: formData.getFieldValue('templateType') || '',
+          batchNo: formData.getFieldValue('batchNo') || '',
           businessLine: formData.getFieldValue('businessLine'),
         };
 
