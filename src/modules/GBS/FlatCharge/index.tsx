@@ -1849,7 +1849,8 @@ export default (props: any) => {
           <FilterGroup
             moudleName="Flat Charge"
             authPagename={pageName}
-            onSearch={(val) => {
+            onSearch={(lineVal,val) => {
+              console.log(lineVal)
               latestGroupIdRef.current = val;
               if (current != 1) {
                 setCurrent(1);
