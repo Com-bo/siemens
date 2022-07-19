@@ -38,20 +38,12 @@ interface FilterGroupType {
   moudleName: string; //模块标识
   authPagename?: string; //模块权限用名称
   customComponet?: React.ReactNode; //自定义渲染组件【ex:checkbox等
-<<<<<<< Updated upstream
   onSearch: (val: string | number) => void; //搜索方法
-=======
-  onSearch: (lineVal: any, val: string | number) => void; //搜索方法
->>>>>>> Stashed changes
   onClear: () => void;
   exportAction?: () => void; //导出
   businessLineRender?: React.ReactNode;
 }
-<<<<<<< Updated upstream
 export default (props: FilterGroupType) => {
-=======
-export default (props: FilterGroupType, ref) => {
->>>>>>> Stashed changes
   const [filterGroup, setFilterGroup] = useState('');
   const [isSetting, setSetting] = useState(false);
   const [operfields, setFields] = useState({});
@@ -697,7 +689,6 @@ export default (props: FilterGroupType, ref) => {
         </Form>
       </Modal>
       <FilterGroupDiv id="filterGroup">
-<<<<<<< Updated upstream
         <Space size={0}>
           {props?.businessLineRender}
           <label>Filter Group:</label>
@@ -753,52 +744,6 @@ export default (props: FilterGroupType, ref) => {
                 ></Button>
               </Tooltip>
               <Tooltip title="Clear">
-=======
-
-        <label>Business Line:</label>
-        <Select
-          value={BusinessLine}
-          style={{ minWidth: '300px' }}
-          onChange={changeBusinessLine}
-        // allowClear
-        >
-          {BusinessLineList.map((item, i) => (
-            <Option key={i} value={item}>
-              {item}
-            </Option>
-          ))}
-        </Select>
-
-        <label>Filter Group:</label>
-        <Select
-          value={filterGroup}
-          style={{ minWidth: '300px' }}
-          onChange={changeFilterGroup}
-        // allowClear
-        >
-          {filterGropList.map((item, i) => (
-            <Option key={i} value={item?.value}>
-              {item?.label}
-            </Option>
-          ))}
-        </Select>
-        <AuthWrapper
-          functionName={props?.authPagename}
-          authCode={[
-            props?.authPagename + '-View',
-            props?.authPagename + '-Edit',
-          ]}
-        >
-          <Space size={10}>
-            {props?.customComponet}
-            <Button
-              type="primary"
-              icon={<i className="gbs gbs-search"></i>}
-              onClick={() => props.onSearch(BusinessLine, filterGroup)}
-            ></Button>
-            {checkAuth(props?.authPagename, props?.authPagename + '-Edit') ? (
-              <Tooltip title="Setting">
->>>>>>> Stashed changes
                 <Button
                   icon={<ClearOutlined />}
                   onClick={() => {
