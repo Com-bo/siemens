@@ -117,7 +117,7 @@ export const Index = (props: any) => {
     {
       title: 'Enable',
       name: 'enable',
-      render: (text) => (text != 0 ? 'Yes' : 'No'),
+      render: (text) => (text ? 'Yes' : 'No'),
     },
     {
       name: 'Operate',
@@ -144,7 +144,7 @@ export const Index = (props: any) => {
                     : '',
                   enable: record.enable === 1 ? true : false,
                 });
-                showUserDataFuc(record.roleName);
+                showUserDataFuc(record.role);
               }}
             ></Button>
           </Tooltip>
@@ -248,16 +248,20 @@ export const Index = (props: any) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
-          // enable: formData.getFieldValue('enable') ? 1 : 0,
+          role: formData.getFieldValue('role').split(','),
+          enable: formData.getFieldValue('enable') ? 1 : 0,
+          customerDivision: formData
+            .getFieldValue('customerDivision')
+            .split(''),
         };
         console.log(params);
         let res: any;
         if (formData.getFieldValue('id')) {
           // 编辑
-          res = await modifyUserInfo(JSON.parse(params));
+          res = await modifyUserInfo(params);
         } else {
           // 新增
-          res = await insertUserInfo(JSON.parse(params));
+          res = await insertUserInfo(params);
         }
         if (res.isSuccess) {
           message.success(res.msg);
@@ -272,9 +276,6 @@ export const Index = (props: any) => {
   };
   const showUserDataFuc = (roleName?: string) => {
     setShowUserData(true);
-    formData.setFieldsValue({
-      role: [],
-    });
     // 获取角色列表
     // queryRolePageInfo({
     //   roleName: roleName,
@@ -443,8 +444,8 @@ export const Index = (props: any) => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Name"
-                name="userName"
+                label="user Name"
+                name="name"
                 rules={[{ required: true }]}
               >
                 <Input />
@@ -543,11 +544,6 @@ export const Index = (props: any) => {
                 />
               </Form.Item>
             </Col>
-            {/* <Col span={12}>
-              <Form.Item label="Enable" name="enable" valuePropName="checked">
-                <Switch checkedChildren="Yes" unCheckedChildren="No" />
-              </Form.Item>
-            </Col> */}
             <Col span={24}>
               <Form.Item style={{ textAlign: 'center', marginTop: '20px' }}>
                 <Space size={60}>
