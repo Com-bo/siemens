@@ -9,7 +9,7 @@
 # production
 /dist
 /storybook-static
-
+/wwwroot
 
 # misc
 .DS_Store
