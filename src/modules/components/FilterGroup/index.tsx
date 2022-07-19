@@ -138,6 +138,7 @@ export default (props: FilterGroupType) => {
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
   };
+
   const [form] = Form.useForm();
 
   useEffect(() => {

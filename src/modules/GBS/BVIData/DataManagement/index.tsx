@@ -1409,44 +1409,53 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                labelCol={{ flex: '50px' }}
-                label="PO"
-                name="po"
-                rules={[{ required: formData.getFieldValue('are') != '5547' }]}
-              >
-                <DebounceSelect
-                  initFlag
-                  disabled={componentDisabled}
-                  getoptions={(options) => {
-                    return options?.map((x, index) => {
-                      return (
-                        <Select.Option
-                          style={{ width: '100%' }}
-                          key={index}
-                          data={x}
-                          value={x.poNumber}
-                        >
-                          {x.poNumber}
-                        </Select.Option>
-                      );
-                    });
-                  }}
-                  delegate={(e) => {
-                    if (!formData.getFieldValue('productId')) {
-                      return Promise.resolve({
-                        code: 200,
-                        isSuccess: true,
-                        data: [],
+              {formData.getFieldValue('are') != '5547' ? (
+                <Form.Item
+                  labelCol={{ flex: '50px' }}
+                  label="PO"
+                  name="po"
+                  rules={[{ required: true }]}
+                >
+                  <DebounceSelect
+                    initFlag
+                    disabled={componentDisabled}
+                    getoptions={(options) => {
+                      return options?.map((x, index) => {
+                        return (
+                          <Select.Option
+                            style={{ width: '100%' }}
+                            key={index}
+                            data={x}
+                            value={x.poNumber}
+                          >
+                            {x.poNumber}
+                          </Select.Option>
+                        );
                       });
-                    }
-                    return ProductPoDrop({
-                      productId: formData.getFieldValue('productId'),
-                      poNumber: e,
-                    });
-                  }}
-                />
-              </Form.Item>
+                    }}
+                    delegate={(e) => {
+                      if (!formData.getFieldValue('productId')) {
+                        return Promise.resolve({
+                          code: 200,
+                          isSuccess: true,
+                          data: [],
+                        });
+                      }
+                      return ProductPoDrop({
+                        productId: formData.getFieldValue('productId'),
+                        poNumber: e,
+                      });
+                    }}
+                  />
+                </Form.Item>
+              ) : (
+                <Form.Item labelCol={{ flex: '50px' }} label="PO" name="po">
+                  <InputNumber
+                    // min={0}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              )}
             </Col>
             {/* <Col span={8}>
               <Form.Item
@@ -1780,11 +1789,7 @@ export default (props: any) => {
               };
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
-            dataSource={checkData?.map((_item) => {
-              return {
-                ..._item,
-              };
-            })}
+            dataSource={checkData}
             rowKey="id"
             pagination={false}
             scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
