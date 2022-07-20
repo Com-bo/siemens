@@ -55,6 +55,7 @@ import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+import { getUserOperateTemplate } from '@/app/request/apiBVI';
 const pageName = 'BVIDataManage';
 export default (props: any) => {
   const {
@@ -979,6 +980,7 @@ export default (props: any) => {
     });
     cancelCostCenter();
   };
+  const [templateList, setTemplateList] = useState([]);
   //
   return (
     <ContentWrap>
@@ -1084,14 +1086,11 @@ export default (props: any) => {
         <Form form={formImport} labelCol={{ flex: '100px' }}>
           <Form.Item label="Type" name="type" rules={[{ required: true }]}>
             <Radio.Group onChange={onRodioChange}>
-              <Radio value={1}>BVI Manual</Radio>
-              <Radio value={2}>R2R MD</Radio>
-              <Radio value={3}>H2R BVI</Radio>
-              <Radio value={4}>H2R T&E BVI</Radio>
-              <Radio value={5}>H2R GMM</Radio>
-              <Radio value={6}>O2C BVI</Radio>
-              <Radio value={7}>O2C TI BVI</Radio>
-              <Radio value={8}>P2P BCS</Radio>
+              {templateList.map((item, index) => (
+                <Radio key={index} value={item.key}>
+                  {item.templateName}
+                </Radio>
+              ))}
             </Radio.Group>
           </Form.Item>
           {isP2PMark ? (
@@ -1984,7 +1983,24 @@ export default (props: any) => {
                         <Menu.Item
                           key="1"
                           icon={<i className="gbs gbs-import"></i>}
-                          onClick={() => setShowImport(true)}
+                          onClick={() => {
+                            if (!business) {
+                              message.warning(
+                                'please select [BVI Business Line]!',
+                              );
+                              return;
+                            }
+                            getUserOperateTemplate({
+                              business,
+                            }).then((res) => {
+                              if (res.isSuccess) {
+                                setTemplateList(res.data || []);
+                                setShowImport(true);
+                              } else {
+                                message.error(res.msg);
+                              }
+                            });
+                          }}
                         >
                           <span style={{ margin: '0 10px' }}>Import</span>
                         </Menu.Item>

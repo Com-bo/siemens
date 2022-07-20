@@ -83,4 +83,7 @@ export const TableMixDiv = styled.div<{ data: any }>`
   .ant-table-tbody > tr.ant-table-row-selected > td {
     background: unset;
   }
+  .ant-table-tbody td {
+    padding: 2px;
+  }
 `;

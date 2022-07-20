@@ -17,6 +17,7 @@ import {
   Dropdown,
   Form,
   Input,
+  List,
   Menu,
   message,
   Modal,
@@ -37,6 +38,7 @@ import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import {
   deleUser,
@@ -57,6 +59,9 @@ export const Index = (props: any) => {
   const [formFilter] = Form.useForm();
   const [formData] = Form.useForm();
   const [roleForm] = Form.useForm();
+  const [areForm] = Form.useForm();
+  const [customerForm] = Form.useForm();
+  const [businessForm] = Form.useForm();
   const [tableData, setTableData] = useState([{ id: 111, gID: 'SS' }]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -65,12 +70,30 @@ export const Index = (props: any) => {
   const [isSearch, setIsSearch] = useState(false);
   const [pageSize, setPageSize] = useState(20);
   const [showUserData, setShowUserData] = useState(false);
+  // ----------角色---------
+  const [role, setRole] = useState([]);
   const [isRoles, setIsRoles] = useState(false);
   const [roles, setRoleData] = useState([]);
   const [roleCurrent, setRoleCurent] = useState(1);
   const [roleTotal, setRoleTotal] = useState(0);
   const [rolePageSize, setRolePageSize] = useState(20);
   const [selectRole, setSelectedRoles] = useState([]);
+  // -----------are--------------
+  const [are, setAre] = useState([]);
+  const [isAres, setIsAres] = useState(false);
+  const [areList, setAREData] = useState([]);
+  const [selectAre, setSelectedAres] = useState([]);
+  // --------------CustomerDivision(SLC)----------
+  const [customerDivision, setCustomerDivision] = useState([]);
+  const [isCustomers, setIsCustomer] = useState(false);
+  const [customerList, setCustomerData] = useState([]);
+  const [selectCustomer, setSelectedCustomers] = useState([]);
+  // -----------businessLine------
+  const [businessLine, setBusinessLine] = useState([]);
+  const [isBusiness, setIsBusinessLine] = useState(false);
+  const [businessList, setBusinessData] = useState([]);
+  const [selectBusiness, setSelectedBusiness] = useState([]);
+
   const orignalCols: any = [
     {
       name: 'gid',
@@ -132,19 +155,16 @@ export const Index = (props: any) => {
               key="1"
               icon={<EditOutlined />}
               onClick={() => {
+                setAre(record.are || []);
+                setCustomerDivision(record.custemerDivision || []);
+                setBusinessLine(record.businessLine || []);
+                setRole(record.role || []);
                 formData.setFieldsValue({
                   ...record,
-                  role: record.role ? record.role.join(',') : '',
-                  are: record.are ? record.are.join(',') : '',
-                  customerDivision: record.customerDivision
-                    ? record.customerDivision.join(',')
-                    : '',
-                  businessLine: record.businessLine
-                    ? record.businessLine.join(',')
-                    : '',
+                  userName: record.name,
                   enable: record.enable === 1 ? true : false,
                 });
-                showUserDataFuc(record.role);
+                showUserDataFuc();
               }}
             ></Button>
           </Tooltip>
@@ -187,6 +207,30 @@ export const Index = (props: any) => {
       key: 'enable',
       align: 'center',
       render: (text) => (text === 1 ? 'Enable' : text === 0 ? 'Disable' : text),
+    },
+  ];
+  const areCols: any = [
+    {
+      dataIndex: 'label',
+      title: 'ARE',
+      key: 'label',
+      align: 'center',
+    },
+  ];
+  const customerCols: any = [
+    {
+      dataIndex: 'label',
+      title: 'CustomerDivision',
+      key: 'label',
+      align: 'center',
+    },
+  ];
+  const businessCols = [
+    {
+      dataIndex: 'label',
+      title: 'CustomerDivision',
+      key: 'label',
+      align: 'center',
     },
   ];
   // 删除接口
@@ -248,11 +292,11 @@ export const Index = (props: any) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
-          role: formData.getFieldValue('role').split(','),
+          role,
+          customerDivision,
+          are,
+          businessLine,
           enable: formData.getFieldValue('enable') ? 1 : 0,
-          customerDivision: formData
-            .getFieldValue('customerDivision')
-            .split(''),
         };
         console.log(params);
         let res: any;
@@ -265,8 +309,7 @@ export const Index = (props: any) => {
         }
         if (res.isSuccess) {
           message.success(res.msg);
-          setShowUserData(false);
-          formData.resetFields();
+          handleFormDataCancel();
           getData();
         } else {
           message.error(res.msg);
@@ -274,27 +317,16 @@ export const Index = (props: any) => {
       })
       .catch((e) => {});
   };
-  const showUserDataFuc = (roleName?: string) => {
+  const showUserDataFuc = () => {
     setShowUserData(true);
-    // 获取角色列表
-    // queryRolePageInfo({
-    //   roleName: roleName,
-    //   pageIndex: 1,
-    //   pageSize: 100,
-    // }).then((res) => {
-    //   if (res.isSuccess) {
-    //     setRoles(res.data);
-    //   }
-    // });
   };
 
   // 人员维护搜索
   const roleSearch = () => {
     let params = {
-      roleName: formFilter.getFieldValue('roleName'),
-      // adminFlag: 1,
-      pageIndex: current,
-      pageSize: pageSize,
+      roleName: roleForm.getFieldValue('role'),
+      pageIndex: roleCurrent,
+      pageSize: rolePageSize,
     };
     queryRolePageInfo(params).then((res) => {
       if (res.isSuccess) {
@@ -305,42 +337,308 @@ export const Index = (props: any) => {
       }
     });
   };
-  const roleFunc = async (_role: string) => {
+  const customerDivisionSearch = () => {
+    let params = {
+      keywords: customerForm.getFieldValue('keywords'),
+    };
+    OtherMasterDataQueryCustemerDivisionSLCOptionsList(params).then((res) => {
+      if (res.isSuccess) {
+        setCustomerData(res.data);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  // are
+  const areSearch = () => {
+    let params = {
+      keywords: areForm.getFieldValue('keywords'),
+    };
+    OtherMasterDataQueryAREOCOptionsList(params).then((res) => {
+      if (res.isSuccess) {
+        setAREData(res.data);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const businessSearch = () => {
+    let params = {
+      keywords: businessForm.getFieldValue('keywords'),
+    };
+    queryBusinesslineOptionsList(params).then((res) => {
+      if (res.isSuccess) {
+        setBusinessData(res.data);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const roleFunc = async () => {
     setIsRoles(true);
     if (roleCurrent == 1) {
-      await roleSearch();
-      _role && setSelectedRoles(_role?.split(','));
+      roleSearch();
     } else {
       setRoleCurent(1);
     }
   };
+  const areFunc = async (_) => {
+    setIsAres(true);
+    setSelectedAres(are || []);
+    areSearch();
+  };
+  const customerDivisionFunc = () => {
+    setIsCustomer(true);
+    setSelectedCustomers(customerDivision || []);
+    customerDivisionSearch();
+  };
+  const businessFunc = () => {
+    setIsBusinessLine(true);
+    setSelectedBusiness(businessLine || []);
+    businessSearch();
+  };
   useEffect(() => {
-    roleSearch();
+    if (isRoles) {
+      roleSearch();
+    }
   }, [roleCurrent, rolePageSize]);
+
   const onRolePageChange = (pagination) => {
     setRoleCurent(pagination.current);
   };
+
   const handlerRolePageSize = (val: number) => {
     setRolePageSize(val);
   };
+
   // 人员维护绑定
   const handleRoleOk = () => {
-    // selectRole
-    formData.setFieldsValue({
-      // role: formData.getFieldValue('role').concat(selectRole),
-      role: selectRole.join(','),
-    });
-    setIsRoles(false);
-    setSelectedRoles([]);
-    setIsRoles(false);
+    setRole(selectRole);
+    handleRoleCancel();
+  };
+  const handleCustomerOk = () => {
+    setCustomerDivision(selectCustomer);
+    handleCustomerCancel();
+  };
+
+  const handleAreOk = () => {
+    setAre(selectAre);
+    handleAreCancel();
+  };
+  const handleBusinessOk = () => {
+    setBusinessLine(selectBusiness);
+    handleBusinessCancel();
   };
   const handleRoleCancel = () => {
     setIsRoles(false);
     roleForm.resetFields();
     setSelectedRoles([]);
   };
+  const handleAreCancel = () => {
+    setIsAres(false);
+    areForm.resetFields();
+    setSelectedAres([]);
+  };
+  const handleCustomerCancel = () => {
+    setIsCustomer(false);
+    customerForm.resetFields();
+    setSelectedCustomers([]);
+  };
+  const handleBusinessCancel = () => {
+    setIsBusinessLine(false);
+    businessForm.resetFields();
+    setSelectedBusiness([]);
+  };
+  const handleFormDataCancel = () => {
+    setShowUserData(false);
+    formData.resetFields();
+    setAre([]);
+    setCustomerDivision([]);
+    setRole([]);
+    setBusinessLine([]);
+  };
+
   return (
     <ContentWrap className="userClass">
+      {/* -----------business---------- */}
+      <Modal
+        maskClosable={false}
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                BusinessLine List Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={isBusiness}
+        footer={null}
+        onCancel={handleBusinessCancel}
+      >
+        <TableWrapDiv className="user_wrap">
+          <Form form={businessForm}>
+            <Row>
+              <Col span={20}>
+                <Form.Item label="CustomerDivision" name="keywords">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={3} offset={1}>
+                <Button type="primary" onClick={businessSearch}>
+                  Search
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          <Table
+            columns={businessCols}
+            data={businessList}
+            type="checkbox"
+            scrollY={'calc(100vh - 480px)'}
+            pagination={false}
+            onChange={(_selectedRowKeys, _selectedRows) => {
+              // (_selectedRowKeys);
+              setSelectedBusiness(_selectedRowKeys);
+            }}
+            rowKey="value"
+            selection={true}
+            selectedRowKeys={selectBusiness}
+          />
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <Space size={60}>
+              <Button type="primary" onClick={handleBusinessOk}>
+                Save
+              </Button>
+              <Button onClick={handleBusinessCancel}>Cancel</Button>
+            </Space>
+          </div>
+        </TableWrapDiv>
+      </Modal>
+      {/* --------CustomerDivision----- */}
+      <Modal
+        maskClosable={false}
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                CustomerDivision(SLC) List Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={isCustomers}
+        footer={null}
+        onCancel={handleCustomerCancel}
+      >
+        <TableWrapDiv className="user_wrap">
+          <Form form={customerForm}>
+            <Row>
+              <Col span={20}>
+                <Form.Item label="CustomerDivision" name="keywords">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={3} offset={1}>
+                <Button type="primary" onClick={customerDivisionSearch}>
+                  Search
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          <Table
+            columns={customerCols}
+            data={customerList}
+            type="checkbox"
+            scrollY={'calc(100vh - 480px)'}
+            pagination={false}
+            onChange={(_selectedRowKeys, _selectedRows) => {
+              // (_selectedRowKeys);
+              setSelectedCustomers(_selectedRowKeys);
+            }}
+            rowKey="value"
+            selection={true}
+            selectedRowKeys={selectCustomer}
+          />
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <Space size={60}>
+              <Button type="primary" onClick={handleCustomerOk}>
+                Save
+              </Button>
+              <Button onClick={handleCustomerCancel}>Cancel</Button>
+            </Space>
+          </div>
+        </TableWrapDiv>
+      </Modal>
+
+      {/* ------are---------- */}
+      <Modal
+        maskClosable={false}
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                ARE List Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={isAres}
+        footer={null}
+        onCancel={handleAreCancel}
+      >
+        <TableWrapDiv className="user_wrap">
+          <Form form={areForm}>
+            <Row>
+              <Col span={20}>
+                <Form.Item label="ARE" name="keywords">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={3} offset={1}>
+                <Button type="primary" onClick={areSearch}>
+                  Search
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          <Table
+            columns={areCols}
+            data={areList}
+            type="checkbox"
+            scrollY={'calc(100vh - 480px)'}
+            onChange={(_selectedRowKeys, _selectedRows) => {
+              setSelectedAres(_selectedRowKeys);
+            }}
+            pagination={false}
+            rowKey="value"
+            selection={true}
+            selectedRowKeys={selectAre}
+          />
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <Space size={60}>
+              <Button type="primary" onClick={handleAreOk}>
+                Save
+              </Button>
+              <Button onClick={handleAreCancel}>Cancel</Button>
+            </Space>
+          </div>
+        </TableWrapDiv>
+      </Modal>
+
+      {/* ------role---------- */}
       <Modal
         maskClosable={false}
         width="1000px"
@@ -379,6 +677,7 @@ export const Index = (props: any) => {
             columns={roleCols}
             data={roles}
             type="checkbox"
+            preserveSelectedRowKeys={true}
             current={roleCurrent}
             pageSize={rolePageSize}
             total={roleTotal}
@@ -388,6 +687,7 @@ export const Index = (props: any) => {
             }}
             pagination={true}
             rowKey="roleName"
+            scrollY={'calc(100vh - 420px)'}
             selection={true}
             selectedRowKeys={selectRole}
             onPageChange={onRolePageChange}
@@ -421,12 +721,13 @@ export const Index = (props: any) => {
         }
         visible={showUserData}
         footer={null}
-        onCancel={() => {
-          setShowUserData(false);
-          formData.resetFields();
-        }}
+        onCancel={handleFormDataCancel}
       >
-        <Form form={formData} labelCol={{ flex: '160px' }}>
+        <Form
+          form={formData}
+          labelCol={{ flex: '160px' }}
+          className="user_form"
+        >
           <Row gutter={20}>
             <Col span={12}>
               <Form.Item label="GID" name="gid" rules={[{ required: true }]}>
@@ -445,7 +746,7 @@ export const Index = (props: any) => {
             <Col span={12}>
               <Form.Item
                 label="user Name"
-                name="name"
+                name="userName"
                 rules={[{ required: true }]}
               >
                 <Input />
@@ -468,79 +769,160 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="ARE(OC)" name="are">
-                <DebounceSelect
-                  initFlag
-                  mode="multiple"
-                  onChange={(value, data) => {}}
-                  getoptions={(options) => {
-                    return options?.map((x, index) => {
-                      return (
-                        <Select.Option key={index} data={x} value={x.value}>
-                          {x.label}
-                        </Select.Option>
-                      );
-                    });
-                  }}
-                  delegate={(e) => {
-                    return OtherMasterDataQueryAREOCOptionsList({
-                      keywords: e,
-                    });
-                  }}
+              <Form.Item label="ARE(OC)" name="are" valuePropName="dataSource">
+                <div style={{ margin: '5px 0', textAlign: 'right' }}>
+                  <Button onClick={areFunc} icon={<PlusOutlined />}>
+                    ARE(OC)
+                  </Button>
+                </div>
+                <List
+                  bordered
+                  dataSource={are}
+                  size="small"
+                  renderItem={(item, index: number) => (
+                    <List.Item
+                      actions={[
+                        <Tooltip title="delete" key={index}>
+                          <Button
+                            type="text"
+                            icon={<i className="gbs gbs-delete"></i>}
+                            onClick={() => {
+                              let newData = [...are];
+                              newData.splice(index, 1);
+                              setAre(newData);
+                            }}
+                          ></Button>
+                        </Tooltip>,
+                      ]}
+                    >
+                      {item}
+                    </List.Item>
+                  )}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="CustomerDivision(SLC)" name="customerDivision">
-                <DebounceSelect
-                  initFlag
-                  mode="multiple"
-                  onChange={(value, data) => {}}
-                  getoptions={(options) => {
-                    return options?.map((x, index) => {
-                      return (
-                        <Select.Option key={index} data={x} value={x.value}>
-                          {x.label}
-                        </Select.Option>
-                      );
-                    });
-                  }}
-                  delegate={(e) => {
-                    return getCustemerDivisionList({
-                      keywords: e,
-                    });
-                  }}
+              <Form.Item
+                label="CustomerDivision(SLC)"
+                name="customerDivision"
+                valuePropName="dataSource"
+              >
+                <div style={{ margin: '5px 0', textAlign: 'right' }}>
+                  <Button
+                    icon={<PlusOutlined />}
+                    onClick={customerDivisionFunc}
+                  >
+                    CustomerDivision(SLC)
+                  </Button>
+                </div>
+                <List
+                  bordered
+                  dataSource={customerDivision}
+                  renderItem={(item, index: number) => (
+                    <List.Item
+                      actions={[
+                        <Tooltip title="delete">
+                          <Button
+                            type="text"
+                            icon={<i className="gbs gbs-delete"></i>}
+                            onClick={() => {
+                              let newData = [...customerDivision];
+                              newData.splice(index, 1);
+                              setCustomerDivision(newData);
+                            }}
+                          ></Button>
+                        </Tooltip>,
+                      ]}
+                    >
+                      {item}
+                    </List.Item>
+                  )}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="BusinessLine" name="businessLine">
-                <DebounceSelect
-                  initFlag
-                  mode="multiple"
-                  onChange={(value, data) => {}}
-                  getoptions={(options) => {
-                    return options?.map((x, index) => {
-                      return (
-                        <Select.Option key={index} data={x} value={x.value}>
-                          {x.label}
-                        </Select.Option>
-                      );
-                    });
-                  }}
-                  delegate={(e) => {
-                    return queryBusinesslineOptionsList({
-                      keywords: e,
-                    });
-                  }}
+              <Form.Item
+                label="BusinessLine"
+                name="businessLine"
+                valuePropName="dataSource"
+              >
+                <div style={{ margin: '5px 0', textAlign: 'right' }}>
+                  <Button icon={<PlusOutlined />} onClick={businessFunc}>
+                    BusinessLine
+                  </Button>
+                </div>
+                <List
+                  bordered
+                  dataSource={businessLine}
+                  renderItem={(item, index) => (
+                    <List.Item
+                      key={index}
+                      actions={[
+                        <Tooltip title="delete">
+                          <Button
+                            type="text"
+                            icon={<i className="gbs gbs-delete"></i>}
+                            onClick={() => {
+                              let newData = [...businessLine];
+                              newData.splice(index, 1);
+                              setBusinessLine(newData);
+                            }}
+                          ></Button>
+                        </Tooltip>,
+                      ]}
+                    >
+                      {item}
+                    </List.Item>
+                  )}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Role" name="role" rules={[{ required: true }]}>
-                <Input.Search
-                  readOnly
-                  onSearch={() => roleFunc(form.getFieldValue('role') || '')}
+              <Form.Item
+                label="Role"
+                name="role"
+                required={true}
+                rules={[
+                  {
+                    validator: (rule, value) => {
+                      if (!role || !role.length) {
+                        return Promise.reject(rule.message);
+                      }
+                      return Promise.resolve();
+                    },
+                    message: 'Please select Role',
+                  },
+                ]}
+                valuePropName="dataSource"
+              >
+                <div style={{ margin: '5px 0', textAlign: 'right' }}>
+                  <Button icon={<PlusOutlined />} onClick={roleFunc}>
+                    Role
+                  </Button>
+                </div>
+                <List
+                  bordered
+                  dataSource={role}
+                  renderItem={(item, index) => (
+                    <List.Item
+                      key={index}
+                      actions={[
+                        <Tooltip title="delete">
+                          <Button
+                            type="text"
+                            icon={<i className="gbs gbs-delete"></i>}
+                            onClick={() => {
+                              let newData = [...role];
+                              newData.splice(index, 1);
+                              setRole(newData);
+                            }}
+                          ></Button>
+                        </Tooltip>,
+                      ]}
+                    >
+                      {item}
+                    </List.Item>
+                  )}
                 />
               </Form.Item>
             </Col>
@@ -550,14 +932,7 @@ export const Index = (props: any) => {
                   <Button type="primary" onClick={saveFormData}>
                     Save
                   </Button>
-                  <Button
-                    onClick={() => {
-                      setShowUserData(false);
-                      formData.resetFields();
-                    }}
-                  >
-                    Cancel
-                  </Button>
+                  <Button onClick={handleFormDataCancel}>Cancel</Button>
                 </Space>
               </Form.Item>
             </Col>
@@ -607,43 +982,6 @@ export const Index = (props: any) => {
         }
         renderBtns={
           <Space>
-            {/* <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
-                      <Button
-                        style={{ margin: '0 10px' }}
-                        type="text"
-                        onClick={() => {
-                          setShowUserData(true);
-                          setComponentDisabled(false);
-                        }}
-                      >
-                        Add
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="3"
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
-                          Download Template
-                        </a>
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
-                </Button>
-              </Dropdown>
-            </BtnThemeWrap> */}
             <Button type="primary" onClick={() => showUserDataFuc()}>
               Add
             </Button>
@@ -653,20 +991,6 @@ export const Index = (props: any) => {
             >
               Delete
             </Button>
-            {/* <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
-                />
-              }
-            ></Button> */}
           </Space>
         }
         changePageSize={changePageSize}

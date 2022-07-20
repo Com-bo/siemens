@@ -26,6 +26,7 @@ interface TableOptions {
   pagination?: boolean;
   rowClick?: (record: Object) => void;
   summary?: (currentData: any) => ReactNode;
+  preserveSelectedRowKeys?: boolean;
 }
 
 export default (_props: TableOptions) => {
