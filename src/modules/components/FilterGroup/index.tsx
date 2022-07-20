@@ -229,7 +229,7 @@ export default (props: FilterGroupType) => {
           <DebounceSelect
             initFlag
             mode="multiple"
-            onChange={(value, data) => { }}
+            onChange={(value, data) => {}}
             getoptions={(options) => {
               return options?.map((x, index) => {
                 return (
@@ -259,7 +259,7 @@ export default (props: FilterGroupType) => {
           <DebounceSelect
             initFlag
             mode="multiple"
-            onChange={(value, data) => { }}
+            onChange={(value, data) => {}}
             getoptions={(options) => {
               return options?.map((x, index) => {
                 return (
@@ -289,7 +289,7 @@ export default (props: FilterGroupType) => {
           <DebounceSelect
             initFlag
             mode="multiple"
-            onChange={(value, data) => { }}
+            onChange={(value, data) => {}}
             getoptions={(options) => {
               return options?.map((x, index) => {
                 return (
@@ -413,8 +413,8 @@ export default (props: FilterGroupType) => {
             groupName: type
               ? form.getFieldValue('groupName')
               : filterGropList.find(
-                (item) => item.value == form.getFieldValue('id'),
-              ).label,
+                  (item) => item.value == form.getFieldValue('id'),
+                ).label,
             moduleName: props.moudleName,
             conditionRelationship: form.getFieldValue('conditionRelationship'),
           },
@@ -464,7 +464,7 @@ export default (props: FilterGroupType) => {
           });
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
   const validGroupName = (rule, value, callback) => {
     if (form.getFieldValue('isNew') && !value) {

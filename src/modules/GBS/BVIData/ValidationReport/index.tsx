@@ -277,7 +277,7 @@ export default (props: any) => {
   };
   const exportExcelAction = () => {
     if (!business || !business.length) {
-      message.warning('Please select [BVI Bussiness Line]!');
+      message.warning('Please select [Bussiness Line]!');
       return;
     }
     let params = {
@@ -307,7 +307,7 @@ export default (props: any) => {
   };
   const exportExcelDiffAction = () => {
     if (!businessDiff || !businessDiff.length) {
-      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      message.warning('Please select [Bussiness Line]!'); //暂无权限提示
       return;
     }
     let params = {
@@ -362,7 +362,7 @@ export default (props: any) => {
               <FilterGroup
                 businessLineRender={
                   <>
-                    <label>BVI Business Line:</label>
+                    <label>Business Line:</label>
                     <Select
                       placeholder="Please select"
                       mode="multiple"
@@ -472,7 +472,7 @@ export default (props: any) => {
                 moudleName="BVI Difference Report"
                 businessLineRender={
                   <>
-                    <label>BVI Business Line:</label>
+                    <label>Business Line:</label>
                     <Select
                       placeholder="Please select"
                       mode="multiple"

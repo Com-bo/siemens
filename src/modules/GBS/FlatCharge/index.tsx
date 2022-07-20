@@ -96,6 +96,7 @@ export default (props: any) => {
   const [showCostcenter, setShowCostcenter] = useState(false);
   const [costcenterData, setcostcenterData] = useState([]);
   const [costCenterVal, setCostCenterVal] = useState(''); //用于检索的字段
+  const [customerDivisionVal, setCustomerDivisionVal] = useState(''); //用于检索的字段
   const [selectCostCenterkeys, setSelectCostCenterkeys] = useState([]);
   const [selectCostCenterRows, setSelectCostCenterRows] = useState([]); //选中的costcenter行
   const [costcenterCurrent, setCostCenterCurrent] = useState(1);
@@ -311,6 +312,7 @@ export default (props: any) => {
                 key="1"
                 icon={<EditOutlined />}
                 onClick={() => {
+                  console.log("点击的数据",record)
                   setShowFlatData(true);
                   setComponentDisabled(record.dataStatus == 'Submit');
                   formData.setFieldsValue({
@@ -1114,6 +1116,7 @@ export default (props: any) => {
     setShowPro(false);
     console.log(selectProductRow);
     let data = selectProductRow[0];
+    console.log(data)
     formData.setFieldsValue({
       businessLine: data.businessLine,
       are: data.are,
@@ -1121,6 +1124,7 @@ export default (props: any) => {
       customerDivision: data.customerDivision,
       productName: data.productName,
       productId: data.id,
+      po:null
     });
     handlerCancelProSearch();
   };
@@ -1229,6 +1233,7 @@ export default (props: any) => {
         listHeader: {
           are: formData.getFieldValue('are'),
           costCenter: costCenterVal,
+          custemerDivision: customerDivisionVal,
         },
       },
       orderCondition: {
@@ -1252,6 +1257,7 @@ export default (props: any) => {
   const cancelCostCenter = () => {
     setShowCostcenter(false);
     setCostCenterVal('');
+    setCustomerDivisionVal('');
     setSelectCostCenterRows([]);
     setSelectCostCenterkeys([]);
     setcostcenterData([]);
@@ -1311,14 +1317,25 @@ export default (props: any) => {
         destroyOnClose={true}
         onCancel={cancelCostCenter}
       >
-        <Form>
+        <Form labelCol={{ flex: '150px' }}>
           <Row>
-            <Col span={20}>
+            <Col span={10}>
               <Form.Item label="Cost Center">
                 <Input
                   value={costCenterVal}
                   onChange={(e) => {
                     setCostCenterVal(e.target.value);
+                  }}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={10}>
+              <Form.Item label="Customer Division">
+                <Input
+                  value={customerDivisionVal}
+                  onChange={(e) => {
+                    setCustomerDivisionVal(e.target.value);
                   }}
                   style={{ width: '100%' }}
                 />
@@ -1564,7 +1581,7 @@ export default (props: any) => {
                 <Input disabled={true} />
               </Form.Item>
             </Col>
-            {formData.getFieldValue('orgId') ? (
+            {formData.getFieldValue('orgId') && componentDisabled ? (
               ''
             ) : (
               <Col span={4}>
@@ -1716,6 +1733,11 @@ export default (props: any) => {
                 name="totalAmount"
                 rules={[
                   { required: true, message: 'Total Amount is Required;' },
+                  {
+                    pattern:
+                      /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
+                    message: 'Greater than zero and two decimal places at most',
+                  },
                 ]}
               >
                 <InputNumber

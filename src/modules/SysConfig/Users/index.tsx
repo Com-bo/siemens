@@ -242,6 +242,7 @@ export const Index = (props: any) => {
   };
 
   const saveFormData = () => {
+    console.log(1111)
     formData
       .validateFields()
       .then(async (values) => {
@@ -252,8 +253,9 @@ export const Index = (props: any) => {
           enable: formData.getFieldValue('enable') ? 1 : 0,
           customerDivision: formData
             .getFieldValue('customerDivision')
-            .split(''),
+            .split(','),
         };
+        console.log(222)
         console.log(params);
         let res: any;
         if (formData.getFieldValue('id')) {
@@ -272,7 +274,7 @@ export const Index = (props: any) => {
           message.error(res.msg);
         }
       })
-      .catch((e) => {});
+      .catch((e) => {console.log(e)});
   };
   const showUserDataFuc = (roleName?: string) => {
     setShowUserData(true);
