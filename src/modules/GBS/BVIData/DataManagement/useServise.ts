@@ -224,7 +224,7 @@ export default (props: any) => {
       .then((values) => {
         const fd = new FormData();
         objectToFormData(values.file[0], fd, 'file');
-        importDataSave(fd, values.type).then((res) => {
+        importDataSave(fd, Number(values.type)).then((res) => {
           setShowImport(false);
           if (res.isSuccess) {
             message.success('Submit success!');
