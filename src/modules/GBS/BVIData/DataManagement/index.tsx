@@ -194,13 +194,7 @@ export default (props: any) => {
       titleRender: 'input',
       sorter: true,
     },
-    {
-      name: 'billingARE',
-      title: 'Billing ARE',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
+    
     {
       name: 'companyCode',
       title: 'Company Code',
@@ -232,13 +226,6 @@ export default (props: any) => {
       name: 'costCenter',
       title: 'Cost Center',
       width: '150px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'billingCostCenter',
-      title: 'Billing Cost Center',
-      width: '200px',
       titleRender: 'input',
       sorter: true,
     },
@@ -471,6 +458,20 @@ export default (props: any) => {
       title: 'SAP Exchange Rate',
       width: '150px',
       name: 'exchangeRate',
+      sorter: true,
+    },
+    {
+      name: 'billingARE',
+      title: 'Billing ARE',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'billingCostCenter',
+      title: 'Billing Cost Center',
+      width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
