@@ -64,6 +64,7 @@ export default (props: any) => {
   const [showCostcenter, setShowCostcenter] = useState(false);
   const [costcenterData, setcostcenterData] = useState([]);
   const [costCenterVal, setCostCenterVal] = useState(''); //用于检索的字段
+  const [customerDivisionVal, setCustomerDivisionVal] = useState(''); //用于检索的字段
   const [selectCostCenterkeys, setSelectCostCenterkeys] = useState([]);
   const [selectCostCenterRows, setSelectCostCenterRows] = useState([]); //选中的costcenter行
   const [costcenterCurrent, setCostCenterCurrent] = useState(1);
@@ -589,6 +590,8 @@ export default (props: any) => {
     setcostcenterData,
     costCenterVal,
     setCostCenterVal,
+    customerDivisionVal,
+    setCustomerDivisionVal,
     selectCostCenterkeys,
     setSelectCostCenterkeys,
     selectCostCenterRows,

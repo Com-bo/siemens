@@ -286,6 +286,7 @@ export const Index = (props: any) => {
   };
 
   const saveFormData = () => {
+    console.log(1111);
     formData
       .validateFields()
       .then(async (values) => {
@@ -298,7 +299,6 @@ export const Index = (props: any) => {
           businessLine,
           enable: formData.getFieldValue('enable') ? 1 : 0,
         };
-        console.log(params);
         let res: any;
         if (formData.getFieldValue('id')) {
           // 编辑
@@ -315,7 +315,9 @@ export const Index = (props: any) => {
           message.error(res.msg);
         }
       })
-      .catch((e) => {});
+      .catch((e) => {
+        console.log(e);
+      });
   };
   const showUserDataFuc = () => {
     setShowUserData(true);

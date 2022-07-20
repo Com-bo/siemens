@@ -144,6 +144,8 @@ export default (props: any) => {
     setcostcenterData,
     costCenterVal,
     setCostCenterVal,
+    customerDivisionVal,
+    setCustomerDivisionVal,
     selectCostCenterkeys,
     setSelectCostCenterkeys,
     selectCostCenterRows,
@@ -931,6 +933,7 @@ export default (props: any) => {
         listHeader: {
           are: formData.getFieldValue('are'),
           costCenter: costCenterVal,
+          custemerDivision: customerDivisionVal,
         },
       },
       orderCondition: {
@@ -952,6 +955,7 @@ export default (props: any) => {
   const cancelCostCenter = () => {
     setShowCostcenter(false);
     setCostCenterVal('');
+    setCustomerDivisionVal('');
     setSelectCostCenterRows([]);
     setSelectCostCenterkeys([]);
     setcostcenterData([]);
@@ -1005,14 +1009,25 @@ export default (props: any) => {
         destroyOnClose={true}
         onCancel={cancelCostCenter}
       >
-        <Form>
+        <Form labelCol={{ flex: '150px' }}>
           <Row>
-            <Col span={20}>
+            <Col span={10}>
               <Form.Item label="Cost Center">
                 <Input
                   value={costCenterVal}
                   onChange={(e) => {
                     setCostCenterVal(e.target.value);
+                  }}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={10}>
+              <Form.Item label="Customer Division">
+                <Input
+                  value={customerDivisionVal}
+                  onChange={(e) => {
+                    setCustomerDivisionVal(e.target.value);
                   }}
                   style={{ width: '100%' }}
                 />
@@ -1374,7 +1389,9 @@ export default (props: any) => {
                     console.log(val);
                     val = val == '' ? 0 : Number(val);
                     formData.setFieldsValue({
-                      totalAmount: val * formData.getFieldValue('unitPrice'),
+                      totalAmount: Number(
+                        (val * formData.getFieldValue('unitPrice')).toFixed(2),
+                      ),
                     });
                   }}
                 />
@@ -1395,11 +1412,6 @@ export default (props: any) => {
                 name="totalAmount"
                 rules={[
                   { required: true, message: 'Total Amount is Required;' },
-                  {
-                    pattern:
-                      /^([1-9]\d*(\.\d{1,2})?|([0](\.([0][1-9]|[1-9]\d{0,1}))))$/,
-                    message: 'Greater than zero and two decimal places at most',
-                  },
                 ]}
               >
                 <InputNumber
