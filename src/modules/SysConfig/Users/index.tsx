@@ -948,6 +948,7 @@ export const Index = (props: any) => {
         data={tableData}
         columns={orignalCols}
         scrollX="2800px"
+        scrollY={'calc(100vh - 420px)'}
         selectedRowKeys={selectedRowKeys}
         total={total}
         onPageChange={onPageChange}
