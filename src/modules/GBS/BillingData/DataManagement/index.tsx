@@ -122,6 +122,7 @@ export default (props: any) => {
     setBusiness,
     business,
     businesslineOptions,
+    initialState, setInitialState
   } = useService(props);
   const orignalCols = [
     {
@@ -159,7 +160,7 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'customerDevision',
+      name: 'customerDivision',
       title: 'Customer Division',
       width: '200px',
       titleRender: 'input',
@@ -446,6 +447,7 @@ export default (props: any) => {
               onClick={(event) => {
                 event.stopPropagation();
                 console.log(record);
+                setInitialState(record.billingStatus)
                 setEditListMark(true);
                 setIsSingelEdits(true);
                 formDataEdit.setFieldsValue({
@@ -454,6 +456,7 @@ export default (props: any) => {
                     ? moment(record.billingDate)
                     : null,
                 });
+                console.log(formDataEdit.getFieldValue('billingStatus'))
                 if (formDataEdit.getFieldValue('billingStatus') == '2') {
                   setSuccessMark(false);
                 } else {
@@ -489,9 +492,10 @@ export default (props: any) => {
   };
   const renderOption = (fieldList) => {
     const options = [];
+    console.log(initialState)
     fieldList.map((item, index) => {
       options.push(
-        <Option key={index} value={item.value}>
+        <Option key={index} value={item.label} disabled={(initialState=="Successfully"||initialState=="Cancel")?(item.label=="Unfreeze"?true:false):false}>
           {item.label}
         </Option>,
       );

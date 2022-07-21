@@ -70,6 +70,7 @@ export default (props: any) => {
   //
   const [successMark, setSuccessMark] = useState(false);
   const [isSingelEdit, setIsSingelEdits] = useState(false);
+  const [initialState, setInitialState] = useState('');
   const [billingStatusGroup, setBillingStatusGroup] = useState([
     {
       label: 'Freeze',
@@ -581,13 +582,13 @@ export default (props: any) => {
         getData();
         setSelectedRowKeys([]);
         message.success(res.msg);
-        if (statusIndex == '7') {
-          notification.open({
-            message: 'Tip',
-            description:
-              'Please add the relevant information about SAP recharge',
-          });
-        }
+        // if (statusIndex == '7') {
+        //   notification.open({
+        //     message: 'Tip',
+        //     description:
+        //       'Please add the relevant information about SAP recharge',
+        //   });
+        // }
         if (statusIndex == '2') {
           notification.open({
             message: 'Tip',
@@ -603,17 +604,17 @@ export default (props: any) => {
     // let date = `yyyyMM=${new Date().getFullYear()}${new Date().getMonth()+1}`;
     switch (index) {
       case 1:
-        BatchFileManual({}).then((res) => {
+        BatchFileManual(business[0]).then((res) => {
           exportFun(res, 'BatchFileManual');
         });
         break;
       case 2:
-        BatchFileAuto({}).then((res) => {
+        BatchFileAuto(business[0]).then((res) => {
           exportFun(res, 'BatchFileAuto');
         });
         break;
       case 3:
-        AllocationFile({}).then((res) => {
+        AllocationFile(business[0]).then((res) => {
           exportFun(res, 'AllocationFile');
         });
         break;
@@ -719,5 +720,6 @@ export default (props: any) => {
     business,
     setBusiness,
     businesslineOptions,
+    initialState, setInitialState
   };
 };
