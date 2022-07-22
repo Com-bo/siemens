@@ -457,7 +457,7 @@ export default (props: any) => {
                     : null,
                 });
                 console.log(formDataEdit.getFieldValue('billingStatus'))
-                if (formDataEdit.getFieldValue('billingStatus') == '2') {
+                if (formDataEdit.getFieldValue('billingStatus') == 'Successfully') {
                   setSuccessMark(false);
                 } else {
                   setSuccessMark(true);
@@ -520,8 +520,8 @@ export default (props: any) => {
     });
     return options;
   };
-  const handleChangebus = (val: string) => {
-    if (val == '2') {
+  const handleChangebus = (val) => {
+    if (val == 2) {
       message.info('Please fill in the SAP recharge data');
       setSuccessMark(false);
     } else {

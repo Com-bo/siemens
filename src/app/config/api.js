@@ -166,4 +166,13 @@ export const Api = {
   EditO2CUserIDDataSave: '/api/O2CUserID/EditDataSave',
   DeleteO2CUserIDData: '/api/O2CUserID/DeleteData',
   QueryO2CUserIDLogData: '/api/O2CUserID/QueryLogData',
+
+
+  // CustomerReport
+  CustomerReportQueryChartData: '/api/CustomerReport/QueryChartData',
+  CustomerReportQueryListData: '/api/CustomerReport/QueryListData',
+  CustomerReportExportListData: '/api/CustomerReport/ExportListData',
+  CustomerReportImportListData: '/api/CustomerReport/ImportListData',
+  CustomerReportDeleteListData: '/api/CustomerReport/DeleteListData',
+  CustomerReportQueryBVIData: '/api/CustomerReport/QueryBVIData',
 };

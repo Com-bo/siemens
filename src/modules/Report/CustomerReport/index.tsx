@@ -11,7 +11,12 @@ import {
   Col,
   Space,
   Typography,
+  DatePicker,
+  Upload,
+  Checkbox,
+  Modal
 } from 'antd';
+const { RangePicker } = DatePicker;
 const { Option } = Select;
 import React, { useEffect, useRef, useState } from 'react';
 const { TabPane } = Tabs;
@@ -21,7 +26,24 @@ import ReactECharts from "echarts-for-react";
 import * as echarts from 'echarts';
 
 import { isNull } from 'lodash';
-
+import {
+  BtnTextRedWrap,
+  BtnBlueWrap,
+  BtnGreenWrap,
+  BtnOrangeWrap,
+  BtnThemeWrap,
+  TableTopDiv,
+  TableTitleDiv,
+  TaleTitleIconDiv,
+  TableWrapDiv,
+  ContentWrap, FilterGroupDiv
+} from '@/assets/style';
+import {
+  DownOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
 import TableList from '@/modules/components/TableMixInline';
 import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
@@ -33,149 +55,74 @@ import {
   getIntergrityReportData,
   detalInPercentageConfigQuery,
 } from '@/app/request/apiValidReport';
-import { ContentWrap, FilterGroupDiv } from '@/assets/style';
+import {
+  CustomerReportQueryChartData,
+  CustomerReportQueryListData,
+  CustomerReportExportListData,
+  CustomerReportImportListData,
+  CustomerReportDeleteListData,
+  CustomerReportQueryBVIData,
+} from '@/app/request/apiCustomerReport';
+
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 const pageName = 'BVIValidationReport';
 const { Text } = Typography;
 export default (props: any) => {
-  const [form] = Form.useForm();
-  const [diffForm] = Form.useForm();
   const [tableData, setTableData] = useState([]);
-  const [differenceData, setDiffData] = useState([]);
+  const [isSearch, setIsSearch] = useState(true);
+  const [isCheckOriginal, setIsCheckOriginal] = useState(false);
+  const [checkOriginalParam, setCheckOriginalParam] = useState({});
+  const [checkData, setCheckData] = useState([]);
+  const [columns, setCols] = useState([]);
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [pageSize, setPageSize] = useState(20);
-  const [diffTotal, setDiffTotal] = useState(0);
-  const [diffCurrent, setDiffCurrent] = useState(1);
-  const [diffPageSize, setDiffPageSize] = useState(20);
-  const [isSearch, setIsSearch] = useState(true);
-  const [isDiffSearch, setIsDiffSearch] = useState(true);
-  const [months, setMonths] = useState([]);
-  const [deltaTotal, setDeltaTotal] = useState(0);
-  const [totalSum, setTotalSum] = useState([]);
-  const [deltaInPercentage, setDeltaInPercentage] = useState({
-    percentage: 0,
-    plusColorCode: '',
-    minusColorCode: '',
-  });
+  const [componentDisabled, setComponentDisabled] = useState(false);
+  const [showBviData, setShowBviData] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [form] = Form.useForm();
+  const [formData] = Form.useForm();
+  const [formImport] = Form.useForm();
+  const [groupName, setGroupName] = useState('');
+  //
+  const [groupId, setGroupId] = useState('');
+  const [orderField, setOrderField] = useState('modifiedDate');
+  const [orderType, setOrderType] = useState('descend');
+  const latestGroupIdRef = useRef<any>();
+  const [showPro, setShowPro] = useState(false);
+  const [proForm] = Form.useForm();
+  const [proCurrent, setProCurrent] = useState(1);
+  const [proSize, setProSize] = useState(20);
+  const [productData, setProductData] = useState([]);
+  const [proTotal, setProTotal] = useState(0);
+  const [selectProKeys, setSelectProKeys] = useState([]);
+  const [selectProductRow, setSelectProductRow] = useState([]);
+  const [editListMark, setEditListMark] = useState(false);
+  const [isP2PMark, setIsP2PMark] = useState(false);
+  const [customerDivision, setCustomerDivision] = useState(''); //用于比对
+  const [formDataEdit] = Form.useForm();
+  const [isViewMark, setIsViewMark] = useState(false);
+  // 针对costcenter数据
+  const [showCostcenter, setShowCostcenter] = useState(false);
+  const [costcenterData, setcostcenterData] = useState([]);
+  const [costCenterVal, setCostCenterVal] = useState(''); //用于检索的字段
+  const [customerDivisionVal, setCustomerDivisionVal] = useState(''); //用于检索的字段
+  const [selectCostCenterkeys, setSelectCostCenterkeys] = useState([]);
+  const [selectCostCenterRows, setSelectCostCenterRows] = useState([]); //选中的costcenter行
+  const [costcenterCurrent, setCostCenterCurrent] = useState(1);
+  const [costcenterPageSize, setCostcenterPageSize] = useState(20);
+  const [costcenterTotal, setCostcenterTotal] = useState(0);
   const [first, setFirst] = useState(true);
-  const [business, setBusiness] = useState([businesslineOptions[0]]);
-  const [businessDiff, setBusinessDiff] = useState([businesslineOptions[0]]);
-
-  // 
+  const [business, setBusiness] = useState(businesslineOptions[0]);
   const [formSearch] = Form.useForm();
-
-  const orignalCols = [
-    {
-      name: 'businessLine',
-      title: 'Business Line',
-      width: '180px',
-      titleRender: 'input',
-    },
-    {
-      name: 'are',
-      title: 'ARE',
-      width: '120px',
-      titleRender: 'input',
-    },
-    {
-      name: 'customerDivision',
-      title: 'Customer Division',
-      width: '120px',
-      titleRender: 'input',
-    },
-    {
-      name: 'productName',
-      title: 'Product Name',
-      width: '200px',
-      titleRender: 'input',
-    },
-    {
-      name: 'systemTagOfProduct',
-      title: 'System Tag of Product',
-      width: '180px',
-      titleRender: 'input',
-    },
-    {
-      name: 'systemTagOfBVI',
-      title: 'System Tag of BVI',
-      width: '180px',
-      titleRender: 'input',
-    },
-    {
-      name: 'isThereBVI',
-      title: 'IS There BVI',
-      width: '100px',
-      render: (text) => (text == 1 ? 'Yes' : 'No'),
-    },
-    {
-      name: 'mandatoryBVI',
-      title: 'MandatoryBVI',
-      width: '100px',
-      render: (text) => (text == 1 ? 'Yes' : 'No'),
-    },
-    {
-      name: 'bviMonth',
-      title: 'BVI Month',
-      width: '100px',
-      render: (text) =>
-        text && moment(text).isValid() ? moment(text).format('YYYYMM') : text,
-    },
-  ];
-
-  const originalColsSecond = [
-    {
-      name: 'businessLine',
-      title: 'Business Line',
-      width: '180px',
-      titleRender: 'input',
-    },
-    {
-      name: 'are',
-      title: 'ARE',
-      width: '120px',
-      titleRender: 'input',
-    },
-    {
-      name: 'customerDivision',
-      title: 'Customer Division',
-      width: '120px',
-      titleRender: 'input',
-    },
-    {
-      name: 'productName',
-      title: 'Product Name',
-      width: '200px',
-      titleRender: 'input',
-    },
-    ...months,
-    {
-      name: 'delta',
-      title: 'Delta',
-      width: '100px',
-      // titleRender: 'input',
-    },
-    {
-      name: 'deltaInPercentage',
-      title: 'Delta in %',
-      width: '100px',
-      fixed: 'right',
-      render: (text, record, index) => {
-        return (
-          <Text
-            strong={true}
-            style={{ color: record.deltaInPercentageColor || '' }}
-          >
-            <span style={{ fontSize: '30px', verticalAlign: 'sub' }}>·</span>
-            {text}%
-          </Text>
-        );
-      },
-    },
-  ];
-  const option = {
+  const [FYDataOption, setFYDataOption] = useState(["FY2021","FY2022","FY2023"]);
+  const [serverLineDataOption, setServerLineDataOption] = useState(["AR"]);
+  const [productNameDataOption, setProductNameDataOption] = useState(["OneSRM Change Management"]);
+  const [EchartsOption,setEchartsOption]=useState({
     // title: {
     //   text: 'BVI Volume'
     // },
@@ -185,7 +132,7 @@ export default (props: any) => {
     },
     xAxis: {
       type: 'category',
-      data: ['Oct.', 'Nov.', 'Dec.', 'Jan.', 'Feb.', 'Mar.', 'Apr.',"May.","Jun.","Jul.","Aug.","Sept."],
+      data: [],
     },
     yAxis: {
       type: 'value',
@@ -207,31 +154,33 @@ export default (props: any) => {
     tooltip: {
       trigger: 'axis',
     },
-  };
+  })
+  // 
   useEffect(() => {
-    _getData();
-  }, [current, pageSize]);
-  useEffect(() => {
-    if (first) {
-      detalInPercentageConfigQuery().then((res) => {
-        if (res.isSuccess) {
-          // 默认配置
-          setDeltaInPercentage(res.data);
-          _getDiffData(res.data);
-        } else {
-          console.error(res.msg);
-        }
-      });
-    } else {
-      setFirst(false);
-      _getDiffData();
-    }
-  }, [diffCurrent, diffPageSize]);
-  const latestDiffGroupIdRef = useRef<any>();
-  const latestGroupIdRef = useRef<any>();
-  const _getData = async () => {
-    if (!business || !business.length) {
-      message.warning('Please select [BVI Bussiness Line]!');
+    formSearch.setFieldsValue({
+      businessLine:
+        businesslineOptions && businesslineOptions.length
+          ? businesslineOptions[0]
+          : null,
+      fy:FYDataOption[0],
+      serverLine:serverLineDataOption[0],
+      productName:productNameDataOption[0]
+    });
+    getData();
+    getChartData()
+  }, [current, pageSize, orderField, orderType, business]);
+  const getData = (recordId?: any) => {
+    // const params = {
+    //   pageIndex: current,
+    //   current,
+    //   pageSize,
+    //   ...form.getFieldsValue(),
+    // };
+    // if (conditions) {
+    //   params.groupId = conditions.groupId || null;
+    // }
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
       return;
     }
     let params = {
@@ -240,91 +189,50 @@ export default (props: any) => {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
-        userBusinessLineList: business,
+        userBusinessLineList: [business],
+        reportMonthList:[
+          "202206"
+        ],
+      },
+      orderCondition: {
+        [orderField]: orderType == 'ascend' ? 0 : 1,
       },
       pageIndex: current,
       pageSize: pageSize,
     };
 
-    let res = await getIntergrityReportData(params);
-    if (res.isSuccess) {
-      setTableData(res.data);
-      setTotal(res.totalCount);
-    } else {
-      message.error(res.msg);
-    }
-  };
-  const _getDiffData = (deltaParam?: {
-    percentage: number;
-    plusColorCode: string;
-    minusColorCode: string;
-  }) => {
-    if (!businessDiff || !businessDiff.length) {
-      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
-      return;
-    }
-    let _deltaInPercentage = {};
-    if (deltaParam) {
-      _deltaInPercentage = deltaParam;
-    } else {
-      _deltaInPercentage = deltaInPercentage;
-    }
-
-    let params = {
-      searchCondition: {
-        filterGroup: {
-          recordId: latestDiffGroupIdRef.current,
-        },
-        listHeader: diffForm.getFieldsValue(),
-        deltaInPercentage: _deltaInPercentage,
-        userBusinessLineList: businessDiff,
-      },
-      pageIndex: diffCurrent,
-      pageSize: diffPageSize,
-    };
-    getDiffData(params).then((res) => {
+    CustomerReportQueryListData(params).then((res) => {
       if (res.isSuccess) {
-        setDiffData(res.data?.dataList || []);
-        if (res.data?.monthList) {
-          setMonths(
-            res.data?.monthList.map((item, index) => {
-              return {
-                name: item,
-                title: item,
-                width: '120px',
-                render: (text, record) => record?.monthOfBVI[index],
-              };
-            }),
-          );
-          setDeltaTotal(res.data.deltaTotal);
-        } else {
-          setMonths([]);
-        }
-        setDiffTotal(res.totalCount);
-        setTotalSum(res.data?.monthOfTotalBVI || []);
+        setTableData(res.data);
+        setTotal(res.totalCount);
       } else {
         message.error(res.msg);
       }
     });
   };
-  const onPageChange = (pagination) => {
-    setCurrent(pagination.current);
-  };
-
-  const onDiffPageChange = (pagination) => {
-    setDiffCurrent(pagination.current);
+  const onPageChange = (
+    pagination,
+    filters,
+    { column, columnKey, field, order },
+    { currentDataSource, action },
+  ) => {
+    //   翻页|排序|筛选
+    switch (action) {
+      case 'sort':
+        setOrderField(field);
+        setOrderType(order);
+        break;
+      default:
+        setCurrent(pagination.current);
+        break;
+    }
   };
   const changePageSize = (val: number) => {
-    setCurrent(1);
     setPageSize(val);
   };
-  const changeDiffPageSize = (val: number) => {
-    setDiffCurrent(1);
-    setDiffPageSize(val);
-  };
   const exportExcelAction = () => {
-    if (!business || !business.length) {
-      message.warning('Please select [Bussiness Line]!');
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
       return;
     }
     let params = {
@@ -332,109 +240,277 @@ export default (props: any) => {
         filterGroup: {
           recordId: latestGroupIdRef.current,
         },
-        userBusinessLineList: business,
         listHeader: form.getFieldsValue(),
+        userBusinessLineList: [business],
       },
-      pageIndex: current,
+      orderCondition: {
+        [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      current,
       pageSize: pageSize,
     };
-
-    exportIntergrityReport(params).then((res: any) => {
-      if (res.response.status == 200) {
-        let elink = document.createElement('a');
-        // 设置下载文件名
-        elink.download = 'Integrity Validation List.xlsx';
-        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
-        elink.click();
-        window.URL.revokeObjectURL(elink.href);
+    CustomerReportExportListData(params).then((res: any) => {
+      let elink = document.createElement('a');
+      // 设置下载文件名
+      elink.download = 'Customer Report List.xlsx';
+      elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+      elink.click();
+      window.URL.revokeObjectURL(elink.href);
+    });
+  };
+  const importExcel = (file) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    CustomerReportImportListData(fd).then((res) => {
+      if (res.isSuccess) {
+        message.success(res.msg);
+        getData();
+        setSelectedRowKeys([]);
       } else {
-        message.error(res.response.statusText);
+        message.error(res.msg);
       }
     });
   };
-  const exportExcelDiffAction = () => {
-    if (!businessDiff || !businessDiff.length) {
-      message.warning('Please select [Bussiness Line]!'); //暂无权限提示
-      return;
+    // 删除接口
+  const deleteInfos = (recordIdList: Array<any>, event) => {
+    event.stopPropagation();
+    CustomerReportDeleteListData({
+      recordIdList,
+    }).then((res) => {
+      if (res.isSuccess) {
+        message.success(res.msg);
+        setSelectedRowKeys([]);
+        getData();
+        setCurrent(1);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  // 
+   const orignalCols = [
+    {
+      name: 'fiscalYear',
+      title: 'Fiscal Year',
+      width: '150px',
+      sorter: true,
+      titleRender: 'input',
+    },
+    {
+      name: 'billingMonth',
+      title: 'Billing Month',
+      width: '150px',
+      sorter: true,
+      titleRender: 'input',
+    },
+    {
+      name: 'calendarMonth',
+      title: 'Calendar Month',
+      width: '150px',
+      sorter: true,
+      titleRender: 'input',
+    },
+    {
+      name: 'businessLine',
+      title: 'Business Line',
+      width: '150px',
+      sorter: true,
+      titleRender: 'input',
+    },
+    {
+      name: 'serviceLine',
+      title: 'ServiceLine',
+      width: '150px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'senderProfitCenter',
+      title: 'Sender Profit Center',
+      width: '300px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'customerARE',
+      title: 'Customer ARE',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'customerCompanyCode',
+      title: 'Customer Company Code',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'customerDivision',
+      title: 'Customer Division',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'bu',
+      title: 'BU',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'customerCostCenter',
+      title: 'Customer Cost Center',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'productGSCCode',
+      title: 'Product GSC Code',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'productGSCDescription',
+      title: 'Product GSC Description',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'productName',
+      title: 'Product Name',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'productNameForReport',
+      title: 'Product Name For Report',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'bvi',
+      title: 'BVI',
+      width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'bvI_YTD',
+      title: 'BVI YTD',
+      width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'unitPrice',
+      title: 'Unit Price',
+      width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'unitPriceCurrency',
+      title: 'Unit Price Currency',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'actualChargeCNYGoss',
+      title: 'Actual charge(In CNY) Goss',
+      width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'actualChargeCurrencyGoss',
+      title: 'Actual charge(In Currency) Goss',
+      width: '220px',
+      sorter: true,
+    },
+    {
+      name: 'actualUsageCNYGoss',
+      title: 'Actual Usage(In CNY) Goss',
+      width: '200px',
+      sorter: true,
+    },
+    
+    {
+      name: 'actualUsageCurrencyGoss',
+      title: 'Actual Usage(In Currency) Goss',
+      width: '220px',
+      sorter: true,
+    },
+    {
+      name: 'billingCurrency',
+      title: 'Billing Currency',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'adjustTag',
+      title: 'AdjustTag',
+      width: '100px',
+      titleRender: 'input',
+    },
+    {
+      name: 'isFlatCharge',
+      title: 'isFlatCharge',
+      width: '100px',
+      titleRender: 'input',
+    },
+    {
+      name: 'comment',
+      title: 'Comment',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'importTag',
+      title: 'Import Tag',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
     }
-    let params = {
-      searchCondition: {
-        filterGroup: {
-          recordId: latestDiffGroupIdRef.current,
-        },
-        userBusinessLineList: businessDiff,
-        listHeader: diffForm.getFieldsValue(),
-        deltaInPercentage,
-      },
-      pageIndex: diffCurrent,
-      pageSize: diffPageSize,
-    };
-
-    deferenceDataExport(params).then((res: any) => {
-      if (res.response.status == 200) {
-        let elink = document.createElement('a');
-        // 设置下载文件名
-        elink.download = 'Difference Validation List.xlsx';
-        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
-        elink.click();
-        window.URL.revokeObjectURL(elink.href);
-      } else {
-        message.error(res.response.statusText);
-      }
-    });
-  };
-  const templateTypeData = [
-    { value: 'BVI Manual Template', label: 'BVI Manual Template' },
-    { value: 'R2R MD Import Template', label: 'R2R MD Import Template' },
-    { value: 'H2R BVI Template', label: 'H2R BVI Template' },
-    { value: 'H2R T&E BVI Template', label: 'H2R T&E BVI Template' },
-    { value: 'H2R GMM Template', label: 'H2R GMM Template' },
-    { value: 'O2C BVI Template', label: 'O2C BVI Template' },
-    { value: 'O2C TI BVI Template', label: 'O2C TI BVI Template' },
-    { value: 'P2P BCS Template', label: 'P2P BCS Template' },
   ];
-  const renderOption = (fieldList) => {
-    const options = [];
-    fieldList.map((item, index) => {
-      options.push(
-        <Option key={index} value={item.value}>
-          {item.label}
-        </Option>,
-      );
-    });
-    return options;
-  };
-  const getData = (recordId?: any) => {
+
+
+  // Chart Report 
+
+  const getChartData = (recordId?: any) => {
     formSearch
       .validateFields()
       .then((valid) => {
-        let startDate = '';
-        let endDate = '';
-        let uploadDate = formSearch.getFieldValue('uploadDate');
-        if (uploadDate && uploadDate.length) {
-          startDate = uploadDate[0];
-          endDate = uploadDate[1];
-        }
         let params = {
-          businessLine: formSearch.getFieldValue('businessLine'),
-          templateType: formSearch.getFieldValue('templateType'),
-          startUploadDate: startDate,
-          endUploadDate: endDate,
-          uploadUser: formSearch.getFieldValue('uploadUser'),
-          pageIndex: current,
-          pageSize: pageSize,
+          searchCondition: {
+            userBusinessLineList:
+              [formSearch.getFieldValue("businessLine")],
+            pageTop: {
+              fiscalYear: formSearch.getFieldValue("fy"),
+              serviceLine: formSearch.getFieldValue("serverLine"),
+              productName: formSearch.getFieldValue("productName")
+            }
+          }
         };
-        // QueryImportLog(params).then((res) => {
-        //   if (res.isSuccess) {
-        //     setTableData(res.data);
-        //     setTotal(res.totalCount);
-        //   } else {
-        //     message.error(res.msg);
-        //   }
-        // });
+        CustomerReportQueryChartData(params).then((res) => {
+          if (res.isSuccess) {
+            const ChartOption={...EchartsOption}
+            ChartOption.xAxis.data=res.data.option
+            setEchartsOption(ChartOption)
+            console.log(EchartsOption)
+          } else {
+            message.error(res.msg);
+          }
+        });
       })
       .catch((e) => {});
   };
+
   return (
     <TabWrapDiv>
       <Tabs defaultActiveKey="1" type="card">
@@ -448,7 +524,7 @@ export default (props: any) => {
                     name="fy"
                   >
                     <Select>
-                      {businesslineOptions.map((item, index) => (
+                      {FYDataOption.map((item, index) => (
                         <Select.Option key={index} value={item}>
                           {item}
                         </Select.Option>
@@ -464,9 +540,10 @@ export default (props: any) => {
                     <Select
                         placeholder="Please select"
                         mode="multiple"
-                        value={businessDiff}
+                        value={business}
                         onChange={(val) => {
-                          setBusinessDiff(val);
+                          console.log(val)
+                          setBusiness(val);
                         }}
                       >
                         {businesslineOptions.map((item, index) => (
@@ -483,7 +560,7 @@ export default (props: any) => {
                     name="serverLine"
                   >
                     <Select>
-                      {businesslineOptions.map((item, index) => (
+                      {serverLineDataOption.map((item, index) => (
                         <Select.Option key={index} value={item}>
                           {item}
                         </Select.Option>
@@ -497,7 +574,7 @@ export default (props: any) => {
                     name="productName"
                   >
                     <Select>
-                      {businesslineOptions.map((item, index) => (
+                      {productNameDataOption.map((item, index) => (
                         <Select.Option key={index} value={item}>
                           {item}
                         </Select.Option>
@@ -511,7 +588,7 @@ export default (props: any) => {
                       <Button
                         type="primary"
                         icon={<i className="gbs gbs-search"></i>}
-                        onClick={getData}
+                        onClick={getChartData}
                       ></Button>
                     </Space>
                   </Form.Item>
@@ -520,13 +597,7 @@ export default (props: any) => {
             </Form>
             {/* <Space> */}
               <ReactECharts
-                option={option}
-                echarts={echarts}
-                style={{ height: 400 }}
-                opts={{ locale: 'FR' }}
-              />
-              <ReactECharts
-                option={option}
+                option={EchartsOption}
                 echarts={echarts}
                 style={{ height: 400 }}
                 opts={{ locale: 'FR' }}
@@ -535,148 +606,168 @@ export default (props: any) => {
           </FilterGroupDiv>
         </TabPane>
         <TabPane tab="Report List" key="2">
-          <TableList
-              headerSearch={_getDiffData}
-              form={diffForm}
-              data={differenceData.map((item) => {
-                return {
-                  ...item,
-                  key: Math.random(),
-                };
-              })}
-              columns={originalColsSecond}
-              total={diffTotal}
-              scrollY={'calc(100vh - 509px)'}
-              onPageChange={onDiffPageChange}
-              changePageSize={changeDiffPageSize}
-              current={diffCurrent}
-              search={isDiffSearch}
-              selection={false}
-              // listName="Validation Report"
-              summary={(currentData) => (
-                // <Table.Summary fixed>
-                <Table.Summary.Row>
-                  {originalColsSecond.map((item, index) => {
-                    if (item.name == 'delta') {
-                      return (
-                        <Table.Summary.Cell
-                          index={originalColsSecond.length - 1}
-                          align="center"
-                        >
-                          {deltaTotal}
-                        </Table.Summary.Cell>
-                      );
-                    }
-                    if (index == 3) {
-                      return (
-                        <Table.Summary.Cell index={index} align="center">
-                          Total
-                        </Table.Summary.Cell>
-                      );
-                    } else {
-                      return (
-                        <Table.Summary.Cell index={index} align="center">
-                          {months.length &&
-                          index > 3 &&
-                          index <= 3 + months.length
-                            ? totalSum[index - 4]
-                            : ''}
-                        </Table.Summary.Cell>
-                      );
-                    }
-                  })}
-                </Table.Summary.Row>
-                // </Table.Summary>
-              )}
-              renderFilterGroup={
-                <FilterGroup
-                  moudleName="BVI Difference Report"
-                  businessLineRender={
-                    <>
-                      <label>Business Line:</label>
-                      <Select
-                        placeholder="Please select"
-                        mode="multiple"
-                        value={businessDiff}
-                        onChange={(val) => {
-                          setBusinessDiff(val);
-                        }}
-                      >
-                        {businesslineOptions.map((item, index) => (
-                          <Select.Option key={index} value={item}>
-                            {item}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </>
-                  }
-                  authPagename={pageName}
-                  onSearch={(val) => {
-                    latestDiffGroupIdRef.current = val;
-                    _getDiffData();
+        <TableList
+        data={tableData}
+        headerSearch={getData}
+        form={form}
+        columns={orignalCols}
+        total={total}
+        // rowClick={(record) => rowClick(record)}
+        onPageChange={onPageChange}
+        selectedRowKeys={selectedRowKeys}
+        onChange={(_selectedRowKeys, _selectedRows) => {
+          setSelectedRowKeys(_selectedRowKeys);
+          setSelectedRows(_selectedRows);
+        }}
+        changePageSize={changePageSize}
+        current={current}
+        search={isSearch}
+        rowKey="id"
+        listName="Data Management"
+        renderFilterGroup={
+          <FilterGroup
+            businessLineRender={
+              <>
+                <label>BVI Business Line:</label>
+                <Select
+                  placeholder="Please select"
+                  value={business}
+                  onChange={(val) => {
+                    setBusiness(val);
                   }}
-                  onClear={() => {
-                    latestDiffGroupIdRef.current = '';
-                    diffForm.resetFields();
-                    if (diffCurrent != 1) {
-                      setDiffCurrent(1);
-                    } else {
-                      _getDiffData();
-                    }
-                  }}
-                  exportAction={exportExcelDiffAction}
-                />
+                >
+                  {businesslineOptions?.map((item, index) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </>
+            }
+            moudleName=""
+            authPagename={pageName}
+            onSearch={(val) => {
+              latestGroupIdRef.current = val;
+              // getData(val);
+              if (current != 1) {
+                setCurrent(1);
+              } else {
+                getData(val);
               }
-              renderBtns={
-                <>
-                   <Button
-                    // disabled={!selectedRowKeys.length}
+            }}
+            onClear={() => {
+              latestGroupIdRef.current = '';
+              form.resetFields();
+              if (current != 1) {
+                setCurrent(1);
+              } else {
+                getData();
+              }
+            }}
+            exportAction={exportExcelAction}
+          />
+        }
+        renderBtns={
+          <>
+            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+              <Space>
+                <BtnOrangeWrap>
+                  <Button
+                    disabled={!selectedRowKeys.length}
                     // onClick={toRecheck}
                   >
                     Check BVI
                   </Button>
-                   <Button
-                    // disabled={!selectedRowKeys.length}
-                    // onClick={toRecheck}
+                </BtnOrangeWrap>
+                <BtnGreenWrap>
+                  <Button
+                    disabled={!selectedRowKeys.length}
+                    onClick={() => {
+                      Modal.confirm({
+                        title: 'Tips',
+                        icon: <ExclamationCircleOutlined />,
+                        content: 'Confirm delete selected data?',
+                        okText: 'Confirm',
+                        cancelText: 'Cancel',
+                        onOk: () => {
+
+                            deleteInfos(selectedRowKeys, event);
+
+                        },
+                        centered: true,
+                      });
+                    }}
                   >
                     Delete
                   </Button>
-                   <Button
-                    // disabled={!selectedRowKeys.length}
-                    // onClick={toRecheck}
+                </BtnGreenWrap>
+                <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
+                />
+                <BtnThemeWrap>
+                <label>Report Month</label>
+                <DatePicker
+                  disabled={false}
+                  picker="month"
+                  format="YYYYMM"
+                  style={{ width: '100px' }}
+                />
+                </BtnThemeWrap>
+        
+                <BtnThemeWrap>
+                  <Button
+                    disabled={selectedRowKeys.length !== 1}
+                    // onClick={copyData}
                   >
                     Export
                   </Button>
-                   <Button
-                    // disabled={!selectedRowKeys.length}
-                    // onClick={toRecheck}
-                  >
-                    Import
-                  </Button>
-                   <Button
-                    // disabled={!selectedRowKeys.length}
-                    // onClick={toRecheck}
-                  >
-                    Download Template
-                  </Button>
-
-                  <Divider
-                    type="vertical"
-                    style={{ height: '20px', borderColor: '#999' }}
+                </BtnThemeWrap>
+                <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
+                />
+                <BtnThemeWrap>
+                    <Upload
+                      style={{ margin: '0 10px' }}
+                      maxCount={1}
+                      showUploadList={false}
+                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                      beforeUpload={(file) => {
+                        importExcel(file);
+                        return false;
+                      }}
+                    >
+                      <Button key="import" type="text">
+                        <span>Import</span>
+                      </Button>
+                    </Upload>
+                </BtnThemeWrap>
+                <Button
+                >
+                  <a href="./template/Customer Report Template.xlsx">Download Template</a>
+                </Button>
+              </Space>
+            </AuthWrapper>
+            <Space>
+              <Divider
+                type="vertical"
+                style={{ height: '20px', borderColor: '#999' }}
+              />
+              <Button
+                style={{ width: '40px' }}
+                onClick={() => setIsSearch(!isSearch)}
+                icon={
+                  <img
+                    style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                    src={search}
                   />
-                  <Button
-                    style={{ width: '40px' }}
-                    onClick={() => setIsDiffSearch(!isDiffSearch)}
-                    icon={
-                      <img
-                        style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                        src={search}
-                      />
-                    }
-                  ></Button>
-                </>
-              }
-            />
+                }
+              ></Button>
+            </Space>
+          </>
+        }
+      />
         </TabPane>
       </Tabs>
     </TabWrapDiv>
