@@ -171,25 +171,6 @@ export const Index = (props: any) => {
       key: 'newValue',
       align: 'center',
     },
-    {
-      title: 'Modified Date',
-      dataIndex: 'modifiedDate',
-      // sorter: {
-      //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
-      // },
-      key: 'modifiedDate',
-      align: 'center',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
-    },
-    {
-      title: 'Modified User',
-      dataIndex: 'modifiedUser',
-      key: 'modifiedUser',
-      align: 'center',
-    },
   ];
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {

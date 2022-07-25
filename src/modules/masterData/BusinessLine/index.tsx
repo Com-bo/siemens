@@ -166,25 +166,22 @@ export const Index = (props: any) => {
       key: 'newValue',
       align: 'center',
     },
-    {
-      title: 'Modified Date',
-      dataIndex: 'modifiedDate',
-      // sorter: {
-      //   compare: (a, b) => moment(a.modifiedDate) > moment(b.modifiedDate),
-      // },
-      key: 'modifiedDate',
-      align: 'center',
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
-    },
-    {
-      title: 'Modified User',
-      dataIndex: 'modifiedUser',
-      key: 'modifiedUser',
-      align: 'center',
-    },
+    // {
+    //   title: 'Modified Date',
+    //   dataIndex: 'modifiedDate',
+    //   key: 'modifiedDate',
+    //   align: 'center',
+    //   render: (text) =>
+    //     text && moment(text).isValid()
+    //       ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+    //       : text,
+    // },
+    // {
+    //   title: 'Modified User',
+    //   dataIndex: 'modifiedUser',
+    //   key: 'modifiedUser',
+    //   align: 'center',
+    // },
   ];
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
@@ -515,11 +512,11 @@ export const Index = (props: any) => {
         }
         renderBtns={
           <Space>
-            <BtnThemeWrap>
+            {/* <BtnThemeWrap>
               <Dropdown
                 overlay={() => (
                   <Menu>
-                    {/* <Menu.Item
+                    <Menu.Item
                       key="1"
                       icon={<i className="gbs gbs-import"></i>}
                     >
@@ -537,7 +534,7 @@ export const Index = (props: any) => {
                           <span>Import</span>
                         </Button>
                       </Upload>
-                    </Menu.Item> */}
+                    </Menu.Item>
                     <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
                       <Button
                         style={{ margin: '0 10px' }}
@@ -570,6 +567,19 @@ export const Index = (props: any) => {
                   </Space>
                 </Button>
               </Dropdown>
+            </BtnThemeWrap> */}
+            
+            <BtnThemeWrap>
+              <Button
+                style={{ margin: '0 10px' }}
+                type="text"
+                onClick={() => {
+                  setShowCostCenterData(true);
+                  setComponentDisabled(false);
+                }}
+              >
+                Add
+              </Button>
             </BtnThemeWrap>
             <Button
               disabled={selectedRowKeys.length != 1}
