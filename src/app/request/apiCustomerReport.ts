@@ -27,6 +27,7 @@ export const CustomerReportExportListData = (data: Object) => {
     data,
     {
       autoLoading: true,
+      responseType: 'blob',
     },
   );
 };
@@ -50,12 +51,22 @@ export const CustomerReportDeleteListData = (data: Object) => {
     },
   );
 };
-export const CustomerReportQueryBVIData = () => {
+export const CustomerReportQueryBVIData = (data: Object) => {
   return usePost(
     `${Config.Api.Base}${Config.Api.CustomerReportQueryBVIData}`,
-    {},
+      data,
     {
       autoLoading: true,
+    },
+  );
+};
+export const CustomerReportBuildReport = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.CustomerReportBuildReport}`,
+    data,
+    {
+      autoLoading: true,
+      responseType: 'blob',
     },
   );
 };

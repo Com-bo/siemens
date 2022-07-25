@@ -175,4 +175,5 @@ export const Api = {
   CustomerReportImportListData: '/api/CustomerReport/ImportListData',
   CustomerReportDeleteListData: '/api/CustomerReport/DeleteListData',
   CustomerReportQueryBVIData: '/api/CustomerReport/QueryBVIData',
+  CustomerReportBuildReport: '/api/CustomerReport/BuildReport',
 };

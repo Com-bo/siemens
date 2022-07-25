@@ -44,3 +44,32 @@ export const TabWrapDiv = styled.div`
     }
   }
 `;
+
+export const FilterGroupDivReport = styled.div`
+  padding: 22px;
+  background-color: #f6f8f9;
+  border-bottom: 1px solid #e3e5e5;
+  position: absolute;
+  height: 80px;
+  width: 100%;
+  .ant-select {
+    width: 200px !important;
+    margin: 0 20px 0 10px;
+  }
+  .ant-space .ant-btn {
+    width: 40px;
+  }
+`;
+export const ReactEChartsDiv = styled.div`
+  padding: 22px;
+  margin-top: 80px;
+  /* border-bottom: 1px solid #e3e5e5; */
+  label{
+    display: block;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+`;
+export const ReactEChartsDivWrap = styled.div`
+margin-bottom: 80px;
+`

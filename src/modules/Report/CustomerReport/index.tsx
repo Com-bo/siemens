@@ -47,7 +47,7 @@ import {
 import TableList from '@/modules/components/TableMixInline';
 import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
-import { TabWrapDiv } from './style';
+import { TabWrapDiv,FilterGroupDivReport,ReactEChartsDiv,ReactEChartsDivWrap } from './style';
 import {
   deferenceDataExport,
   exportIntergrityReport,
@@ -62,6 +62,7 @@ import {
   CustomerReportImportListData,
   CustomerReportDeleteListData,
   CustomerReportQueryBVIData,
+  CustomerReportBuildReport
 } from '@/app/request/apiCustomerReport';
 
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
@@ -119,13 +120,11 @@ export default (props: any) => {
   const [first, setFirst] = useState(true);
   const [business, setBusiness] = useState(businesslineOptions[0]);
   const [formSearch] = Form.useForm();
+  const [ReportMonth, setReportMonth] = useState(`${new Date().getFullYear()}${(new Date().getMonth()+1)>9?(new Date().getMonth()+1):"0"+(new Date().getMonth()+1)}`);
   const [FYDataOption, setFYDataOption] = useState(["FY2021","FY2022","FY2023"]);
   const [serverLineDataOption, setServerLineDataOption] = useState(["AR"]);
   const [productNameDataOption, setProductNameDataOption] = useState(["OneSRM Change Management"]);
-  const [EchartsOption,setEchartsOption]=useState({
-    // title: {
-    //   text: 'BVI Volume'
-    // },
+  const [EchartsOption1,setEchartsOption1]=useState({
     grid: { top: 8, right: 8, bottom: 24, left: 36 },
     legend: {
       data:['销量']
@@ -139,13 +138,36 @@ export default (props: any) => {
     },
     series: [
       {
-        name:'line1',
+        name:'BVI Volume',
+        data: [200, 333, 700, 800, 900,900, 1290,200, 333, 700, 800, 900],
+        type: 'line',
+      }
+    ],
+    tooltip: {
+      trigger: 'axis',
+    },
+  })
+  const [EchartsOption2,setEchartsOption2]=useState({
+    grid: { top: 8, right: 8, bottom: 24, left: 36 },
+    legend: {
+      data:['销量']
+    },
+    xAxis: {
+      type: 'category',
+      data: [],
+    },
+    yAxis: {
+      type: 'value',
+    },
+    series: [
+      {
+        name:'usage',
         data: [200, 333, 700, 800, 900,900, 1290,200, 333, 700, 800, 900],
         type: 'line',
         // smooth: true,
       },
       {
-        name:'line2',
+        name:'charge',
         data: [900, 222, 200, 333, 700, 800, 900,900, 222, 200, 333, 700],
         type: 'line',
         // smooth: true,
@@ -191,7 +213,7 @@ export default (props: any) => {
         listHeader: form.getFieldsValue(),
         userBusinessLineList: [business],
         reportMonthList:[
-          "202206"
+          ReportMonth
         ],
       },
       orderCondition: {
@@ -231,6 +253,11 @@ export default (props: any) => {
     setPageSize(val);
   };
   const exportExcelAction = () => {
+    console.log(ReportMonth)
+    if (!ReportMonth) {
+      message.warning('Please select [Report Month]!'); 
+      return;
+    }
     if (!business) {
       message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
       return;
@@ -242,6 +269,9 @@ export default (props: any) => {
         },
         listHeader: form.getFieldsValue(),
         userBusinessLineList: [business],
+        reportMonthList: [
+          ReportMonth
+        ],
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -277,13 +307,14 @@ export default (props: any) => {
     CustomerReportDeleteListData({
       recordIdList,
     }).then((res) => {
-      if (res.isSuccess) {
-        message.success(res.msg);
+      console.log(res)
+      if (res.response.status==200) {
+        message.success(res.response.statusText);
         setSelectedRowKeys([]);
         getData();
         setCurrent(1);
       } else {
-        message.error(res.msg);
+        message.error(res.response.statusText);
       }
     });
   };
@@ -428,7 +459,7 @@ export default (props: any) => {
     {
       name: 'actualChargeCurrencyGoss',
       title: 'Actual charge(In Currency) Goss',
-      width: '220px',
+      width: '250px',
       sorter: true,
     },
     {
@@ -441,7 +472,7 @@ export default (props: any) => {
     {
       name: 'actualUsageCurrencyGoss',
       title: 'Actual Usage(In Currency) Goss',
-      width: '220px',
+      width: '250px',
       sorter: true,
     },
     {
@@ -478,8 +509,51 @@ export default (props: any) => {
       sorter: true,
     }
   ];
-
-
+  const onReportMonthChange=(datestring)=>{
+    setReportMonth(datestring)
+  }
+  const toCheckBVI=()=>{
+    let params = {
+      searchCondition: {
+        recordIdList: selectedRowKeys
+      },
+      pageIndex: current,
+      pageSize: pageSize,
+    };
+    CustomerReportQueryBVIData(params).then((res) => {
+      if (res.isSuccess) {
+        // setTableData(res.data);
+        // setTotal(res.totalCount);
+      } else {
+        message.error(res.msg);
+      }
+    });
+    
+  }
+  const ExportCustomer=()=>{
+    console.log(ReportMonth)
+    if (!ReportMonth) {
+      message.warning('Please select [Report Month]!'); 
+      return;
+    }
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      return;
+    }
+    let params = {
+        busiLine: business,
+        reportMonth: ReportMonth
+    };
+    CustomerReportBuildReport(params).then((res: any) => {
+      let elink = document.createElement('a');
+      // 设置下载文件名
+      elink.download = 'BuildReport Customer List.xlsx';
+      elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+      elink.click();
+      window.URL.revokeObjectURL(elink.href);
+    });
+  }
+  
   // Chart Report 
 
   const getChartData = (recordId?: any) => {
@@ -499,10 +573,15 @@ export default (props: any) => {
         };
         CustomerReportQueryChartData(params).then((res) => {
           if (res.isSuccess) {
-            const ChartOption={...EchartsOption}
-            ChartOption.xAxis.data=res.data.option
-            setEchartsOption(ChartOption)
-            console.log(EchartsOption)
+            const ChartOption1={...EchartsOption1}
+            const ChartOption2={...EchartsOption2}
+            ChartOption1.xAxis.data=res.data.option
+            ChartOption1.series[0].data=res.data.bvi
+            ChartOption2.xAxis.data=res.data.option
+            ChartOption2.series[0].data=res.data.usage
+            ChartOption2.series[1].data=res.data.charge
+            setEchartsOption1({...ChartOption1})
+            setEchartsOption2({...ChartOption2})
           } else {
             message.error(res.msg);
           }
@@ -515,10 +594,10 @@ export default (props: any) => {
     <TabWrapDiv>
       <Tabs defaultActiveKey="1" type="card">
         <TabPane tab="Chart Report" key="1">
-          <FilterGroupDiv >
+          <FilterGroupDivReport>
             <Form form={formSearch}>
-              <Row className="importData"  justify="start">
-                <Col span={4}>
+              <Row>
+                <Col span={5}>
                   <Form.Item
                     label="FY"
                     name="fy"
@@ -532,7 +611,7 @@ export default (props: any) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={5}>
                   <Form.Item
                     label="Business Line"
                     name="businessLine"
@@ -554,7 +633,7 @@ export default (props: any) => {
                       </Select>
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={5}>
                   <Form.Item
                     label="Server Line"
                     name="serverLine"
@@ -568,7 +647,7 @@ export default (props: any) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={5}>
                   <Form.Item
                     label="Product Name"
                     name="productName"
@@ -595,15 +674,34 @@ export default (props: any) => {
                 </Col>
               </Row>
             </Form>
-            {/* <Space> */}
-              <ReactECharts
-                option={EchartsOption}
-                echarts={echarts}
-                style={{ height: 400 }}
-                opts={{ locale: 'FR' }}
-              />
-            {/* </Space> */}
-          </FilterGroupDiv>
+            </FilterGroupDivReport>
+            <ReactEChartsDiv>
+              <ReactEChartsDivWrap>
+                <label>BVI Volume</label>
+                <ReactECharts
+                  echarts={echarts}
+                  option={EchartsOption1}
+                  notMerge={true}
+                  lazyUpdate={true}
+                  style={{ height: 400 }}
+                  opts={{ locale: 'FR' }}
+                  key={Date.now()}
+                />
+              </ReactEChartsDivWrap>
+              <ReactEChartsDivWrap>
+                <label>Usage&Charge</label>
+                <ReactECharts
+                  echarts={echarts}
+                  option={EchartsOption2}
+                  notMerge={true}
+                  lazyUpdate={true}
+                  style={{ height: 400 }}
+                  opts={{ locale: 'FR' }}
+                  key={Date.now()+1}
+                />
+              </ReactEChartsDivWrap>
+            </ReactEChartsDiv>
+          
         </TabPane>
         <TabPane tab="Report List" key="2">
         <TableList
@@ -623,7 +721,7 @@ export default (props: any) => {
         current={current}
         search={isSearch}
         rowKey="id"
-        listName="Data Management"
+        listName="Customer Report"
         renderFilterGroup={
           <FilterGroup
             businessLineRender={
@@ -674,7 +772,7 @@ export default (props: any) => {
                 <BtnOrangeWrap>
                   <Button
                     disabled={!selectedRowKeys.length}
-                    // onClick={toRecheck}
+                    onClick={toCheckBVI}
                   >
                     Check BVI
                   </Button>
@@ -706,23 +804,21 @@ export default (props: any) => {
                   style={{ height: '20px', borderColor: '#999' }}
                 />
                 <BtnThemeWrap>
-                <label>Report Month</label>
+                <label>Report Month : </label>
                 <DatePicker
+                  onChange={(dates,datestring)=>{
+                    onReportMonthChange(datestring)
+                  }}
+                  defaultValue={moment(ReportMonth)}
                   disabled={false}
                   picker="month"
                   format="YYYYMM"
                   style={{ width: '100px' }}
                 />
                 </BtnThemeWrap>
-        
-                <BtnThemeWrap>
-                  <Button
-                    disabled={selectedRowKeys.length !== 1}
-                    // onClick={copyData}
-                  >
-                    Export
-                  </Button>
-                </BtnThemeWrap>
+                <Button onClick={ExportCustomer}>
+                  <span>Export</span>
+                </Button>
                 <Divider
                   type="vertical"
                   style={{ height: '20px', borderColor: '#999' }}
