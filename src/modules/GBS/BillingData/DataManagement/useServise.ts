@@ -518,7 +518,7 @@ export default (props: any) => {
 
   // freeze
   const freezeDataMethod = () => {
-    FreezeData({}).then((res) => {
+    FreezeData({businessLine:business[0]}).then((res) => {
       if (res.isSuccess) {
         getData();
         setSelectedRowKeys([]);
