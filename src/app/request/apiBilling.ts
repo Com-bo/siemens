@@ -129,7 +129,7 @@ export const SetStatusSave = (data: Object) => {
 export const BatchFileManual = (data) => {
   console.log(data);
   return usePost(
-    `${Config.Api.Base}${Config.Api.BatchFileManual}?${data}`,{},
+    `${Config.Api.Base}${Config.Api.BatchFileManual}?businessLine=${data}`,{},
     // `${Config.Api.Base}${Config.Api.BatchFileManual}`,
     // data,
     {
@@ -140,13 +140,13 @@ export const BatchFileManual = (data) => {
 };
 export const BatchFileAuto = (data: Object) => {
   return usePost(`
-  ${Config.Api.Base}${Config.Api.BatchFileAuto}?${data}`, {}, {
+  ${Config.Api.Base}${Config.Api.BatchFileAuto}?businessLine=${data}`, {}, {
     autoLoading: true,
     responseType: 'blob',
   });
 };
 export const AllocationFile = (data: Object) => {
-  return usePost(`${Config.Api.Base}${Config.Api.AllocationFile}?${data}`, {}, {
+  return usePost(`${Config.Api.Base}${Config.Api.AllocationFile}?businessLine=${data}`, {}, {
     autoLoading: true,
     responseType: 'blob',
   });

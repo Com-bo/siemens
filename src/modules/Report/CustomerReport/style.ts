@@ -63,7 +63,6 @@ export const FilterGroupDivReport = styled.div`
 export const ReactEChartsDiv = styled.div`
   padding: 22px;
   margin-top: 80px;
-  /* border-bottom: 1px solid #e3e5e5; */
   label{
     display: block;
     font-size: 28px;

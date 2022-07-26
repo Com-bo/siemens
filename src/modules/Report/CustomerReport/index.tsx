@@ -73,10 +73,8 @@ const { Text } = Typography;
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
-  const [isCheckOriginal, setIsCheckOriginal] = useState(false);
   const [checkOriginalParam, setCheckOriginalParam] = useState({});
   const [checkData, setCheckData] = useState([]);
-  const [columns, setCols] = useState([]);
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -118,6 +116,8 @@ export default (props: any) => {
   const [costcenterPageSize, setCostcenterPageSize] = useState(20);
   const [costcenterTotal, setCostcenterTotal] = useState(0);
   const [first, setFirst] = useState(true);
+  const [isCheckOriginal, setIsCheckOriginal] = useState(false);
+  const [columns, setCols] = useState([]);
   const [business, setBusiness] = useState(businesslineOptions[0]);
   const [formSearch] = Form.useForm();
   const [ReportMonth, setReportMonth] = useState(`${new Date().getFullYear()}${(new Date().getMonth()+1)>9?(new Date().getMonth()+1):"0"+(new Date().getMonth()+1)}`);
@@ -512,6 +512,23 @@ export default (props: any) => {
   const onReportMonthChange=(datestring)=>{
     setReportMonth(datestring)
   }
+  const _generateHead = (cols: any) => {
+    let _columns = [];
+    for (let _key in cols) {
+      if (_key) {
+        let start = _key[0];
+        let end = _key.slice(1);
+        let colKey = start + end;
+        _columns.push({
+          title: cols[_key],
+          dataIndex: colKey,
+          // width: '120px',
+          key: colKey,
+        });
+      }
+    }
+    setCols(_columns);
+  };
   const toCheckBVI=()=>{
     let params = {
       searchCondition: {
@@ -522,35 +539,12 @@ export default (props: any) => {
     };
     CustomerReportQueryBVIData(params).then((res) => {
       if (res.isSuccess) {
-        // setTableData(res.data);
-        // setTotal(res.totalCount);
+        setIsCheckOriginal(true);
+        setCheckData(res.data.body || []);
+        _generateHead(res.data.header || []);
       } else {
         message.error(res.msg);
       }
-    });
-    
-  }
-  const ExportCustomer=()=>{
-    console.log(ReportMonth)
-    if (!ReportMonth) {
-      message.warning('Please select [Report Month]!'); 
-      return;
-    }
-    if (!business) {
-      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
-      return;
-    }
-    let params = {
-        busiLine: business,
-        reportMonth: ReportMonth
-    };
-    CustomerReportBuildReport(params).then((res: any) => {
-      let elink = document.createElement('a');
-      // 设置下载文件名
-      elink.download = 'BuildReport Customer List.xlsx';
-      elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
-      elink.click();
-      window.URL.revokeObjectURL(elink.href);
     });
   }
   
@@ -589,9 +583,67 @@ export default (props: any) => {
       })
       .catch((e) => {});
   };
-
+  const checkOriginalOptions = {
+    validationMsg: '100px',
+    productName: '200px',
+  };
   return (
     <TabWrapDiv>
+        {/* 查看bvi */}
+        <Modal
+          maskClosable={false}
+          title={
+            <TableTopDiv style={{ margin: 0 }}>
+              <TableTitleDiv style={{ float: 'left' }}>
+                <TaleTitleIconDiv>
+                  <span></span>
+                </TaleTitleIconDiv>
+                <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                  Check BVI List
+                </span>
+              </TableTitleDiv>
+            </TableTopDiv>
+          }
+          width="1300px"
+          visible={isCheckOriginal}
+          footer={null}
+          onCancel={() => setIsCheckOriginal(false)}
+        >
+        <TableWrapDiv>
+          <Table
+            columns={columns?.map((_item) => {
+              return {
+                ..._item,
+                fixed: _item.dataIndex == 'validationMsg' ? 'right' : null,
+                align: 'center',
+                width: checkOriginalOptions[_item.dataIndex] || '100px',
+                render: (text) => {
+                  if (_item.dataIndex == 'validationMsg') {
+                    return (
+                      <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
+                    );
+                  } else if (
+                    _item.dataIndex == 'postingDate' ||
+                    _item.dataIndex == 'entryDate' ||
+                    _item.dataIndex == 'documentDate' ||
+                    _item.dataIndex == 'netDueDate' ||
+                    _item.dataIndex == 'billingDate'
+                  ) {
+                    return moment(text).format('YYYY-MM-DD');
+                  } else {
+                    return text;
+                  }
+                },
+              };
+            })}
+            rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
+            dataSource={checkData}
+            rowKey="id"
+            pagination={false}
+            scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
+          />
+        </TableWrapDiv>
+      </Modal>
       <Tabs defaultActiveKey="1" type="card">
         <TabPane tab="Chart Report" key="1">
           <FilterGroupDivReport>
@@ -711,6 +763,7 @@ export default (props: any) => {
         columns={orignalCols}
         total={total}
         // rowClick={(record) => rowClick(record)}
+        scrollY={'calc(100vh - 510px)'}
         onPageChange={onPageChange}
         selectedRowKeys={selectedRowKeys}
         onChange={(_selectedRowKeys, _selectedRows) => {
@@ -816,9 +869,6 @@ export default (props: any) => {
                   style={{ width: '100px' }}
                 />
                 </BtnThemeWrap>
-                <Button onClick={ExportCustomer}>
-                  <span>Export</span>
-                </Button>
                 <Divider
                   type="vertical"
                   style={{ height: '20px', borderColor: '#999' }}

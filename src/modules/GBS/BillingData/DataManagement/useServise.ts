@@ -71,6 +71,9 @@ export default (props: any) => {
   const [successMark, setSuccessMark] = useState(false);
   const [isSingelEdit, setIsSingelEdits] = useState(false);
   const [initialState, setInitialState] = useState('');
+  const [ReportMonthMark, setReportMonthMark] = useState(false);
+  // const [ReportMonth, setReportMonth] = useState(`${new Date().getFullYear()}${(new Date().getMonth()+1)>9?(new Date().getMonth()+1):"0"+(new Date().getMonth()+1)}`);
+  const [ReportMonth, setReportMonth] = useState(``);
   const [billingStatusGroup, setBillingStatusGroup] = useState([
     {
       label: 'Freeze',
@@ -713,6 +716,8 @@ export default (props: any) => {
     business,
     setBusiness,
     businesslineOptions,
-    initialState, setInitialState
+    initialState, setInitialState,
+    ReportMonthMark, setReportMonthMark,
+    ReportMonth, setReportMonth
   };
 };
