@@ -459,26 +459,26 @@ export const Index = (props: any) => {
           <FilterGroupDiv>
             <Form
               form={formFilter}
-              labelCol={{ flex: '120px' }}
+              labelCol={{ offset:1 }}
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
                 <Col span={5}>
-                  <Form.Item label="Division" name="customerDivision">
+                  <Form.Item label="Customer Division" name="customerDivision">
                     <Input />
                   </Form.Item>
                 </Col>
                 <Col span={5}>
-                  <Form.Item label="NumberBatch" name="customerNumberBatch">
+                  <Form.Item label="Customer Number Batch" name="customerNumberBatch">
                     <Input />
                   </Form.Item>
                 </Col>
                 <Col span={5}>
-                  <Form.Item label="NumberAllocation" name="customerNumberAllocation">
+                  <Form.Item label="Customer Number Allocation" name="customerNumberAllocation">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={3} offset={1}>
                   <Form.Item style={{ textAlign: 'right' }}>
                     <Space size={20}>
                       <Tooltip title="Search">

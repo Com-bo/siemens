@@ -24,6 +24,7 @@ const { TabPane } = Tabs;
 import noData from '@/assets/images/noData.png';
 import ReactECharts from "echarts-for-react";
 import * as echarts from 'echarts';
+import {lastMonth} from "@/tools/validator/lastMonth"
 
 import { isNull } from 'lodash';
 import {
@@ -120,7 +121,7 @@ export default (props: any) => {
   const [columns, setCols] = useState([]);
   const [business, setBusiness] = useState(businesslineOptions[0]);
   const [formSearch] = Form.useForm();
-  const [ReportMonth, setReportMonth] = useState(`${new Date().getFullYear()}${(new Date().getMonth()+1)>9?(new Date().getMonth()+1):"0"+(new Date().getMonth()+1)}`);
+  const [ReportMonth, setReportMonth] = useState(lastMonth());
   const [FYDataOption, setFYDataOption] = useState(["FY2021","FY2022","FY2023"]);
   const [serverLineDataOption, setServerLineDataOption] = useState(["AR"]);
   const [productNameDataOption, setProductNameDataOption] = useState(["OneSRM Change Management"]);

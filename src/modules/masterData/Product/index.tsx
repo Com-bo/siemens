@@ -61,6 +61,7 @@ import {
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import FormTable from '@/components/FormTable/formTable';
 import { _GraphQueryableInstance } from '@pnp/graph/graphqueryable';
+import { parseExcel } from '@/tools/excelDownload';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formData] = Form.useForm();
@@ -467,34 +468,38 @@ export const Index = (props: any) => {
     fd.append('file', file);
     importProductData(fd).then((res) => {
       if (res.isSuccess) {
-        message.success(
-          <>
-            {res.msg}
-            <Divider type="vertical" />
-            Success:{res.data?.successCount || 0}
-            <Divider type="vertical" />
-            No import required:{res.data?.notRequiredCount || 0}
-            <Divider type="vertical" />
-            Error:{res.data?.errorCount || 0}
-            <Divider type="vertical" />
-            Total:{res.data?.totalCount || 0}
-          </>,
-        );
+        res.data && parseExcel(res.data, 'Product import feedback');
+        message.success(res.msg);
+        // message.success(
+        //   // <>
+        //     {res.msg}
+        //     <Divider type="vertical" />
+        //     Success:{res.data?.successCount || 0}
+        //     <Divider type="vertical" />
+        //     No import required:{res.data?.notRequiredCount || 0}
+        //     <Divider type="vertical" />
+        //     Error:{res.data?.errorCount || 0}
+        //     <Divider type="vertical" />
+        //     Total:{res.data?.totalCount || 0}
+        //   </>,
+        // );
         getData();
       } else {
-        message.error(
-          <>
-            {res.msg}
-            <Divider type="vertical" />
-            Success:{res.data?.successCount || 0}
-            <Divider type="vertical" />
-            No import required:{res.data?.notRequiredCount || 0}
-            <Divider type="vertical" />
-            Error:{res.data?.errorCount || 0}
-            <Divider type="vertical" />
-            Total:{res.data?.totalCount || 0}
-          </>,
-        );
+        res.data && parseExcel(res.data, 'Product import feedback');
+        message.error(res.msg);
+        // message.error(
+        //   <>
+        //     {res.msg}
+        //     <Divider type="vertical" />
+        //     Success:{res.data?.successCount || 0}
+        //     <Divider type="vertical" />
+        //     No import required:{res.data?.notRequiredCount || 0}
+        //     <Divider type="vertical" />
+        //     Error:{res.data?.errorCount || 0}
+        //     <Divider type="vertical" />
+        //     Total:{res.data?.totalCount || 0}
+        //   </>,
+        // );
       }
     });
   };

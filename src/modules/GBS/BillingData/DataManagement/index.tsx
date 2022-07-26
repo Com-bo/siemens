@@ -547,13 +547,12 @@ export default (props: any) => {
         reportMonth: ReportMonth
     };
     CustomerReportBuildReport(params).then((res: any) => {
-      setReportMonthMark(false);
-      let elink = document.createElement('a');
-      // 设置下载文件名
-      elink.download = 'Report Customer List.xlsx';
-      elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
-      elink.click();
-      window.URL.revokeObjectURL(elink.href);
+      if (res.response.status == 200) {
+        setReportMonthMark(false);
+        message.success(res.response.statusText);
+      } else {
+        message.error(res.response.statusText);
+      }
     });
   }
   // 

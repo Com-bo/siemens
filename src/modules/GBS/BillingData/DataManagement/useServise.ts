@@ -27,6 +27,7 @@ import {
 } from '@/app/request/apiBilling';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal, notification } from 'antd';
+import {lastMonth} from "@/tools/validator/lastMonth"
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
@@ -72,7 +73,8 @@ export default (props: any) => {
   const [isSingelEdit, setIsSingelEdits] = useState(false);
   const [initialState, setInitialState] = useState('');
   const [ReportMonthMark, setReportMonthMark] = useState(false);
-  const [ReportMonth, setReportMonth] = useState(`${new Date().getFullYear()}${(new Date().getMonth()+1)>9?(new Date().getMonth()+1):"0"+(new Date().getMonth()+1)}`);
+  const [ReportMonth, setReportMonth] = useState(lastMonth());
+  // const [ReportMonth, setReportMonth] = useState(``);
   const [billingStatusGroup, setBillingStatusGroup] = useState([
     {
       label: 'Freeze',

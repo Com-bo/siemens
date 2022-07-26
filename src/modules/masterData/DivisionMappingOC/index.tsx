@@ -25,6 +25,7 @@ import {
   Space,
   Tooltip,
   Upload,
+  Switch
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -102,7 +103,8 @@ export const Index = (props: any) => {
                 setShowCostCenterData(true);
                 setComponentDisabled(false);
                 formData.setFieldsValue({
-                  ...record
+                  ...record,
+                  seTag:record.seTag=="Yes" ? true:false
                 });
               }}
             ></Button>
@@ -317,6 +319,7 @@ export const Index = (props: any) => {
         const params = {
           id: formData.getFieldValue('id') || '',
           ...formData.getFieldsValue(),
+          seTag:formData.getFieldValue('seTag')?"Yes":"No"
         };
         DivMappingOcEditDataSave(params).then((res) => {
           if (res.isSuccess) {
@@ -378,8 +381,17 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="SETag" name="seTag" rules={[{ required: true }]}>
-                <Input disabled={componentDisabled} />
+              <Form.Item label="SETag" name="seTag" valuePropName="checked">
+                <Switch
+                  checkedChildren="Yes"
+                  unCheckedChildren="No"
+                  disabled={componentDisabled}
+                  onChange={(val) => {
+                    formData.setFieldsValue({
+                      seTag: val,
+                    });
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -542,6 +554,9 @@ export const Index = (props: any) => {
                         onClick={() => {
                           setShowCostCenterData(true);
                           setComponentDisabled(false);
+                          formData.setFieldsValue({
+                            seTag: false,
+                          });
                         }}
                       >
                         Add
