@@ -469,35 +469,37 @@ export const Index = (props: any) => {
     importProductData(fd).then((res) => {
       if (res.isSuccess) {
         res.data && parseExcel(res.data, 'Product import feedback');
-        message.success(
-          <>
-            {res.msg}
-            <Divider type="vertical" />
-            Success:{res.data?.successCount || 0}
-            <Divider type="vertical" />
-            No import required:{res.data?.notRequiredCount || 0}
-            <Divider type="vertical" />
-            Error:{res.data?.errorCount || 0}
-            <Divider type="vertical" />
-            Total:{res.data?.totalCount || 0}
-          </>,
-        );
+        message.success(res.msg);
+        // message.success(
+        //   // <>
+        //     {res.msg}
+        //     <Divider type="vertical" />
+        //     Success:{res.data?.successCount || 0}
+        //     <Divider type="vertical" />
+        //     No import required:{res.data?.notRequiredCount || 0}
+        //     <Divider type="vertical" />
+        //     Error:{res.data?.errorCount || 0}
+        //     <Divider type="vertical" />
+        //     Total:{res.data?.totalCount || 0}
+        //   </>,
+        // );
         getData();
       } else {
         res.data && parseExcel(res.data, 'Product import feedback');
-        message.error(
-          <>
-            {res.msg}
-            <Divider type="vertical" />
-            Success:{res.data?.successCount || 0}
-            <Divider type="vertical" />
-            No import required:{res.data?.notRequiredCount || 0}
-            <Divider type="vertical" />
-            Error:{res.data?.errorCount || 0}
-            <Divider type="vertical" />
-            Total:{res.data?.totalCount || 0}
-          </>,
-        );
+        message.error(res.msg);
+        // message.error(
+        //   <>
+        //     {res.msg}
+        //     <Divider type="vertical" />
+        //     Success:{res.data?.successCount || 0}
+        //     <Divider type="vertical" />
+        //     No import required:{res.data?.notRequiredCount || 0}
+        //     <Divider type="vertical" />
+        //     Error:{res.data?.errorCount || 0}
+        //     <Divider type="vertical" />
+        //     Total:{res.data?.totalCount || 0}
+        //   </>,
+        // );
       }
     });
   };
