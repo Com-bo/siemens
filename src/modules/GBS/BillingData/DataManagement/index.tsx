@@ -43,10 +43,8 @@ import {
   ContentWrap,
 } from '@/assets/style';
 import {
-  getCompanyCodeDrop,
-  getCostCenterDrop,
-  ProductPoDrop,
-} from '@/app/request/common';
+  CustomerReportBuildReport
+} from '@/app/request/apiCustomerReport';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
@@ -122,7 +120,9 @@ export default (props: any) => {
     setBusiness,
     business,
     businesslineOptions,
-    initialState, setInitialState
+    initialState, setInitialState,
+    ReportMonthMark, setReportMonthMark,
+    ReportMonth, setReportMonth
   } = useService(props);
   const orignalCols = [
     {
@@ -529,8 +529,81 @@ export default (props: any) => {
     }
   };
   //
+  const onReportMonthChange=(datestring)=>{
+    setReportMonth(datestring)
+  }
+  const ExportCustomer=()=>{
+    console.log(ReportMonth)
+    if (!ReportMonth) {
+      message.warning('Please select [Report Month]!'); 
+      return;
+    }
+    if (!business) {
+      message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
+      return;
+    }
+    let params = {
+        busiLine: business[0],
+        reportMonth: ReportMonth
+    };
+    CustomerReportBuildReport(params).then((res: any) => {
+      setReportMonthMark(false);
+      let elink = document.createElement('a');
+      // 设置下载文件名
+      elink.download = 'Report Customer List.xlsx';
+      elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+      elink.click();
+      window.URL.revokeObjectURL(elink.href);
+    });
+  }
+  // 
   return (
     <ContentWrap>
+      {/* 选择生成报告日期 */}
+      <Modal
+        maskClosable={false}
+        width="500px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Select Report Month
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={ReportMonthMark}
+        footer={null}
+        onCancel={() => {
+          setReportMonthMark(false);
+        }}
+      >
+        <Row gutter={20}>
+          <Col span={16}>
+            <DatePicker
+              onChange={(dates,datestring)=>{
+                onReportMonthChange(datestring)
+              }}
+              defaultValue={moment(ReportMonth)}
+              disabled={false}
+              picker="month"
+              format="YYYYMM"
+              style={{ width: '200px' }}
+            />
+          </Col>
+          <Col span={8}>
+            <Space size={60}>
+              <Button type="primary" onClick={ExportCustomer}>
+                Confirm
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+       
+      </Modal>
       {/* 导入 */}
       <Modal
         width="800px"
@@ -923,7 +996,7 @@ export default (props: any) => {
                   <Button onClick={() => setShowImport(true)}>Import</Button>
                 </BtnThemeWrap>
                 <BtnThemeWrap>
-                  <Button>Generate Customer Report</Button>
+                  <Button onClick={()=>{setReportMonthMark(true);}}>Generate Customer Report</Button>
                 </BtnThemeWrap>
               </Space>
             </AuthWrapper>
