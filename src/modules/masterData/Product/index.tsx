@@ -61,6 +61,7 @@ import {
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import FormTable from '@/components/FormTable/formTable';
 import { _GraphQueryableInstance } from '@pnp/graph/graphqueryable';
+import { parseExcel } from '@/tools/excelDownload';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formData] = Form.useForm();
@@ -467,6 +468,7 @@ export const Index = (props: any) => {
     fd.append('file', file);
     importProductData(fd).then((res) => {
       if (res.isSuccess) {
+        res.data && parseExcel(res.data, 'Product import feedback');
         message.success(
           <>
             {res.msg}
@@ -482,6 +484,7 @@ export const Index = (props: any) => {
         );
         getData();
       } else {
+        res.data && parseExcel(res.data, 'Product import feedback');
         message.error(
           <>
             {res.msg}
