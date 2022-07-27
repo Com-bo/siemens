@@ -47,6 +47,8 @@ import {
   DivMappingOcEditDataSave, 
   DivMappingOcDeleteData, 
 } from '@/app/request/apiDivMappingOc';
+const pageName = 'DivisionMapping-OC';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -93,50 +95,52 @@ export const Index = (props: any) => {
       width: '200px',
       fixed: 'right',
       render: (text, record, index) => (
-        <Space>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={() => {
-                setShowCostCenterData(true);
-                setComponentDisabled(false);
-                formData.setFieldsValue({
-                  ...record,
-                  seTag:record.seTag=="Yes" ? true:false
-                });
-              }}
-            ></Button>
-          </Tooltip>
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => deleteInfos([record.id], event)}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
+        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+          <Space>
+            <Tooltip title="Edit">
               <Button
                 type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
+                key="1"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setShowCostCenterData(true);
+                  setComponentDisabled(false);
+                  formData.setFieldsValue({
+                    ...record,
+                    seTag:record.seTag=="Yes" ? true:false
+                  });
+                }}
               ></Button>
             </Tooltip>
-          </Popconfirm>
-          {/* <Tooltip title="Log">
-            <Button
-              type="text"
-              key="4"
-              icon={<i className="gbs gbs-logs"></i>}
-              onClick={(event) => {
-                event.stopPropagation();
+            <Popconfirm
+              title="Confirm to delete?"
+              onConfirm={(event) => deleteInfos([record.id], event)}
+              okText="Confirm"
+              cancelText="Cancel"
+            >
+              <Tooltip title="Delete">
+                <Button
+                  type="text"
+                  key="2"
+                  icon={<i className="gbs gbs-delete"></i>}
+                  onClick={(event) => event.stopPropagation()}
+                ></Button>
+              </Tooltip>
+            </Popconfirm>
+            {/* <Tooltip title="Log">
+              <Button
+                type="text"
+                key="4"
+                icon={<i className="gbs gbs-logs"></i>}
+                onClick={(event) => {
+                  event.stopPropagation();
 
-                toLog(record.id);
-              }}
-            ></Button>
-          </Tooltip> */}
-        </Space>
+                  toLog(record.id);
+                }}
+              ></Button>
+            </Tooltip> */}
+          </Space>
+        </AuthWrapper>
       ),
     },
   ];
@@ -523,87 +527,91 @@ export const Index = (props: any) => {
           </FilterGroupDiv>
         }
         renderBtns={
-          <Space>
-            <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item
-                      key="1"
-                      icon={<i className="gbs gbs-import"></i>}
-                    >
-                      <Upload
-                        style={{ margin: '0 10px' }}
-                        maxCount={1}
-                        showUploadList={false}
-                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                        beforeUpload={(file) => {
-                          importExcel(file);
-                          return false;
-                        }}
-                      >
-                        <Button key="import" type="text">
-                          <span>Import</span>
-                        </Button>
-                      </Upload>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
-                      <Button
-                        style={{ margin: '0 10px' }}
-                        type="text"
-                        onClick={() => {
-                          setShowCostCenterData(true);
-                          setComponentDisabled(false);
-                          formData.setFieldsValue({
-                            seTag: false,
-                          });
-                        }}
-                      >
+          <>
+            <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+              <Space>
+                <BtnThemeWrap>
+                  <Dropdown
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item
+                          key="1"
+                          icon={<i className="gbs gbs-import"></i>}
+                        >
+                          <Upload
+                            style={{ margin: '0 10px' }}
+                            maxCount={1}
+                            showUploadList={false}
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                            beforeUpload={(file) => {
+                              importExcel(file);
+                              return false;
+                            }}
+                          >
+                            <Button key="import" type="text">
+                              <span>Import</span>
+                            </Button>
+                          </Upload>
+                        </Menu.Item>
+                        <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
+                          <Button
+                            style={{ margin: '0 10px' }}
+                            type="text"
+                            onClick={() => {
+                              setShowCostCenterData(true);
+                              setComponentDisabled(false);
+                              formData.setFieldsValue({
+                                seTag: false,
+                              });
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="3"
+                          icon={<i className="gbs gbs-download"></i>}
+                        >
+                          <span style={{ margin: '0 10px' }}>
+                            <a href="./template/DivisionMapping-OC.xlsx">
+                              Download Template
+                            </a>
+                          </span>
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
                         Add
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="3"
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <span style={{ margin: '0 10px' }}>
-                        <a href="./template/DivisionMapping-OC.xlsx">
-                          Download Template
-                        </a>
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap>
+                <Button
+                  disabled={selectedRowKeys.length == 0}
+                  onClick={(event) => deleteInfos(selectedRowKeys, event)}
+                >
+                  Delete
                 </Button>
-              </Dropdown>
-            </BtnThemeWrap>
-            <Button
-              disabled={selectedRowKeys.length == 0}
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
-            >
-              Delete
-            </Button>
-            {/* <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
+                {/* <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
                 />
-              }
-            ></Button> */}
-          </Space>
+                <Button
+                  style={{ width: '40px' }}
+                  onClick={() => setIsSearch(!isSearch)}
+                  icon={
+                    <img
+                      style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                      src={search}
+                    />
+                  }
+                ></Button> */}
+              </Space>
+            </AuthWrapper>
+          </>
         }
         changePageSize={changePageSize}
         current={current}

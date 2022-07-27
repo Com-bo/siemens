@@ -42,7 +42,8 @@ import {
   getO2CUserIDListData,
   queryO2CUserIDLogData,
 } from '@/app/request/apiO2CUserID';
-
+const pageName = 'O2CUserID';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 export const Index = (props: any) => {
   const [orderField, setOrderField] = useState('modifiedDate');
   const [orderType, setOrderType] = useState('descend');
@@ -76,49 +77,51 @@ export const Index = (props: any) => {
       width: '200px',
       fixed: 'right',
       render: (text, record, index) => (
-        <Space>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={() => {
-                setShowCostCenterData(true);
-                setComponentDisabled(false);
-                formData.setFieldsValue({
-                  ...record,
-                  customerDivision: record.custemerDivision,
-                });
-              }}
-            ></Button>
-          </Tooltip>
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => deleteInfos([record.id], event)}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
+        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+          <Space>
+            <Tooltip title="Edit">
               <Button
                 type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
+                key="1"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setShowCostCenterData(true);
+                  setComponentDisabled(false);
+                  formData.setFieldsValue({
+                    ...record,
+                    customerDivision: record.custemerDivision,
+                  });
+                }}
               ></Button>
             </Tooltip>
-          </Popconfirm>
-          <Tooltip title="Log">
-            <Button
-              type="text"
-              key="4"
-              icon={<i className="gbs gbs-logs"></i>}
-              onClick={(event) => {
-                event.stopPropagation();
-                toLog(record.id);
-              }}
-            ></Button>
-          </Tooltip>
-        </Space>
+            <Popconfirm
+              title="Confirm to delete?"
+              onConfirm={(event) => deleteInfos([record.id], event)}
+              okText="Confirm"
+              cancelText="Cancel"
+            >
+              <Tooltip title="Delete">
+                <Button
+                  type="text"
+                  key="2"
+                  icon={<i className="gbs gbs-delete"></i>}
+                  onClick={(event) => event.stopPropagation()}
+                ></Button>
+              </Tooltip>
+            </Popconfirm>
+            <Tooltip title="Log">
+              <Button
+                type="text"
+                key="4"
+                icon={<i className="gbs gbs-logs"></i>}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toLog(record.id);
+                }}
+              ></Button>
+            </Tooltip>
+          </Space>
+        </AuthWrapper>
       ),
     },
   ];
@@ -472,78 +475,82 @@ export const Index = (props: any) => {
           </FilterGroupDiv>
         }
         renderBtns={
-          <Space>
-            {/* <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
-                      <Button
-                        style={{ margin: '0 10px' }}
-                        type="text"
-                        onClick={() => {
-                          setShowCostCenterData(true);
-                          setComponentDisabled(false);
-                        }}
-                      >
+          <>
+            <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+              <Space>
+                {/* <BtnThemeWrap>
+                  <Dropdown
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
+                          <Button
+                            style={{ margin: '0 10px' }}
+                            type="text"
+                            onClick={() => {
+                              setShowCostCenterData(true);
+                              setComponentDisabled(false);
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="3"
+                          icon={<i className="gbs gbs-download"></i>}
+                        >
+                          <span style={{ margin: '0 10px' }}>
+                            <a href="./template/O2CUserID.xlsx">
+                              Download Template
+                            </a>
+                          </span>
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
                         Add
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="3"
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <span style={{ margin: '0 10px' }}>
-                        <a href="./template/O2CUserID.xlsx">
-                          Download Template
-                        </a>
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
-                </Button>
-              </Dropdown>
-            </BtnThemeWrap> */}
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap> */}
 
-            <BtnThemeWrap>
-              <Button
-                style={{ margin: '0 10px' }}
-                type="text"
-                onClick={() => {
-                  setShowCostCenterData(true);
-                  setComponentDisabled(false);
-                }}
-              >
-                Add
-              </Button>
-            </BtnThemeWrap>
-            <Button
-              disabled={selectedRowKeys.length != 1}
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
-            >
-              Delete
-            </Button>
-            {/* <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
+                <BtnThemeWrap>
+                  <Button
+                    style={{ margin: '0 10px' }}
+                    type="text"
+                    onClick={() => {
+                      setShowCostCenterData(true);
+                      setComponentDisabled(false);
+                    }}
+                  >
+                    Add
+                  </Button>
+                </BtnThemeWrap>
+                <Button
+                  disabled={selectedRowKeys.length != 1}
+                  onClick={(event) => deleteInfos(selectedRowKeys, event)}
+                >
+                  Delete
+                </Button>
+                {/* <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
                 />
-              }
-            ></Button> */}
-          </Space>
+                <Button
+                  style={{ width: '40px' }}
+                  onClick={() => setIsSearch(!isSearch)}
+                  icon={
+                    <img
+                      style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                      src={search}
+                    />
+                  }
+                ></Button> */}
+              </Space>
+            </AuthWrapper>
+          </>
         }
         changePageSize={changePageSize}
         current={current}

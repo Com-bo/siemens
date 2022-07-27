@@ -49,10 +49,10 @@ import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
 import moment from 'moment';
-const pageName = 'BillingDataManagement';
-import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 export default (props: any) => {
   const {
+    pageName,
+    AuthWrapper, checkAuth,
     form,
     formData,
     formImport,
@@ -495,7 +495,7 @@ export default (props: any) => {
     console.log(initialState)
     fieldList.map((item, index) => {
       options.push(
-        <Option key={index} value={item.label} disabled={(initialState=="Successfully"||initialState=="Cancel")?(item.label=="Unfreeze"?true:false):false}>
+        <Option key={index} value={item.value} disabled={(initialState=="Successfully"||initialState=="Cancel")?(item.label=="Unfreeze"?true:false):false}>
           {item.label}
         </Option>,
       );

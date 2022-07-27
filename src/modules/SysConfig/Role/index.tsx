@@ -31,7 +31,7 @@ import {
   Upload,
 } from 'antd';
 import './style.less';
-import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ClearOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   delRole,
   queryRoleMapAuthTrees,
@@ -43,6 +43,8 @@ import {
   updateRole,
 } from '@/app/request/apiSys';
 import Table from '@/components/Table';
+const pageName = 'Role';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -122,52 +124,54 @@ export const Index = (props: any) => {
       width: '15%',
       fixed: 'right',
       render: (text, record, index) => (
-        <Space>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={() => {
-                formData.setFieldsValue({
-                  ...record,
-                });
-                showRoleDataFunc(record.enable == 1 ? true : false);
-              }}
-            ></Button>
-          </Tooltip>
-          {/* <Tooltip title="Maintenance user">
-                        <Button
-                            type="text"
-                            key="3"
-                            icon={<span className="gbs gbs-users"></span>}
-                            onClick={()=>personAuth(record)}
-                        ></Button>
-                    </Tooltip> */}
-          <Tooltip title="Function authorization">
-            <Button
-              type="text"
-              key="3"
-              icon={<span className="gbs gbs-fun"></span>}
-              onClick={() => funAuth(record)}
-            ></Button>
-          </Tooltip>
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => deleteInfos([record.id], event)}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
+        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+          <Space>
+            <Tooltip title="Edit">
               <Button
                 type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
+                key="1"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  formData.setFieldsValue({
+                    ...record,
+                  });
+                  showRoleDataFunc(record.enable == 1 ? true : false);
+                }}
               ></Button>
             </Tooltip>
-          </Popconfirm>
-        </Space>
+            {/* <Tooltip title="Maintenance user">
+                          <Button
+                              type="text"
+                              key="3"
+                              icon={<span className="gbs gbs-users"></span>}
+                              onClick={()=>personAuth(record)}
+                          ></Button>
+                      </Tooltip> */}
+            <Tooltip title="Function authorization">
+              <Button
+                type="text"
+                key="3"
+                icon={<span className="gbs gbs-fun"></span>}
+                onClick={() => funAuth(record)}
+              ></Button>
+            </Tooltip>
+            <Popconfirm
+              title="Confirm to delete?"
+              onConfirm={(event) => deleteInfos([record.id], event)}
+              okText="Confirm"
+              cancelText="Cancel"
+            >
+              <Tooltip title="Delete">
+                <Button
+                  type="text"
+                  key="2"
+                  icon={<i className="gbs gbs-delete"></i>}
+                  onClick={(event) => event.stopPropagation()}
+                ></Button>
+              </Tooltip>
+            </Popconfirm>
+          </Space>
+        </AuthWrapper>
       ),
     },
   ];
@@ -587,6 +591,20 @@ export const Index = (props: any) => {
                           onClick={getData}
                         ></Button>
                       </Tooltip>
+                      <Tooltip title="Clear">
+                        <Button
+                          icon={<ClearOutlined />}
+                          onClick={() => {
+                            form.resetFields();
+                            formFilter.resetFields();
+                            if (current == 1) {
+                              getData();
+                            } else {
+                              setCurrent(1);
+                            }
+                          }}
+                        ></Button>
+                      </Tooltip>
                     </Space>
                   </Form.Item>
                 </Col>
@@ -595,68 +613,72 @@ export const Index = (props: any) => {
           </FilterGroupDiv>
         }
         renderBtns={
-          <Space>
-            {/* <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
-                      <Button
-                        style={{ margin: '0 10px' }}
-                        type="text"
-                        onClick={() => {
-                          setShowUserData(true);
-                          setComponentDisabled(false);
-                        }}
-                      >
+          <>
+            <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+              <Space>
+                {/* <BtnThemeWrap>
+                  <Dropdown
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
+                          <Button
+                            style={{ margin: '0 10px' }}
+                            type="text"
+                            onClick={() => {
+                              setShowUserData(true);
+                              setComponentDisabled(false);
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="3"
+                          icon={<i className="gbs gbs-download"></i>}
+                        >
+                          <span style={{ margin: '0 10px' }}>
+                            <a href="./template/Cost Center Input.xlsx">
+                              Download Template
+                            </a>
+                          </span>
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
                         Add
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="3"
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Cost Center Input.xlsx">
-                          Download Template
-                        </a>
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap> */}
+                <Button type="primary" onClick={() => showRoleDataFunc()}>
+                  Add
                 </Button>
-              </Dropdown>
-            </BtnThemeWrap> */}
-            <Button type="primary" onClick={() => showRoleDataFunc()}>
-              Add
-            </Button>
-            <Button
-              disabled={!selectedRowKeys.length}
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
-            >
-              Delete
-            </Button>
-            {/* <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
+                <Button
+                  disabled={!selectedRowKeys.length}
+                  onClick={(event) => deleteInfos(selectedRowKeys, event)}
+                >
+                  Delete
+                </Button>
+                {/* <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
                 />
-              }
-            ></Button> */}
-          </Space>
+                <Button
+                  style={{ width: '40px' }}
+                  onClick={() => setIsSearch(!isSearch)}
+                  icon={
+                    <img
+                      style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                      src={search}
+                    />
+                  }
+                ></Button> */}
+              </Space>
+            </AuthWrapper>
+          </>
         }
         changePageSize={changePageSize}
         current={current}

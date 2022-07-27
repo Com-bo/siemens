@@ -45,7 +45,9 @@ import {
   importCostCenterData,
   logCostCenterDataQuery,
 } from '@/app/request/apiCostCenter';
-
+const pageName = 'CostCenter';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+import { parseExcel } from '@/tools/excelDownload';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -128,6 +130,7 @@ export const Index = (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
+          <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
           <Tooltip title="Edit">
             <Button
               type="text"
@@ -169,6 +172,7 @@ export const Index = (props: any) => {
               }}
             ></Button>
           </Tooltip>
+          </AuthWrapper>
         </Space>
       ),
     },
@@ -312,35 +316,39 @@ export const Index = (props: any) => {
     fd.append('file', file);
     importCostCenterData(fd).then((res) => {
       if (res.isSuccess) {
+        res.data && parseExcel(res.data, 'CostCenter import feedback');
+        message.success(res.msg);
         // 添加一个导入反馈
-        message.success(
-          <>
-            {res.msg}
-            <Divider type="vertical" />
-            Success:{res.data?.successCount || 0}
-            <Divider type="vertical" />
-            No import required:{res.data?.notRequiredCount || 0}
-            <Divider type="vertical" />
-            Error:{res.data?.errorCount || 0}
-            <Divider type="vertical" />
-            Total:{res.data?.totalCount || 0}
-          </>,
-        );
+        // message.success(
+        //   <>
+        //     {res.msg}
+        //     <Divider type="vertical" />
+        //     Success:{res.data?.successCount || 0}
+        //     <Divider type="vertical" />
+        //     No import required:{res.data?.notRequiredCount || 0}
+        //     <Divider type="vertical" />
+        //     Error:{res.data?.errorCount || 0}
+        //     <Divider type="vertical" />
+        //     Total:{res.data?.totalCount || 0}
+        //   </>,
+        // );
         getData();
       } else {
-        message.error(
-          <>
-            {res.msg}
-            <Divider type="vertical" />
-            Success:{res.data?.successCount || 0}
-            <Divider type="vertical" />
-            No import required:{res.data?.notRequiredCount || 0}
-            <Divider type="vertical" />
-            Error:{res.data?.errorCount || 0}
-            <Divider type="vertical" />
-            Total:{res.data?.totalCount || 0}
-          </>,
-        );
+        res.data && parseExcel(res.data, 'CostCenter import feedback');
+        message.error(res.msg);
+        // message.error(
+        //   <>
+        //     {res.msg}
+        //     <Divider type="vertical" />
+        //     Success:{res.data?.successCount || 0}
+        //     <Divider type="vertical" />
+        //     No import required:{res.data?.notRequiredCount || 0}
+        //     <Divider type="vertical" />
+        //     Error:{res.data?.errorCount || 0}
+        //     <Divider type="vertical" />
+        //     Total:{res.data?.totalCount || 0}
+        //   </>,
+        // );
       }
     });
   };
@@ -652,6 +660,8 @@ export const Index = (props: any) => {
           </FilterGroupDiv>
         }
         renderBtns={
+          <>
+          <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
           <Space>
             <BtnThemeWrap>
               <Dropdown
@@ -715,6 +725,9 @@ export const Index = (props: any) => {
             >
               Delete
             </Button>
+          </Space>  
+          </AuthWrapper>
+          <Space>
             <Divider
               type="vertical"
               style={{ height: '20px', borderColor: '#999' }}
@@ -730,6 +743,7 @@ export const Index = (props: any) => {
               }
             ></Button>
           </Space>
+          </>
         }
         changePageSize={changePageSize}
         current={current}

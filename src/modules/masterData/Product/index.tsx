@@ -276,7 +276,7 @@ export const Index = (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
-          {/* <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} ></AuthWrapper> */}
+          <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
           <Tooltip title="Edit">
             <Button
               type="text"
@@ -339,6 +339,7 @@ export const Index = (props: any) => {
               }}
             ></Button>
           </Tooltip>
+          </AuthWrapper>
         </Space>
       ),
     },
@@ -1377,6 +1378,8 @@ export const Index = (props: any) => {
           />
         }
         renderBtns={
+          <>
+          <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
           <Space>
             <BtnThemeWrap>
               <Dropdown
@@ -1440,6 +1443,9 @@ export const Index = (props: any) => {
             >
               Delete
             </Button>
+          </Space>
+          </AuthWrapper>
+          <Space>
             <Divider
               type="vertical"
               style={{ height: '20px', borderColor: '#999' }}
@@ -1455,6 +1461,7 @@ export const Index = (props: any) => {
               }
             ></Button>
           </Space>
+          </>
         }
         changePageSize={changePageSize}
         current={current}

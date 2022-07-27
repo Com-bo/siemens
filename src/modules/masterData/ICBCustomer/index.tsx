@@ -43,6 +43,8 @@ import {
   ICBCustomerInfoQueryLogData,
   ICBCustomerInfoEditDataSave
 } from '@/app/request/apiICBCustomerInfo';
+const pageName = 'ICBCustomer';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -87,6 +89,7 @@ export const Index = (props: any) => {
       width: '200px',
       fixed: 'right',
       render: (text, record, index) => (
+        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
         <Space>
           <Tooltip title="Edit">
             <Button
@@ -131,6 +134,7 @@ export const Index = (props: any) => {
             ></Button>
           </Tooltip>
         </Space>
+        </AuthWrapper>
       ),
     },
   ];
@@ -519,97 +523,101 @@ export const Index = (props: any) => {
           </FilterGroupDiv>
         }
         renderBtns={
-          <Space>
-            {/* <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item
-                      key="1"
-                      icon={<i className="gbs gbs-import"></i>}
-                    >
-                      <Upload
-                        style={{ margin: '0 10px' }}
-                        maxCount={1}
-                        showUploadList={false}
-                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                        beforeUpload={(file) => {
-                          importExcel(file);
-                          return false;
-                        }}
-                      >
-                        <Button key="import" type="text">
-                          <span>Import</span>
-                        </Button>
-                      </Upload>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
-                      <Button
-                        style={{ margin: '0 10px' }}
-                        type="text"
-                        onClick={() => {
-                          setShowCostCenterData(true);
-                          setComponentDisabled(false);
-                        }}
-                      >
+          <>
+            <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+              <Space>
+                {/* <BtnThemeWrap>
+                  <Dropdown
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item
+                          key="1"
+                          icon={<i className="gbs gbs-import"></i>}
+                        >
+                          <Upload
+                            style={{ margin: '0 10px' }}
+                            maxCount={1}
+                            showUploadList={false}
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                            beforeUpload={(file) => {
+                              importExcel(file);
+                              return false;
+                            }}
+                          >
+                            <Button key="import" type="text">
+                              <span>Import</span>
+                            </Button>
+                          </Upload>
+                        </Menu.Item>
+                        <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
+                          <Button
+                            style={{ margin: '0 10px' }}
+                            type="text"
+                            onClick={() => {
+                              setShowCostCenterData(true);
+                              setComponentDisabled(false);
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="3"
+                          icon={<i className="gbs gbs-download"></i>}
+                        >
+                          <span style={{ margin: '0 10px' }}>
+                            <a href="./template/ICBCustomer.xlsx">
+                              Download Template
+                            </a>
+                          </span>
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
                         Add
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="3"
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <span style={{ margin: '0 10px' }}>
-                        <a href="./template/ICBCustomer.xlsx">
-                          Download Template
-                        </a>
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
-                </Button>
-              </Dropdown>
-            </BtnThemeWrap> */}
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap> */}
 
-            <BtnThemeWrap>
-              <Button
-                style={{ margin: '0 10px' }}
-                type="text"
-                onClick={() => {
-                  setShowCostCenterData(true);
-                  setComponentDisabled(false);
-                }}
-              >
-                Add
-              </Button>
-            </BtnThemeWrap>
-            <Button
-              disabled={selectedRowKeys.length != 1}
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
-            >
-              Delete
-            </Button>
-            {/* <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
+                <BtnThemeWrap>
+                  <Button
+                    style={{ margin: '0 10px' }}
+                    type="text"
+                    onClick={() => {
+                      setShowCostCenterData(true);
+                      setComponentDisabled(false);
+                    }}
+                  >
+                    Add
+                  </Button>
+                </BtnThemeWrap>
+                <Button
+                  disabled={selectedRowKeys.length != 1}
+                  onClick={(event) => deleteInfos(selectedRowKeys, event)}
+                >
+                  Delete
+                </Button>
+                {/* <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
                 />
-              }
-            ></Button> */}
-          </Space>
+                <Button
+                  style={{ width: '40px' }}
+                  onClick={() => setIsSearch(!isSearch)}
+                  icon={
+                    <img
+                      style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                      src={search}
+                    />
+                  }
+                ></Button> */}
+              </Space>
+            </AuthWrapper>
+          </>
         }
         changePageSize={changePageSize}
         current={current}

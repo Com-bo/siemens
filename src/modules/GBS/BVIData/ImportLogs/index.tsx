@@ -24,6 +24,7 @@ import { ContentWrap, FilterGroupDiv } from '@/assets/style';
 import './style.less';
 
 const pageName = 'ImportLogs';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
@@ -168,55 +169,59 @@ export default (props: any) => {
         rowKey="uploadDate"
         listName="Import Logs"
         renderFilterGroup={
-          <FilterGroupDiv>
-            <Form form={formSearch} labelCol={{ flex: '120px' }}>
-              <Row className="importData">
-                <Col span={10}>
-                  <Form.Item
-                    label="Business Line"
-                    name="businessLine"
-                    rules={[{ required: true, message: 'Please select' }]}
-                  >
-                    <Select>
-                      {businesslineOptions.map((item, index) => (
-                        <Select.Option key={index} value={item}>
-                          {item}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={10}>
-                  <Form.Item label="Template Type" name="templateType">
-                    <Select style={{ width: '100%' }}>
-                      {renderOption(templateTypeData)}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={4}>
-                  <Form.Item style={{ textAlign: 'right' }}>
-                    <Space>
-                      <Button
-                        type="primary"
-                        icon={<i className="gbs gbs-search"></i>}
-                        onClick={getData}
-                      ></Button>
-                    </Space>
-                  </Form.Item>
-                </Col>
-                <Col span={10} className="form_unMargin">
-                  <Form.Item label="Upload Date" name="uploadDate">
-                    <RangePicker format="YYYY-MM-DD" />
-                  </Form.Item>
-                </Col>
-                <Col span={10} className="form_unMargin">
-                  <Form.Item label="Upload User" name="uploadUser">
-                    <Input />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </FilterGroupDiv>
+          <>
+            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+              <FilterGroupDiv>
+                <Form form={formSearch} labelCol={{ flex: '120px' }}>
+                  <Row className="importData">
+                    <Col span={10}>
+                      <Form.Item
+                        label="Business Line"
+                        name="businessLine"
+                        rules={[{ required: true, message: 'Please select' }]}
+                      >
+                        <Select>
+                          {businesslineOptions.map((item, index) => (
+                            <Select.Option key={index} value={item}>
+                              {item}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col span={10}>
+                      <Form.Item label="Template Type" name="templateType">
+                        <Select style={{ width: '100%' }}>
+                          {renderOption(templateTypeData)}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item style={{ textAlign: 'right' }}>
+                        <Space>
+                          <Button
+                            type="primary"
+                            icon={<i className="gbs gbs-search"></i>}
+                            onClick={getData}
+                          ></Button>
+                        </Space>
+                      </Form.Item>
+                    </Col>
+                    <Col span={10} className="form_unMargin">
+                      <Form.Item label="Upload Date" name="uploadDate">
+                        <RangePicker format="YYYY-MM-DD" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={10} className="form_unMargin">
+                      <Form.Item label="Upload User" name="uploadUser">
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form>
+              </FilterGroupDiv>
+            </AuthWrapper>
+          </>
         }
       />
     </ContentWrap>

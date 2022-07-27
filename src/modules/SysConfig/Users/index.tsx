@@ -54,6 +54,8 @@ import {
   getCustemerDivisionList,
   queryBusinesslineOptionsList,
 } from '@/app/request/common';
+const pageName = 'Users';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -148,42 +150,44 @@ export const Index = (props: any) => {
       // width: '200px',
       fixed: 'right',
       render: (text, record, index) => (
-        <Space>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={() => {
-                setAre(record.are || []);
-                setCustomerDivision(record.custemerDivision || []);
-                setBusinessLine(record.businessLine || []);
-                setRole(record.role || []);
-                formData.setFieldsValue({
-                  ...record,
-                  userName: record.name,
-                  enable: record.enable === 1 ? true : false,
-                });
-                showUserDataFuc();
-              }}
-            ></Button>
-          </Tooltip>
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => deleteInfos([record.id], event)}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
+        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+          <Space>
+            <Tooltip title="Edit">
               <Button
                 type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
+                key="1"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setAre(record.are || []);
+                  setCustomerDivision(record.custemerDivision || []);
+                  setBusinessLine(record.businessLine || []);
+                  setRole(record.role || []);
+                  formData.setFieldsValue({
+                    ...record,
+                    userName: record.name,
+                    enable: record.enable === 1 ? true : false,
+                  });
+                  showUserDataFuc();
+                }}
               ></Button>
             </Tooltip>
-          </Popconfirm>
-        </Space>
+            <Popconfirm
+              title="Confirm to delete?"
+              onConfirm={(event) => deleteInfos([record.id], event)}
+              okText="Confirm"
+              cancelText="Cancel"
+            >
+              <Tooltip title="Delete">
+                <Button
+                  type="text"
+                  key="2"
+                  icon={<i className="gbs gbs-delete"></i>}
+                  onClick={(event) => event.stopPropagation()}
+                ></Button>
+              </Tooltip>
+            </Popconfirm>
+          </Space>
+        </AuthWrapper>
       ),
     },
   ];
@@ -976,6 +980,20 @@ export const Index = (props: any) => {
                           onClick={getData}
                         ></Button>
                       </Tooltip>
+                      <Tooltip title="Clear">
+                        <Button
+                          icon={<ClearOutlined />}
+                          onClick={() => {
+                            form.resetFields();
+                            formFilter.resetFields();
+                            if (current == 1) {
+                              getData();
+                            } else {
+                              setCurrent(1);
+                            }
+                          }}
+                        ></Button>
+                      </Tooltip>
                     </Space>
                   </Form.Item>
                 </Col>
@@ -984,17 +1002,21 @@ export const Index = (props: any) => {
           </FilterGroupDiv>
         }
         renderBtns={
-          <Space>
-            <Button type="primary" onClick={() => showUserDataFuc()}>
-              Add
-            </Button>
-            <Button
-              disabled={!selectedRowKeys.length}
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
-            >
-              Delete
-            </Button>
-          </Space>
+          <>
+            <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+              <Space>
+                <Button type="primary" onClick={() => showUserDataFuc()}>
+                  Add
+                </Button>
+                <Button
+                  disabled={!selectedRowKeys.length}
+                  onClick={(event) => deleteInfos(selectedRowKeys, event)}
+                >
+                  Delete
+                </Button>
+              </Space>
+            </AuthWrapper>
+          </>
         }
         changePageSize={changePageSize}
         current={current}

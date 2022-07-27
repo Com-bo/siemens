@@ -66,10 +66,10 @@ import {
   CustomerReportBuildReport
 } from '@/app/request/apiCustomerReport';
 
+const pageName = 'CustomerReport';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
-const pageName = 'BVIValidationReport';
 const { Text } = Typography;
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
@@ -119,7 +119,8 @@ export default (props: any) => {
   const [first, setFirst] = useState(true);
   const [isCheckOriginal, setIsCheckOriginal] = useState(false);
   const [columns, setCols] = useState([]);
-  const [business, setBusiness] = useState(businesslineOptions[0]);
+  const [business, setBusiness] = useState([businesslineOptions[0]]);
+  const [businessDiff, setBusinessDiff] = useState([businesslineOptions[0]]);
   const [formSearch] = Form.useForm();
   const [ReportMonth, setReportMonth] = useState(lastMonth());
   const [FYDataOption, setFYDataOption] = useState(["FY2021","FY2022","FY2023"]);
@@ -186,12 +187,12 @@ export default (props: any) => {
           ? businesslineOptions[0]
           : null,
       fy:FYDataOption[0],
-      serverLine:serverLineDataOption[0],
-      productName:productNameDataOption[0]
+      // serverLine:serverLineDataOption[0],
+      // productName:productNameDataOption[0]
     });
     getData();
     getChartData()
-  }, [current, pageSize, orderField, orderType, business]);
+  }, [current, pageSize, orderField, orderType]);
   const getData = (recordId?: any) => {
     // const params = {
     //   pageIndex: current,
@@ -212,7 +213,7 @@ export default (props: any) => {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
-        userBusinessLineList: [business],
+        userBusinessLineList: businessDiff,
         reportMonthList:[
           ReportMonth
         ],
@@ -269,7 +270,7 @@ export default (props: any) => {
           recordId: latestGroupIdRef.current,
         },
         listHeader: form.getFieldsValue(),
-        userBusinessLineList: [business],
+        userBusinessLineList: businessDiff,
         reportMonthList: [
           ReportMonth
         ],
@@ -557,8 +558,7 @@ export default (props: any) => {
       .then((valid) => {
         let params = {
           searchCondition: {
-            userBusinessLineList:
-              [formSearch.getFieldValue("businessLine")],
+            userBusinessLineList:business,
             pageTop: {
               fiscalYear: formSearch.getFieldValue("fy"),
               serviceLine: formSearch.getFieldValue("serverLine"),
@@ -647,87 +647,89 @@ export default (props: any) => {
       </Modal>
       <Tabs defaultActiveKey="1" type="card">
         <TabPane tab="Chart Report" key="1">
-          <FilterGroupDivReport>
-            <Form form={formSearch}>
-              <Row>
-                <Col span={5}>
-                  <Form.Item
-                    label="FY"
-                    name="fy"
-                  >
-                    <Select>
-                      {FYDataOption.map((item, index) => (
-                        <Select.Option key={index} value={item}>
-                          {item}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label="Business Line"
-                    name="businessLine"
-                  >
-                    <Select
-                        placeholder="Please select"
-                        mode="multiple"
-                        value={business}
-                        onChange={(val) => {
-                          console.log(val)
-                          setBusiness(val);
-                        }}
-                      >
-                        {businesslineOptions.map((item, index) => (
+            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+              <FilterGroupDivReport>
+              <Form form={formSearch} labelCol={{ flex: '120px' }}>
+                <Row className="importData">
+                  <Col span={10}>
+                    <Form.Item
+                      label="FY"
+                      name="fy"
+                    >
+                      <Select>
+                        {FYDataOption.map((item, index) => (
                           <Select.Option key={index} value={item}>
                             {item}
                           </Select.Option>
                         ))}
                       </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label="Server Line"
-                    name="serverLine"
-                  >
-                    <Select>
-                      {serverLineDataOption.map((item, index) => (
-                        <Select.Option key={index} value={item}>
-                          {item}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label="Product Name"
-                    name="productName"
-                  >
-                    <Select>
-                      {productNameDataOption.map((item, index) => (
-                        <Select.Option key={index} value={item}>
-                          {item}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={4}>
-                  <Form.Item>
-                    <Space>
-                      <Button
-                        type="primary"
-                        icon={<i className="gbs gbs-search"></i>}
-                        onClick={getChartData}
-                      ></Button>
-                    </Space>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-            </FilterGroupDivReport>
+                    </Form.Item>
+                  </Col>
+                  <Col span={10}>
+                    <Form.Item
+                      label="Business Line"
+                      name="businessLine"
+                    >
+                      <Select
+                          placeholder="Please select"
+                          mode="multiple"
+                          value={business}
+                          onChange={(val) => {
+                            setBusiness(val);
+                          }}
+                        >
+                          {businesslineOptions.map((item, index) => (
+                            <Select.Option key={index} value={item}>
+                              {item}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={4}>
+                    <Form.Item style={{ textAlign: 'right' }}>
+                      <Space>
+                        <Button
+                          type="primary"
+                          icon={<i className="gbs gbs-search"></i>}
+                          onClick={getChartData}
+                        ></Button>
+                      </Space>
+                    </Form.Item>
+                  </Col>
+                  <Col span={10}>
+                    <Form.Item
+                      label="Service Line"
+                      name="serverLine"
+                    >
+                      <Select>
+                        {serverLineDataOption.map((item, index) => (
+                          <Select.Option key={index} value={item}>
+                            {item}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={10}>
+                    <Form.Item
+                      label="Product Name"
+                      name="productName"
+                    >
+                      <Select>
+                        {productNameDataOption.map((item, index) => (
+                          <Select.Option key={index} value={item}>
+                            {item}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  
+                </Row>
+              </Form>
+              </FilterGroupDivReport>
+            </AuthWrapper>
             <ReactEChartsDiv>
               <ReactEChartsDivWrap>
                 <label>BVI Volume</label>
@@ -780,12 +782,13 @@ export default (props: any) => {
           <FilterGroup
             businessLineRender={
               <>
-                <label>BVI Business Line:</label>
+                <label>Business Line:</label>
                 <Select
                   placeholder="Please select"
-                  value={business}
+                  mode="multiple"
+                  value={businessDiff}
                   onChange={(val) => {
-                    setBusiness(val);
+                    setBusinessDiff(val);
                   }}
                 >
                   {businesslineOptions?.map((item, index) => (
@@ -796,7 +799,7 @@ export default (props: any) => {
                 </Select>
               </>
             }
-            moudleName=""
+            moudleName="BVI Data"
             authPagename={pageName}
             onSearch={(val) => {
               latestGroupIdRef.current = val;

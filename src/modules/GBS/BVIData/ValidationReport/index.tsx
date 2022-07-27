@@ -22,10 +22,10 @@ import {
   getIntergrityReportData,
   detalInPercentageConfigQuery,
 } from '@/app/request/apiValidReport';
+const pageName = 'BVIValidationReport';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
-const pageName = 'BVIValidationReport';
 const { Text } = Typography;
 export default (props: any) => {
   const [form] = Form.useForm();

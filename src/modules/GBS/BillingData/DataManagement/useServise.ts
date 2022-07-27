@@ -29,6 +29,10 @@ import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal, notification } from 'antd';
 import {lastMonth} from "@/tools/validator/lastMonth"
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
+// 权限
+const pageName = 'BillingDataManagement';
+import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+// 
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
@@ -167,6 +171,13 @@ export default (props: any) => {
     });
   };
   const getData = (recordId?: any) => {
+    if (
+      !checkAuth(pageName, `${pageName}-Edit`) &&
+      !checkAuth(pageName, `${pageName}-View`)
+    ) {
+      message.warning('No permission temporarily'); //暂无权限提示
+      return;
+    }
     if (!business || !business.length) {
       message.warning('Please select [Bussiness Line]!');
       return;
@@ -634,6 +645,8 @@ export default (props: any) => {
   };
 
   return {
+    pageName,
+    AuthWrapper, checkAuth,
     form,
     formData,
     formImport,

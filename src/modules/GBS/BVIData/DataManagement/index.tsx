@@ -53,12 +53,11 @@ import useService from './useServise';
 import TableMix from '@/components/Table';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
-
-import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import { getUserOperateTemplate } from '@/app/request/apiBVI';
-const pageName = 'BVIDataManage';
 export default (props: any) => {
   const {
+    pageName,
+    AuthWrapper, checkAuth,
     form,
     formData,
     formImport,
