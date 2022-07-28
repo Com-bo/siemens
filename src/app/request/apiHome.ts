@@ -102,3 +102,10 @@ export const getDashboardProductCategoryDdl = () => {
     },
   );
 };
+
+// 
+export const HomeQueryData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.HomeQueryData}`, data, {
+    autoLoading: true,
+  });
+};
