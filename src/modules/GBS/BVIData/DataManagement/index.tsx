@@ -340,7 +340,7 @@ export default (props: any) => {
       sorter: true,
       render: (text) =>
         text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          ? moment(text).format('YYYY-MM-DD')
           : text,
     },
     {

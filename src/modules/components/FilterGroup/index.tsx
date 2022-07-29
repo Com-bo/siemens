@@ -286,7 +286,7 @@ export default (props: FilterGroupType) => {
             }}
           />
         );
-      case 'CustomerDevision':
+      case 'CustomerDivision':
         if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
           arra[index].fieldValue = [];
         } else {
@@ -400,7 +400,7 @@ export default (props: FilterGroupType) => {
             case 'EndDate':
             case 'StartDate':
               item.fieldValue = moment(item.fieldValue).format(
-                'YYYY-MM-DD HH:mm:ss',
+                'YYYY-MM-DD',
               );
               break;
             default:
