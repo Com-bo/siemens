@@ -6,12 +6,12 @@ export const DivisionMappingICBQueryListData = (data: Object) => {
   });
 };
 
-// export const exportCostCenterExcel = (data: Object) => {
-//   return usePost(`${Config.Api.Base}${Config.Api.ExportCostCenterData}`, data, {
-//     autoLoading: true,
-//     responseType: 'blob',
-//   });
-// };
+export const DivisionMappingICBExportData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.DivisionMappingICBExportData}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
+};
 export const DivisionMappingICBImportData = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.DivisionMappingICBImportData}`, data, {
     autoLoading: true,

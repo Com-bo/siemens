@@ -4,7 +4,8 @@ import {
   TaleTitleIconDiv,
   ContentWrap,
   TableTopDiv,
-  FilterGroupDivReport
+  FilterGroupDivReport,
+  HomeWrap,
 } from '@/assets/style';
 import {
   Col,
@@ -29,6 +30,7 @@ import news from '@/assets/images/new.png';
 import topTip from '@/assets/images/top.png';
 import ReactECharts from 'echarts-for-react';
 import { history } from 'umi';
+import logo from '@/assets/images/homebg.png';
 import * as echarts from 'echarts';
 import chinaJson from '@/assets/data/china.json';
 
@@ -314,6 +316,9 @@ export default (props: any) => {
               }
               bordered={false}
             >
+              <HomeWrap>
+                <img src={logo} alt="" />
+              </HomeWrap>
             </Card>
           </Col>
         </Row>

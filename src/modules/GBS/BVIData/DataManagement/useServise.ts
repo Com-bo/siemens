@@ -263,7 +263,22 @@ export default (props: any) => {
       return;
     }
     let params = {
-      recordIdList: selectedRowKeys,
+      // searchCondition: {
+      //   filterGroup: {
+      //     recordId: latestGroupIdRef.current,
+      //   },
+      //   listHeader: form.getFieldsValue(),
+      //   isOnlyQueryErrorData: errorCheckedRef.current,
+      //   isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+      //   userBusinessLineList: [business],
+      // },
+      searchCondition: null,
+      orderCondition: {
+        [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      operationRecords: {
+        recordIdList: selectedRowKeys
+      }
     };
     ReCheckDataBVIData(params).then((res) => {
       if (res.isSuccess) {
@@ -276,7 +291,25 @@ export default (props: any) => {
     });
   };
   const confirmDataAction = (recordIdList) => {
-    confirmData({ recordIdList }).then((res) => {
+    let params = {
+      // searchCondition: {
+      //   filterGroup: {
+      //     recordId: latestGroupIdRef.current,
+      //   },
+      //   listHeader: form.getFieldsValue(),
+      //   isOnlyQueryErrorData: errorCheckedRef.current,
+      //   isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+      //   userBusinessLineList: [business],
+      // },
+      searchCondition: null,
+      orderCondition: {
+        [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      operationRecords: {
+        recordIdList: recordIdList
+      }
+    };
+    confirmData(params).then((res) => {
       if (res.isSuccess) {
         getData();
         setSelectedRowKeys([]);
@@ -287,7 +320,25 @@ export default (props: any) => {
     });
   };
   const unconfirmDataAction = (recordIdList) => {
-    unConfirmData({ recordIdList }).then((res) => {
+    let params = {
+      // searchCondition: {
+      //   filterGroup: {
+      //     recordId: latestGroupIdRef.current,
+      //   },
+      //   listHeader: form.getFieldsValue(),
+      //   isOnlyQueryErrorData: errorCheckedRef.current,
+      //   isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+      //   userBusinessLineList: [business],
+      // },
+      searchCondition: null,
+      orderCondition: {
+        [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      operationRecords: {
+        recordIdList: recordIdList
+      }
+    };
+    unConfirmData(params).then((res) => {
       if (res.isSuccess) {
         getData();
         setSelectedRowKeys([]);
@@ -358,9 +409,25 @@ export default (props: any) => {
   // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
     event.stopPropagation();
-    deleteBVIData({
-      recordIdList,
-    }).then((res) => {
+    let params = {
+      // searchCondition: {
+      //   filterGroup: {
+      //     recordId: latestGroupIdRef.current,
+      //   },
+      //   listHeader: form.getFieldsValue(),
+      //   isOnlyQueryErrorData: errorCheckedRef.current,
+      //   isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+      //   userBusinessLineList: [business],
+      // },
+      searchCondition: null,
+      orderCondition: {
+        [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      operationRecords: {
+        recordIdList: recordIdList
+      }
+    };
+    deleteBVIData(params).then((res) => {
       if (res.isSuccess) {
         message.success(res.msg);
         setSelectedRowKeys([]);

@@ -6,12 +6,12 @@ export const SpecialDivisionQueryListData = (data: Object) => {
   });
 };
 
-// export const exportCostCenterExcel = (data: Object) => {
-//   return usePost(`${Config.Api.Base}${Config.Api.ExportCostCenterData}`, data, {
-//     autoLoading: true,
-//     responseType: 'blob',
-//   });
-// };
+export const SpecialDivisionExportData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.SpecialDivisionExportData}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
+};
 export const SpecialDivisionImportData = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.SpecialDivisionImportData}`, data, {
     autoLoading: true,

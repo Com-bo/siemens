@@ -111,7 +111,7 @@ export default (props: FilterGroupType) => {
         { value: '0', label: 'No' },
       ],
     },
-    Product: {
+    "Product": {
       BillingMonthTag: [
         { value: 'Last Month', label: 'Last Month' },
         { value: 'Current Month', label: 'Current Month' },
@@ -129,6 +129,16 @@ export default (props: FilterGroupType) => {
         { value: '0', label: 'No' },
       ],
       Signed: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+    },
+    'Customer Report': {
+      BillingMonthTag: [
+        { value: 'Last Month', label: 'Last Month' },
+        { value: 'Current Month', label: 'Current Month' },
+      ],
+      AdjustTag: [
         { value: '1', label: 'Yes' },
         { value: '0', label: 'No' },
       ],
@@ -309,6 +319,7 @@ export default (props: FilterGroupType) => {
       case 'StartMonth':
       case 'EndMonth':
       case 'BVIMonth':
+      case 'CalendarMonth':
       case 'BillingMonth':
         if (typeof arra[index].fieldValue == 'string') {
           arra[index].fieldValue =
@@ -712,13 +723,12 @@ export default (props: FilterGroupType) => {
             ]}
           >
             <Space size={10}>
-              {props?.customComponet}
               <Button
                 type="primary"
                 icon={<i className="gbs gbs-search"></i>}
                 onClick={() => props.onSearch(filterGroup)}
               ></Button>
-              {checkAuth(props?.authPagename, props?.authPagename + '-Edit') ? (
+              {checkAuth(props?.authPagename, [`${props?.authPagename}-Edit`, `${props?.authPagename}-View`]) ? (
                 <Tooltip title="Setting">
                   <Button
                     icon={<i className="gbs gbs-setting"></i>}
@@ -752,6 +762,7 @@ export default (props: FilterGroupType) => {
                   }}
                 ></Button>
               </Tooltip>
+              {props?.customComponet}
             </Space>
           </AuthWrapper>
         </Space>

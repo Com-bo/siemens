@@ -6,12 +6,12 @@ export const DivMappingOcQueryListData = (data: Object) => {
   });
 };
 
-// export const exportCostCenterExcel = (data: Object) => {
-//   return usePost(`${Config.Api.Base}${Config.Api.ExportCostCenterData}`, data, {
-//     autoLoading: true,
-//     responseType: 'blob',
-//   });
-// };
+export const DivMappingOcExportData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.DivMappingOcExportData}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
+};
 export const DivMappingOcImportData = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.DivMappingOcImportData}`, data, {
     autoLoading: true,

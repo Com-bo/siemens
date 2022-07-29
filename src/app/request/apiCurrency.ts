@@ -6,12 +6,12 @@ export const CurrencyQueryListData = (data: Object) => {
   });
 };
 
-// export const exportCostCenterExcel = (data: Object) => {
-//   return usePost(`${Config.Api.Base}${Config.Api.ExportCostCenterData}`, data, {
-//     autoLoading: true,
-//     responseType: 'blob',
-//   });
-// };
+export const CurrencyExportData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.CurrencyExportData}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
+};
 export const CurrencyImportData = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.CurrencyImportData}`, data, {
     autoLoading: true,

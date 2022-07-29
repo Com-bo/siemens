@@ -123,25 +123,25 @@ export default (props: any) => {
 
   const orignalCols = [
     {
-      name: 'bviBusinessLine',
-      title: 'BVI Business Line',
-      width: '180px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'businessLine',
-      title: 'Business Line',
+      name: 'dataStatus',
+      title: 'Status',
       width: '150px',
       titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'serviceLine',
-      title: 'Service Line',
+      name: 'startMonth',
+      title: 'Start Month',
       width: '150px',
-      titleRender: 'input',
       sorter: true,
+      // titleRender: 'input'
+    },
+    {
+      name: 'endMonth',
+      title: 'End Month',
+      width: '150px',
+      sorter: true,
+      // titleRender: 'input'
     },
     {
       name: 'are',
@@ -240,20 +240,6 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'startMonth',
-      title: 'Start Month',
-      width: '150px',
-      sorter: true,
-      // titleRender: 'input'
-    },
-    {
-      name: 'endMonth',
-      title: 'End Month',
-      width: '150px',
-      sorter: true,
-      // titleRender: 'input'
-    },
-    {
       name: 'chargeType',
       title: 'ChargeType',
       width: '200px',
@@ -274,13 +260,7 @@ export default (props: any) => {
       titleRender: 'input',
       sorter: true,
     },
-    {
-      name: 'dataStatus',
-      title: 'Status',
-      width: '150px',
-      titleRender: 'input',
-      sorter: true,
-    },
+
     {
       name: 'modifiedDate',
       title: 'Modified Date',
@@ -295,6 +275,27 @@ export default (props: any) => {
       name: 'modifiedUser',
       title: 'Modified User',
       width: '120px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'bviBusinessLine',
+      title: 'BVI Business Line',
+      width: '180px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'businessLine',
+      title: 'Business Line',
+      width: '150px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'serviceLine',
+      title: 'Service Line',
+      width: '150px',
       titleRender: 'input',
       sorter: true,
     },

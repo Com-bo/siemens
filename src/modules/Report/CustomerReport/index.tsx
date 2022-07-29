@@ -48,7 +48,7 @@ import {
 import TableList from '@/modules/components/TableMixInline';
 import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
-import { TabWrapDiv,FilterGroupDivReport,ReactEChartsDiv,ReactEChartsDivWrap } from './style';
+import { TabWrapDiv,FilterGroupDivReport,ReactEChartsDiv,ReactEChartsDivWrap ,SelectAnt} from './style';
 import {
   deferenceDataExport,
   exportIntergrityReport,
@@ -63,7 +63,7 @@ import {
   CustomerReportImportListData,
   CustomerReportDeleteListData,
   CustomerReportQueryBVIData,
-  CustomerReportBuildReport
+  CustomerReportQueryReportMonth
 } from '@/app/request/apiCustomerReport';
 
 const pageName = 'CustomerReport';
@@ -122,10 +122,11 @@ export default (props: any) => {
   const [business, setBusiness] = useState([businesslineOptions[0]]);
   const [businessDiff, setBusinessDiff] = useState([businesslineOptions[0]]);
   const [formSearch] = Form.useForm();
-  const [ReportMonth, setReportMonth] = useState(lastMonth());
   const [FYDataOption, setFYDataOption] = useState(["FY2021","FY2022","FY2023"]);
   const [serverLineDataOption, setServerLineDataOption] = useState(["AR"]);
   const [productNameDataOption, setProductNameDataOption] = useState(["OneSRM Change Management"]);
+  const [ReportMonthApiData, setReportMonthApiData] = useState([]);
+  const [ReportMonth, setReportMonth] = useState([]);
   const [EchartsOption1,setEchartsOption1]=useState({
     grid: { top: 8, right: 8, bottom: 24, left: 36 },
     legend: {
@@ -191,19 +192,22 @@ export default (props: any) => {
       // serverLine:serverLineDataOption[0],
       // productName:productNameDataOption[0]
     });
-    getData();
+    QueryReportMonth()
     getChartData()
   }, [current, pageSize, orderField, orderType]);
+  const QueryReportMonth=()=>{
+    CustomerReportQueryReportMonth({}).then((res) => {
+      if (res.isSuccess) {
+        setReportMonthApiData(res.data)
+        setReportMonth([res.data[0]])
+        console.log(ReportMonth)
+        getData();
+      } else {
+        message.error(res.msg);
+      }
+    });
+  }
   const getData = (recordId?: any) => {
-    // const params = {
-    //   pageIndex: current,
-    //   current,
-    //   pageSize,
-    //   ...form.getFieldsValue(),
-    // };
-    // if (conditions) {
-    //   params.groupId = conditions.groupId || null;
-    // }
     if (!business) {
       message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
       return;
@@ -215,9 +219,8 @@ export default (props: any) => {
         },
         listHeader: form.getFieldsValue(),
         userBusinessLineList: businessDiff,
-        reportMonthList:[
-          ReportMonth
-        ],
+        reportMonthList:
+          ReportMonth,
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -272,9 +275,9 @@ export default (props: any) => {
         },
         listHeader: form.getFieldsValue(),
         userBusinessLineList: businessDiff,
-        reportMonthList: [
+        reportMonthList: 
           ReportMonth
-        ],
+        ,
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -454,18 +457,6 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'actualChargeCNYGoss',
-      title: 'Actual charge(In CNY) Goss',
-      width: '200px',
-      sorter: true,
-    },
-    {
-      name: 'actualChargeCurrencyGoss',
-      title: 'Actual charge(In Currency) Goss',
-      width: '250px',
-      sorter: true,
-    },
-    {
       name: 'actualUsageCNYGoss',
       title: 'Actual Usage(In CNY) Goss',
       width: '200px',
@@ -474,7 +465,19 @@ export default (props: any) => {
     
     {
       name: 'actualUsageCurrencyGoss',
-      title: 'Actual Usage(In Currency) Goss',
+      title: 'Actual Usage(In Unit Price Currency) Goss',
+      width: '350px',
+      sorter: true,
+    },
+    {
+      name: 'actualChargeCNYGoss',
+      title: 'Actual charge(In CNY) Goss',
+      width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'actualChargeCurrencyGoss',
+      title: 'Actual charge(In Currency) Goss',
       width: '250px',
       sorter: true,
     },
@@ -512,9 +515,9 @@ export default (props: any) => {
       sorter: true,
     }
   ];
-  const onReportMonthChange=(datestring)=>{
-    setReportMonth(datestring)
-  }
+  // const onReportMonthChange=(datestring)=>{
+  //   setReportMonth(datestring)
+  // }
   const _generateHead = (cols: any) => {
     let _columns = [];
     for (let _key in cols) {
@@ -732,30 +735,32 @@ export default (props: any) => {
               </FilterGroupDivReport>
             </AuthWrapper>
             <ReactEChartsDiv>
-              <ReactEChartsDivWrap>
-                <label>BVI Volume</label>
-                <ReactECharts
-                  echarts={echarts}
-                  option={EchartsOption1}
-                  notMerge={true}
-                  lazyUpdate={true}
-                  style={{ height: 400 }}
-                  opts={{ locale: 'FR' }}
-                  key={Date.now()}
-                />
-              </ReactEChartsDivWrap>
-              <ReactEChartsDivWrap>
-                <label>Usage&Charge</label>
-                <ReactECharts
-                  echarts={echarts}
-                  option={EchartsOption2}
-                  notMerge={true}
-                  lazyUpdate={true}
-                  style={{ height: 400 }}
-                  opts={{ locale: 'FR' }}
-                  key={Date.now()+1}
-                />
-              </ReactEChartsDivWrap>
+              <div className='ReactChart'>
+                <ReactEChartsDivWrap>
+                  <label>BVI Volume</label>
+                  <ReactECharts
+                    echarts={echarts}
+                    option={EchartsOption1}
+                    notMerge={true}
+                    lazyUpdate={true}
+                    style={{ height: 400 }}
+                    opts={{ locale: 'FR' }}
+                    key={Date.now()}
+                  />
+                </ReactEChartsDivWrap>
+                <ReactEChartsDivWrap>
+                  <label>Usage&Charge</label>
+                  <ReactECharts
+                    echarts={echarts}
+                    option={EchartsOption2}
+                    notMerge={true}
+                    lazyUpdate={true}
+                    style={{ height: 400 }}
+                    opts={{ locale: 'FR' }}
+                    key={Date.now()+1}
+                  />
+                </ReactEChartsDivWrap>
+              </div>
             </ReactEChartsDiv>
           
         </TabPane>
@@ -800,7 +805,7 @@ export default (props: any) => {
                 </Select>
               </>
             }
-            moudleName="BVI Data"
+            moudleName="Customer Report"
             authPagename={pageName}
             onSearch={(val) => {
               latestGroupIdRef.current = val;
@@ -862,17 +867,26 @@ export default (props: any) => {
                   style={{ height: '20px', borderColor: '#999' }}
                 />
                 <BtnThemeWrap>
-                <label>Report Month : </label>
-                <DatePicker
-                  onChange={(dates,datestring)=>{
-                    onReportMonthChange(datestring)
-                  }}
-                  defaultValue={moment(ReportMonth)}
-                  disabled={false}
-                  picker="month"
-                  format="YYYYMM"
-                  style={{ width: '100px' }}
-                />
+                  <SelectAnt>
+                  <label>Report Month : </label>
+                   <Select 
+                        mode="multiple"
+                        onChange={(val) => {
+                          setReportMonth(val)
+                        }
+                        } 
+                        value={ReportMonth}
+                        style={{ width: 200 }}>
+                     {
+                       ReportMonthApiData.map((item,index)=>{
+                        return (
+                          <Option value={item} key={index}>{item}</Option>
+                        )
+                       })
+                     }
+                      
+                    </Select>
+                    </SelectAnt>
                 </BtnThemeWrap>
                 <Divider
                   type="vertical"

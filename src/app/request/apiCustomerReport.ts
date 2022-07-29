@@ -70,3 +70,12 @@ export const CustomerReportBuildReport = (data: Object) => {
     },
   );
 };
+export const CustomerReportQueryReportMonth = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.CustomerReportQueryReportMonth}`,
+    data,
+    {
+      autoLoading: true
+    },
+  );
+};

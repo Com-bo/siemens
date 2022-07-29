@@ -96,3 +96,8 @@ export const FilterGroupDivReport = styled.div`
     width: 40px;
   }
 `;
+export const HomeWrap = styled.div`
+  img{
+    width: 100%;
+  }
+`;

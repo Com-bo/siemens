@@ -161,15 +161,16 @@ export default (props: any) => {
   } = useService(props);
   const orignalCols = [
     {
-      name: 'bviBusinessLine',
-      title: 'BVI Business Line',
-      width: '150px',
+      name: 'bviMonth',
+      title: 'BVI Month',
+      width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
-      name: 'businessLine',
-      title: 'Business Line',
-      width: '150px',
+      name: 'bviStatus',
+      title: 'BVI Status',
+      width: '100px',
       sorter: true,
     },
     {
@@ -193,38 +194,10 @@ export default (props: any) => {
       titleRender: 'input',
       sorter: true,
     },
-    
-    {
-      name: 'companyCode',
-      title: 'Company Code',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
     {
       name: 'customerDivision',
       title: 'Customer Division',
       width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'productUnitPrice',
-      title: 'Product Unit Price',
-      width: '200px',
-      sorter: true,
-    },
-    {
-      name: 'productUnitPriceCurrency',
-      title: 'Product Unit Price Currency',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'costCenter',
-      title: 'Cost Center',
-      width: '150px',
       titleRender: 'input',
       sorter: true,
     },
@@ -288,6 +261,19 @@ export default (props: any) => {
       },
     },
     {
+      name: 'productUnitPrice',
+      title: 'Product Unit Price',
+      width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'productUnitPriceCurrency',
+      title: 'Product Unit Price Currency',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
       name: 'totalAmount',
       title: 'Total Amount(Unit Price Currency)',
       width: '200px',
@@ -297,6 +283,13 @@ export default (props: any) => {
       name: 'billingCurrency',
       title: 'Billing Currency',
       width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'costCenter',
+      title: 'Cost Center',
+      width: '150px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -320,8 +313,51 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'bviMonth',
-      title: 'BVI Month',
+      name: 'billingARE',
+      title: 'Billing ARE',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'billingCostCenter',
+      title: 'Billing Cost Center',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'modifiedUser',
+      title: 'Modified User',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'modifiedDate',
+      title: 'Modified Date',
+      width: '200px',
+      sorter: true,
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+          : text,
+    },
+    {
+      name: 'bviBusinessLine',
+      title: 'BVI Business Line',
+      width: '150px',
+      sorter: true,
+    },
+    {
+      name: 'businessLine',
+      title: 'Business Line',
+      width: '150px',
+      sorter: true,
+    },
+    {
+      name: 'companyCode',
+      title: 'Company Code',
       width: '200px',
       titleRender: 'input',
       sorter: true,
@@ -367,35 +403,14 @@ export default (props: any) => {
       sorter: true,
       render: (text) => (text == 0 ? 'No' : 'Yes'),
     },
-    {
-      name: 'bviStatus',
-      title: 'BVI Status',
-      width: '100px',
-      sorter: true,
-    },
+
     {
       name: 'customerNumber',
       title: 'Customer Number Allocation',
       width: '240px',
       sorter: true,
     },
-    {
-      name: 'modifiedUser',
-      title: 'Modified User',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'modifiedDate',
-      title: 'Modified Date',
-      width: '200px',
-      sorter: true,
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
-    },
+
     {
       name: 'z003',
       title: 'Z003',
@@ -457,20 +472,6 @@ export default (props: any) => {
       title: 'SAP Exchange Rate',
       width: '150px',
       name: 'exchangeRate',
-      sorter: true,
-    },
-    {
-      name: 'billingARE',
-      title: 'Billing ARE',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'billingCostCenter',
-      title: 'Billing Cost Center',
-      width: '200px',
-      titleRender: 'input',
       sorter: true,
     },
     {

@@ -104,22 +104,26 @@ export const Api = {
   CurrencyQueryListData: '/api/Currency/QueryListData',
   CurrencyEditDataSave: '/api/Currency/EditDataSave',
   CurrencyDeleteData: '/api/Currency/DeleteData',
+  CurrencyExportData: '/api/Currency/ExportData',
 
   DivisionMappingICBImportData: '/api/DivisionMappingICB/ImportData',
   DivisionMappingICBQueryListData: '/api/DivisionMappingICB/QueryListData',
   DivisionMappingICBEditDataSave: '/api/DivisionMappingICB/EditDataSave',
   DivisionMappingICBDeleteData: '/api/DivisionMappingICB/DeleteData',
+  DivisionMappingICBExportData: '/api/DivisionMappingICB/ExportData',
 
   DivMappingOcQueryPageDropListData: '/api/DivMappingOc/QueryPageDropListData',
   DivMappingOcImportData: '/api/DivMappingOc/ImportData',
   DivMappingOcQueryListData: '/api/DivMappingOc/QueryListData',
   DivMappingOcEditDataSave: '/api/DivMappingOc/EditDataSave',
   DivMappingOcDeleteData: '/api/DivMappingOc/DeleteData',
+  DivMappingOcExportData: '/api/DivMappingOc/ExportData',
 
   SpecialDivisionImportData: '/api/SpecialDivision/ImportData',
   SpecialDivisionQueryListData: '/api/SpecialDivision/QueryListData',
   SpecialDivisionEditDataSave: '/api/SpecialDivision/EditDataSave',
   SpecialDivisionDeleteData: '/api/SpecialDivision/DeleteData',
+  SpecialDivisionExportData: '/api/SpecialDivision/ExportData',
 
   BusinessLineQueryListData: '/api/BusinessLine/QueryListData',
   BusinessLineExportData: '/api/BusinessLine/ExportData',
@@ -176,6 +180,7 @@ export const Api = {
   CustomerReportDeleteListData: '/api/CustomerReport/DeleteListData',
   CustomerReportQueryBVIData: '/api/CustomerReport/QueryBVIData',
   CustomerReportBuildReport: '/api/CustomerReport/BuildReport',
+  CustomerReportQueryReportMonth: '/api/CustomerReport/QueryReportMonth',
 
   // Home
   HomeQueryData: '/api/Home/QueryData',

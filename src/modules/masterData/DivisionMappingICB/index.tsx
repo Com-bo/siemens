@@ -40,6 +40,7 @@ import {
   // exportCostCenterExcel,
   // logCostCenterDataQuery,
   // 
+  DivisionMappingICBExportData,
   DivisionMappingICBImportData,
   DivisionMappingICBQueryListData, 
   DivisionMappingICBEditDataSave, 
@@ -235,31 +236,30 @@ export const Index = (props: any) => {
   };
 
   const exportExcelAction = () => {
-    message.error("暂未开发")
-    // let params = {
-    //   searchCondition: {
-    //     pageTop: formFilter.getFieldsValue(),
-    //     listHeader: form.getFieldsValue(),
-    //   },
-    //   orderCondition: {
-    //     //   [orderField]: orderType == 'ascend' ? 0 : 1,
-    //   },
-    //   pageIndex: current,
-    //   pageSize: pageSize,
-    // };
+    let params = {
+      searchCondition: {
+        pageTop: formFilter.getFieldsValue(),
+        listHeader: form.getFieldsValue(),
+      },
+      orderCondition: {
+        //   [orderField]: orderType == 'ascend' ? 0 : 1,
+      },
+      pageIndex: current,
+      pageSize: pageSize,
+    };
 
-    // exportCostCenterExcel(params).then((res: any) => {
-    //   if (res.response.status == 200) {
-    //     let elink = document.createElement('a');
-    //     // 设置下载文件名
-    //     elink.download = 'CostCenter List.xlsx';
-    //     elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
-    //     elink.click();
-    //     window.URL.revokeObjectURL(elink.href);
-    //   } else {
-    //     message.error(res.response.statusText);
-    //   }
-    // });
+    DivisionMappingICBExportData(params).then((res: any) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        // 设置下载文件名
+        elink.download = 'DivisionMappingICB List.xlsx';
+        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
   };
   const importExcel = (file) => {
     const fd = new FormData();

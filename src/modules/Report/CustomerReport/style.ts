@@ -49,9 +49,7 @@ export const FilterGroupDivReport = styled.div`
   padding: 22px;
   background-color: #f6f8f9;
   border-bottom: 1px solid #e3e5e5;
-  position: absolute;
   height: 120px;
-  width: 100%;
   .ant-select {
     width: 200px !important;
     margin: 0 20px 0 10px;
@@ -62,7 +60,10 @@ export const FilterGroupDivReport = styled.div`
 `;
 export const ReactEChartsDiv = styled.div`
   padding: 22px;
-  margin-top: 120px;
+  .ReactChart{
+    height: calc(100vh - 370px);
+    overflow: auto;
+  }
   label{
     display: block;
     font-size: 28px;
@@ -71,4 +72,11 @@ export const ReactEChartsDiv = styled.div`
 `;
 export const ReactEChartsDivWrap = styled.div`
 margin-bottom: 80px;
+`
+
+export const SelectAnt = styled.div`
+  .ant-select-selection-overflow{
+    flex-wrap:nowrap;
+    overflow: auto;
+  }
 `
