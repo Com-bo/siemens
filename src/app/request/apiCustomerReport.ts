@@ -47,7 +47,6 @@ export const CustomerReportDeleteListData = (data: Object) => {
     data,
     {
       autoLoading: true,
-      responseType: 'blob',
     },
   );
 };

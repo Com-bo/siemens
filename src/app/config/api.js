@@ -83,6 +83,7 @@ export const Api = {
   BatchFileManual: '/api/Billing/BatchFileManual',
   BatchFileAuto: '/api/Billing/BatchFileAuto',
   AllocationFile: '/api/Billing/AllocationFile',
+  GetOriginBVI:"/api/Billing/GetOriginBVI",
   // masterData-costcenter
   GetCostCenterData: '/api/CostCenterIcb/QueryListData',
   ExportCostCenterData: '/api/CostCenterIcb/ExportData', //导出costcenter

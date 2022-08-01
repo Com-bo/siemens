@@ -387,7 +387,6 @@ export default (props: any) => {
       name: 'adjustTag',
       title: 'AdjustTag',
       width: '100px',
-      titleRender: 'input',
       sorter: true,
       render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
     },
@@ -407,7 +406,7 @@ export default (props: any) => {
     },
 
     {
-      name: 'customerNumber',
+      name: 'customerNumberAllocation',
       title: 'Customer Number Allocation',
       width: '240px',
       sorter: true,

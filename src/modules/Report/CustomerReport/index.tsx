@@ -316,13 +316,13 @@ export default (props: any) => {
       recordIdList,
     }).then((res) => {
       console.log(res)
-      if (res.response.status==200) {
-        message.success(res.response.statusText);
+      if (res.isSuccess) {
+        message.success(res.msg);
         setSelectedRowKeys([]);
         getData();
         setCurrent(1);
       } else {
-        message.error(res.response.statusText);
+        message.error(res.msg);
       }
     });
   };
@@ -659,7 +659,10 @@ export default (props: any) => {
       </Modal>
       <Tabs defaultActiveKey="1" type="card">
         <TabPane tab="Chart Report" key="1">
-            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+            <AuthWrapper functionName={pageName} authCode={[
+              `${pageName}-View`,
+              `${pageName}-Edit`,
+            ]}>
               <FilterGroupDivReport>
               <Form form={formSearch} labelCol={{ flex: '120px' }}>
                 <Row className="importData">

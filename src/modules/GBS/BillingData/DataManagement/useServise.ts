@@ -12,6 +12,7 @@ import {
   EditBVIData,
   EditDataListSave,
   getAbnormalOriginDataByBVI,
+  GetOriginBVI,
   exportOriginalData,
   //
   FreezeData,
@@ -124,32 +125,17 @@ export default (props: any) => {
   ]);
   const [business, setBusiness] = useState([businesslineOptions[0]]);
   //
-  const _generateHead = (cols: any) => {
-    let _columns = [];
-    for (let _key in cols) {
-      if (_key) {
-        let start = _key[0];
-        let end = _key.slice(1);
-        let colKey = start + end;
-        _columns.push({
-          title: cols[_key],
-          dataIndex: colKey,
-          // width: '120px',
-          key: colKey,
-        });
-      }
-    }
-    setCols(_columns);
-  };
   const getCheckOriginalData = (event, _data) => {
     event.stopPropagation();
-    setCheckOriginalParam(_data);
-    getAbnormalOriginDataByBVI([_data]).then((res) => {
-      if (res.isSuccess) {
+    // setCheckOriginalParam(_data);
+    const params={
+      z003IdList:[_data]
+    }
+    GetOriginBVI(params).then((res) => {
+      if (!res.isSuccess) {
         setIsCheckOriginal(true);
-        setCheckData(res.data.body || []);
-        _generateHead(res.data.header || []);
-        // setCols(res.data.head||[])
+        console.log(res.data)
+        setCheckData(res.data);
       } else {
         message.error(res.msg);
       }

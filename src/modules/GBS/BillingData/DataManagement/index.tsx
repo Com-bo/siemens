@@ -199,24 +199,51 @@ export default (props: any) => {
       width: '100px',
       sorter: true,
       render: (text, record, index) => {
-        if (record.error) {
+        let temptype = true;
+        if (
+          record.templateType == 'Flat Charge' ||
+          record.templateType == 'H2R BVI Template' ||
+          record.templateType == 'BVI Manual Template' ||
+          (record.templateType == 'P2P BCS Template' &&
+            record.userno != 'ROBOT_MICHAEL')
+        ) {
+          temptype = true;
+        } else {
+          temptype = false;
+        }
+        if (record?.error) {
           return (
-            <BtnTextRedWrap color="red">
-              <Button
-                type="text"
-                // onClick={(evt) => getCheckOriginalData(evt, record)}
-                icon={<ExclamationCircleOutlined />}
-              >
-                {text}
-              </Button>
-            </BtnTextRedWrap>
+            <Tooltip title={record.error}>
+              <BtnTextRedWrap color="red">
+                <Button
+                  type="text"
+                  onClick={(evt) => {
+                    evt.stopPropagation();
+                    if (temptype) {
+                    } else {
+                      getCheckOriginalData(evt, record.materialSalesTextCustomerTextZ003)
+                    }
+                  }}
+                  icon={<ExclamationCircleOutlined />}
+                >
+                  {text}
+                </Button>
+              </BtnTextRedWrap>
+            </Tooltip>
           );
         } else {
           return (
             <BtnTextRedWrap>
               <Button
                 type="text"
-                // onClick={(evt) => getCheckOriginalData(evt, record)}
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  if (temptype) {
+                    message.error('Check source data is not supported');
+                  } else {
+                    getCheckOriginalData(evt, record.materialSalesTextCustomerTextZ003)
+                  }
+                }}
               >
                 {text}
               </Button>
@@ -238,13 +265,6 @@ export default (props: any) => {
       sorter: true,
     },
 
-    //
-    {
-      name: 'BatchFile Exchange Rate',
-      title: 'BatchFile Exchange Rate',
-      width: '200px',
-      sorter: true,
-    },
     //
     {
       name: 'billingCurrency',
@@ -468,6 +488,213 @@ export default (props: any) => {
         </Space>
       ),
     },
+  ];
+
+  const bviOrignalCols = [
+    {
+      name: 'bviMonth',
+      title: 'BVI Month',
+      width: '200px',
+    },
+    {
+      name: 'bviStatus',
+      title: 'BVI Status',
+      width: '100px',
+    },
+    {
+      name: 'serviceLine',
+      title: 'ServiceLine',
+      width: '150px',
+    },
+    {
+      name: 'product',
+      title: 'Product',
+      width: '200px',
+    },
+    {
+      name: 'are',
+      title: 'ARE',
+      width: '150px',
+    },
+    {
+      name: 'customerDivision',
+      title: 'Customer Division',
+      width: '200px',
+    },
+    {
+      name: 'bvi',
+      title: 'BVI',
+      width: '100px'
+    },
+    {
+      name: 'productUnitPrice',
+      title: 'Product Unit Price',
+      width: '200px',
+    },
+    {
+      name: 'productUnitPriceCurrency',
+      title: 'Product Unit Price Currency',
+      width: '200px',
+    },
+    {
+      name: 'totalAmount',
+      title: 'Total Amount(Unit Price Currency)',
+      width: '200px',
+    },
+    {
+      name: 'billingCurrency',
+      title: 'Billing Currency',
+      width: '200px',
+    },
+    {
+      name: 'costCenter',
+      title: 'Cost Center',
+      width: '150px',
+    },
+    {
+      name: 'po',
+      title: 'PO',
+      width: '200px',
+    },
+    {
+      name: 'poPercentage',
+      title: 'PO Percentage',
+      width: '200px',
+    },
+    {
+      name: 'comment',
+      title: 'Comment',
+      width: '200px',
+    },
+    {
+      name: 'billingARE',
+      title: 'Billing ARE',
+      width: '200px',
+    },
+    {
+      name: 'billingCostCenter',
+      title: 'Billing Cost Center',
+      width: '200px',
+    },
+    {
+      name: 'modifiedUser',
+      title: 'Modified User',
+      width: '200px',
+    },
+    {
+      name: 'modifiedDate',
+      title: 'Modified Date',
+      width: '200px',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD')
+          : text,
+    },
+    {
+      name: 'bviBusinessLine',
+      title: 'BVI Business Line',
+      width: '150px',
+
+    },
+    {
+      name: 'businessLine',
+      title: 'Business Line',
+      width: '150px',
+    },
+    {
+      name: 'companyCode',
+      title: 'Company Code',
+      width: '200px',
+    },
+    {
+      name: 'system',
+      title: 'System',
+      width: '200px',
+    },
+    {
+      name: 'idH',
+      title: 'ID_H',
+      width: '200px',
+    },
+    {
+      name: 'chargeType',
+      title: 'ChargeType',
+      width: '200px',
+    },
+    {
+      name: 'adjustTag',
+      title: 'AdjustTag',
+      width: '100px',
+      render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
+    },
+    {
+      name: 'templateType',
+      title: 'Template Type',
+      width: '200px',
+    },
+    {
+      name: 'isPOByPercentage',
+      title: 'IsPOByPercentage',
+      width: '200px',
+      render: (text) => (text == 0 ? 'No' : 'Yes'),
+    },
+
+    {
+      name: 'customerNumberAllocation',
+      title: 'Customer Number Allocation',
+      width: '240px',
+    },
+
+    {
+      name: 'z003',
+      title: 'Z003',
+      width: '100px',
+    },
+    {
+      name: 'salesOrder',
+      title: 'Sales Order',
+      width: '200px',
+    },
+    {
+      name: 'billingDoc',
+      title: 'Billing Doc.',
+      width: '200px',
+    },
+    {
+      name: 'billingStatus',
+      title: 'Billing Status',
+      width: '200px',
+    },
+    {
+      name: 'itemNo',
+      title: 'Item No.',
+      width: '200px',
+    },
+    {
+      title: 'Amount in Currecy',
+      width: '200px',
+      name: 'amountInCurrecy',
+    },
+    {
+      title: 'Currency in SAP',
+      width: '200px',
+      name: 'currencyInSAP',
+    },
+    {
+      title: 'Amount in Local Currency(CNY)',
+      width: '240px',
+      name: 'amountInLocalCurrencyCNY',
+    },
+    {
+      title: 'Billing Date',
+      width: '180px',
+      name: 'billingDate',
+    },
+    {
+      title: 'SAP Exchange Rate',
+      width: '150px',
+      name: 'exchangeRate',
+    }
   ];
 
   const uploadProps = {
@@ -803,6 +1030,37 @@ export default (props: any) => {
             }
           </Row>
         </Form>
+      </Modal>
+      {/* 查看 */}
+      <Modal
+        maskClosable={false}
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Check Original List
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        width="1300px"
+        visible={isCheckOriginal}
+        footer={null}
+        onCancel={() => setIsCheckOriginal(false)}
+      >
+        <TableWrapDiv>
+          <Table
+            columns={bviOrignalCols}
+            rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
+            dataSource={checkData}
+            rowKey="id"
+            pagination={false}
+            scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
+          />
+        </TableWrapDiv>
       </Modal>
       <TableList
         data={tableData}

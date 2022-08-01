@@ -83,6 +83,15 @@ export const getAbnormalOriginDataByBVI = (data: Object) => {
     },
   );
 };
+export const GetOriginBVI = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.GetOriginBVI}`,
+    data,
+    {
+      autoLoading: true,
+    },
+  );
+};
 export const exportOriginalData = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.ExportOriginalData}`, data, {
     autoLoading: true,
