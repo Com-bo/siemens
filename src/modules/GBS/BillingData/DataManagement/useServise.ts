@@ -455,7 +455,7 @@ export default (props: any) => {
                 'amountInLocalCurrencyCNY',
               ),
               billingDate: formDataEdit.getFieldValue('billingDate'),
-              sapExchangeRate: formDataEdit.getFieldValue('exchangeRate'),
+              sapExchangeRate: formDataEdit.getFieldValue('sapExchangeRate'),
               id: formDataEdit.getFieldValue('id'),
             };
             EditDataSpecialSave(params).then((res) => {

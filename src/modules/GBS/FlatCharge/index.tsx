@@ -1748,12 +1748,12 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              {formData.getFieldValue('are') != '5547' ? (
+              {/* {formData.getFieldValue('are') != '5547' ? ( */}
                 <Form.Item
                   labelCol={{ flex: '50px' }}
                   label="PO"
                   name="po"
-                  rules={[{ required: true }]}
+                  rules={[{ required: formData.getFieldValue('are') != '5547' }]}
                 >
                   <DebounceSelect
                     initFlag
@@ -1787,11 +1787,11 @@ export default (props: any) => {
                     }}
                   />
                 </Form.Item>
-              ) : (
+              {/* ) : (
                 <Form.Item labelCol={{ flex: '50px' }} label="PO" name="po">
                   <Input style={{ width: '100%' }} />
                 </Form.Item>
-              )}
+              )} */}
             </Col>
             <Col span={8}>
               <Form.Item

@@ -14,7 +14,8 @@ import {
   DatePicker,
   Upload,
   Checkbox,
-  Modal
+  Modal,
+  Tooltip
 } from 'antd';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -44,6 +45,7 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
   UploadOutlined,
+  ClearOutlined
 } from '@ant-design/icons';
 import TableList from '@/modules/components/TableMixInline';
 import FilterGroup from '@/modules/components/FilterGroup';
@@ -199,7 +201,7 @@ export default (props: any) => {
     CustomerReportQueryReportMonth({}).then((res) => {
       if (res.isSuccess) {
         setReportMonthApiData(res.data)
-        setReportMonth([res.data[0]])
+        // setReportMonth([res.data[0]])
         console.log(ReportMonth)
         getData();
       } else {
@@ -490,13 +492,13 @@ export default (props: any) => {
     },
     {
       name: 'adjustTag',
-      title: 'AdjustTag',
+      title: 'Adjust Tag',
       width: '100px',
       titleRender: 'input',
     },
     {
       name: 'isFlatCharge',
-      title: 'isFlatCharge',
+      title: 'Is Flat Charge',
       width: '100px',
       titleRender: 'input',
     },
@@ -505,6 +507,12 @@ export default (props: any) => {
       title: 'Comment',
       width: '200px',
       titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'reportMonth',
+      title: 'Report Month',
+      width: '200px',
       sorter: true,
     },
     {
@@ -693,6 +701,14 @@ export default (props: any) => {
                   <Col span={4}>
                     <Form.Item style={{ textAlign: 'right' }}>
                       <Space>
+                        <Tooltip title="Clear">
+                          <Button
+                            icon={<ClearOutlined />}
+                            onClick={() => {
+                              formSearch.resetFields()
+                            }}
+                          ></Button>
+                        </Tooltip>
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
@@ -830,8 +846,35 @@ export default (props: any) => {
         }
         renderBtns={
           <>
-            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+            
               <Space>
+                <BtnThemeWrap>
+                  <SelectAnt>
+                  <label>Report Month : </label>
+                   <Select 
+                        mode="multiple"
+                        onChange={(val) => {
+                          setReportMonth(val)
+                        }
+                        } 
+                        value={ReportMonth}
+                        style={{ width: 200 }}>
+                     {
+                       ReportMonthApiData.map((item,index)=>{
+                        return (
+                          <Option value={item} key={index}>{item}</Option>
+                        )
+                       })
+                     }
+                    </Select>
+                    </SelectAnt>
+                </BtnThemeWrap>
+                <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+                  <Space>
+                <Divider
+                  type="vertical"
+                  style={{ height: '20px', borderColor: '#999' }}
+                />
                 <BtnOrangeWrap>
                   <Button
                     disabled={!selectedRowKeys.length}
@@ -867,32 +910,6 @@ export default (props: any) => {
                   style={{ height: '20px', borderColor: '#999' }}
                 />
                 <BtnThemeWrap>
-                  <SelectAnt>
-                  <label>Report Month : </label>
-                   <Select 
-                        mode="multiple"
-                        onChange={(val) => {
-                          setReportMonth(val)
-                        }
-                        } 
-                        value={ReportMonth}
-                        style={{ width: 200 }}>
-                     {
-                       ReportMonthApiData.map((item,index)=>{
-                        return (
-                          <Option value={item} key={index}>{item}</Option>
-                        )
-                       })
-                     }
-                      
-                    </Select>
-                    </SelectAnt>
-                </BtnThemeWrap>
-                <Divider
-                  type="vertical"
-                  style={{ height: '20px', borderColor: '#999' }}
-                />
-                <BtnThemeWrap>
                     <Upload
                       style={{ margin: '0 10px' }}
                       maxCount={1}
@@ -912,8 +929,10 @@ export default (props: any) => {
                 >
                   <a href="./template/Customer Report Template.xlsx">Download Template</a>
                 </Button>
+                </Space>
+                </AuthWrapper>
               </Space>
-            </AuthWrapper>
+
             <Space>
               <Divider
                 type="vertical"

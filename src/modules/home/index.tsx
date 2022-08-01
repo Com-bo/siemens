@@ -19,7 +19,8 @@ import {
   Button,
   DatePicker,
   message,
-  Space
+  Space,
+  Tooltip
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import todo from '@/assets/images/todo.png';
@@ -34,6 +35,13 @@ import logo from '@/assets/images/homebg.png';
 import * as echarts from 'echarts';
 import chinaJson from '@/assets/data/china.json';
 
+import {
+  DownOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  UploadOutlined,
+  ClearOutlined
+} from '@ant-design/icons';
 import {
   handlerGetInstrumentOnGoingOrderCount,
   handlerGetOnGoingOrderCount,
@@ -164,6 +172,14 @@ export default (props: any) => {
                     <Col span={4} offset={1}>
                       <Form.Item>
                         <Space>
+                        <Tooltip title="Clear">
+                          <Button
+                            icon={<ClearOutlined />}
+                            onClick={() => {
+                              formSearch.resetFields()
+                            }}
+                          ></Button>
+                        </Tooltip>
                           <Button
                             type="primary"
                             icon={<i className="gbs gbs-search"></i>}
@@ -309,7 +325,7 @@ export default (props: any) => {
                       <span></span>
                     </TaleTitleIconDiv>
                     <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                      Data Flaw
+                      Data Flow
                     </span>
                   </TableTitleDiv>
                 </TableTopDiv>

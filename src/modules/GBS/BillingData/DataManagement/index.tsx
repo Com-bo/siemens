@@ -777,7 +777,7 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="SAP Exchange Rate" name="exchangeRate">
+              <Form.Item label="SAP Exchange Rate" name="sapExchangeRate">
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
