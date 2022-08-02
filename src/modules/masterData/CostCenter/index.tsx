@@ -26,6 +26,7 @@ import {
   Tooltip,
   Upload,
   Switch,
+  Checkbox
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -67,6 +68,8 @@ export const Index = (props: any) => {
   const [logId, setLogId] = useState('');
   const [showCostCenterData, setShowCostCenterData] = useState(false);
   const [componentDisabled, setComponentDisabled] = useState(false);
+
+  const [isSelectAll, setIsSelectAll] = useState(false);
   const orignalCols: any = [
     {
       name: 'are',
@@ -236,9 +239,24 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteCostCenterData({
-          recordIdList,
-        }).then((res) => {
+        let params = {}
+        if(isSelectAll){
+          params = {
+            searchCondition: {
+              pageTop: formFilter.getFieldsValue(),
+              listHeader: form.getFieldsValue(),
+            },
+            operationRecords: null,
+          };
+        }else{
+          params = {
+            searchCondition: null,
+            operationRecords: {
+              recordIdList: recordIdList
+            }
+          };
+        }
+        deleteCostCenterData(params).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
             getData();
@@ -597,17 +615,17 @@ export const Index = (props: any) => {
               wrapperCol={{ span: 14 }}
             >
               <Row className="masterData">
-                <Col span={7}>
+                <Col span={6}>
                   <Form.Item label="CostCenter" name="costCenter">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={7}>
+                <Col span={6}>
                   <Form.Item label="CEPC Division" name="cepcDivision">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={7}>
+                <Col span={6}>
                   <Form.Item label="lockIndicator" name="isLocked">
                     <Select allowClear>
                       <Select.Option value={true as unknown as Key}>
@@ -654,6 +672,15 @@ export const Index = (props: any) => {
                       </Tooltip>
                     </Space>
                   </Form.Item>
+                </Col>
+                <Col span={3}>
+                        <Checkbox
+                        onChange={(e) => {
+                          setIsSelectAll(e.target.checked)
+                        }}
+                      >
+                        Select All
+                      </Checkbox>
                 </Col>
               </Row>
             </Form>
@@ -720,7 +747,7 @@ export const Index = (props: any) => {
               </Dropdown>
             </BtnThemeWrap>
             <Button
-              disabled={selectedRowKeys.length == 0}
+               disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
               onClick={(event) => deleteInfos(selectedRowKeys, event)}
             >
               Delete

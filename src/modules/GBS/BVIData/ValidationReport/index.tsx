@@ -116,24 +116,28 @@ export default (props: any) => {
       title: 'Business Line',
       width: '180px',
       titleRender: 'input',
+      fixed: 'left',
     },
     {
       name: 'are',
       title: 'ARE',
       width: '120px',
       titleRender: 'input',
+      fixed: 'left',
     },
     {
       name: 'customerDivision',
       title: 'Customer Division',
       width: '120px',
       titleRender: 'input',
+      fixed: 'left',
     },
     {
       name: 'productName',
       title: 'Product Name',
       width: '200px',
       titleRender: 'input',
+      fixed: 'left',
     },
     ...months,
     {

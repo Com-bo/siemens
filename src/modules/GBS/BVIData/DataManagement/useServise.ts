@@ -269,9 +269,6 @@ export default (props: any) => {
           userBusinessLineList: [business],
         },
         operationRecords: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        }
       };
     }else{
       let recordList = selectedRows.filter((item) => !!item.error);
@@ -285,9 +282,6 @@ export default (props: any) => {
       }
       params = {
         searchCondition: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        },
         operationRecords: {
           recordIdList: selectedRowKeys
         }
@@ -317,16 +311,10 @@ export default (props: any) => {
           userBusinessLineList: [business],
         },
         operationRecords: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        }
       };
     }else{
       params = {
         searchCondition: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        },
         operationRecords: {
           recordIdList: recordIdList
         }
@@ -356,16 +344,10 @@ export default (props: any) => {
           userBusinessLineList: [business],
         },
         operationRecords: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        }
       };
     }else{
       params = {
         searchCondition: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        },
         operationRecords: {
           recordIdList: recordIdList
         }
@@ -455,16 +437,10 @@ export default (props: any) => {
           userBusinessLineList: [business],
         },
         operationRecords: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        }
       };
     }else{
       params = {
         searchCondition: null,
-        orderCondition: {
-          [orderField]: orderType == 'ascend' ? 0 : 1,
-        },
         operationRecords: {
           recordIdList: recordIdList
         }

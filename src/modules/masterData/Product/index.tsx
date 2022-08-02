@@ -29,6 +29,7 @@ import {
   Table,
   Tooltip,
   Upload,
+  Checkbox
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -86,6 +87,8 @@ export const Index = (props: any) => {
   const [currency, setCurrency] = useState([]);
   const [systemTag, setSystemTag] = useState([]);
   const [isPOByPercentage, setIsPOByPercentage] = useState(false);
+
+  const [isSelectAll, setIsSelectAll] = useState(false);
   const orignalCols: any = [
     {
       name: 'businessLine',
@@ -353,9 +356,26 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteProductData({
-          recordIdList,
-        }).then((res) => {
+        let params = {}
+        if(isSelectAll){
+          params = {
+            searchCondition: {
+              filterGroup: {
+                recordId: latestGroupIdRef.current,
+              },
+              listHeader: form.getFieldsValue(),
+            },
+            operationRecords: null,
+          };
+        }else{
+          params = {
+            searchCondition: null,
+            operationRecords: {
+              recordIdList: recordIdList
+            }
+          };
+        }
+        deleteProductData(params).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
             if (current == 1) {
@@ -1375,6 +1395,17 @@ export const Index = (props: any) => {
               }
             }}
             exportAction={exportExcelAction}
+            customComponet={
+              <>
+                <Checkbox
+                  onChange={(e) => {
+                    setIsSelectAll(e.target.checked)
+                  }}
+                >
+                  Select All
+                </Checkbox>
+              </>
+            }
           />
         }
         renderBtns={
@@ -1439,7 +1470,7 @@ export const Index = (props: any) => {
             </BtnThemeWrap>
             <Button
               onClick={(event) => deleteInfos(selectedRowKeys, event)}
-              disabled={selectedRowKeys.length == 0}
+              disabled={selectedRowKeys.length == 0 ? ( isSelectAll ? false : true ) : false }
             >
               Delete
             </Button>

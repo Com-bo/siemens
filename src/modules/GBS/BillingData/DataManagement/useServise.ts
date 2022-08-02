@@ -80,6 +80,7 @@ export default (props: any) => {
   const [ReportMonthMark, setReportMonthMark] = useState(false);
   const [ReportMonth, setReportMonth] = useState(lastMonth());
   // const [ReportMonth, setReportMonth] = useState(``);
+  const [isSelectAll, setIsSelectAll] = useState(false);
   const [billingStatusGroup, setBillingStatusGroup] = useState([
     {
       label: 'Freeze',
@@ -132,9 +133,8 @@ export default (props: any) => {
       z003IdList:[_data]
     }
     GetOriginBVI(params).then((res) => {
-      if (!res.isSuccess) {
+      if (res.isSuccess) {
         setIsCheckOriginal(true);
-        console.log(res.data)
         setCheckData(res.data);
       } else {
         message.error(res.msg);
@@ -475,13 +475,34 @@ export default (props: any) => {
             });
           }
         } else {
-          params = {
-            billingARE: formDataEdit.getFieldValue('billingARE'),
-            billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
-            billingPO: formDataEdit.getFieldValue('billingPO'),
-            recordIdList:
-              idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
-          };
+          let params = {}
+          if(isSelectAll){
+            params = {
+              billingARE: formDataEdit.getFieldValue('billingARE'),
+              billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
+              billingPO: formDataEdit.getFieldValue('billingPO'),
+              searchCondition: {
+                filterGroup: {
+                  recordId: latestGroupIdRef.current,
+                },
+                listHeader: form.getFieldsValue(),
+                isOnlyQueryErrorData: errorCheckedRef.current,
+                isOnlyQueryUncompleteData: UnconfirmDataRef.current,
+                userBusinessLineList: business,
+              },
+              operationRecords: null
+            };
+          }else{
+            params = {
+              billingARE: formDataEdit.getFieldValue('billingARE'),
+              billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
+              billingPO: formDataEdit.getFieldValue('billingPO'),
+              searchCondition: null,
+              operationRecords: {
+                recordIdList: idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')]
+              } 
+            };
+          }
           QuickEditDataSave(params).then((res) => {
             if (res.isSuccess) {
               message.success(res.msg);
@@ -538,10 +559,10 @@ export default (props: any) => {
         item.billingStatus == 'Successfully' || item.billingStatus == 'Cancel'
       );
     });
-    let params = {
-      billingStatus: statusIndex,
-      recordIdList: selectedRowKeys,
-    };
+    // let params = {
+    //   billingStatus: statusIndex,
+    //   recordIdList: selectedRowKeys,
+    // };
     switch (statusIndex) {
       case 1:
         break;
@@ -572,11 +593,35 @@ export default (props: any) => {
       case 8:
         break;
       case 9:
-        params.billingStatus = 0;
+        // params.billingStatus = 0;
         break;
       case 10:
-        params.billingStatus = -1;
+        // params.billingStatus = -1;
         break;
+    }
+    let params={}
+    if(isSelectAll){
+      params = {
+        billingStatus: statusIndex,
+        searchCondition: {
+          filterGroup: {
+            recordId: latestGroupIdRef.current,
+          },
+          listHeader: form.getFieldsValue(),
+          isOnlyQueryErrorData: errorCheckedRef.current,
+          isOnlyQueryUncompleteData: UnconfirmDataRef.current,
+          userBusinessLineList: business,
+        },
+        operationRecords: null
+      }
+    }else{
+      params = {
+        billingStatus: statusIndex,
+        searchCondition: null,
+        operationRecords: {
+          recordIdList: selectedRowKeys
+        }
+      }
     }
     SetStatusSave(params).then((res) => {
       if (res.isSuccess) {
@@ -718,6 +763,7 @@ export default (props: any) => {
     businesslineOptions,
     initialState, setInitialState,
     ReportMonthMark, setReportMonthMark,
-    ReportMonth, setReportMonth
+    ReportMonth, setReportMonth,
+    isSelectAll, setIsSelectAll
   };
 };

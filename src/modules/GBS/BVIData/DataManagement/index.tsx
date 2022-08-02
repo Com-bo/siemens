@@ -1917,6 +1917,14 @@ export default (props: any) => {
                 >
                   View all unconfirm Data
                 </Checkbox>
+
+                <Checkbox
+                  onChange={(e) => {
+                    setIsSelectAll(e.target.checked)
+                  }}
+                >
+                  Select All
+                </Checkbox>
               </>
             }
           />
@@ -1925,7 +1933,7 @@ export default (props: any) => {
           <>
             <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
               <Space>
-                <Checkbox
+                {/* <Checkbox
                   onChange={(e) => {
                     setIsSelectAll(e.target.checked)
                   }}
@@ -1935,10 +1943,10 @@ export default (props: any) => {
                 <Divider
                   type="vertical"
                   style={{ height: '20px', borderColor: '#999' }}
-                />
+                /> */}
                 <BtnOrangeWrap>
                   <Button
-                    // disabled={!selectedRowKeys.length || !isSelectAll}
+                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                     onClick={toRecheck}
                   >
                     Recheck
@@ -1946,7 +1954,7 @@ export default (props: any) => {
                 </BtnOrangeWrap>
                 <BtnGreenWrap>
                   <Button
-                    // disabled={!selectedRowKeys.length}
+                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                     onClick={() => {
                       if(isSelectAll){
                         toConfirm(selectedRowKeys);
@@ -1976,7 +1984,7 @@ export default (props: any) => {
                 </BtnGreenWrap>
                 <BtnBlueWrap>
                   <Button
-                    // disabled={!selectedRowKeys.length}
+                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                     onClick={() => {
                       if(isSelectAll){
                         toUnconfirm(selectedRowKeys);
@@ -2185,7 +2193,7 @@ export default (props: any) => {
                   </Button>
                 </BtnThemeWrap>
                 <Button
-                  // disabled={!selectedRowKeys.length}
+                  disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                   onClick={() => {
                     Modal.confirm({
                       title: 'Tips',

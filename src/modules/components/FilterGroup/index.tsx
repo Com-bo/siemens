@@ -7,6 +7,7 @@ import {
   queryFilterGroupList,
   queryFilterGroupListWithFields,
   saveFilterGroupData,
+  queryDictionaryInfo
 } from '@/app/request/common';
 import { FilterGroupDiv, TaleTitleIconDiv } from '@/assets/style';
 import {
@@ -100,6 +101,60 @@ export default (props: FilterGroupType) => {
         { value: '1', label: 'Yes' },
         { value: '0', label: 'No' },
       ],
+      ChargeType: [
+        { value: 'ICB', label: 'ICB' },
+        { value: 'ICC', label: 'ICC' },
+      ],
+      ModifiedTag: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      SETag:[
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      BillingStatus:[
+        {
+          label: 'Freeze',
+          value: "Freeze",
+        },
+        {
+          label: 'Successfully',
+          value: "Successfully",
+        },
+        {
+          label: 'Manual To SAP',
+          value: "Manual To SAP",
+        },
+        {
+          label: 'Auto To SAP',
+          value: "Auto To SAP",
+        },
+        {
+          label: 'Waiting For SAP',
+          value: "Waiting For SAP",
+        },
+        {
+          label: 'PostPone',
+          value: "PostPone",
+        },
+        {
+          label: 'Unfreeze',
+          value: "Unfreeze",
+        },
+        {
+          label: 'Obsolete',
+          value: "Obsolete",
+        },
+        {
+          label: 'Cancel',
+          value: "Cancel",
+        },
+        {
+          label: 'Error',
+          value: "Error",
+        },
+      ]
     },
     'Billing Integrity Report': {
       isThereBilling: [
@@ -360,6 +415,9 @@ export default (props: FilterGroupType) => {
       case 'IsPOByPercentage':
       case 'Signed':
       case 'IndividualInvoice':
+      case 'SETag':
+      case 'ModifiedTag':
+      case 'BillingStatus':
         return (
           <Select allowClear>
             {options[props.moudleName][fieldName]?.map((item, index) => (
@@ -369,12 +427,45 @@ export default (props: FilterGroupType) => {
             ))}
           </Select>
         );
+      case "DataType":
+        if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
+          arra[index].fieldValue = [];
+        } else {
+          if (typeof arra[index].fieldValue == 'string') {
+            arra[index].fieldValue = JSON.parse(arra[index].fieldValue);
+          }
+        }
+        return (
+          <DebounceSelect
+            initFlag
+            mode="multiple"
+            onChange={(value, data) => {}}
+            getoptions={(options) => {
+              return options?.map((x, index) => {
+                return (
+                  <Select.Option key={index} data={x} value={x.value}>
+                    {x.value}
+                  </Select.Option>
+                );
+              });
+            }}
+            delegate={(e) => {
+              return queryDictionaryInfo({
+                  groupName: "Constants",
+                  key: "SystemTag",
+                  subkey: "",
+                  isOnlyEnable: true
+              });
+            }}
+          />
+        );
       default:
         return <Input style={{ width: '100%' }} />;
     }
   };
   // type=true,新建type=false编辑
   const saveFilterGroup = () => {
+    console.log(form.getFieldValue("conditionRelationship"))
     const type = form.getFieldValue('isNew');
     form
       .validateFields()
@@ -735,6 +826,7 @@ export default (props: FilterGroupType) => {
                     onClick={() => {
                       form.resetFields();
                       form.setFieldsValue({
+                        conditionRelationship:"and",
                         groupFieldList: [
                           { fieldName: '', operator: '', fieldValue: '' },
                         ],

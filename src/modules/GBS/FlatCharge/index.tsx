@@ -103,6 +103,8 @@ export default (props: any) => {
   const [costcenterPageSize, setCostcenterPageSize] = useState(20);
   const [costcenterTotal, setCostcenterTotal] = useState(0);
   const [business, setBusiness] = useState(businesslineOptions[0]);
+  // 多选
+  const [isSelectAll, setIsSelectAll] = useState(false);
   const costcenterCols: any = [
     {
       title: 'Cost Center',
@@ -959,9 +961,28 @@ export default (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        deleteData({
-          recordIdList,
-        }).then((res) => {
+        let params = {}
+        if(isSelectAll){
+          params = {
+            searchCondition: {
+              filterGroup: {
+                recordId: latestGroupIdRef.current,
+              },
+              listHeader: form.getFieldsValue(),
+              isOnlyQueryErrorData: errorCheckedRef.current,
+              userBusinessLineList: [business],
+            },
+            operationRecords: null,
+          };
+        }else{
+          params = {
+            searchCondition: null,
+            operationRecords: {
+              recordIdList: recordIdList
+            }
+          };
+        }
+        deleteData(params).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
             _getData();
@@ -977,9 +998,28 @@ export default (props: any) => {
   // 批量提交
   const onSubmit = (data, event) => {
     event.stopPropagation();
-    submitMulti({
-      recordIdList: data,
-    }).then((res) => {
+    let params = {}
+    if(isSelectAll){
+      params = {
+        searchCondition: {
+          filterGroup: {
+            recordId: latestGroupIdRef.current,
+          },
+          listHeader: form.getFieldsValue(),
+          isOnlyQueryErrorData: errorCheckedRef.current,
+          userBusinessLineList: [business],
+        },
+        operationRecords: null,
+      };
+    }else{
+      params = {
+        searchCondition: null,
+        operationRecords: {
+          recordIdList: data
+        }
+      };
+    }
+    submitMulti(params).then((res) => {
       if (res.isSuccess) {
         _getData();
         message.success(res.msg);
@@ -1956,6 +1996,7 @@ export default (props: any) => {
             }}
             exportAction={exportExcelAction}
             customComponet={
+              <>
               <Checkbox
                 checked={errorChecked}
                 onChange={(e) => {
@@ -1965,6 +2006,16 @@ export default (props: any) => {
               >
                 View all Error Data
               </Checkbox>
+
+              <Checkbox
+                onChange={(e) => {
+                  setIsSelectAll(e.target.checked)
+                }}
+              >
+                Select All
+              </Checkbox>
+
+              </>
             }
           />
         }
@@ -2047,7 +2098,7 @@ export default (props: any) => {
                 </BtnThemeWrap>
                 <BtnThemeWrap>
                   <Button
-                    disabled={!selectedRowKeys.length}
+                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                     onClick={(event) => onSubmit(selectedRowKeys, event)}
                   >
                     Submit
@@ -2055,7 +2106,7 @@ export default (props: any) => {
                 </BtnThemeWrap>
                 <Button
                   onClick={(event) => deleteInfos(selectedRowKeys, event)}
-                  disabled={selectedRowKeys.length == 0}
+                  disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                 >
                   Delete
                 </Button>

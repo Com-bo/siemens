@@ -122,16 +122,10 @@ export default (props: any) => {
     businesslineOptions,
     initialState, setInitialState,
     ReportMonthMark, setReportMonthMark,
-    ReportMonth, setReportMonth
+    ReportMonth, setReportMonth,
+    isSelectAll, setIsSelectAll
   } = useService(props);
   const orignalCols = [
-    {
-      name: 'soNumber',
-      title: 'SO Number',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
     {
       name: 'businessLine',
       title: 'Business Line',
@@ -318,14 +312,12 @@ export default (props: any) => {
       name: 'billingStatus',
       title: 'Billing Status',
       width: '200px',
-      titleRender: 'input',
       sorter: true,
     },
     {
       name: 'billingErrorMsg',
       title: 'Billing Error Message',
       width: '200px',
-      sorter: true,
     },
     {
       name: 'itemNo',
@@ -384,23 +376,17 @@ export default (props: any) => {
       name: 'adjustTag',
       title: 'AdjustTag',
       width: '100px',
-      titleRender: 'input',
-      sorter: true,
       render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
     },
     {
       name: 'quarterlyCharge',
       title: 'Quarterly Charge',
       width: '150px',
-      titleRender: 'input',
-      sorter: true,
     },
     {
       name: 'seTag',
       title: 'SETag',
       width: '100px',
-      titleRender: 'input',
-      sorter: true,
     },
     {
       name: 'billingMonth',
@@ -430,8 +416,6 @@ export default (props: any) => {
       name: 'modifiedTag',
       title: 'modifiedTag',
       width: '100px',
-      titleRender: 'input',
-      sorter: true,
     },
     //
     {
@@ -961,27 +945,27 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="salesOrder" name="salesOrder">
+              <Form.Item label="Sales Order" name="salesOrder">
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="billingDoc" name="billingDoc">
+              <Form.Item label="Billing Doc" name="billingDoc">
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="itemNo" name="itemNo">
+              <Form.Item label="Item No" name="itemNo">
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="amountInCurrecy" name="amountInCurrecy">
+              <Form.Item label="Amount In Currecy" name="amountInCurrecy">
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="currencyInSAP" name="currencyInSAP">
+              <Form.Item label="Currency In SAP" name="currencyInSAP">
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
@@ -994,7 +978,7 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="billingDate" name="billingDate">
+              <Form.Item label="Billing Date" name="billingDate">
                 <DatePicker
                   disabled={successMark}
                   picker="month"
@@ -1053,7 +1037,31 @@ export default (props: any) => {
       >
         <TableWrapDiv>
           <Table
-            columns={bviOrignalCols}
+            columns={bviOrignalCols?.map((_item) => {
+              return {
+                ..._item,
+                dataIndex: _item.name,
+                key: _item.name,
+                align: 'center',
+                render: (text) => {
+                  if (_item.name == 'validationMsg') {
+                    return (
+                      <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
+                    );
+                  } else if (
+                    _item.name == 'postingDate' ||
+                    _item.name == 'entryDate' ||
+                    _item.name == 'documentDate' ||
+                    _item.name == 'netDueDate' ||
+                    _item.name == 'billingDate'
+                  ) {
+                    return moment(text).format('YYYY-MM-DD');
+                  } else {
+                    return text;
+                  }
+                },
+              }
+            })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
             rowKey="id"
@@ -1142,6 +1150,14 @@ export default (props: any) => {
                 >
                   View all unconfirm Data
                 </Checkbox>
+
+                <Checkbox
+                  onChange={(e) => {
+                    setIsSelectAll(e.target.checked)
+                  }}
+                >
+                  Select All
+                </Checkbox>
               </>
             }
           />
@@ -1155,29 +1171,10 @@ export default (props: any) => {
                 </BtnOrangeWrap>
                 <BtnThemeWrap color="grass">
                   <Button
-                    disabled={!selectedRowKeys.length}
+                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                     onClick={() => {
                       setEditListMark(true);
                       setSuccessMark(true);
-                      // if (selectedRowKeys.length == 1) {
-                      //   setIsSingelEdits(true);
-                      //   formDataEdit.setFieldsValue({
-                      //     ...selectedRows[0],
-                      //     billingDate: selectedRows[0].billingDate
-                      //       ? moment(selectedRows[0].billingDate)
-                      //       : null,
-                      //   });
-                      //   if (
-                      //     formDataEdit.getFieldValue('billingStatus') ==
-                      //     'Successful'
-                      //   ) {
-                      //     setSuccessMark(false);
-                      //   } else {
-                      //     setSuccessMark(true);
-                      //   }
-                      // } else {
-                      //   setIsSingelEdits(false);
-                      // }
                       setIsSingelEdits(false);
                     }}
                   >
