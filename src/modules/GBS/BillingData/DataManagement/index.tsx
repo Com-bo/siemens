@@ -382,11 +382,13 @@ export default (props: any) => {
       name: 'quarterlyCharge',
       title: 'Quarterly Charge',
       width: '150px',
+      render: (text) => (text == 0 ? 'No' : 'Yes'),
     },
     {
       name: 'seTag',
       title: 'SETag',
       width: '100px',
+      render: (text) => (text == 0 ? 'No' : 'Yes'),
     },
     {
       name: 'billingMonth',
@@ -416,6 +418,7 @@ export default (props: any) => {
       name: 'modifiedTag',
       title: 'modifiedTag',
       width: '100px',
+      render: (text) => (text == 0 ? 'No' : 'Yes'),
     },
     //
     {
@@ -673,6 +676,10 @@ export default (props: any) => {
       title: 'Billing Date',
       width: '180px',
       name: 'billingDate',
+      // render: (text) =>
+      // text && moment(text).isValid()
+      //   ? moment(text).format('YYYY-MM-DD')
+      //   : text,
     },
     {
       title: 'SAP Exchange Rate',
@@ -1048,14 +1055,19 @@ export default (props: any) => {
                     return (
                       <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
                     );
-                  } else if (
+                  } else 
+                  if (
                     _item.name == 'postingDate' ||
                     _item.name == 'entryDate' ||
                     _item.name == 'documentDate' ||
                     _item.name == 'netDueDate' ||
                     _item.name == 'billingDate'
                   ) {
-                    return moment(text).format('YYYY-MM-DD');
+                    if(text && moment(text).isValid()){
+                      return moment(text).format('YYYY-MM-DD');
+                    }else{
+                      return text;
+                    }
                   } else {
                     return text;
                   }

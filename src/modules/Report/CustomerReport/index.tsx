@@ -128,7 +128,7 @@ export default (props: any) => {
   const [serverLineDataOption, setServerLineDataOption] = useState(["AR"]);
   const [productNameDataOption, setProductNameDataOption] = useState(["OneSRM Change Management"]);
   const [ReportMonthApiData, setReportMonthApiData] = useState([]);
-  const [ReportMonth, setReportMonth] = useState([]);
+  const [ReportMonth, setReportMonth] = useState([lastMonth()]);
   const [EchartsOption1,setEchartsOption1]=useState({
     grid: { top: 8, right: 8, bottom: 24, left: 36 },
     legend: {
@@ -195,15 +195,16 @@ export default (props: any) => {
       // productName:productNameDataOption[0]
     });
     QueryReportMonth()
+    getData();
     getChartData()
   }, [current, pageSize, orderField, orderType]);
+//   useEffect(() => {
+//     getData();
+// }, [ReportMonth]);
   const QueryReportMonth=()=>{
     CustomerReportQueryReportMonth({}).then((res) => {
       if (res.isSuccess) {
         setReportMonthApiData(res.data)
-        // setReportMonth([res.data[0]])
-        console.log(ReportMonth)
-        getData();
       } else {
         message.error(res.msg);
       }

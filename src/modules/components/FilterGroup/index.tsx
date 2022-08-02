@@ -113,6 +113,10 @@ export default (props: FilterGroupType) => {
         { value: '1', label: 'Yes' },
         { value: '0', label: 'No' },
       ],
+      QuarterlyCharge:[
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
       BillingStatus:[
         {
           label: 'Freeze',
