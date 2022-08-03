@@ -171,7 +171,7 @@ export const Index = (props: any) => {
                 }}
               ></Button>
             </Tooltip>
-            <Popconfirm
+            {/* <Popconfirm
               title="Confirm to delete?"
               onConfirm={(event) => deleteInfos([record.id], event)}
               okText="Confirm"
@@ -185,7 +185,7 @@ export const Index = (props: any) => {
                   onClick={(event) => event.stopPropagation()}
                 ></Button>
               </Tooltip>
-            </Popconfirm>
+            </Popconfirm> */}
           </Space>
         </AuthWrapper>
       ),

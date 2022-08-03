@@ -1056,6 +1056,12 @@ export default (props: any) => {
                       <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
                     );
                   } else 
+                  if(_item.name == 'adjustTag'){
+                    return text === null ? '' : text === false ? 'No' : 'Yes'
+                  }else 
+                  if(_item.name == 'isPOByPercentage'){
+                    return (text == 0 ? 'No' : 'Yes')
+                  }else 
                   if (
                     _item.name == 'postingDate' ||
                     _item.name == 'entryDate' ||
