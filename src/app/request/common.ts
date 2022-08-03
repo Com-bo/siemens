@@ -67,3 +67,9 @@ export const queryBusinesslineOptionsList = (data: Object) => {
 export const queryDictionaryInfo = (data: Object) => {
   return usePost(`${Config.Api.Base}${Config.Api.QueryDictionaryInfo}`, data);
 };
+// 
+export const getProductData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.PopWinPagingQuery}`, data, {
+    autoLoading: true,
+  });
+};

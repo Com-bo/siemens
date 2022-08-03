@@ -85,6 +85,48 @@ export default (props: FilterGroupType) => {
         { value: '1', label: 'Yes' },
         { value: '0', label: 'No' },
       ],
+      BillingStatus:[
+        {
+          label: 'Freeze',
+          value: "Freeze",
+        },
+        {
+          label: 'Successfully',
+          value: "Successfully",
+        },
+        {
+          label: 'Manual To SAP',
+          value: "Manual To SAP",
+        },
+        {
+          label: 'Auto To SAP',
+          value: "Auto To SAP",
+        },
+        {
+          label: 'Waiting For SAP',
+          value: "Waiting For SAP",
+        },
+        {
+          label: 'PostPone',
+          value: "PostPone",
+        },
+        {
+          label: 'Unfreeze',
+          value: "Unfreeze",
+        },
+        {
+          label: 'Obsolete',
+          value: "Obsolete",
+        },
+        {
+          label: 'Cancel',
+          value: "Cancel",
+        },
+        {
+          label: 'Error',
+          value: "Error",
+        },
+      ]
     },
     'BVI Integrity Report': {
       IsThereBVI: [

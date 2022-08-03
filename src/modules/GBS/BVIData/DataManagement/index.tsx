@@ -1964,9 +1964,11 @@ export default (props: any) => {
                           (item) => item.bviStatus.toLowerCase() == 'unconfirm',
                         );
                         let errorMark = selectedRows.filter(
-                          (item) => item.error != null,
+                          // (item) => item.error == null||item.error == "",
+                          (item) => !item.error == false
                         );
                         if (!errorMark || errorMark.length != 0) {
+                        // if (errorMark && errorMark.length) {
                           message.error('Contains incorrect data');
                         } else {
                           if (!recordList || !recordList.length) {
@@ -1994,9 +1996,10 @@ export default (props: any) => {
                           (item) => item.bviStatus.toLowerCase() == 'confirm',
                         );
                         let errorMark = selectedRows.filter(
-                          (item) => item.error != null,
+                          (item) => !item.error == false
                         );
-                        if (!errorMark || errorMark.length != 0) {
+                        // if (errorMark && errorMark.length) {
+                          if (!errorMark || errorMark.length != 0) {
                           message.error('Contains incorrect data');
                         } else {
                           if (!recordList || !recordList.length) {

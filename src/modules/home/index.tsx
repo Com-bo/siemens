@@ -54,6 +54,11 @@ import {
   // 
   HomeQueryData
 } from '@/app/request/apiHome';
+import {
+  getServiceLineList,
+  getProductData
+} from "@/app/request/common"
+import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 export default (props: any) => {
@@ -62,8 +67,8 @@ export default (props: any) => {
   // 
   const [homeData, setHomeData] = useState({});
   const [formSearch] = Form.useForm();
-  const [serverLineDataOption, setServerLineDataOption] = useState(["AR"]);
-  const [productNameDataOption, setProductNameDataOption] = useState(["OneSRM Change Management"]);
+  const [serverLineDataOption, setServerLineDataOption] = useState([]);
+  const [productNameDataOption, setProductNameDataOption] = useState([]);
   const [business, setBusiness] = useState([businesslineOptions[0]]);
   // 
   useEffect(() => {
@@ -74,6 +79,8 @@ export default (props: any) => {
           : null,
     });
     getHomeData()
+    getServiceLineFun(business)
+    getProductDataFun(business,"")
   }, []);
   // new
   const getHomeData=()=>{
@@ -88,13 +95,72 @@ export default (props: any) => {
       HomeQueryData(params).then((res) => {
         if (res.isSuccess) {
           setHomeData(res.data)
-          console.log(res.data)
         } else {
           message.error(res.msg);
         }
       });
   }
+  const getServiceLine=(item)=>{
+    return new Promise((resolve,reject)=>{
+      getServiceLineList({
+      businessLine: item,
+      keywords: "",
+    }).then((res) => {
+      if (res.isSuccess) {
+        resolve(res.data)
+      } else {
+        message.error(res.msg);
+      }
+    });
+    })
+  }
 
+  async function getServiceLineFun(businessParmes){
+    let serverLineNew=[]
+    businessParmes.map(async (item,index)=>{
+      try{
+        let dataitem = await getServiceLine(item)
+        serverLineNew=serverLineNew.concat(dataitem)
+        setServerLineDataOption(serverLineNew)
+      }catch{
+        return
+      }
+    })
+  }
+
+  // //
+  const getProduct=(item,serviceLineParmes)=>{
+    return new Promise((resolve,reject)=>{
+      getProductData({
+        businessLine: item,
+        serviceLine: serviceLineParmes,
+      }).then((res) => {
+        if (res.isSuccess) {
+          let newDataitem=[]
+          res.data.map((item,index)=>{
+            newDataitem.push(item.productName)
+          })
+          resolve(newDataitem)
+        } else {
+          message.error(res.msg);
+        }
+      });
+    })
+  }
+
+  async function getProductDataFun(businessParmes,serviceLineParmes) {
+    let productDataNew=[]
+    businessParmes.map(async (item,index)=>{
+      try{
+        let dataitem = await getProduct(item,serviceLineParmes)
+        productDataNew=productDataNew.concat(dataitem)
+        let dedproduct = [...new Set(productDataNew)]
+        setProductNameDataOption(dedproduct)
+      }catch{
+        return
+      }
+    })
+  }
   return (
     <ContentWrap>
       <div style={{ minWidth: '1360px', height: '100%' }}>
@@ -131,6 +197,11 @@ export default (props: any) => {
                             value={business}
                             onChange={(val) => {
                               setBusiness(val);
+                              getServiceLineFun(val)
+                              formSearch.setFieldsValue({
+                                productName:"",
+                                serverLine:""
+                              })
                             }}
                           >
                             {businesslineOptions.map((item, index) => (
@@ -146,10 +217,17 @@ export default (props: any) => {
                       label="Service Line"
                       name="serverLine"
                     >
-                      <Select>
+                      <Select
+                        onChange={(val) => {
+                          getProductDataFun(business,val)
+                          formSearch.setFieldsValue({
+                            productName:"",
+                          })
+                        }}
+                      >
                           {serverLineDataOption.map((item, index) => (
-                            <Select.Option key={index} value={item}>
-                              {item}
+                            <Select.Option key={index} value={item.value}>
+                              {item.label}
                             </Select.Option>
                           ))}
                         </Select>
@@ -176,7 +254,10 @@ export default (props: any) => {
                           <Button
                             icon={<ClearOutlined />}
                             onClick={() => {
-                              formSearch.resetFields()
+                              formSearch.setFieldsValue({
+                                productName:"",
+                                serverLine:""
+                              })
                             }}
                           ></Button>
                         </Tooltip>
