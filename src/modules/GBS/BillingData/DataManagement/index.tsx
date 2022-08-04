@@ -463,8 +463,15 @@ export default (props: any) => {
                     ? moment(record.billingDate)
                     : null,
                 });
+                billingStatusGroup.map((item,index)=>{
+                  if(formDataEdit.getFieldValue('billingStatus')==item.dbvalue){
+                    formDataEdit.setFieldsValue({
+                      billingStatus:item.value
+                    })
+                  }
+                })
                 console.log(formDataEdit.getFieldValue('billingStatus'))
-                if (formDataEdit.getFieldValue('billingStatus') == 'Successfully') {
+                if (formDataEdit.getFieldValue('billingStatus') == 2) {
                   setSuccessMark(false);
                 } else {
                   setSuccessMark(true);

@@ -70,6 +70,7 @@ export default (props: any) => {
   const [serverLineDataOption, setServerLineDataOption] = useState([]);
   const [productNameDataOption, setProductNameDataOption] = useState([]);
   const [business, setBusiness] = useState([businesslineOptions[0]]);
+  const [productMark,setProductMark] = useState(false)
   // 
   useEffect(() => {
     formSearch.setFieldsValue({
@@ -197,6 +198,11 @@ export default (props: any) => {
                             value={business}
                             onChange={(val) => {
                               setBusiness(val);
+                              if(businesslineOptions.length==val.length){
+                                setProductMark(true)
+                              }else{
+                                setProductMark(false)
+                              }
                               getServiceLineFun(val)
                               formSearch.setFieldsValue({
                                 productName:"",
@@ -238,7 +244,7 @@ export default (props: any) => {
                         label="Product Name"
                         name="productName"
                       >
-                        <Select>
+                        <Select disabled={productMark}>
                           {productNameDataOption.map((item, index) => (
                             <Select.Option key={index} value={item}>
                               {item}

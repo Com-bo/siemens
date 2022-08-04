@@ -85,34 +85,42 @@ export default (props: any) => {
     {
       label: 'Freeze',
       value: 1,
+      dbvalue:"Freeze"
     },
     {
       label: 'Successfully',
       value: 2,
+      dbvalue:"Successfully"
     },
     {
       label: 'Manual To SAP',
       value: 3,
+      dbvalue:"ManualToSAP"
     },
     {
       label: 'Auto To SAP',
       value: 4,
+      dbvalue:"AutoToSAP"
     },
     {
       label: 'Waiting For SAP',
       value: 5,
+      dbvalue:"WaitingForSAP"
     },
     {
       label: 'PostPone',
       value: 6,
+      dbvalue:"PostPone"
     },
     {
       label: 'Unfreeze',
       value: 7,
+      dbvalue:"Unfreeze"
     },
     {
       label: 'Obsolete',
       value: 8,
+      dbvalue:"Obsolete"
     },
 
     // {

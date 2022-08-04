@@ -468,6 +468,10 @@ export default (props: any) => {
       width: '180px',
       name: 'billingDate',
       sorter: true,
+      render: (text) =>
+      text && moment(text).isValid()
+        ? moment(text).format('YYYY-MM-DD')
+        : text,
     },
     {
       title: 'SAP Exchange Rate',
@@ -581,9 +585,8 @@ export default (props: any) => {
                         icon={<i className="gbs gbs-confirm"></i>}
                       ></Button>
                     </Tooltip>
-                  ) : (
-                    <>
-                      {record.bviStatus.toLowerCase() == 'confirm' &&
+                  ) : 
+                      record.bviStatus.toLowerCase() == 'confirm' &&
                       record.templateType != 'Flat Charge' ? (
                         <Tooltip title="Unconfirm">
                           <Button
@@ -595,9 +598,8 @@ export default (props: any) => {
                         </Tooltip>
                       ) : (
                         ''
-                      )}
-                    </>
-                  )}
+                      )
+                  }
                 </Popconfirm>
               </span>
             ) : (

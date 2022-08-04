@@ -68,6 +68,11 @@ import {
   CustomerReportQueryReportMonth
 } from '@/app/request/apiCustomerReport';
 
+import {
+  getServiceLineList,
+  getProductData
+} from "@/app/request/common"
+
 const pageName = 'CustomerReport';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import moment from 'moment';
@@ -125,10 +130,11 @@ export default (props: any) => {
   const [businessDiff, setBusinessDiff] = useState([businesslineOptions[0]]);
   const [formSearch] = Form.useForm();
   const [FYDataOption, setFYDataOption] = useState(["FY2021","FY2022","FY2023"]);
-  const [serverLineDataOption, setServerLineDataOption] = useState(["AR"]);
-  const [productNameDataOption, setProductNameDataOption] = useState(["OneSRM Change Management"]);
+  const [serverLineDataOption, setServerLineDataOption] = useState([]);
+  const [productNameDataOption, setProductNameDataOption] = useState([]);
   const [ReportMonthApiData, setReportMonthApiData] = useState([]);
   const [ReportMonth, setReportMonth] = useState([lastMonth()]);
+  const [productMark,setProductMark] = useState(false)
   const [EchartsOption1,setEchartsOption1]=useState({
     grid: { top: 8, right: 8, bottom: 24, left: 36 },
     legend: {
@@ -196,6 +202,8 @@ export default (props: any) => {
     });
     QueryReportMonth()
     getData();
+    getServiceLineFun(business)
+    getProductDataFun(business,"")
     getChartData()
   }, [current, pageSize, orderField, orderType]);
 //   useEffect(() => {
@@ -241,6 +249,68 @@ export default (props: any) => {
       }
     });
   };
+  // new
+  const getServiceLine=(item)=>{
+    return new Promise((resolve,reject)=>{
+      getServiceLineList({
+      businessLine: item,
+      keywords: "",
+    }).then((res) => {
+      if (res.isSuccess) {
+        resolve(res.data)
+      } else {
+        message.error(res.msg);
+      }
+    });
+    })
+  }
+
+  async function getServiceLineFun(businessParmes){
+    let serverLineNew=[]
+    businessParmes.map(async (item,index)=>{
+      try{
+        let dataitem = await getServiceLine(item)
+        serverLineNew=serverLineNew.concat(dataitem)
+        setServerLineDataOption(serverLineNew)
+      }catch{
+        return
+      }
+    })
+  }
+
+  // //
+  const getProduct=(item,serviceLineParmes)=>{
+    return new Promise((resolve,reject)=>{
+      getProductData({
+        businessLine: item,
+        serviceLine: serviceLineParmes,
+      }).then((res) => {
+        if (res.isSuccess) {
+          let newDataitem=[]
+          res.data.map((item,index)=>{
+            newDataitem.push(item.productName)
+          })
+          resolve(newDataitem)
+        } else {
+          message.error(res.msg);
+        }
+      });
+    })
+  }
+
+  async function getProductDataFun(businessParmes,serviceLineParmes) {
+    let productDataNew=[]
+    businessParmes.map(async (item,index)=>{
+      try{
+        let dataitem = await getProduct(item,serviceLineParmes)
+        productDataNew=productDataNew.concat(dataitem)
+        let dedproduct = [...new Set(productDataNew)]
+        setProductNameDataOption(dedproduct)
+      }catch{
+        return
+      }
+    })
+  }
   const onPageChange = (
     pagination,
     filters,
@@ -692,6 +762,16 @@ export default (props: any) => {
                           value={business}
                           onChange={(val) => {
                             setBusiness(val);
+                            if(businesslineOptions.length==val.length){
+                              setProductMark(true)
+                            }else{
+                              setProductMark(false)
+                            }
+                            getServiceLineFun(val)
+                            formSearch.setFieldsValue({
+                              productName:"",
+                              serverLine:""
+                            })
                           }}
                         >
                           {businesslineOptions.map((item, index) => (
@@ -709,7 +789,10 @@ export default (props: any) => {
                           <Button
                             icon={<ClearOutlined />}
                             onClick={() => {
-                              formSearch.resetFields()
+                              formSearch.setFieldsValue({
+                                productName:"",
+                                serverLine:""
+                              })
                             }}
                           ></Button>
                         </Tooltip>
@@ -726,10 +809,17 @@ export default (props: any) => {
                       label="Service Line"
                       name="serverLine"
                     >
-                      <Select>
+                      <Select
+                        onChange={(val) => {
+                          getProductDataFun(business,val)
+                          formSearch.setFieldsValue({
+                            productName:"",
+                          })
+                        }}
+                      >
                         {serverLineDataOption.map((item, index) => (
-                          <Select.Option key={index} value={item}>
-                            {item}
+                          <Select.Option key={index} value={item.value}>
+                            {item.label}
                           </Select.Option>
                         ))}
                       </Select>
@@ -740,7 +830,7 @@ export default (props: any) => {
                       label="Product Name"
                       name="productName"
                     >
-                      <Select>
+                      <Select disabled={productMark}>
                         {productNameDataOption.map((item, index) => (
                           <Select.Option key={index} value={item}>
                             {item}
