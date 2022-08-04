@@ -99,6 +99,7 @@ export const Api = {
   DeleteProductData: '/api/Product/DeleteData', //删除product数据
   DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
   EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
+  BatchEditProductDataSave: '/api/Product/BatchEditDataSave', 
 
   // masterdata
   CurrencyImportData: '/api/Currency/ImportData',

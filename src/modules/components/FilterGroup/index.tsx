@@ -203,7 +203,7 @@ export default (props: FilterGroupType) => {
       ]
     },
     'Billing Integrity Report': {
-      isThereBilling: [
+      IsThereBilling: [
         { value: '1', label: 'Yes' },
         { value: '0', label: 'No' },
       ],
@@ -240,6 +240,14 @@ export default (props: FilterGroupType) => {
         { value: 'Current Month', label: 'Current Month' },
       ],
       AdjustTag: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      IsFlatCharge: [
+        { value: '1', label: 'Yes' },
+        { value: '0', label: 'No' },
+      ],
+      ImportTag: [
         { value: '1', label: 'Yes' },
         { value: '0', label: 'No' },
       ],
@@ -455,7 +463,10 @@ export default (props: FilterGroupType) => {
       case 'TemplateType':
       case 'AdjustTag':
       case 'MandatoryBVI':
+      case 'IsThereBilling':
       case 'IsThereBVI':
+      case 'IsFlatCharge':
+      case 'ImportTag':
       case 'BillingMonthTag':
       case 'QuarterlyCharge':
       case 'IsPOByPercentage':

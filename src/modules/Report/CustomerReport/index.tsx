@@ -565,20 +565,17 @@ export default (props: any) => {
       name: 'adjustTag',
       title: 'Adjust Tag',
       width: '100px',
-      titleRender: 'input',
     },
     {
       name: 'isFlatCharge',
       title: 'Is Flat Charge',
       width: '100px',
-      titleRender: 'input',
     },
     {
       name: 'comment',
       title: 'Comment',
       width: '200px',
       titleRender: 'input',
-      sorter: true,
     },
     {
       name: 'reportMonth',
@@ -590,8 +587,6 @@ export default (props: any) => {
       name: 'importTag',
       title: 'Import Tag',
       width: '200px',
-      titleRender: 'input',
-      sorter: true,
     }
   ];
   // const onReportMonthChange=(datestring)=>{

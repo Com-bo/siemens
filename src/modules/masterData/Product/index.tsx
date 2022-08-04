@@ -58,6 +58,7 @@ import {
   importProductData,
   queryProductListData,
   queryProductLogData,
+  BatchEditProductDataSave
 } from '@/app/request/apiProduct';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import FormTable from '@/components/FormTable/formTable';
@@ -89,6 +90,8 @@ export const Index = (props: any) => {
   const [isPOByPercentage, setIsPOByPercentage] = useState(false);
 
   const [isSelectAll, setIsSelectAll] = useState(false);
+  const [editListMark,setEditListMark]= useState(false)
+  const [formDataEdit] = Form.useForm();
   const orignalCols: any = [
     {
       name: 'businessLine',
@@ -868,9 +871,9 @@ export const Index = (props: any) => {
           'YYYY-MM-DD',
         ),
         endDate: moment(formData.getFieldValue('endDate')).format('YYYY-MM-DD'),
-        signedDate: moment(formData.getFieldValue('signedDate')).format(
+        signedDate: formData.getFieldValue('signedDate') && moment(formData.getFieldValue('signedDate')).isValid() ? moment(formData.getFieldValue('signedDate')).format(
           'YYYY-MM-DD',
-        ),
+        ):"",
       },
       productPoList: poData,
     }).then((res) => {
@@ -884,6 +887,60 @@ export const Index = (props: any) => {
       }
     });
   };
+  // 批量多选
+  const editDataListSaveFn = () => {
+    formDataEdit
+      .validateFields()
+      .then((values) => {
+        let params = {}
+        if(isSelectAll){
+          params = {
+           editInfo:{
+             endDate:formDataEdit.getFieldValue('endDate'),
+             productNameForReport:formDataEdit.getFieldValue('productNameForReport'),
+             signed:formDataEdit.getFieldValue('signed'),
+             gscId:formDataEdit.getFieldValue('gscId'),
+             gscDescription:formDataEdit.getFieldValue('gscDescription'),
+             materialNumber:formDataEdit.getFieldValue('materialNumber')
+           },
+           searchCondition: {
+             filterGroup: {
+               recordId: latestGroupIdRef.current,
+             },
+             listHeader: form.getFieldsValue(),
+           },
+           operationRecords: null,
+         };
+        }else{
+          params = {
+            editInfo:{
+              endDate:formDataEdit.getFieldValue('endDate'),
+              productNameForReport:formDataEdit.getFieldValue('productNameForReport'),
+              signed:formDataEdit.getFieldValue('signed'),
+              gscId:formDataEdit.getFieldValue('gscId'),
+              gscDescription:formDataEdit.getFieldValue('gscDescription'),
+              materialNumber:formDataEdit.getFieldValue('materialNumber')
+            },
+            searchCondition: null,
+            operationRecords:{
+              recordIdList: selectedRowKeys
+            }
+          };
+        }
+        console.log(params);
+
+        BatchEditProductDataSave(params).then((res) => {
+          if (res.isSuccess) {
+            message.success(res.msg);
+            setEditListMark(false);
+            formDataEdit.resetFields();
+            getData();
+          } else {
+            message.error(res.msg);
+          }
+        });
+      }).catch((e) => {});
+    }
 
   return (
     <ContentWrap>
@@ -1365,6 +1422,123 @@ export const Index = (props: any) => {
           </Row>
         </Form>
       </Modal>
+      {/* 批量编辑*/}
+      <Modal
+        maskClosable={false}
+        width="1000px"
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Product Data
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        visible={editListMark}
+        footer={null}
+        onCancel={() => {
+          setEditListMark(false);
+          formDataEdit.resetFields();
+        }}
+      >
+        <Form
+          requiredMark={!componentDisabled}
+          form={formDataEdit}
+          labelCol={{ flex: '180px' }}
+        >
+          <Row gutter={20}>
+            <Col span={24}>
+              <Form.Item
+                labelCol={{ flex: '180px' }}
+                label="Product Name for Report"
+                name="productNameForReport"
+                rules={[{ required: true }]}
+              >
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="End Date"
+                name="endDate"
+                rules={[{ required: true }, { validator: validEndDate }]}
+              >
+                <DatePicker
+                  disabled={componentDisabled}
+                  format="YYYY-MM-DD"
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Signed"
+                name="signed"
+                rules={[{ required: true }]}
+              >
+                <Select allowClear>
+                  <Select.Option value={true as unknown as Key}>
+                    Yes
+                  </Select.Option>
+                  <Select.Option value={false as unknown as Key}>
+                    No
+                  </Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="GSC_ID"
+                name="gscId"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="GSC_description"
+                name="gscDescription"
+                // rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Material Number"
+                name="materialNumber"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            {
+              <Col span={24} style={{ marginTop: '20px' }}>
+                <Form.Item style={{ textAlign: 'center' }}>
+                  <Space size={60}>
+                    <Button type="primary" onClick={editDataListSaveFn}>
+                      Submit
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setEditListMark(false);
+                        formDataEdit.resetFields();
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Col>
+            }
+          </Row>
+        </Form>
+      </Modal>
       <TableList
         headerSearch={getData}
         form={form}
@@ -1412,6 +1586,16 @@ export const Index = (props: any) => {
           <>
           <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
           <Space>
+          <BtnThemeWrap>
+            <Button
+              disabled={selectedRowKeys.length == 0 ? ( isSelectAll ? false : true ) : false }
+              onClick={() => {
+                setEditListMark(true);
+              }}
+            >
+              Edit
+            </Button>
+          </BtnThemeWrap>
             <BtnThemeWrap>
               <Dropdown
                 overlay={() => (

@@ -25,6 +25,7 @@ import {
   Space,
   Tooltip,
   Upload,
+  Checkbox
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -67,6 +68,8 @@ export const Index = (props: any) => {
   const [logId, setLogId] = useState('');
   const [showCostCenterData, setShowCostCenterData] = useState(false);
   const [componentDisabled, setComponentDisabled] = useState(false);
+
+  const [isSelectAll, setIsSelectAll] = useState(false);
   const orignalCols: any = [
     {
       name: 'profitCenter',
@@ -185,9 +188,24 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        SpecialDivisionDeleteData({
-          recordIdList,
-        }).then((res) => {
+        let params = {}
+        if(isSelectAll){
+          params = {
+            searchCondition: {
+              pageTop: formFilter.getFieldsValue(),
+              listHeader: form.getFieldsValue(),
+            },
+            operationRecords: null,
+          };
+        }else{
+          params = {
+            searchCondition: null,
+            operationRecords: {
+              recordIdList: recordIdList
+            }
+          };
+        }
+        SpecialDivisionDeleteData(params).then((res) => {
           if (res.isSuccess) {
             message.success('Deletion succeeded!');
             setSelectedRowKeys([]);
@@ -504,6 +522,15 @@ export const Index = (props: any) => {
                     </Space>
                   </Form.Item>
                 </Col>
+                <Col span={3}>
+                        <Checkbox
+                        onChange={(e) => {
+                          setIsSelectAll(e.target.checked)
+                        }}
+                      >
+                        Select All
+                      </Checkbox>
+                </Col>
               </Row>
             </Form>
           </FilterGroupDiv>
@@ -569,7 +596,7 @@ export const Index = (props: any) => {
                   </Dropdown>
                 </BtnThemeWrap>
                 <Button
-                  disabled={selectedRowKeys.length == 0}
+                  disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
                   onClick={(event) => deleteInfos(selectedRowKeys, event)}
                 >
                   Delete
