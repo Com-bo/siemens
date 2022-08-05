@@ -10,14 +10,16 @@ export default defineConfig({
   favicon: 'favicon.ico',
   proxy: {
     '/api': {
+      // target: ' http://10.10.10.151:9003/',
       target: 'http://192.168.30.241:8821/',
+
       // pathRewrite: { '^/api': '' },
       changeOrigin: true,
       secure: false,
       pathRewrite: {
         '^/api': '/api',
       },
-    }   
+    },
   },
   title: 'B&B System',
   locale: {

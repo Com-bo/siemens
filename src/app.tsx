@@ -1,9 +1,15 @@
 import { history } from 'umi';
 import Mgr from '@/services/SecurityService';
 import { message, notification, Modal } from 'antd';
+import axios from 'axios';
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 import '@/app/framework';
-import { getLoginUser } from '@/app/request/apiUser';
+import {
+  getMyIdUserInfo,
+  getMyIdLoginInfo,
+  getLoginUser,
+  createToken,
+} from '@/app/request/apiUser';
 let authBtnCodes = {};
 let sysRoutes = [];
 const parseTree = (datas, resultData) => {
@@ -106,58 +112,127 @@ export function patchRoutes({ routes }) {
   // });
 }
 
-let modalPrivacy: any;
 let _routes = [];
 export async function render(oldRender) {
   // oldRender();
-  const Mgrs = new Mgr();
-  const result = await Mgrs.getSignedIn();
-  if (!result) {
-    //存一下当前的路由
-    if (location.hash) {
-      sessionStorage.setItem('re', window.btoa(location.hash));
-    }
-    return;
-  }
-  const infos = await Mgrs.getProfile();
-  if (!infos) {
-    return;
-  }
-  getLoginUser().then((res: any) => {
-    if (res.isSuccess) {
-      sessionStorage.setItem('user', res.data?.realName);
-      sessionStorage.setItem(
-        'businessLines',
-        JSON.stringify(res.data?.businessLines),
-      );
-      parseTree(res.data.auhtList, _routes);
-      console.log(authBtnCodes);
-      console.log(_routes);
-      // _routes[1].routes[0].path="/CertificateList/list"
-      sessionStorage.setItem('authCodes', JSON.stringify(authBtnCodes));
-      sessionStorage.setItem('routes', JSON.stringify(_routes));
-      oldRender();
+  try {
+    if (process.env.LOGIN_IDENTITY == 'PE') {
+      if (
+        !sessionStorage.getItem('umiToken') ||
+        !sessionStorage.getItem('authorization') ||
+        !sessionStorage.getItem('token')
+      ) {
+        const resToken = await createToken();
+        if (resToken.isSuccess) {
+          sessionStorage.setItem('token', resToken.data);
+        } else {
+          Modal.error({
+            title: 'Tips',
+            content: resToken.msg,
+            okText: () => {},
+            cancelText: '',
+            centered: true,
+            keyboard: false,
+          });
+        }
+
+        const result = await getMyIdLoginInfo(process.env.REDIRECT_URL);
+        if (result.isSuccess) {
+          sessionStorage.setItem('umiToken', result.data?.umiToken);
+          window.location.href = result.data?.data;
+        } else {
+          Modal.error({
+            title: 'Tips',
+            content: result.msg,
+            okText: () => {},
+            cancelText: '',
+            centered: true,
+            keyboard: false,
+          });
+          return;
+        }
+      } else {
+        await getMyIdUserInfo();
+        // -----------获取用户信息-------------
+        const resloginInfo = await getLoginUser();
+        if (resloginInfo.isSuccess) {
+          sessionStorage.setItem('user', resloginInfo.data?.realName);
+          sessionStorage.setItem(
+            'businessLines',
+            JSON.stringify(resloginInfo.data?.businessLines),
+          );
+          parseTree(resloginInfo.data.auhtList, _routes);
+          console.log(authBtnCodes);
+          console.log(_routes);
+          // _routes[1].routes[0].path="/CertificateList/list"
+          sessionStorage.setItem('authCodes', JSON.stringify(authBtnCodes));
+          sessionStorage.setItem('routes', JSON.stringify(_routes));
+          oldRender();
+        } else {
+          Modal.error({
+            title: 'Tips',
+            content: resloginInfo?.msg,
+            okText: () => {},
+            cancelText: '',
+            centered: true,
+            keyboard: false,
+          });
+        }
+      }
     } else {
-      Modal.error({
-        title: 'Tips',
-        content: res?.Value?.msg,
-        okText: () => {},
-        cancelText: '',
-        centered: true,
-        keyboard: false,
-      });
+      const Mgrs = new Mgr();
+      const result = await Mgrs.getSignedIn();
+      if (!result) {
+        //存一下当前的路由
+        if (location.hash) {
+          sessionStorage.setItem('re', window.btoa(location.hash));
+        }
+        return;
+      }
+      const infos = await Mgrs.getProfile();
+      if (!infos) {
+        return;
+      }
+      // -----------获取用户信息-------------
+      const resloginInfo = await getLoginUser();
+      if (resloginInfo.isSuccess) {
+        sessionStorage.setItem('user', resloginInfo.data?.realName);
+        sessionStorage.setItem(
+          'businessLines',
+          JSON.stringify(resloginInfo.data?.businessLines),
+        );
+        parseTree(resloginInfo.data.auhtList, _routes);
+        console.log(authBtnCodes);
+        console.log(_routes);
+        sessionStorage.setItem('authCodes', JSON.stringify(authBtnCodes));
+        sessionStorage.setItem('routes', JSON.stringify(_routes));
+        oldRender();
+      } else {
+        Modal.error({
+          title: 'Tips',
+          content: resloginInfo?.msg,
+          okText: () => {},
+          cancelText: '',
+          centered: true,
+          keyboard: false,
+        });
+      }
     }
-  });
+  } catch (error) {}
 }
 
 // 路由变化
 export function onRouteChange({ location, routes, action }) {
-  // if (!useType) {
-  //   return;
-  // }
   if (location.pathname == '/logout') {
-    const Mgrs = new Mgr();
-    Mgrs.signOut();
+    // 退出登录的处理
+    if (process.env.MEDALENV == 'uat') {
+      // 暂未开发
+    } else {
+      // 这个部分可以找朱老板处理
+      const Mgrs = new Mgr();
+      Mgrs.signOut();
+    }
+
     return;
   }
 

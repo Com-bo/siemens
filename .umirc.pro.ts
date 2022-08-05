@@ -1,6 +1,7 @@
 export default {
   define: {
     'process.env.MEDALENV': 'pro',
+    'process.env.LOGIN_IDENTITY': 'PE', //正式环境的登录认证方式打包Production Environment的缩写
     'process.env.BASE_URL':
       'https://dx-distributor.siemens-healthineers.cn/Api',
     'process.env.REDIRECT_URL':
