@@ -131,8 +131,6 @@ export async function render(oldRender) {
         JSON.stringify(res.data?.businessLines),
       );
       parseTree(res.data.auhtList, _routes);
-      console.log(authBtnCodes);
-      console.log(_routes);
       // _routes[1].routes[0].path="/CertificateList/list"
       sessionStorage.setItem('authCodes', JSON.stringify(authBtnCodes));
       sessionStorage.setItem('routes', JSON.stringify(_routes));
@@ -162,7 +160,16 @@ export function onRouteChange({ location, routes, action }) {
   }
 
   if (location.pathname == '/') {
-    history.replace(_routes[0].path);
+
+    if(_routes[0].path != "/home"){
+
+      history.replace(_routes[0]["routes"][0].path);
+
+    }else{
+
+      history.replace(_routes[0].path);
+      
+    }
     // } else {
     // 如果页面没有权限
     //   if (

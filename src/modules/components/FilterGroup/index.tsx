@@ -485,6 +485,7 @@ export default (props: FilterGroupType) => {
           </Select>
         );
       case "DataType":
+      case "System":
         if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
           arra[index].fieldValue = [];
         } else {

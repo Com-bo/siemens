@@ -22,6 +22,7 @@ const { Option } = Select;
 import React, { useEffect, useRef, useState } from 'react';
 const { TabPane } = Tabs;
 
+import TableMix from '@/components/Table';
 import noData from '@/assets/images/noData.png';
 import ReactECharts from "echarts-for-react";
 import * as echarts from 'echarts';
@@ -150,7 +151,7 @@ export default (props: any) => {
     series: [
       {
         name:'BVI Volume',
-        data: [200, 333, 700, 800, 900,900, 1290,200, 333, 700, 800, 900],
+        data: [],
         type: 'line',
       }
     ],
@@ -173,13 +174,13 @@ export default (props: any) => {
     series: [
       {
         name:'usage',
-        data: [200, 333, 700, 800, 900,900, 1290,200, 333, 700, 800, 900],
+        data: [],
         type: 'line',
         // smooth: true,
       },
       {
         name:'charge',
-        data: [900, 222, 200, 333, 700, 800, 900,900, 222, 200, 333, 700],
+        data: [],
         type: 'line',
         // smooth: true,
       },
@@ -589,26 +590,219 @@ export default (props: any) => {
       width: '200px',
     }
   ];
+  const bviOrignalCols = [
+    {
+      name: 'bviMonth',
+      title: 'BVI Month',
+      width: '200px',
+    },
+    {
+      name: 'bviStatus',
+      title: 'BVI Status',
+      width: '100px',
+    },
+    {
+      name: 'serviceLine',
+      title: 'ServiceLine',
+      width: '150px',
+    },
+    {
+      name: 'product',
+      title: 'Product',
+      width: '200px',
+    },
+    {
+      name: 'are',
+      title: 'ARE',
+      width: '150px',
+    },
+    {
+      name: 'customerDivision',
+      title: 'Customer Division',
+      width: '200px',
+    },
+    {
+      name: 'bvi',
+      title: 'BVI',
+      width: '100px'
+    },
+    {
+      name: 'productUnitPrice',
+      title: 'Product Unit Price',
+      width: '200px',
+    },
+    {
+      name: 'productUnitPriceCurrency',
+      title: 'Product Unit Price Currency',
+      width: '200px',
+    },
+    {
+      name: 'totalAmount',
+      title: 'Total Amount(Unit Price Currency)',
+      width: '200px',
+    },
+    {
+      name: 'billingCurrency',
+      title: 'Billing Currency',
+      width: '200px',
+    },
+    {
+      name: 'costCenter',
+      title: 'Cost Center',
+      width: '150px',
+    },
+    {
+      name: 'po',
+      title: 'PO',
+      width: '200px',
+    },
+    {
+      name: 'poPercentage',
+      title: 'PO Percentage',
+      width: '200px',
+    },
+    {
+      name: 'comment',
+      title: 'Comment',
+      width: '200px',
+    },
+    {
+      name: 'billingARE',
+      title: 'Billing ARE',
+      width: '200px',
+    },
+    {
+      name: 'billingCostCenter',
+      title: 'Billing Cost Center',
+      width: '200px',
+    },
+    {
+      name: 'modifiedUser',
+      title: 'Modified User',
+      width: '200px',
+    },
+    {
+      name: 'modifiedDate',
+      title: 'Modified Date',
+      width: '200px',
+      render: (text) =>
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD')
+          : text,
+    },
+    {
+      name: 'bviBusinessLine',
+      title: 'BVI Business Line',
+      width: '150px',
+
+    },
+    {
+      name: 'businessLine',
+      title: 'Business Line',
+      width: '150px',
+    },
+    {
+      name: 'companyCode',
+      title: 'Company Code',
+      width: '200px',
+    },
+    {
+      name: 'system',
+      title: 'System',
+      width: '200px',
+    },
+    {
+      name: 'idH',
+      title: 'ID_H',
+      width: '200px',
+    },
+    {
+      name: 'chargeType',
+      title: 'ChargeType',
+      width: '200px',
+    },
+    {
+      name: 'adjustTag',
+      title: 'AdjustTag',
+      width: '100px',
+      render: (text) => (text === null ? '' : text === false ? 'No' : 'Yes'),
+    },
+    {
+      name: 'templateType',
+      title: 'Template Type',
+      width: '200px',
+    },
+    {
+      name: 'isPOByPercentage',
+      title: 'IsPOByPercentage',
+      width: '200px',
+      render: (text) => (text == 0 ? 'No' : 'Yes'),
+    },
+
+    {
+      name: 'customerNumberAllocation',
+      title: 'Customer Number Allocation',
+      width: '240px',
+    },
+
+    {
+      name: 'z003',
+      title: 'Z003',
+      width: '100px',
+    },
+    {
+      name: 'salesOrder',
+      title: 'Sales Order',
+      width: '200px',
+    },
+    {
+      name: 'billingDoc',
+      title: 'Billing Doc.',
+      width: '200px',
+    },
+    {
+      name: 'billingStatus',
+      title: 'Billing Status',
+      width: '200px',
+    },
+    {
+      name: 'itemNo',
+      title: 'Item No.',
+      width: '200px',
+    },
+    {
+      title: 'Amount in Currecy',
+      width: '200px',
+      name: 'amountInCurrecy',
+    },
+    {
+      title: 'Currency in SAP',
+      width: '200px',
+      name: 'currencyInSAP',
+    },
+    {
+      title: 'Amount in Local Currency(CNY)',
+      width: '240px',
+      name: 'amountInLocalCurrencyCNY',
+    },
+    {
+      title: 'Billing Date',
+      width: '180px',
+      name: 'billingDate',
+      render: (text) =>
+      text && moment(text).isValid()
+        ? moment(text).format('YYYY-MM-DD')
+        : text,
+    },
+    {
+      title: 'SAP Exchange Rate',
+      width: '150px',
+      name: 'exchangeRate',
+    }
+  ];
   // const onReportMonthChange=(datestring)=>{
   //   setReportMonth(datestring)
   // }
-  const _generateHead = (cols: any) => {
-    let _columns = [];
-    for (let _key in cols) {
-      if (_key) {
-        let start = _key[0];
-        let end = _key.slice(1);
-        let colKey = start + end;
-        _columns.push({
-          title: cols[_key],
-          dataIndex: colKey,
-          // width: '120px',
-          key: colKey,
-        });
-      }
-    }
-    setCols(_columns);
-  };
   const toCheckBVI=()=>{
     let params = {
       searchCondition: {
@@ -620,8 +814,7 @@ export default (props: any) => {
     CustomerReportQueryBVIData(params).then((res) => {
       if (res.isSuccess) {
         setIsCheckOriginal(true);
-        setCheckData(res.data.body || []);
-        _generateHead(res.data.header || []);
+        setProductData(res.data);
       } else {
         message.error(res.msg);
       }
@@ -666,6 +859,13 @@ export default (props: any) => {
     validationMsg: '100px',
     productName: '200px',
   };
+  const handleProSize = (val: number) => {
+    setProCurrent(1);
+    setProSize(val);
+  };
+  const onProPageChange = (pagination, filters, sorter, extra) => {
+    setProCurrent(pagination.current);
+  };
   return (
     <TabWrapDiv>
         {/* 查看bvi */}
@@ -689,37 +889,31 @@ export default (props: any) => {
           onCancel={() => setIsCheckOriginal(false)}
         >
         <TableWrapDiv>
-          <Table
-            columns={columns?.map((_item) => {
+          <TableMix
+            columns={bviOrignalCols?.map((_item) => {
               return {
                 ..._item,
-                fixed: _item.dataIndex == 'validationMsg' ? 'right' : null,
-                align: 'center',
-                width: checkOriginalOptions[_item.dataIndex] || '100px',
-                render: (text) => {
-                  if (_item.dataIndex == 'validationMsg') {
-                    return (
-                      <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
-                    );
-                  } else if (
-                    _item.dataIndex == 'postingDate' ||
-                    _item.dataIndex == 'entryDate' ||
-                    _item.dataIndex == 'documentDate' ||
-                    _item.dataIndex == 'netDueDate' ||
-                    _item.dataIndex == 'billingDate'
-                  ) {
-                    return moment(text).format('YYYY-MM-DD');
-                  } else {
-                    return text;
-                  }
-                },
+                dataIndex:_item.name,
+                // key
+                align: 'center'
               };
             })}
-            rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
-            dataSource={checkData}
+            type="radio"
+            onChange={(rowkeys, rows) => {
+              setSelectProKeys(rowkeys);
+              setSelectProductRow(rows);
+            }}
+            data={productData}
+            current={proCurrent}
+            pageSize={proSize}
+            total={proTotal}
+            handlePageSize={handleProSize}
             rowKey="id"
-            pagination={false}
-            scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
+            onPageChange={onProPageChange}
+            pagination={true}
+            scrollX={1000}
+            selection={true}
+            selectedRowKeys={selectProKeys}
           />
         </TableWrapDiv>
       </Modal>
@@ -966,7 +1160,7 @@ export default (props: any) => {
                 />
                 <BtnOrangeWrap>
                   <Button
-                    disabled={!selectedRowKeys.length}
+                    disabled={selectedRowKeys.length!=1}
                     onClick={toCheckBVI}
                   >
                     Check BVI
