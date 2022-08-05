@@ -20,11 +20,15 @@ export enum EnumConditionalType {
   NoLike = 13,
   EqualNull = 14,
 }
+let Mgrs;
+if (process.env.LOGIN_IDENTITY !== 'PE') {
+  Mgrs = new Mgr();
+  Mgrs.getUser().then((res) => {
+    axios.defaults.headers.common['Authorization'] =
+      'Bearer ' + res.access_token;
+  });
+}
 
-const Mgrs = new Mgr();
-// Mgrs.getUser().then((res) => {
-//   axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token;
-// });
 /**
  * 后端返参类型
  */
@@ -111,13 +115,12 @@ const requestWrapper = async <T = any>(
 
 export const useGet = <T = any>(url, config?: UseAxiosRequestConfig) =>
   requestWrapper(config, async () => {
-    await Mgrs.getUser().then((res) => {
-      axios.defaults.headers.common['Authorization'] =
-        'Bearer ' + res.access_token;
-      axios.defaults.headers.common['pageRouter'] = window.location.hash
-        .split('?')[0]
-        .substr(2);
-    });
+    if (process.env.LOGIN_IDENTITY !== 'PE') {
+      await Mgrs.getUser().then((res) => {
+        axios.defaults.headers.common['Authorization'] =
+          'Bearer ' + res.access_token;
+      });
+    }
     return axios.get<Response<T>>(url, config);
   });
 
@@ -130,13 +133,12 @@ export const usePost = <T = any>(
   },
 ) =>
   requestWrapper(config, async () => {
-    await Mgrs.getUser().then((res) => {
-      axios.defaults.headers.common['Authorization'] =
-        'Bearer ' + res.access_token;
-      axios.defaults.headers.common['pageRouter'] = window.location.hash
-        .split('?')[0]
-        .substr(2);
-    });
+    if (process.env.LOGIN_IDENTITY !== 'PE') {
+      await Mgrs.getUser().then((res) => {
+        axios.defaults.headers.common['Authorization'] =
+          'Bearer ' + res.access_token;
+      });
+    }
     return axios.post<Response<T>>(
       url,
       formatParams
@@ -156,10 +158,12 @@ export const usePut = <T = any>(
   },
 ) =>
   requestWrapper(config, async () => {
-    await Mgrs.getUser().then((res) => {
-      axios.defaults.headers.common['Authorization'] =
-        'Bearer ' + res.access_token;
-    });
+    if (process.env.LOGIN_IDENTITY !== 'PE') {
+      await Mgrs.getUser().then((res) => {
+        axios.defaults.headers.common['Authorization'] =
+          'Bearer ' + res.access_token;
+      });
+    }
     return axios.put<Response<T>>(
       url,
       formatParams
@@ -183,13 +187,12 @@ export const useExport = <T = any>(
   },
 ) =>
   requestWrapper(config, async () => {
-    await Mgrs.getUser().then((res) => {
-      axios.defaults.headers.common['Authorization'] =
-        'Bearer ' + res.access_token;
-      axios.defaults.headers.common['pageRouter'] = window.location.hash
-        .split('?')[0]
-        .substr(2);
-    });
+    if (process.env.LOGIN_IDENTITY !== 'PE') {
+      await Mgrs.getUser().then((res) => {
+        axios.defaults.headers.common['Authorization'] =
+          'Bearer ' + res.access_token;
+      });
+    }
     return axios.post<any>(
       url,
       formatParams

@@ -1,5 +1,8 @@
 export const Api = {
   // 通用
+  CreateToken: '/api/System/CreateToken', //临时使用jwt认证
+  GetMyIdLoginInfo: '/api/MyID/GetMyIdLoginInfo', //获取Myid登录信息
+  GetMyIdUserInfo: '/api/MyID/GetMyIdUserInfo', //获取用户信息
   QueryLoginUser: '/api/System/QueryLoginUser', // 获取用户信息
   CostCenterDrop: '/api/CostCenterIcb/QueryPageDropListData', //获取cost center下拉框
   CompanyCodeDrop: '/api/DivMappingOc/QueryPageDropListData', //获取companyCode
@@ -83,7 +86,7 @@ export const Api = {
   BatchFileManual: '/api/Billing/BatchFileManual',
   BatchFileAuto: '/api/Billing/BatchFileAuto',
   AllocationFile: '/api/Billing/AllocationFile',
-  GetOriginBVI:"/api/Billing/GetOriginBVI",
+  GetOriginBVI: '/api/Billing/GetOriginBVI',
   // masterData-costcenter
   GetCostCenterData: '/api/CostCenterIcb/QueryListData',
   ExportCostCenterData: '/api/CostCenterIcb/ExportData', //导出costcenter
@@ -171,7 +174,6 @@ export const Api = {
   EditO2CUserIDDataSave: '/api/O2CUserID/EditDataSave',
   DeleteO2CUserIDData: '/api/O2CUserID/DeleteData',
   QueryO2CUserIDLogData: '/api/O2CUserID/QueryLogData',
-
 
   // CustomerReport
   CustomerReportQueryChartData: '/api/CustomerReport/QueryChartData',

@@ -3,15 +3,11 @@ import { Modal, Form, message } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { history } from 'umi';
 import { Action, IMedalsoftPersonDropdownProps } from '.';
-import Mgr from '@/services/SecurityService';
 import { encryptByRSA } from '@/tools/jsencrypt';
-// import {
-//   getPublicKey,
-//   resetSelfPassword,
-//   loginUpdate,
-// } from '@/app/request/requestApi';
-import moment from 'moment';
+import Mgr from '@/services/SecurityService';
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
+import { getMyIdLoginInfo } from '@/app/request/apiUser';
+import axios from 'axios';
 
 const config: any = {
   auth: {
@@ -88,7 +84,7 @@ const usePersonalDropdownService = (props: IMedalsoftPersonDropdownProps) => {
   };
 
   const handleOk = () => {
-    message.warning("开发中");
+    message.warning('开发中');
     // passwordForm.validateFields().then(() => {
     //   getPublicKey().then((res) => {
     //     if (res.code != 200 || !res.isSuccess) {
@@ -164,16 +160,31 @@ const usePersonalDropdownService = (props: IMedalsoftPersonDropdownProps) => {
         break;
       case 'SignOut':
         Modal.confirm({
-          title:"Login Out",
+          title: 'Login Out',
           icon: <ExclamationCircleOutlined />,
-          content: "Login Out?",
-          okText: "OK",
-          cancelText: "Cancel",
-          onOk: () => {
-            const Mgrs = new Mgr();
-            Mgrs.getUser().then((res) => {
-              authProvider.logout();
-            });
+          content: 'Login Out?',
+          okText: 'OK',
+          cancelText: 'Cancel',
+          onOk: async () => {
+            console.log('退出登录');
+            if (process.env.MEDALENV == 'uat') {
+              sessionStorage.setItem('umiToken', '');
+              sessionStorage.setItem('authorization', '');
+              const result = await getMyIdLoginInfo(process.env.REDIRECT_URL);
+              if (result.isSuccess) {
+                // 清理session
+                axios.defaults.headers.common['umiToken'] =
+                  result.data?.umiToken;
+                sessionStorage.setItem('umiToken', result.data?.umiToken);
+                window.location.href = result.data?.data;
+              }
+            } else {
+              // 此条件找朱磊老板
+              const Mgrs = new Mgr();
+              Mgrs.getUser().then((res) => {
+                authProvider.logout();
+              });
+            }
           },
           centered: true,
         });
