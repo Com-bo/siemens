@@ -683,10 +683,10 @@ export default (props: any) => {
       title: 'Billing Date',
       width: '180px',
       name: 'billingDate',
-      // render: (text) =>
-      // text && moment(text).isValid()
-      //   ? moment(text).format('YYYY-MM-DD')
-      //   : text,
+      render: (text) =>
+      text && moment(text).isValid()
+        ? moment(text).format('YYYY-MM-DD')
+        : text,
     },
     {
       title: 'SAP Exchange Rate',
@@ -1054,38 +1054,10 @@ export default (props: any) => {
             columns={bviOrignalCols?.map((_item) => {
               return {
                 ..._item,
-                dataIndex: _item.name,
-                key: _item.name,
-                align: 'center',
-                render: (text) => {
-                  if (_item.name == 'validationMsg') {
-                    return (
-                      <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
-                    );
-                  } else 
-                  if(_item.name == 'adjustTag'){
-                    return text === null ? '' : text === false ? 'No' : 'Yes'
-                  }else 
-                  if(_item.name == 'isPOByPercentage'){
-                    return (text == 0 ? 'No' : 'Yes')
-                  }else 
-                  if (
-                    _item.name == 'postingDate' ||
-                    _item.name == 'entryDate' ||
-                    _item.name == 'documentDate' ||
-                    _item.name == 'netDueDate' ||
-                    _item.name == 'billingDate'
-                  ) {
-                    if(text && moment(text).isValid()){
-                      return moment(text).format('YYYY-MM-DD');
-                    }else{
-                      return text;
-                    }
-                  } else {
-                    return text;
-                  }
-                },
-              }
+                dataIndex:_item.name,
+                // key
+                align: 'center'
+              };
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
@@ -1173,7 +1145,8 @@ export default (props: any) => {
                     setUnconfirmData(e.target.checked);
                   }}
                 >
-                  View all unconfirm Data
+                  {/* View all unconfirm Data */}
+                  View all Uncomplete Data
                 </Checkbox>
 
                 <Checkbox

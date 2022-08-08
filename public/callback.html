@@ -32,9 +32,9 @@
   <script src="oidc-client.js"></script>
   <script>
 
-    // var mgr = new Oidc.UserManager({ userStore: new Oidc.WebStorageStateStore({ store: window.sessionStorage }), loadUserInfo: true, filterProtocolClaims: true });
+    var mgr = new Oidc.UserManager({ userStore: new Oidc.WebStorageStateStore({ store: window.sessionStorage }), loadUserInfo: true, filterProtocolClaims: true });
     let redirect = "" //237
-    // let redirect = "/web"
+
     let token = location.search.replace("?t=", '')
     sessionStorage.setItem("authorization", token)
     if (sessionStorage.getItem('re')) {
@@ -42,11 +42,11 @@
     }
     window.location.href = redirect || "/";
 
-    // mgr.signinRedirectCallback().then(function (user) {
-    //   window.location.href = redirect || "/";
-    // }).catch(function (err) {
-    //   window.location.href = redirect || "/";
-    // });
+    mgr.signinRedirectCallback().then(function (user) {
+      window.location.href = redirect || "/";
+    }).catch(function (err) {
+      window.location.href = redirect || "/";
+    });
 
   </script>
 </body>

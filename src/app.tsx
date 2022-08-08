@@ -114,7 +114,8 @@ export function patchRoutes({ routes }) {
 
 let _routes = [];
 export async function render(oldRender) {
-  // oldRender();
+  // oldRender()
+  // return
   try {
     if (process.env.LOGIN_IDENTITY == 'PE') {
       if (
@@ -180,6 +181,7 @@ export async function render(oldRender) {
         }
       }
     } else {
+    
       const Mgrs = new Mgr();
       const result = await Mgrs.getSignedIn();
       if (!result) {
@@ -218,14 +220,17 @@ export async function render(oldRender) {
         });
       }
     }
+
   } catch (error) {}
 }
 
 // 路由变化
 export function onRouteChange({ location, routes, action }) {
+
   if (location.pathname == '/logout') {
-    // 退出登录的处理
-    if (process.env.MEDALENV == 'uat') {
+ 
+    // // 退出登录的处理
+    if (process.env.LOGIN_IDENTITY == 'PE') {
       // 暂未开发
     } else {
       // 这个部分可以找朱老板处理
@@ -237,7 +242,17 @@ export function onRouteChange({ location, routes, action }) {
   }
 
   if (location.pathname == '/') {
-    history.replace(_routes[0].path);
+    // debugger
+
+    if(_routes[0].path != "/home"){
+
+      history.replace(_routes[0]["routes"][0].path);
+
+    }else{
+
+      history.replace(_routes[0].path);
+      
+    }
     // } else {
     // 如果页面没有权限
     //   if (

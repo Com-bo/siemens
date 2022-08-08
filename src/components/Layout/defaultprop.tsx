@@ -123,6 +123,11 @@ export const defaultRoute = {
           key: 'Currency',
           path: '/MasterData/Currency',
         },
+        {
+          name: 'H2RConfig',
+          key: 'H2RConfig',
+          path: '/MasterData/H2RConfig',
+        },
       ],
     },
     {

@@ -92,7 +92,6 @@ export default (props: any) => {
           productName: formSearch.getFieldValue("productName")
         },
       };
-      console.log(params)
       HomeQueryData(params).then((res) => {
         if (res.isSuccess) {
           setHomeData(res.data)

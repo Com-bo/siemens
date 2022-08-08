@@ -167,7 +167,7 @@ const usePersonalDropdownService = (props: IMedalsoftPersonDropdownProps) => {
           cancelText: 'Cancel',
           onOk: async () => {
             console.log('退出登录');
-            if (process.env.MEDALENV == 'uat') {
+            if (process.env.LOGIN_IDENTITY == 'PE') {
               sessionStorage.setItem('umiToken', '');
               sessionStorage.setItem('authorization', '');
               const result = await getMyIdLoginInfo(process.env.REDIRECT_URL);

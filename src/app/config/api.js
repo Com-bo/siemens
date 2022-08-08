@@ -169,6 +169,11 @@ export const Api = {
   RoleBingUser: '/api/System/RoleBingUser', // 角色管理-角色绑定人员
   DelRole: '/api/System/DelRole', //删除角色
   DeleUser: '/api/System/DeleUser',
+  // H2R config
+  QueryLogicH2R:"/api/System/QueryLogicH2R",
+  EditLogicH2R:"/api/System/EditLogicH2R",
+  DeleteLogicH2R:"/api/System/DeleteLogicH2R",
+  AddLogicH2R:"/api/System/AddLogicH2R",
   // masterdata-O2CUserID
   QueryO2CUserIDListData: '/api/O2CUserID/QueryListData',
   ExportO2CUserIDData: '/api/O2CUserID/ExportData',
