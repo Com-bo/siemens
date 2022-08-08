@@ -312,7 +312,6 @@ export default (props: any) => {
       name: 'billingStatus',
       title: 'Billing Status',
       width: '200px',
-      sorter: true,
     },
     {
       name: 'billingErrorMsg',

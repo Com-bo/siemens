@@ -174,6 +174,10 @@ export const Api = {
   EditLogicH2R:"/api/System/EditLogicH2R",
   DeleteLogicH2R:"/api/System/DeleteLogicH2R",
   AddLogicH2R:"/api/System/AddLogicH2R",
+  // PageQueryDictionary
+  PageQueryDictionary:"/api/System/PageQueryDictionary",
+  EditDictionary:"/api/System/EditDictionary",
+      
   // masterdata-O2CUserID
   QueryO2CUserIDListData: '/api/O2CUserID/QueryListData',
   ExportO2CUserIDData: '/api/O2CUserID/ExportData',

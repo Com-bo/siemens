@@ -73,3 +73,13 @@ export const getProductData = (data: Object) => {
     autoLoading: true,
   });
 };
+
+export const getAbnormalOriginDataByBVI = (data: Object) => {
+  return usePost(
+    `${Config.Api.Base}${Config.Api.GetAbnormalOriginDataByBVI}`,
+    data,
+    {
+      autoLoading: true,
+    },
+  );
+};
