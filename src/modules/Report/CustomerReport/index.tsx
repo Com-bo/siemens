@@ -71,7 +71,8 @@ import {
 
 import {
   getServiceLineList,
-  getProductData
+  getProductData,
+  getAbnormalOriginDataByBVI
 } from "@/app/request/common"
 
 const pageName = 'CustomerReport';
@@ -125,6 +126,9 @@ export default (props: any) => {
   const [costcenterPageSize, setCostcenterPageSize] = useState(20);
   const [costcenterTotal, setCostcenterTotal] = useState(0);
   const [first, setFirst] = useState(true);
+
+  // 
+  const [isCheckBvi, setIsCheckBvi] = useState(false);
   const [isCheckOriginal, setIsCheckOriginal] = useState(false);
   const [columns, setCols] = useState([]);
   const [business, setBusiness] = useState([businesslineOptions[0]]);
@@ -813,7 +817,7 @@ export default (props: any) => {
     };
     CustomerReportQueryBVIData(params).then((res) => {
       if (res.isSuccess) {
-        setIsCheckOriginal(true);
+        setIsCheckBvi(true);
         setProductData(res.data);
       } else {
         message.error(res.msg);
@@ -855,6 +859,8 @@ export default (props: any) => {
       })
       .catch((e) => {});
   };
+
+
   const checkOriginalOptions = {
     validationMsg: '100px',
     productName: '200px',
@@ -865,6 +871,37 @@ export default (props: any) => {
   };
   const onProPageChange = (pagination, filters, sorter, extra) => {
     setProCurrent(pagination.current);
+  };
+  const _generateHead = (cols: any) => {
+    let _columns = [];
+    for (let _key in cols) {
+      if (_key) {
+        let start = _key[0];
+        let end = _key.slice(1);
+        let colKey = start + end;
+        _columns.push({
+          title: cols[_key],
+          dataIndex: colKey,
+          // width: '120px',
+          key: colKey,
+        });
+      }
+    }
+    setCols(_columns);
+  };
+  const getCheckOriginalData = (event) => {
+    event.stopPropagation();
+    console.log(selectProductRow)
+    getAbnormalOriginDataByBVI([selectProductRow[0]]).then((res) => {
+      if (res.isSuccess) {
+        setIsCheckOriginal(true);
+        setCheckData(res.data.body || []);
+        _generateHead(res.data.header || []);
+        // setCols(res.data.head||[])
+      } else {
+        message.error(res.msg);
+      }
+    });
   };
   return (
     <TabWrapDiv>
@@ -884,11 +921,30 @@ export default (props: any) => {
             </TableTopDiv>
           }
           width="1300px"
-          visible={isCheckOriginal}
+          visible={isCheckBvi}
           footer={null}
-          onCancel={() => setIsCheckOriginal(false)}
+          onCancel={() => {
+            setIsCheckBvi(false)
+            setSelectProKeys([]);
+            setSelectProductRow([]);
+          }
+          }
         >
         <TableWrapDiv>
+          <Space style={{ marginLeft: '23px',marginBottom:"20px" }}>
+          <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+            <BtnThemeWrap>
+                <Button 
+                  disabled={!selectProKeys.length}
+                  onClick={(evt)=>{
+                    getCheckOriginalData(evt)
+                  }}
+                >
+                Check Details
+                </Button>
+            </BtnThemeWrap>
+            </AuthWrapper>
+          </Space>
           <TableMix
             columns={bviOrignalCols?.map((_item) => {
               return {
@@ -914,6 +970,61 @@ export default (props: any) => {
             scrollX={1000}
             selection={true}
             selectedRowKeys={selectProKeys}
+          />
+        </TableWrapDiv>
+      </Modal>
+      {/* 查看源数据 */}
+      <Modal
+        maskClosable={false}
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Check Original List
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        width="1300px"
+        visible={isCheckOriginal}
+        footer={null}
+        onCancel={() => setIsCheckOriginal(false)}
+      >
+        <TableWrapDiv>
+          <Table
+            columns={columns?.map((_item) => {
+              return {
+                ..._item,
+                fixed: _item.dataIndex == 'validationMsg' ? 'right' : null,
+                align: 'center',
+                width: checkOriginalOptions[_item.dataIndex] || '100px',
+                render: (text) => {
+                  if (_item.dataIndex == 'validationMsg') {
+                    return (
+                      <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
+                    );
+                  } else if (
+                    _item.dataIndex == 'postingDate' ||
+                    _item.dataIndex == 'entryDate' ||
+                    _item.dataIndex == 'documentDate' ||
+                    _item.dataIndex == 'netDueDate' ||
+                    _item.dataIndex == 'billingDate'
+                  ) {
+                    return moment(text).format('YYYY-MM-DD');
+                  } else {
+                    return text;
+                  }
+                },
+              };
+            })}
+            rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
+            dataSource={checkData}
+            rowKey="id"
+            pagination={false}
+            scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
           />
         </TableWrapDiv>
       </Modal>

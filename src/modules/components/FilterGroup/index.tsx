@@ -474,9 +474,18 @@ export default (props: FilterGroupType) => {
       case 'IndividualInvoice':
       case 'SETag':
       case 'ModifiedTag':
-      case 'BillingStatus':
         return (
           <Select allowClear>
+            {options[props.moudleName][fieldName]?.map((item, index) => (
+              <Option key={index} value={item.value}>
+                {item.label}
+              </Option>
+            ))}
+          </Select>
+        );
+      case 'BillingStatus':
+        return (
+          <Select allowClear mode="multiple" defaultValue={[]}>
             {options[props.moudleName][fieldName]?.map((item, index) => (
               <Option key={index} value={item.value}>
                 {item.label}
