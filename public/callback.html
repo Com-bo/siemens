@@ -32,18 +32,17 @@
   <script src="oidc-client.js"></script>
   <script>
     let redirect = "" //237
-    // ---用于DE的callback-----
-    var mgr = new Oidc.UserManager({ userStore: new Oidc.WebStorageStateStore({ store: window.sessionStorage }), loadUserInfo: true, filterProtocolClaims: true });
     if (sessionStorage.getItem('re')) {
       redirect = redirect + "/" + window.atob(sessionStorage.getItem('re'))
     }
-
+    // ---用于DE的callback-----
+    var mgr = new Oidc.UserManager({ userStore: new Oidc.WebStorageStateStore({ store: window.sessionStorage }), loadUserInfo: true, filterProtocolClaims: true });
     mgr.signinRedirectCallback().then(function (user) {
       window.location.href = redirect || "/";
     }).catch(function (err) {
       window.location.href = redirect || "/";
     });
-// ---用于PE的callback---
+    // ---用于PE的callback---
     // let token = location.search.replace("?t=", '')
     // token && sessionStorage.setItem("authorization", token)
     //  (window.location.href = redirect || "/");
