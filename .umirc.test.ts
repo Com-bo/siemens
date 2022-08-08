@@ -1,7 +1,7 @@
 export default {
   define: {
-    'process.env.LOGIN_IDENTITY': 'PE', //正式环境的登录认证方式打包Production Environment的缩写
-    // 'process.env.LOGIN_IDENTITY': 'DE',//开发环境的登录认证方式打包Developmen Environment的缩写
+    //'process.env.LOGIN_IDENTITY': 'PE', //正式环境的登录认证方式打包Production Environment的缩写
+    'process.env.LOGIN_IDENTITY': 'DE', //开发环境的登录认证方式打包Developmen Environment的缩写
     // 'process.env.MEDALENV': 'test',
     'process.env.CLIENT_ID': 'c83fe4f5-571f-456c-a20f-559a2d258b63',
     'process.env.TENANTID': '5dbf1add-202a-4b8d-815b-bf0fb024e033',
