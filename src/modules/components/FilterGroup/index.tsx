@@ -90,10 +90,10 @@ export default (props: FilterGroupType) => {
           label: 'Freeze',
           value: "Freeze",
         },
-        {
-          label: 'Successfully',
-          value: "Successfully",
-        },
+        // {
+        //   label: 'Successfully',
+        //   value: "Successfully",
+        // },
         {
           label: 'Manual To SAP',
           value: "Manual To SAP",
@@ -114,14 +114,14 @@ export default (props: FilterGroupType) => {
           label: 'Unfreeze',
           value: "Unfreeze",
         },
-        {
-          label: 'Obsolete',
-          value: "Obsolete",
-        },
-        {
-          label: 'Cancel',
-          value: "Cancel",
-        },
+        // {
+        //   label: 'Obsolete',
+        //   value: "Obsolete",
+        // },
+        // {
+        //   label: 'Cancel',
+        //   value: "Cancel",
+        // },
         {
           label: 'Error',
           value: "Error",
@@ -164,10 +164,10 @@ export default (props: FilterGroupType) => {
           label: 'Freeze',
           value: "Freeze",
         },
-        {
-          label: 'Successfully',
-          value: "Successfully",
-        },
+        // {
+        //   label: 'Successfully',
+        //   value: "Successfully",
+        // },
         {
           label: 'Manual To SAP',
           value: "Manual To SAP",
@@ -188,14 +188,14 @@ export default (props: FilterGroupType) => {
           label: 'Unfreeze',
           value: "Unfreeze",
         },
-        {
-          label: 'Obsolete',
-          value: "Obsolete",
-        },
-        {
-          label: 'Cancel',
-          value: "Cancel",
-        },
+        // {
+        //   label: 'Obsolete',
+        //   value: "Obsolete",
+        // },
+        // {
+        //   label: 'Cancel',
+        //   value: "Cancel",
+        // },
         {
           label: 'Error',
           value: "Error",
