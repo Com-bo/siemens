@@ -111,6 +111,7 @@ export default (props: any) => {
         });
       }
     }
+    console.log(_columns)
     setCols(_columns);
   };
   const getCheckOriginalData = (event, _data) => {
@@ -121,7 +122,6 @@ export default (props: any) => {
         setIsCheckOriginal(true);
         setCheckData(res.data.body || []);
         _generateHead(res.data.header || []);
-        // setCols(res.data.head||[])
       } else {
         message.error(res.msg);
       }

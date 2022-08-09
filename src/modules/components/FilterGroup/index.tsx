@@ -484,8 +484,15 @@ export default (props: FilterGroupType) => {
           </Select>
         );
       case 'BillingStatus':
+        if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
+          arra[index].fieldValue = [];
+        } else {
+          if (typeof arra[index].fieldValue == 'string') {
+            arra[index].fieldValue = JSON.parse(arra[index].fieldValue);
+          }
+        }
         return (
-          <Select allowClear mode="multiple" defaultValue={[]}>
+          <Select allowClear mode="multiple">
             {options[props.moudleName][fieldName]?.map((item, index) => (
               <Option key={index} value={item.value}>
                 {item.label}
@@ -818,13 +825,20 @@ export default (props: FilterGroupType) => {
                               icon={<i className="gbs gbs-delete"></i>}
                               type="text"
                               onClick={() => {
-                                if (index != 0) {
+                                console.log(111)
+                                // if (index != 0) {
+                                //   remove(name);
+                                // } else {
+                                //   if (fields.length == 1) {
+                                //     message.warning('Keep at least one record');
+                                //   }
+                                // }
+                                if (fields.length == 1) {
+                                  message.warning('Keep at least one record');
+                                }else{
                                   remove(name);
-                                } else {
-                                  if (fields.length == 1) {
-                                    message.warning('Keep at least one record');
-                                  }
                                 }
+
                               }}
                             ></Button>
                           </Form.Item>

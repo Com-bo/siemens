@@ -127,9 +127,42 @@ export default (props: any) => {
   } = useService(props);
   const orignalCols = [
     {
+      name: 'billingStatus',
+      title: 'Billing Status',
+      width: '200px',
+    },
+    {
       name: 'businessLine',
       title: 'Business Line',
       width: '200px',
+      sorter: true,
+    },
+    {
+      name: 'billingARE',
+      title: 'Billing ARE',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'companyCode',
+      title: 'Company Code',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'billingCostCenter',
+      title: 'Billing Cost Center',
+      width: '200px',
+      titleRender: 'input',
+      sorter: true,
+    },
+    {
+      name: 'customerDivision',
+      title: 'Customer Division',
+      width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -147,23 +180,9 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'companyCode',
-      title: 'Company Code',
+      name: 'totalAmout',
+      title: 'Total Amount(Unit Price Currency)',
       width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'customerDivision',
-      title: 'Customer Division',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'bu',
-      title: 'BU',
-      width: '100px',
       sorter: true,
     },
     {
@@ -253,38 +272,29 @@ export default (props: any) => {
       sorter: true,
     },
     {
-      name: 'totalAmout',
-      title: 'Total Amount(Unit Price Currency)',
+      name: 'billingUnitPrice',
+      title: 'Billing Unit Price',
       width: '200px',
-      sorter: true,
     },
 
-    //
     {
-      name: 'billingCurrency',
-      title: 'Billing Currency',
-      width: '200px',
+      name: 'bu',
+      title: 'BU',
+      width: '100px',
       sorter: true,
-      titleRender: 'input',
     },
+    //
+    // {
+    //   name: 'billingCurrency',
+    //   title: 'Billing Currency',
+    //   width: '200px',
+    //   sorter: true,
+    //   titleRender: 'input',
+    // },
     {
       name: 'altTaxClassific',
       title: 'Alt.tax Classific',
       width: '200px',
-      sorter: true,
-    },
-    {
-      name: 'billingARE',
-      title: 'Billing ARE',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'billingCostCenter',
-      title: 'Billing Cost Center',
-      width: '200px',
-      titleRender: 'input',
       sorter: true,
     },
     {
@@ -293,6 +303,11 @@ export default (props: any) => {
       width: '350px',
       titleRender: 'input',
       sorter: true,
+    },
+    {
+      name: 'soNumber',
+      title: 'So Number',
+      width: '100px',
     },
     {
       name: 'salesOrder',
@@ -307,11 +322,6 @@ export default (props: any) => {
       width: '200px',
       titleRender: 'input',
       sorter: true,
-    },
-    {
-      name: 'billingStatus',
-      title: 'Billing Status',
-      width: '200px',
     },
     {
       name: 'billingErrorMsg',
@@ -366,12 +376,6 @@ export default (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'bviMonth',
-      title: 'BVI Month',
-      width: '200px',
-      sorter: true,
-    },
-    {
       name: 'adjustTag',
       title: 'AdjustTag',
       width: '100px',
@@ -388,6 +392,12 @@ export default (props: any) => {
       title: 'SETag',
       width: '100px',
       render: (text) => (text == 0 ? 'No' : 'Yes'),
+    },
+    {
+      name: 'bviMonth',
+      title: 'BVI Month',
+      width: '200px',
+      sorter: true,
     },
     {
       name: 'billingMonth',
@@ -413,30 +423,30 @@ export default (props: any) => {
       sorter: true,
     },
     //
-    {
-      name: 'modifiedTag',
-      title: 'modifiedTag',
-      width: '100px',
-      render: (text) => (text == 0 ? 'No' : 'Yes'),
-    },
-    //
-    {
-      name: 'modifiedUser',
-      title: 'Modified User',
-      width: '200px',
-      titleRender: 'input',
-      sorter: true,
-    },
-    {
-      name: 'modifiedDate',
-      title: 'Modified Date',
-      width: '200px',
-      sorter: true,
-      render: (text) =>
-        text && moment(text).isValid()
-          ? moment(text).format('YYYY-MM-DD HH:mm:ss')
-          : text,
-    },
+    // {
+    //   name: 'modifiedTag',
+    //   title: 'modifiedTag',
+    //   width: '100px',
+    //   render: (text) => (text == 0 ? 'No' : 'Yes'),
+    // },
+    // //
+    // {
+    //   name: 'modifiedUser',
+    //   title: 'Modified User',
+    //   width: '200px',
+    //   titleRender: 'input',
+    //   sorter: true,
+    // },
+    // {
+    //   name: 'modifiedDate',
+    //   title: 'Modified Date',
+    //   width: '200px',
+    //   sorter: true,
+    //   render: (text) =>
+    //     text && moment(text).isValid()
+    //       ? moment(text).format('YYYY-MM-DD HH:mm:ss')
+    //       : text,
+    // },
 
     {
       name: 'Operate',

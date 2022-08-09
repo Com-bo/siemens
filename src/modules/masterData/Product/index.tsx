@@ -290,6 +290,7 @@ export const Index = (props: any) => {
               icon={<EditOutlined />}
               onClick={() => {
                 setShowProData(true);
+                setIsPOByPercentage(record.isPOByPercentage)
                 formData.setFieldsValue({
                   ...record,
                   startDate:
@@ -574,7 +575,7 @@ export const Index = (props: any) => {
       renderT: (inputRef, save, record, dataIndex) => {
         return (
           <Form.Item
-            rules={[{ required: true, message: '' }]}
+            // rules={[{ required: true, message: '' }]}
             style={{ margin: 0 }}
             name="soldToParty"
           >
@@ -628,7 +629,7 @@ export const Index = (props: any) => {
       renderT: (inputRef, save, record, dataIndex) => {
         return (
           <Form.Item
-            rules={[{ required: true, message: '' }]}
+            // rules={[{ required: true, message: '' }]}
             style={{ margin: 0 }}
             name="poPercentage"
           >
@@ -858,6 +859,7 @@ export const Index = (props: any) => {
     }
     if (formData.getFieldValue('isPOByPercentage')) {
       // 和为1
+      console.log(sum)
       if (sum !== 1) {
         message.warning(`The sum of percentage should be 1  `);
         return;
