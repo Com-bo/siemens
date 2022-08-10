@@ -50,6 +50,7 @@ import {
 } from '@/app/request/apiDivMappingOc';
 const pageName = 'DivisionMapping-OC';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+import { parseExcel } from '@/tools/excelDownload';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -271,10 +272,12 @@ export const Index = (props: any) => {
     fd.append('file', file);
     DivMappingOcImportData(fd).then((res) => {
       if (res.isSuccess) {
+        res.data && parseExcel(res.data, 'DivMappingOc import feedback');
         message.success(res.msg);
         getData();
-        setSelectedRowKeys([]);
+        // setSelectedRowKeys([]);
       } else {
+        res.data && parseExcel(res.data, 'DivMappingOc import feedback');
         message.error(res.msg);
       }
     });

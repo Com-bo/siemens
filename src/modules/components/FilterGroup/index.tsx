@@ -90,21 +90,21 @@ export default (props: FilterGroupType) => {
           label: 'Freeze',
           value: "Freeze",
         },
-        // {
-        //   label: 'Successfully',
-        //   value: "Successfully",
-        // },
+        {
+          label: 'Successfully',
+          value: "Successfully",
+        },
         {
           label: 'Manual To SAP',
-          value: "Manual To SAP",
+          value: "ManualToSAP",
         },
         {
           label: 'Auto To SAP',
-          value: "Auto To SAP",
+          value: "AutoToSAP",
         },
         {
           label: 'Waiting For SAP',
-          value: "Waiting For SAP",
+          value: "WaitingForSAP",
         },
         {
           label: 'PostPone',
@@ -164,21 +164,21 @@ export default (props: FilterGroupType) => {
           label: 'Freeze',
           value: "Freeze",
         },
-        // {
-        //   label: 'Successfully',
-        //   value: "Successfully",
-        // },
+        {
+          label: 'Successfully',
+          value: "Successfully",
+        },
         {
           label: 'Manual To SAP',
-          value: "Manual To SAP",
+          value: "ManualToSAP",
         },
         {
           label: 'Auto To SAP',
-          value: "Auto To SAP",
+          value: "AutoToSAP",
         },
         {
           label: 'Waiting For SAP',
-          value: "Waiting For SAP",
+          value: "WaitingForSAP",
         },
         {
           label: 'PostPone',
@@ -443,6 +443,7 @@ export default (props: FilterGroupType) => {
             style={{ width: '100%' }}
           />
         );
+      case 'BillingDate':
       case 'ModifiedDate':
       case 'StartDate':
       case 'EndDate':
@@ -456,6 +457,11 @@ export default (props: FilterGroupType) => {
       case 'TotalAmount':
       case 'ProductUnitPrice':
       case 'BVI':
+      case 'ID_H':
+      case 'AmountInCurrecy':
+      case 'AmountInLocalCurrencyCNY':
+      case 'ExchangeRate':
+      case 'BillingUnitPrice':
         return <InputNumber style={{ width: '100%' }} />;
       case 'DataStatus':
       case 'BVIStatus':

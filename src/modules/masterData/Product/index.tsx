@@ -58,7 +58,8 @@ import {
   importProductData,
   queryProductListData,
   queryProductLogData,
-  BatchEditProductDataSave
+  BatchEditProductDataSave,
+  ProductCopyDataSave
 } from '@/app/request/apiProduct';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import FormTable from '@/components/FormTable/formTable';
@@ -92,6 +93,8 @@ export const Index = (props: any) => {
   const [isSelectAll, setIsSelectAll] = useState(false);
   const [editListMark,setEditListMark]= useState(false)
   const [formDataEdit] = Form.useForm();
+
+  const [isViewMark, setIsViewMark] = useState(false);
   const orignalCols: any = [
     {
       name: 'businessLine',
@@ -245,7 +248,7 @@ export const Index = (props: any) => {
       title: 'Individual Invoice',
       width: '150px',
       name: 'individualInvoice',
-      titleRender: 'input',
+      // titleRender: 'input',
       render: (text) => (text === true ? 'Yes' : text === false ? 'No' : text),
     },
 
@@ -260,14 +263,14 @@ export const Index = (props: any) => {
       title: 'Quarterly Charge',
       width: '150px',
       name: 'quarterlyCharge',
-      titleRender: 'input',
+      // titleRender: 'input',
       render: (text) => (text === true ? 'Yes' : text === false ? 'No' : text),
     },
     {
       title: 'BillingMonthTag',
       width: '150px',
       name: 'billingMonthTag',
-      titleRender: 'input',
+      // titleRender: 'input',
     },
     {
       title: 'IsPOByPercentage',
@@ -288,7 +291,8 @@ export const Index = (props: any) => {
               type="text"
               key="1"
               icon={<EditOutlined />}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 setShowProData(true);
                 setIsPOByPercentage(record.isPOByPercentage)
                 formData.setFieldsValue({
@@ -944,6 +948,61 @@ export const Index = (props: any) => {
       }).catch((e) => {});
     }
 
+    const copyData = () => {
+      Modal.confirm({
+        title: 'Tips',
+        icon: <ExclamationCircleOutlined />,
+        content: 'Confirm copying selected data?',
+        okText: 'Confirm',
+        cancelText: 'Cancel',
+        onOk: () => {
+          copyDataMethod();
+        },
+        centered: true,
+      });
+    };
+    const copyDataMethod = () => {
+      ProductCopyDataSave({ recordId: selectedRowKeys[0] }).then((res) => {
+        if (res.isSuccess) {
+          getData();
+          setSelectedRowKeys([]);
+          message.success(res.msg);
+        } else {
+          message.error(res.msg);
+        }
+      });
+    };
+    const rowClick = (record) => {
+      setShowProData(true);
+      setIsViewMark(true)
+      setIsPOByPercentage(record.isPOByPercentage)
+      formData.setFieldsValue({
+        ...record,
+        startDate:
+          record.startDate && moment(record.startDate).isValid()
+            ? moment(record.startDate)
+            : null,
+        endDate:
+          record.endDate && moment(record.endDate).isValid()
+            ? moment(record.endDate)
+            : null,
+        signedDate:
+          record.signedDate && moment(record.signedDate).isValid()
+            ? moment(record.signedDate)
+            : null,
+      });
+      // 获取po
+      ProductPoDrop({
+        productId: record.id,
+        poNumber: '',
+      }).then((res) => {
+        if (res.isSuccess) {
+          setPoData(res.data || []);
+        } else {
+          message.error(res.msg);
+        }
+      });
+    };
   return (
     <ContentWrap>
       {/* 日志查询 */}
@@ -1009,6 +1068,7 @@ export const Index = (props: any) => {
         footer={null}
         onCancel={() => {
           setShowProData(false);
+          setIsViewMark(false)
           formData.resetFields();
         }}
       >
@@ -1396,6 +1456,9 @@ export const Index = (props: any) => {
                 <Input.TextArea />
               </Form.Item>
             </Col>
+            {isViewMark?(
+              ''
+            ):(
             <Col span={24} style={{ textAlign: 'center' }}>
               <Space size={40}>
                 <Button
@@ -1421,6 +1484,7 @@ export const Index = (props: any) => {
                 </Button>
               </Space>
             </Col>
+            )}
           </Row>
         </Form>
       </Modal>
@@ -1553,6 +1617,7 @@ export const Index = (props: any) => {
           setSelectedRowKeys(_selectedRowKeys);
           setSelectedRows(_selectedRows);
         }}
+        rowClick={(record) => rowClick(record)}
         renderFilterGroup={
           <FilterGroup
             moudleName="Product"
@@ -1588,6 +1653,14 @@ export const Index = (props: any) => {
           <>
           <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
           <Space>
+          <BtnThemeWrap>
+            <Button
+              disabled={selectedRowKeys.length !== 1}
+              onClick={copyData}
+            >
+              Copy
+            </Button>
+          </BtnThemeWrap>
           <BtnThemeWrap>
             <Button
               disabled={selectedRowKeys.length == 0 ? ( isSelectAll ? false : true ) : false }

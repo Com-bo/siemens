@@ -130,6 +130,8 @@ export default (props: any) => {
       name: 'billingStatus',
       title: 'Billing Status',
       width: '200px',
+      titleRender: 'input',
+      sorter: true,
     },
     {
       name: 'businessLine',
@@ -281,6 +283,7 @@ export default (props: any) => {
       name: 'bu',
       title: 'BU',
       width: '100px',
+      titleRender: 'input',
       sorter: true,
     },
     //
@@ -295,6 +298,7 @@ export default (props: any) => {
       name: 'altTaxClassific',
       title: 'Alt.tax Classific',
       width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -308,6 +312,7 @@ export default (props: any) => {
       name: 'soNumber',
       title: 'So Number',
       width: '100px',
+      titleRender: 'input',
     },
     {
       name: 'salesOrder',
@@ -327,12 +332,14 @@ export default (props: any) => {
       name: 'billingErrorMsg',
       title: 'Billing Error Message',
       width: '200px',
+      titleRender: 'input',
     },
     {
       name: 'itemNo',
       title: 'Item No.',
       width: '200px',
       sorter: true,
+      titleRender: 'input',
     },
     {
       title: 'Amount in Currecy',
@@ -414,6 +421,7 @@ export default (props: any) => {
       title: 'Period',
       width: '100px',
       sorter: true,
+      titleRender: 'input',
     },
     {
       name: 'chargeType',
@@ -1155,7 +1163,7 @@ export default (props: any) => {
                   }}
                 >
                   {/* View all unconfirm Data */}
-                  View all Uncomplete Data
+                  View all Incomplete Data
                 </Checkbox>
 
                 <Checkbox

@@ -91,14 +91,19 @@ export const Index = (props: any) => {
       name: 'subvalue',
     },
     {
-      title: 'Enable',
+      title: 'Sort',
       width: '180px',
-      name: 'enable',
+      name: 'sortIndex',
+    },
+    {
+      title: 'Remarks',
+      width: '180px',
+      name: 'remarks',
     },
     {
       name: 'Operate',
       title: 'Operate',
-      width: '200px',
+      width: '100px',
       fixed: 'right',
       render: (text, record, index) => (
         <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
@@ -161,22 +166,18 @@ export const Index = (props: any) => {
 
   ];
   const getData = () => {
-    PageQueryDictionary({
-        id: "",
-        groupName: "O2C_TI_GROUP_ProductName",
-        key: "",
-        subkey: "",
-        value: "",
-        subvalue: "",
+      const param={
+        groupName:formFilter.getFieldValue("groupName")?formFilter.getFieldValue("groupName"):"",
         isOnlyEnable: true
-    }).then((res) => {
-      if (res.isSuccess) {
-        setTableData(res.data);
-        setTotal(res.totalCount);
-      } else {
-        message.error(res.msg);
       }
-    });
+      PageQueryDictionary(param).then((res) => {
+        if (res.isSuccess) {
+          setTableData(res.data);
+          setTotal(res.totalCount);
+        } else {
+          message.error(res.msg);
+        }
+      });
   };
   useEffect(() => {
     getData();
@@ -241,6 +242,16 @@ export const Index = (props: any) => {
         <Form form={formData} labelCol={{ flex: '120px' }}>
           <Row gutter={20}>
             <Col span={12}>
+              <Form.Item label="key" name="key">
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Subkey" name="subkey">
+                <Input disabled={componentDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item label="Value" name="value">
                 <Input disabled={componentDisabled} />
               </Form.Item>
@@ -251,12 +262,12 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Remark" name="remark">
+              <Form.Item label="Remark" name="remarks">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Sort" name="sort">
+              <Form.Item label="Sort" name="sortIndex">
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
@@ -333,7 +344,7 @@ export const Index = (props: any) => {
         changePageSize={changePageSize}
         current={current}
         search={isSearch}
-        rowKey="id"
+        rowKey={(record, index)=>index}
         listName="Dictionary Config"
       />
     </ContentWrap>

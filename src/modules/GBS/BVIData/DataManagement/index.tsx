@@ -166,13 +166,13 @@ export default (props: any) => {
       name: 'bviMonth',
       title: 'BVI Month',
       width: '200px',
-      titleRender: 'input',
       sorter: true,
     },
     {
       name: 'bviStatus',
       title: 'BVI Status',
       width: '100px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -285,6 +285,7 @@ export default (props: any) => {
       name: 'billingCurrency',
       title: 'Billing Currency',
       width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -312,7 +313,6 @@ export default (props: any) => {
       title: 'Comment',
       width: '200px',
       titleRender: 'input',
-      sorter: true,
     },
     {
       name: 'billingARE',
@@ -355,6 +355,7 @@ export default (props: any) => {
       name: 'businessLine',
       title: 'Business Line',
       width: '150px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -368,6 +369,7 @@ export default (props: any) => {
       name: 'system',
       title: 'System',
       width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -409,6 +411,7 @@ export default (props: any) => {
       name: 'customerNumberAllocation',
       title: 'Customer Number Allocation',
       width: '240px',
+      titleRender: 'input',
       sorter: true,
     },
 
@@ -416,6 +419,7 @@ export default (props: any) => {
       name: 'z003',
       title: 'Z003',
       width: '100px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -443,6 +447,7 @@ export default (props: any) => {
       name: 'itemNo',
       title: 'Item No.',
       width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -455,6 +460,7 @@ export default (props: any) => {
       title: 'Currency in SAP',
       width: '200px',
       name: 'currencyInSAP',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -1807,7 +1813,8 @@ export default (props: any) => {
                     return (
                       <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
                     );
-                  } else if (
+                  } else 
+                  if (
                     _item.dataIndex == 'postingDate' ||
                     _item.dataIndex == 'entryDate' ||
                     _item.dataIndex == 'documentDate' ||
@@ -1823,7 +1830,7 @@ export default (props: any) => {
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
-            rowKey="id"
+            rowKey={(record, index)=>index}
             pagination={false}
             scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
           />

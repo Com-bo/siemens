@@ -51,6 +51,7 @@ import {
   queryBVIData,
   editDataSave,
   editDataSubmit,
+  RecheckDataFlatCharge
 } from '@/app/request/apiFlat';
 import './style.less';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
@@ -239,7 +240,6 @@ export default (props: any) => {
       title: 'Comment',
       width: '200px',
       titleRender: 'input',
-      sorter: true,
     },
     {
       name: 'chargeType',
@@ -284,7 +284,6 @@ export default (props: any) => {
       name: 'bviBusinessLine',
       title: 'BVI Business Line',
       width: '180px',
-      titleRender: 'input',
       sorter: true,
     },
     {
@@ -1335,6 +1334,82 @@ export default (props: any) => {
     setProCurrent(1);
   };
 
+  const toRecheck = () => {
+    // if(isSelectAll){
+      Modal.confirm({
+        title: 'Tips',
+        icon: <ExclamationCircleOutlined />,
+        content: 'Are you sure to recheck the selected data?',
+        okText: 'Confirm',
+        cancelText: 'Cancel',
+        onOk: () => {
+          recheckDataAction();
+        },
+        centered: true,
+      });
+    // }else{
+    //   const recheckMark = selectedRows.some((item) => {
+    //     return item.error == null;
+    //   });
+    //   if (recheckMark) {
+    //     message.error('Please select "Error" data to recheck!');
+    //   } else {
+    //     Modal.confirm({
+    //       title: 'Tips',
+    //       icon: <ExclamationCircleOutlined />,
+    //       content: 'Are you sure to recheck the selected data?',
+    //       okText: 'Confirm',
+    //       cancelText: 'Cancel',
+    //       onOk: () => {
+    //         recheckDataAction();
+    //       },
+    //       centered: true,
+    //     });
+    //   }
+    // }
+  };
+  const recheckDataAction = () => {
+    let params = {}
+    if(isSelectAll){
+      params = {
+        searchCondition: {
+          filterGroup: {
+            recordId: latestGroupIdRef.current,
+          },
+          listHeader: form.getFieldsValue(),
+          isOnlyQueryErrorData: errorCheckedRef.current,
+          userBusinessLineList: [business],
+        },
+        operationRecords: null,
+      };
+    }else{
+      // let recordList = selectedRows.filter((item) => !!item.error);
+      // if (!recordList || !recordList.length) {
+      //   message.error('No data to recheck is selected');
+      //   return;
+      // }
+      if (!selectedRowKeys.length) {
+        message.warning('No information selected!');
+        return;
+      }
+      params = {
+        searchCondition: null,
+        operationRecords: {
+          recordIdList: selectedRowKeys
+        }
+      };
+    }
+    RecheckDataFlatCharge(params).then((res) => {
+      if (res.isSuccess) {
+        _getData();
+        setSelectedRowKeys([]);
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+
   return (
     <ContentWrap>
       {/* 选择costcenter */}
@@ -2024,6 +2099,14 @@ export default (props: any) => {
             {/* <BtnThemeWrap><Button>Export Original</Button></BtnThemeWrap> */}
             <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
               <Space>
+                <BtnThemeWrap>
+                  <Button
+                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                    onClick={toRecheck}
+                  >
+                    Recheck
+                  </Button>
+                </BtnThemeWrap>
                 <BtnThemeWrap>
                   <Dropdown
                     overlay={() => (

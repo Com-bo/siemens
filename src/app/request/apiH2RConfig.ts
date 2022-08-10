@@ -1,7 +1,7 @@
 import { useGet, usePost } from '.';
 import Config from '../config';
-export const QueryLogicH2R = () => {
-  return useGet(`${Config.Api.Base}${Config.Api.QueryLogicH2R}`);
+export const QueryLogicH2R = (data) => {
+  return useGet(`${Config.Api.Base}${Config.Api.QueryLogicH2R}?ProductName=${data}`);
 };
 // export const QueryLogicH2R = (data: Object) => {
 //   return usePost(`${Config.Api.Base}${Config.Api.QueryLogicH2R}`, data, {

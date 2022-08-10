@@ -1022,7 +1022,7 @@ export default (props: any) => {
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
-            rowKey="id"
+            rowKey={(record, index)=>index}
             pagination={false}
             scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
           />

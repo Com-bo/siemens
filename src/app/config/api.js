@@ -63,6 +63,8 @@ export const Api = {
   QueryBVIData: '/api/FlatCharge/QueryBVIData', //导出bvi拆分
   EditDataSave: '/api/FlatCharge/EditDataSave', //保存flat数据
   EditDataSubmit: '/api/FlatCharge/EditDataSubmit', //提交flat数据
+  RecheckDataFlatCharge: '/api/FlatCharge/RecheckData', 
+  
   // BVI-validation report
   IntegrityDataQuery: '/api/BVIValidateReport/IntegrityDataQuery', //数据查询 - Integrity Report
   IntegrityDataExport: '/api/BVIValidateReport/IntegrityDataExport', //数据导出 - Integrity Report、
@@ -103,6 +105,7 @@ export const Api = {
   DeletePOData: '/api/ProductPo/DeleteData', //删除po数据
   EditProductDataSave: '/api/Product/EditDataSave', //保存product接口
   BatchEditProductDataSave: '/api/Product/BatchEditDataSave', 
+  ProductCopyDataSave: '/api/Product/CopyDataSave', 
 
   // masterdata
   CurrencyImportData: '/api/Currency/ImportData',

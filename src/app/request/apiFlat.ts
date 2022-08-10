@@ -58,3 +58,8 @@ export const editDataSubmit = (data: Object) => {
     autoLoading: true,
   });
 };
+export const RecheckDataFlatCharge = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.RecheckDataFlatCharge}`, data, {
+    autoLoading: true,
+  });
+};

@@ -48,6 +48,7 @@ import {
 } from '@/app/request/apiDivisionMappingICB';
 const pageName = 'DivisionMapping-ICB';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+import { parseExcel } from '@/tools/excelDownload';
 export const Index = (props: any) => {
   const [form] = Form.useForm();
   const [formFilter] = Form.useForm();
@@ -266,10 +267,12 @@ export const Index = (props: any) => {
     fd.append('file', file);
     DivisionMappingICBImportData(fd).then((res) => {
       if (res.isSuccess) {
+        res.data && parseExcel(res.data, 'DivisionMappingICB import feedback');
         message.success(res.msg);
         getData();
-        setSelectedRowKeys([]);
+        // setSelectedRowKeys([]);
       } else {
+        res.data && parseExcel(res.data, 'DivisionMappingICB import feedback');
         message.error(res.msg);
       }
     });

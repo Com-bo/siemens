@@ -210,7 +210,8 @@ export const Index = (props: any) => {
     });
   };
   const getData = () => {
-    QueryLogicH2R().then((res) => {
+    const param=formFilter.getFieldValue("productName")
+    QueryLogicH2R(param).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
         setTotal(res.totalCount);

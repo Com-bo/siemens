@@ -47,3 +47,9 @@ export const BatchEditProductDataSave = (data: Object) => {
     autoLoading: true,
   });
 };
+
+export const ProductCopyDataSave = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ProductCopyDataSave}`, data, {
+    autoLoading: true,
+  });
+};
