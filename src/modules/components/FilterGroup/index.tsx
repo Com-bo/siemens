@@ -563,11 +563,13 @@ export default (props: FilterGroupType) => {
           switch (item.fieldName) {
             case 'StartMonth':
             case 'EndMonth':
+            case 'CalendarMonth':
             case 'BVIMonth':
             case 'BillingMonth':
               item.fieldValue = moment(item.fieldValue).format('YYYYMM');
               break;
             case 'ModifiedDate':
+            case 'BillingDate':
             case 'EndDate':
             case 'StartDate':
               item.fieldValue = moment(item.fieldValue).format(

@@ -172,6 +172,7 @@ export const Api = {
   RoleBingUser: '/api/System/RoleBingUser', // 角色管理-角色绑定人员
   DelRole: '/api/System/DelRole', //删除角色
   DeleUser: '/api/System/DeleUser',
+  ExportUserInfo: '/api/System/ExportUserInfo',
   // H2R config
   QueryLogicH2R:"/api/System/QueryLogicH2R",
   EditLogicH2R:"/api/System/EditLogicH2R",

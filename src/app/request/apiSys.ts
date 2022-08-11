@@ -86,3 +86,9 @@ export const OtherMasterDataQueryCustemerDivisionSLCOptionsList = (data: object)
     autoLoading: true,
   });
 };
+export const ExportUserInfo = (data: object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ExportUserInfo}`, data, {
+    autoLoading: true,
+    responseType: 'blob',
+  });
+};

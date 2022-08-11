@@ -48,6 +48,7 @@ import {
   queryUserPageInfo,
   OtherMasterDataQueryAREOCOptionsList,
   OtherMasterDataQueryCustemerDivisionSLCOptionsList,
+  ExportUserInfo
 } from '@/app/request/apiSys';
 import Table from '@/components/Table';
 import {
@@ -462,6 +463,25 @@ export const Index = (props: any) => {
     setCustomerDivision([]);
     setRole([]);
     setBusinessLine([]);
+  };
+  const exportExcelAction = () => {
+    let params = {
+      keyWord: formFilter.getFieldValue('keyWord'),
+      pageIndex: current,
+      pageSize: pageSize,
+    };
+    ExportUserInfo(params).then((res: any) => {
+      if (res.response.status == 200) {
+        let elink = document.createElement('a');
+        // 设置下载文件名
+        elink.download = 'users List.xlsx';
+        elink.href = window.URL.createObjectURL(new Blob([res.response?.data]));
+        elink.click();
+        window.URL.revokeObjectURL(elink.href);
+      } else {
+        message.error(res.response.statusText);
+      }
+    });
   };
 
   return (
@@ -978,6 +998,12 @@ export const Index = (props: any) => {
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
                           onClick={getData}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title="Export">
+                        <Button
+                          icon={<i className="gbs gbs-export"></i>}
+                          onClick={exportExcelAction}
                         ></Button>
                       </Tooltip>
                       <Tooltip title="Clear">

@@ -270,7 +270,7 @@ export const Index = (props: any) => {
       title: 'BillingMonthTag',
       width: '150px',
       name: 'billingMonthTag',
-      // titleRender: 'input',
+      titleRender: 'input',
     },
     {
       title: 'IsPOByPercentage',
@@ -688,6 +688,10 @@ export const Index = (props: any) => {
       key: 'operation',
       align: 'center',
       render: (text, record, index) => (
+        <>
+        {isViewMark?(
+          ''
+        ):(
         <Space>
           {index == 0 ? (
             <Tooltip title="Add">
@@ -748,6 +752,8 @@ export const Index = (props: any) => {
             </Tooltip>
           </Popconfirm>
         </Space>
+        )}
+        </>
       ),
     },
   ];
