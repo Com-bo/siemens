@@ -322,6 +322,58 @@ TBD
 TBD
 
 
+### 针对GBS的项目补充说明
+
+
+
+* 发布配置
+
+```
+export default {
+  define: {
+    //'process.env.LOGIN_IDENTITY': 'PE', //正式环境的登录认证方式打包Production Environment的缩写
+    'process.env.LOGIN_IDENTITY': 'DE', //开发环境的登录认证方式打包Developmen Environment的缩写
+    ...
+  },
+  outputPath: 'wwwroot',//打包后生成的发布包名称
+};
+```
+process.env.LOGIN_IDENTITY：用于控制生成开发环境和正式环境的登录方式，
+
+当process.env.LOGIN_IDENTITY为PE，即正式登录方式
+    
+public/callback.html
+```
+ // ---用于PE的callback---
+    let token = location.search.replace("?t=", '')
+    token && sessionStorage.setItem("authorization", token)
+     (window.location.href = redirect || "/"); 
+```
+
+
+当process.env.LOGIN_IDENTITY为DE，即开发环境下的登录方式
+
+```
+ // ---用于DE的callback-----
+  var mgr = new Oidc.UserManager({ userStore: new Oidc.WebStorageStateStore({ store: window.sessionStorage }), loadUserInfo: true, filterProtocolClaims: true });
+    mgr.signinRedirectCallback().then(function (user) {
+      window.location.href = redirect || "/";
+    }).catch(function (err) {
+      window.location.href = redirect || "/";
+    });
+```
+
+* 打包命令
+    开发环境 
+    `npm  run test`
+
+    客户环境
+    `npm  run uat`
+
+* 参考库
+ 
+- [echarts-for-react](https://git.hust.cc/echarts-for-react/examples/simple/)
+
 
 
 

@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import TableMix from '@/components/Table';
-import { Button, Divider, Form, Input, InputNumber, Select, Space } from 'antd';
+import {
+  Button,
+  Divider,
+  Form,
+  FormInstance,
+  Input,
+  InputNumber,
+  Select,
+  Space,
+} from 'antd';
 import {
   TableBtnDiv,
   TableTitleDiv,
@@ -8,7 +17,39 @@ import {
   TaleTitleIconDiv,
 } from '@/assets/style';
 import { TableMixDiv } from './tablemix';
-export default (props: any) => {
+interface TableMixType {
+  headerSearch?: any;
+  search?: boolean;
+  renderFilterGroup?: React.ReactNode;
+  columns: any[];
+  listName: string; //表格名称
+  renderBtns?: React.ReactNode; //按钮组
+  rowClick?: (record: any) => void; //行内点击事件
+  scrollY?: string;
+  scrollX?: string;
+  form?: FormInstance; //行内form
+  changePageSize?: (pageSize: number) => void; //页size变化
+  onPageChange: (
+    pagination: any,
+    filters: any,
+    {
+      column,
+      columnKey,
+      field,
+      order,
+    }: { column: any; columnKey: any; field: any; order: any },
+    { currentDataSource, action }: { currentDataSource: any; action: any },
+  ) => void; //页码变化
+  onChange?: (selectedRowKeys, selectedRows) => void; //selection变化
+  selection?: boolean; //是否是可选择table，默认可选
+  data: any[]; //table的数据
+  selectedRowKeys?: any[];
+  total: number;
+  current: number;
+  rowKey: string;
+  type?: 'checkbox' | 'radio';
+}
+export default (props: TableMixType) => {
   // const [scrollY, setScrollY] = useState<any>(0);
   const [columns, setColumns] = useState([]);
   const getcolumnItem = (col: any) => {

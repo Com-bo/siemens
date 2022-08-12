@@ -7,7 +7,7 @@ import {
   queryFilterGroupList,
   queryFilterGroupListWithFields,
   saveFilterGroupData,
-  queryDictionaryInfo
+  queryDictionaryInfo,
 } from '@/app/request/common';
 import { FilterGroupDiv, TaleTitleIconDiv } from '@/assets/style';
 import {
@@ -35,6 +35,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import DebounceSelect from '@/components/Select/debounceSelect';
 import moment from 'moment';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
+import { ops } from './const';
 interface FilterGroupType {
   moudleName: string; //模块标识
   authPagename?: string; //模块权限用名称
@@ -53,206 +54,6 @@ export default (props: FilterGroupType) => {
   const [requireMark, setRequireMark] = useState(false);
   const [filterGroupInfoById, setFilterGroupInfoById] = useState({});
   const { Option } = Select;
-  const options = {
-    'Flat Charge': {
-      DataStatus: [
-        { value: 'Draft', label: 'Draft' },
-        { value: 'Submit', label: 'Submit' },
-      ],
-    },
-    'BVI Data': {
-      TemplateType: [
-        { value: 'BVI Manual Template', label: 'BVI Manual Template' },
-        { value: 'R2R MD Import Template', label: 'R2R MD Import Template' },
-        { value: 'H2R BVI Template', label: 'H2R BVI Template' },
-        { value: 'H2R T&E BVI Template', label: 'H2R T&E BVI Template' },
-        { value: 'H2R GMM Template', label: 'H2R GMM Template' },
-        { value: 'O2C BVI Template', label: 'O2C BVI Template' },
-        { value: 'O2C TI BVI Template', label: 'O2C TI BVI Template' },
-        { value: 'P2P BCS Template', label: 'P2P BCS Template' },
-      ],
-      ChargeType: [
-        { value: 'ICB', label: 'ICB' },
-        { value: 'ICC', label: 'ICC' },
-      ],
-      BVIStatus: [
-        { value: 'Unconfirm', label: 'Unconfirm' },
-        { value: 'Confirm', label: 'Confirm' },
-        { value: 'Obsolete', label: 'Obsolete' },
-        { value: 'Freeze', label: 'Freeze' },
-      ],
-      AdjustTag: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      BillingStatus:[
-        {
-          label: 'Freeze',
-          value: "Freeze",
-        },
-        {
-          label: 'Successfully',
-          value: "Successfully",
-        },
-        {
-          label: 'Manual To SAP',
-          value: "ManualToSAP",
-        },
-        {
-          label: 'Auto To SAP',
-          value: "AutoToSAP",
-        },
-        {
-          label: 'Waiting For SAP',
-          value: "WaitingForSAP",
-        },
-        {
-          label: 'PostPone',
-          value: "PostPone",
-        },
-        {
-          label: 'Unfreeze',
-          value: "Unfreeze",
-        },
-        // {
-        //   label: 'Obsolete',
-        //   value: "Obsolete",
-        // },
-        // {
-        //   label: 'Cancel',
-        //   value: "Cancel",
-        // },
-        {
-          label: 'Error',
-          value: "Error",
-        },
-      ]
-    },
-    'BVI Integrity Report': {
-      IsThereBVI: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      MandatoryBVI: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-    },
-    'Billing Data': {
-      AdjustTag: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      ChargeType: [
-        { value: 'ICB', label: 'ICB' },
-        { value: 'ICC', label: 'ICC' },
-      ],
-      ModifiedTag: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      SETag:[
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      QuarterlyCharge:[
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      BillingStatus:[
-        {
-          label: 'Freeze',
-          value: "Freeze",
-        },
-        {
-          label: 'Successfully',
-          value: "Successfully",
-        },
-        {
-          label: 'Manual To SAP',
-          value: "ManualToSAP",
-        },
-        {
-          label: 'Auto To SAP',
-          value: "AutoToSAP",
-        },
-        {
-          label: 'Waiting For SAP',
-          value: "WaitingForSAP",
-        },
-        {
-          label: 'PostPone',
-          value: "PostPone",
-        },
-        {
-          label: 'Unfreeze',
-          value: "Unfreeze",
-        },
-        // {
-        //   label: 'Obsolete',
-        //   value: "Obsolete",
-        // },
-        // {
-        //   label: 'Cancel',
-        //   value: "Cancel",
-        // },
-        {
-          label: 'Error',
-          value: "Error",
-        },
-      ]
-    },
-    'Billing Integrity Report': {
-      IsThereBilling: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      MandatoryBVI: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-    },
-    "Product": {
-      BillingMonthTag: [
-        { value: 'Last Month', label: 'Last Month' },
-        { value: 'Current Month', label: 'Current Month' },
-      ],
-      IndividualInvoice: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      QuarterlyCharge: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      IsPOByPercentage: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      Signed: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-    },
-    'Customer Report': {
-      BillingMonthTag: [
-        { value: 'Last Month', label: 'Last Month' },
-        { value: 'Current Month', label: 'Current Month' },
-      ],
-      AdjustTag: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      IsFlatCharge: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-      ImportTag: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
-      ],
-    },
-  };
 
   const changeFilterGroup = (val) => {
     setFilterGroup(val);
@@ -482,7 +283,7 @@ export default (props: FilterGroupType) => {
       case 'ModifiedTag':
         return (
           <Select allowClear>
-            {options[props.moudleName][fieldName]?.map((item, index) => (
+            {ops[props.moudleName][fieldName]?.map((item, index) => (
               <Option key={index} value={item.value}>
                 {item.label}
               </Option>
@@ -499,15 +300,15 @@ export default (props: FilterGroupType) => {
         }
         return (
           <Select allowClear mode="multiple">
-            {options[props.moudleName][fieldName]?.map((item, index) => (
+            {ops[props.moudleName][fieldName]?.map((item, index) => (
               <Option key={index} value={item.value}>
                 {item.label}
               </Option>
             ))}
           </Select>
         );
-      case "DataType":
-      case "System":
+      case 'DataType':
+      case 'System':
         if (!form.getFieldValue('groupFieldList')[index].fieldValue) {
           arra[index].fieldValue = [];
         } else {
@@ -531,10 +332,10 @@ export default (props: FilterGroupType) => {
             }}
             delegate={(e) => {
               return queryDictionaryInfo({
-                  groupName: "Constants",
-                  key: "SystemTag",
-                  subkey: "",
-                  isOnlyEnable: true
+                groupName: 'Constants',
+                key: 'SystemTag',
+                subkey: '',
+                isOnlyEnable: true,
               });
             }}
           />
@@ -545,7 +346,7 @@ export default (props: FilterGroupType) => {
   };
   // type=true,新建type=false编辑
   const saveFilterGroup = () => {
-    console.log(form.getFieldValue("conditionRelationship"))
+    console.log(form.getFieldValue('conditionRelationship'));
     const type = form.getFieldValue('isNew');
     form
       .validateFields()
@@ -572,9 +373,7 @@ export default (props: FilterGroupType) => {
             case 'BillingDate':
             case 'EndDate':
             case 'StartDate':
-              item.fieldValue = moment(item.fieldValue).format(
-                'YYYY-MM-DD',
-              );
+              item.fieldValue = moment(item.fieldValue).format('YYYY-MM-DD');
               break;
             default:
               if (typeof item.fieldValue == 'number') {
@@ -833,7 +632,7 @@ export default (props: FilterGroupType) => {
                               icon={<i className="gbs gbs-delete"></i>}
                               type="text"
                               onClick={() => {
-                                console.log(111)
+                                console.log(111);
                                 // if (index != 0) {
                                 //   remove(name);
                                 // } else {
@@ -843,10 +642,9 @@ export default (props: FilterGroupType) => {
                                 // }
                                 if (fields.length == 1) {
                                   message.warning('Keep at least one record');
-                                }else{
+                                } else {
                                   remove(name);
                                 }
-
                               }}
                             ></Button>
                           </Form.Item>
@@ -908,14 +706,17 @@ export default (props: FilterGroupType) => {
                 icon={<i className="gbs gbs-search"></i>}
                 onClick={() => props.onSearch(filterGroup)}
               ></Button>
-              {checkAuth(props?.authPagename, [`${props?.authPagename}-Edit`, `${props?.authPagename}-View`]) ? (
+              {checkAuth(props?.authPagename, [
+                `${props?.authPagename}-Edit`,
+                `${props?.authPagename}-View`,
+              ]) ? (
                 <Tooltip title="Setting">
                   <Button
                     icon={<i className="gbs gbs-setting"></i>}
                     onClick={() => {
                       form.resetFields();
                       form.setFieldsValue({
-                        conditionRelationship:"and",
+                        conditionRelationship: 'and',
                         groupFieldList: [
                           { fieldName: '', operator: '', fieldValue: '' },
                         ],
