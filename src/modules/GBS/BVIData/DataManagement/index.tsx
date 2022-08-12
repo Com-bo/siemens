@@ -166,6 +166,7 @@ export default (props: any) => {
       name: 'bviMonth',
       title: 'BVI Month',
       width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -507,7 +508,7 @@ export default (props: any) => {
                   ) {
                     formData.setFieldsValue({
                       ...record,
-                      bviMonth: record.bviMonth
+                      bviMonth: record.bviMonth && moment(record.bviMonth).isValid()
                         ? moment(record.bviMonth)
                         : null,
                       productName: record.product,

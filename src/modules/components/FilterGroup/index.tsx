@@ -909,7 +909,7 @@ export default (props: FilterGroupType) => {
                 onClick={() => props.onSearch(filterGroup)}
               ></Button>
               {checkAuth(props?.authPagename, [`${props?.authPagename}-Edit`, `${props?.authPagename}-View`]) ? (
-                <Tooltip title="Setting">
+                // <Tooltip title="Setting">
                   <Button
                     icon={<i className="gbs gbs-setting"></i>}
                     onClick={() => {
@@ -923,18 +923,18 @@ export default (props: FilterGroupType) => {
                       setSetting(true);
                     }}
                   ></Button>
-                </Tooltip>
+                /* </Tooltip> */
               ) : (
                 ''
               )}
               {/* 导出 */}
-              <Tooltip title="Export">
+              {/* <Tooltip title="Export"> */}
                 <Button
                   icon={<i className="gbs gbs-export"></i>}
                   onClick={props.exportAction}
                 ></Button>
-              </Tooltip>
-              <Tooltip title="Clear">
+              {/* </Tooltip> */}
+              {/* <Tooltip title="Clear"> */}
                 <Button
                   icon={<ClearOutlined />}
                   onClick={() => {
@@ -942,7 +942,7 @@ export default (props: FilterGroupType) => {
                     props.onClear();
                   }}
                 ></Button>
-              </Tooltip>
+              {/* </Tooltip> */}
               {props?.customComponet}
             </Space>
           </AuthWrapper>

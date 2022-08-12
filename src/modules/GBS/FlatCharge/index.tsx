@@ -321,10 +321,11 @@ export default (props: any) => {
                     ...record,
                     productName: record.product,
                     customerDivision: record.customerDivision,
-                    startMonth: record.startMonth
+                    startMonth: record.startMonth && moment(record.startMonth).isValid()
                       ? moment(record.startMonth)
                       : null,
-                    endMonth: record.endMonth ? moment(record.endMonth) : null,
+                    endMonth: record.endMonth && moment(record.endMonth).isValid() 
+                    ? moment(record.endMonth) : null,
                     modifiedDate: record.modifiedDate
                       ? moment(record.modifiedDate)
                       : null,

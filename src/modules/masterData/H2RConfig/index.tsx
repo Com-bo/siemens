@@ -210,7 +210,8 @@ export const Index = (props: any) => {
     });
   };
   const getData = () => {
-    const param=formFilter.getFieldValue("productName")
+    const productNameparam=formFilter.getFieldValue("productName")
+    const param=productNameparam?`?ProductName=${productNameparam}`:``
     QueryLogicH2R(param).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
@@ -410,6 +411,20 @@ export const Index = (props: any) => {
                           onClick={()=>{
                             setCurrent(1);
                             getData()
+                          }}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title="Clear">
+                        <Button
+                          icon={<ClearOutlined />}
+                          onClick={() => {
+                            form.resetFields();
+                            formFilter.resetFields();
+                            if (current == 1) {
+                              getData();
+                            } else {
+                              setCurrent(1);
+                            }
                           }}
                         ></Button>
                       </Tooltip>

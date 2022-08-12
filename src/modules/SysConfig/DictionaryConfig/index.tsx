@@ -334,6 +334,20 @@ export const Index = (props: any) => {
                           }}
                         ></Button>
                       </Tooltip>
+                      <Tooltip title="Clear">
+                        <Button
+                          icon={<ClearOutlined />}
+                          onClick={() => {
+                            form.resetFields();
+                            formFilter.resetFields();
+                            if (current == 1) {
+                              getData();
+                            } else {
+                              setCurrent(1);
+                            }
+                          }}
+                        ></Button>
+                      </Tooltip>
                     </Space>
                   </Form.Item>
                 </Col>

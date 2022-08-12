@@ -693,7 +693,7 @@ export const Index = (props: any) => {
           ''
         ):(
         <Space>
-          {index == 0 ? (
+          {/* {index == 0 ? (
             <Tooltip title="Add">
               <Button
                 type="text"
@@ -709,7 +709,7 @@ export const Index = (props: any) => {
             </Tooltip>
           ) : (
             ''
-          )}
+          )} */}
           <Popconfirm
             title="Confirm to delete?"
             onConfirm={(event) => {
@@ -718,25 +718,27 @@ export const Index = (props: any) => {
                 //  调用删除接口
                 deletePOData({ recordIdList: [record.id] }).then((res) => {
                   if (res.isSuccess) {
-                    if (poData.length == 1) {
-                      setPoData([{}]);
-                    } else {
-                      setPoData(list.filter((x, rIndex) => rIndex != index));
-                    }
+                    // if (poData.length == 1) {
+                    //   setPoData([{}]);
+                    // } else {
+                    //   setPoData(list.filter((x, rIndex) => rIndex != index));
+                    // }
+                    setPoData(list.filter((x, rIndex) => rIndex != index));
                   } else {
                     message.error(res.msg);
                   }
                 });
               } else {
-                if (poData.length == 1) {
-                  if (formData.getFieldValue('isPOByPercentage') === false) {
-                    setPoData([{ poPercentage: 1 }]);
-                  } else {
-                    setPoData([{}]);
-                  }
-                } else {
-                  setPoData(list.filter((x, rIndex) => rIndex != index));
-                }
+                // if (poData.length == 1) {
+                //   if (formData.getFieldValue('isPOByPercentage') === false) {
+                //     setPoData([{ poPercentage: 1 }]);
+                //   } else {
+                //     setPoData([{}]);
+                //   }
+                // } else {
+                //   setPoData(list.filter((x, rIndex) => rIndex != index));
+                // }
+                setPoData(list.filter((x, rIndex) => rIndex != index));
               }
             }}
             okText="Confirm"
@@ -905,16 +907,28 @@ export const Index = (props: any) => {
       .validateFields()
       .then((values) => {
         let params = {}
+        const editInfo={
+          endDate:formDataEdit.getFieldValue('endDate'),
+          productNameForReport:formDataEdit.getFieldValue('productNameForReport'),
+          signed:formDataEdit.getFieldValue('signed'),
+          gscId:formDataEdit.getFieldValue('gscId'),
+          gscDescription:formDataEdit.getFieldValue('gscDescription'),
+          materialNumber:formDataEdit.getFieldValue('materialNumber')
+        }
+        if(
+          !editInfo?.endDate &&
+          !editInfo?.productNameForReport &&
+          !editInfo?.signed &&
+          !editInfo?.gscId &&
+          !editInfo?.gscDescription &&
+          !editInfo?.materialNumber 
+          ){
+          message.info("Please enter the modified content")
+          return
+        }
         if(isSelectAll){
           params = {
-           editInfo:{
-             endDate:formDataEdit.getFieldValue('endDate'),
-             productNameForReport:formDataEdit.getFieldValue('productNameForReport'),
-             signed:formDataEdit.getFieldValue('signed'),
-             gscId:formDataEdit.getFieldValue('gscId'),
-             gscDescription:formDataEdit.getFieldValue('gscDescription'),
-             materialNumber:formDataEdit.getFieldValue('materialNumber')
-           },
+           editInfo,
            searchCondition: {
              filterGroup: {
                recordId: latestGroupIdRef.current,
@@ -925,14 +939,7 @@ export const Index = (props: any) => {
          };
         }else{
           params = {
-            editInfo:{
-              endDate:formDataEdit.getFieldValue('endDate'),
-              productNameForReport:formDataEdit.getFieldValue('productNameForReport'),
-              signed:formDataEdit.getFieldValue('signed'),
-              gscId:formDataEdit.getFieldValue('gscId'),
-              gscDescription:formDataEdit.getFieldValue('gscDescription'),
-              materialNumber:formDataEdit.getFieldValue('materialNumber')
-            },
+            editInfo,
             searchCondition: null,
             operationRecords:{
               recordIdList: selectedRowKeys
@@ -1442,7 +1449,7 @@ export const Index = (props: any) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={24} style={{ marginBottom: '20px' }}>
+            <Col span={23} style={{ marginBottom: '20px' }}>
               <FormTableDiv>
                 <FormTable
                   dataSource={poData.map((x, index) => {
@@ -1456,6 +1463,21 @@ export const Index = (props: any) => {
                   columns={poCols}
                 />
               </FormTableDiv>
+            </Col>
+            <Col span={1}>
+              <Tooltip title="Add">
+                <Button
+                  type="text"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    if (formData.getFieldValue('isPOByPercentage') === false) {
+                      setPoData([...poData, { poPercentage: 1 }]);
+                    } else {
+                      setPoData([...poData, {}]);
+                    }
+                  }}
+                ></Button>{' '}
+              </Tooltip>
             </Col>
             <Col span={24}>
               <Form.Item label="Comments" name="comments">
@@ -1528,7 +1550,7 @@ export const Index = (props: any) => {
                 labelCol={{ flex: '180px' }}
                 label="Product Name for Report"
                 name="productNameForReport"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
@@ -1537,7 +1559,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="End Date"
                 name="endDate"
-                rules={[{ required: true }, { validator: validEndDate }]}
+                // rules={[{ required: true }, { validator: validEndDate }]}
               >
                 <DatePicker
                   disabled={componentDisabled}
@@ -1550,7 +1572,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="Signed"
                 name="signed"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Select allowClear>
                   <Select.Option value={true as unknown as Key}>
@@ -1566,7 +1588,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="GSC_ID"
                 name="gscId"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>
@@ -1584,7 +1606,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="Material Number"
                 name="materialNumber"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>

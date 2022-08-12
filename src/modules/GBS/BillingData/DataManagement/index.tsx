@@ -405,12 +405,14 @@ export default (props: any) => {
       title: 'BVI Month',
       width: '200px',
       sorter: true,
+      titleRender: 'input',
     },
     {
       name: 'billingMonth',
       title: 'Billing Month',
       width: '200px',
       sorter: true,
+      titleRender: 'input',
       // render: (text) =>
       //   text && moment(text).isValid()
       //     ? moment(text).format('YYYY-MM-DD HH:mm:ss')
@@ -976,27 +978,27 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Sales Order" name="salesOrder">
+              <Form.Item label="Sales Order" name="salesOrder" rules={[{ required: !successMark }]}>
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Billing Doc" name="billingDoc">
+              <Form.Item label="Billing Doc" name="billingDoc" rules={[{ required: !successMark }]}>
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Item No" name="itemNo">
+              <Form.Item label="Item No" name="itemNo" rules={[{ required: !successMark }]}>
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Amount In Currecy" name="amountInCurrecy">
+              <Form.Item label="Amount In Currecy" name="amountInCurrecy" rules={[{ required: !successMark }]}>
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Currency In SAP" name="currencyInSAP">
+              <Form.Item label="Currency In SAP" name="currencyInSAP" rules={[{ required: !successMark }]}>
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
@@ -1004,12 +1006,13 @@ export default (props: any) => {
               <Form.Item
                 label="Amount in Local Currency(CNY)"
                 name="amountInLocalCurrencyCNY"
+                rules={[{ required: !successMark }]}
               >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Billing Date" name="billingDate">
+              <Form.Item label="Billing Date" name="billingDate" rules={[{ required: !successMark }]}>
                 <DatePicker
                   disabled={successMark}
                   picker="month"
@@ -1019,7 +1022,12 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="SAP Exchange Rate" name="sapExchangeRate">
+              <Form.Item label="SAP Exchange Rate" name="sapExchangeRate" rules={[{ required: !successMark }]}>
+                <Input disabled={successMark} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Batch File Exchange Rate" name="batchFileExchangeRate" rules={[{ required: !successMark }]}>
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>

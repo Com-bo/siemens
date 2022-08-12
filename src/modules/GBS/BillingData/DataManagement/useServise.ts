@@ -450,6 +450,7 @@ export default (props: any) => {
               ),
               billingDate: formDataEdit.getFieldValue('billingDate'),
               sapExchangeRate: formDataEdit.getFieldValue('sapExchangeRate'),
+              batchFileExchangeRate: formDataEdit.getFieldValue('batchFileExchangeRate'),
               id: formDataEdit.getFieldValue('id'),
             };
             EditDataSpecialSave(params).then((res) => {
@@ -578,7 +579,7 @@ export default (props: any) => {
         break;
       case 3:
         if (statusMark) {
-          message.error('Please repeat the selection');
+          message.error("ICC and negative number can't set this status");
           return;
         }
         break;

@@ -426,6 +426,12 @@ export default (props: any) => {
       titleRender: 'input',
     },
     {
+      name: 'reportMonth',
+      title: 'Report Month',
+      width: '200px',
+      sorter: true,
+    },
+    {
       name: 'businessLine',
       title: 'Business Line',
       width: '150px',
@@ -581,12 +587,6 @@ export default (props: any) => {
       title: 'Comment',
       width: '200px',
       titleRender: 'input',
-    },
-    {
-      name: 'reportMonth',
-      title: 'Report Month',
-      width: '200px',
-      sorter: true,
     },
     {
       name: 'importTag',
