@@ -51,7 +51,7 @@ import {
   queryBVIData,
   editDataSave,
   editDataSubmit,
-  RecheckDataFlatCharge
+  RecheckDataFlatCharge,
 } from '@/app/request/apiFlat';
 import './style.less';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
@@ -321,10 +321,14 @@ export default (props: any) => {
                     ...record,
                     productName: record.product,
                     customerDivision: record.customerDivision,
-                    startMonth: record.startMonth
-                      ? moment(record.startMonth)
-                      : null,
-                    endMonth: record.endMonth ? moment(record.endMonth) : null,
+                    startMonth:
+                      record.startMonth && moment(record.startMonth).isValid()
+                        ? moment(record.startMonth)
+                        : null,
+                    endMonth:
+                      record.endMonth && moment(record.endMonth).isValid()
+                        ? moment(record.endMonth)
+                        : null,
                     modifiedDate: record.modifiedDate
                       ? moment(record.modifiedDate)
                       : null,
@@ -960,8 +964,8 @@ export default (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        let params = {}
-        if(isSelectAll){
+        let params = {};
+        if (isSelectAll) {
           params = {
             searchCondition: {
               filterGroup: {
@@ -973,12 +977,12 @@ export default (props: any) => {
             },
             operationRecords: null,
           };
-        }else{
+        } else {
           params = {
             searchCondition: null,
             operationRecords: {
-              recordIdList: recordIdList
-            }
+              recordIdList: recordIdList,
+            },
           };
         }
         deleteData(params).then((res) => {
@@ -997,8 +1001,8 @@ export default (props: any) => {
   // 批量提交
   const onSubmit = (data, event) => {
     event.stopPropagation();
-    let params = {}
-    if(isSelectAll){
+    let params = {};
+    if (isSelectAll) {
       params = {
         searchCondition: {
           filterGroup: {
@@ -1010,12 +1014,12 @@ export default (props: any) => {
         },
         operationRecords: null,
       };
-    }else{
+    } else {
       params = {
         searchCondition: null,
         operationRecords: {
-          recordIdList: data
-        }
+          recordIdList: data,
+        },
       };
     }
     submitMulti(params).then((res) => {
@@ -1336,17 +1340,17 @@ export default (props: any) => {
 
   const toRecheck = () => {
     // if(isSelectAll){
-      Modal.confirm({
-        title: 'Tips',
-        icon: <ExclamationCircleOutlined />,
-        content: 'Are you sure to recheck the selected data?',
-        okText: 'Confirm',
-        cancelText: 'Cancel',
-        onOk: () => {
-          recheckDataAction();
-        },
-        centered: true,
-      });
+    Modal.confirm({
+      title: 'Tips',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Are you sure to recheck the selected data?',
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      onOk: () => {
+        recheckDataAction();
+      },
+      centered: true,
+    });
     // }else{
     //   const recheckMark = selectedRows.some((item) => {
     //     return item.error == null;
@@ -1369,8 +1373,8 @@ export default (props: any) => {
     // }
   };
   const recheckDataAction = () => {
-    let params = {}
-    if(isSelectAll){
+    let params = {};
+    if (isSelectAll) {
       params = {
         searchCondition: {
           filterGroup: {
@@ -1382,7 +1386,7 @@ export default (props: any) => {
         },
         operationRecords: null,
       };
-    }else{
+    } else {
       // let recordList = selectedRows.filter((item) => !!item.error);
       // if (!recordList || !recordList.length) {
       //   message.error('No data to recheck is selected');
@@ -1395,8 +1399,8 @@ export default (props: any) => {
       params = {
         searchCondition: null,
         operationRecords: {
-          recordIdList: selectedRowKeys
-        }
+          recordIdList: selectedRowKeys,
+        },
       };
     }
     RecheckDataFlatCharge(params).then((res) => {
@@ -1864,44 +1868,44 @@ export default (props: any) => {
             </Col>
             <Col span={8}>
               {/* {formData.getFieldValue('are') != '5547' ? ( */}
-                <Form.Item
-                  labelCol={{ flex: '50px' }}
-                  label="PO"
-                  name="po"
-                  rules={[{ required: formData.getFieldValue('are') != '5547' }]}
-                >
-                  <DebounceSelect
-                    initFlag
-                    disabled={componentDisabled}
-                    getoptions={(options) => {
-                      return options?.map((x, index) => {
-                        return (
-                          <Select.Option
-                            style={{ width: '100%' }}
-                            key={index}
-                            data={x}
-                            value={x.poNumber}
-                          >
-                            {x.poNumber}
-                          </Select.Option>
-                        );
+              <Form.Item
+                labelCol={{ flex: '50px' }}
+                label="PO"
+                name="po"
+                rules={[{ required: formData.getFieldValue('are') != '5547' }]}
+              >
+                <DebounceSelect
+                  initFlag
+                  disabled={componentDisabled}
+                  getoptions={(options) => {
+                    return options?.map((x, index) => {
+                      return (
+                        <Select.Option
+                          style={{ width: '100%' }}
+                          key={index}
+                          data={x}
+                          value={x.poNumber}
+                        >
+                          {x.poNumber}
+                        </Select.Option>
+                      );
+                    });
+                  }}
+                  delegate={(e) => {
+                    if (!formData.getFieldValue('productId')) {
+                      return Promise.resolve({
+                        code: 200,
+                        isSuccess: true,
+                        data: [],
                       });
-                    }}
-                    delegate={(e) => {
-                      if (!formData.getFieldValue('productId')) {
-                        return Promise.resolve({
-                          code: 200,
-                          isSuccess: true,
-                          data: [],
-                        });
-                      }
-                      return ProductPoDrop({
-                        productId: formData.getFieldValue('productId'),
-                        poNumber: e,
-                      });
-                    }}
-                  />
-                </Form.Item>
+                    }
+                    return ProductPoDrop({
+                      productId: formData.getFieldValue('productId'),
+                      poNumber: e,
+                    });
+                  }}
+                />
+              </Form.Item>
               {/* ) : (
                 <Form.Item labelCol={{ flex: '50px' }} label="PO" name="po">
                   <Input style={{ width: '100%' }} />
@@ -2072,24 +2076,23 @@ export default (props: any) => {
             exportAction={exportExcelAction}
             customComponet={
               <>
-              <Checkbox
-                checked={errorChecked}
-                onChange={(e) => {
-                  errorCheckedRef.current = e.target.checked;
-                  setErrorChecked(e.target.checked);
-                }}
-              >
-                View all Error Data
-              </Checkbox>
+                <Checkbox
+                  checked={errorChecked}
+                  onChange={(e) => {
+                    errorCheckedRef.current = e.target.checked;
+                    setErrorChecked(e.target.checked);
+                  }}
+                >
+                  View all Error Data
+                </Checkbox>
 
-              <Checkbox
-                onChange={(e) => {
-                  setIsSelectAll(e.target.checked)
-                }}
-              >
-                Select All
-              </Checkbox>
-
+                <Checkbox
+                  onChange={(e) => {
+                    setIsSelectAll(e.target.checked);
+                  }}
+                >
+                  Select All
+                </Checkbox>
               </>
             }
           />
@@ -2101,7 +2104,13 @@ export default (props: any) => {
               <Space>
                 <BtnThemeWrap>
                   <Button
-                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
                     onClick={toRecheck}
                   >
                     Recheck
@@ -2181,7 +2190,13 @@ export default (props: any) => {
                 </BtnThemeWrap>
                 <BtnThemeWrap>
                   <Button
-                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
                     onClick={(event) => onSubmit(selectedRowKeys, event)}
                   >
                     Submit
@@ -2189,7 +2204,13 @@ export default (props: any) => {
                 </BtnThemeWrap>
                 <Button
                   onClick={(event) => deleteInfos(selectedRowKeys, event)}
-                  disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                  disabled={
+                    selectedRowKeys.length == 0
+                      ? isSelectAll
+                        ? false
+                        : true
+                      : false
+                  }
                 >
                   Delete
                 </Button>

@@ -15,7 +15,7 @@ import {
   Upload,
   Checkbox,
   Modal,
-  Tooltip
+  Tooltip,
 } from 'antd';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -24,9 +24,9 @@ const { TabPane } = Tabs;
 
 import TableMix from '@/components/Table';
 import noData from '@/assets/images/noData.png';
-import ReactECharts from "echarts-for-react";
+import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
-import {lastMonth} from "@/tools/validator/lastMonth"
+import { lastMonth } from '@/tools/validator/lastMonth';
 
 import { isNull } from 'lodash';
 import {
@@ -39,19 +39,26 @@ import {
   TableTitleDiv,
   TaleTitleIconDiv,
   TableWrapDiv,
-  ContentWrap, FilterGroupDiv
+  ContentWrap,
+  FilterGroupDiv,
 } from '@/assets/style';
 import {
   DownOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
   UploadOutlined,
-  ClearOutlined
+  ClearOutlined,
 } from '@ant-design/icons';
 import TableList from '@/modules/components/TableMixInline';
 import FilterGroup from '@/modules/components/FilterGroup';
 import search from '@/assets/images/search.png';
-import { TabWrapDiv,FilterGroupDivReport,ReactEChartsDiv,ReactEChartsDivWrap ,SelectAnt} from './style';
+import {
+  TabWrapDiv,
+  FilterGroupDivReport,
+  ReactEChartsDiv,
+  ReactEChartsDivWrap,
+  SelectAnt,
+} from './style';
 import {
   deferenceDataExport,
   exportIntergrityReport,
@@ -66,14 +73,14 @@ import {
   CustomerReportImportListData,
   CustomerReportDeleteListData,
   CustomerReportQueryBVIData,
-  CustomerReportQueryReportMonth
+  CustomerReportQueryReportMonth,
 } from '@/app/request/apiCustomerReport';
 
 import {
   getServiceLineList,
   getProductData,
-  getAbnormalOriginDataByBVI
-} from "@/app/request/common"
+  getAbnormalOriginDataByBVI,
+} from '@/app/request/common';
 
 const pageName = 'CustomerReport';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
@@ -127,23 +134,27 @@ export default (props: any) => {
   const [costcenterTotal, setCostcenterTotal] = useState(0);
   const [first, setFirst] = useState(true);
 
-  // 
+  //
   const [isCheckBvi, setIsCheckBvi] = useState(false);
   const [isCheckOriginal, setIsCheckOriginal] = useState(false);
   const [columns, setCols] = useState([]);
   const [business, setBusiness] = useState([businesslineOptions[0]]);
   const [businessDiff, setBusinessDiff] = useState([businesslineOptions[0]]);
   const [formSearch] = Form.useForm();
-  const [FYDataOption, setFYDataOption] = useState(["FY2021","FY2022","FY2023"]);
+  const [FYDataOption, setFYDataOption] = useState([
+    'FY2021',
+    'FY2022',
+    'FY2023',
+  ]);
   const [serverLineDataOption, setServerLineDataOption] = useState([]);
   const [productNameDataOption, setProductNameDataOption] = useState([]);
   const [ReportMonthApiData, setReportMonthApiData] = useState([]);
   const [ReportMonth, setReportMonth] = useState([lastMonth()]);
-  const [productMark,setProductMark] = useState(false)
-  const [EchartsOption1,setEchartsOption1]=useState({
+  const [productMark, setProductMark] = useState(false);
+  const [EchartsOption1, setEchartsOption1] = useState({
     grid: { top: 8, right: 8, bottom: 24, left: 36 },
     legend: {
-      data:['销量']
+      data: ['销量'],
     },
     xAxis: {
       type: 'category',
@@ -154,19 +165,19 @@ export default (props: any) => {
     },
     series: [
       {
-        name:'BVI Volume',
+        name: 'BVI Volume',
         data: [],
         type: 'line',
-      }
+      },
     ],
     tooltip: {
       trigger: 'axis',
     },
-  })
-  const [EchartsOption2,setEchartsOption2]=useState({
+  });
+  const [EchartsOption2, setEchartsOption2] = useState({
     grid: { top: 8, right: 8, bottom: 24, left: 36 },
     legend: {
-      data:['销量']
+      data: ['销量'],
     },
     xAxis: {
       type: 'category',
@@ -177,13 +188,13 @@ export default (props: any) => {
     },
     series: [
       {
-        name:'usage',
+        name: 'usage',
         data: [],
         type: 'line',
         // smooth: true,
       },
       {
-        name:'charge',
+        name: 'charge',
         data: [],
         type: 'line',
         // smooth: true,
@@ -192,37 +203,36 @@ export default (props: any) => {
     tooltip: {
       trigger: 'axis',
     },
-  })
-  // 
+  });
+  //
   useEffect(() => {
-  
     formSearch.setFieldsValue({
       businessLine:
         businesslineOptions && businesslineOptions.length
           ? businesslineOptions[0]
           : null,
-      fy:FYDataOption[0],
+      fy: FYDataOption[0],
       // serverLine:serverLineDataOption[0],
       // productName:productNameDataOption[0]
     });
-    QueryReportMonth()
+    QueryReportMonth();
     getData();
-    getServiceLineFun(business)
-    getProductDataFun(business,"")
-    getChartData()
+    getServiceLineFun(business);
+    getProductDataFun(business, '');
+    getChartData();
   }, [current, pageSize, orderField, orderType]);
-//   useEffect(() => {
-//     getData();
-// }, [ReportMonth]);
-  const QueryReportMonth=()=>{
+  //   useEffect(() => {
+  //     getData();
+  // }, [ReportMonth]);
+  const QueryReportMonth = () => {
     CustomerReportQueryReportMonth({}).then((res) => {
       if (res.isSuccess) {
-        setReportMonthApiData(res.data)
+        setReportMonthApiData(res.data);
       } else {
         message.error(res.msg);
       }
     });
-  }
+  };
   const getData = (recordId?: any) => {
     if (!business) {
       message.warning('Please select [BVI Bussiness Line]!'); //暂无权限提示
@@ -235,8 +245,7 @@ export default (props: any) => {
         },
         listHeader: form.getFieldsValue(),
         userBusinessLineList: businessDiff,
-        reportMonthList:
-          ReportMonth,
+        reportMonthList: ReportMonth,
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -255,66 +264,66 @@ export default (props: any) => {
     });
   };
   // new
-  const getServiceLine=(item)=>{
-    return new Promise((resolve,reject)=>{
+  const getServiceLine = (item) => {
+    return new Promise((resolve, reject) => {
       getServiceLineList({
-      businessLine: item,
-      keywords: "",
-    }).then((res) => {
-      if (res.isSuccess) {
-        resolve(res.data)
-      } else {
-        message.error(res.msg);
+        businessLine: item,
+        keywords: '',
+      }).then((res) => {
+        if (res.isSuccess) {
+          resolve(res.data);
+        } else {
+          message.error(res.msg);
+        }
+      });
+    });
+  };
+
+  async function getServiceLineFun(businessParmes) {
+    let serverLineNew = [];
+    businessParmes.map(async (item, index) => {
+      try {
+        let dataitem = await getServiceLine(item);
+        serverLineNew = serverLineNew.concat(dataitem);
+        setServerLineDataOption(serverLineNew);
+      } catch {
+        return;
       }
     });
-    })
-  }
-
-  async function getServiceLineFun(businessParmes){
-    let serverLineNew=[]
-    businessParmes.map(async (item,index)=>{
-      try{
-        let dataitem = await getServiceLine(item)
-        serverLineNew=serverLineNew.concat(dataitem)
-        setServerLineDataOption(serverLineNew)
-      }catch{
-        return
-      }
-    })
   }
 
   // //
-  const getProduct=(item,serviceLineParmes)=>{
-    return new Promise((resolve,reject)=>{
+  const getProduct = (item, serviceLineParmes) => {
+    return new Promise((resolve, reject) => {
       getProductData({
         businessLine: item,
         serviceLine: serviceLineParmes,
       }).then((res) => {
         if (res.isSuccess) {
-          let newDataitem=[]
-          res.data.map((item,index)=>{
-            newDataitem.push(item.productName)
-          })
-          resolve(newDataitem)
+          let newDataitem = [];
+          res.data.map((item, index) => {
+            newDataitem.push(item.productName);
+          });
+          resolve(newDataitem);
         } else {
           message.error(res.msg);
         }
       });
-    })
-  }
+    });
+  };
 
-  async function getProductDataFun(businessParmes,serviceLineParmes) {
-    let productDataNew=[]
-    businessParmes.map(async (item,index)=>{
-      try{
-        let dataitem = await getProduct(item,serviceLineParmes)
-        productDataNew=productDataNew.concat(dataitem)
-        let dedproduct = [...new Set(productDataNew)]
-        setProductNameDataOption(dedproduct)
-      }catch{
-        return
+  async function getProductDataFun(businessParmes, serviceLineParmes) {
+    let productDataNew = [];
+    businessParmes.map(async (item, index) => {
+      try {
+        let dataitem = await getProduct(item, serviceLineParmes);
+        productDataNew = productDataNew.concat(dataitem);
+        let dedproduct = [...new Set(productDataNew)];
+        setProductNameDataOption(dedproduct);
+      } catch {
+        return;
       }
-    })
+    });
   }
   const onPageChange = (
     pagination,
@@ -337,9 +346,9 @@ export default (props: any) => {
     setPageSize(val);
   };
   const exportExcelAction = () => {
-    console.log(ReportMonth)
+    console.log(ReportMonth);
     if (!ReportMonth) {
-      message.warning('Please select [Report Month]!'); 
+      message.warning('Please select [Report Month]!');
       return;
     }
     if (!business) {
@@ -353,9 +362,7 @@ export default (props: any) => {
         },
         listHeader: form.getFieldsValue(),
         userBusinessLineList: businessDiff,
-        reportMonthList: 
-          ReportMonth
-        ,
+        reportMonthList: ReportMonth,
       },
       orderCondition: {
         [orderField]: orderType == 'ascend' ? 0 : 1,
@@ -385,13 +392,13 @@ export default (props: any) => {
       }
     });
   };
-    // 删除接口
+  // 删除接口
   const deleteInfos = (recordIdList: Array<any>, event) => {
     event.stopPropagation();
     CustomerReportDeleteListData({
       recordIdList,
     }).then((res) => {
-      console.log(res)
+      console.log(res);
       if (res.isSuccess) {
         message.success(res.msg);
         setSelectedRowKeys([]);
@@ -402,8 +409,8 @@ export default (props: any) => {
       }
     });
   };
-  // 
-   const orignalCols = [
+  //
+  const orignalCols = [
     {
       name: 'fiscalYear',
       title: 'Fiscal Year',
@@ -424,6 +431,12 @@ export default (props: any) => {
       width: '150px',
       sorter: true,
       titleRender: 'input',
+    },
+    {
+      name: 'reportMonth',
+      title: 'Report Month',
+      width: '200px',
+      sorter: true,
     },
     {
       name: 'businessLine',
@@ -540,7 +553,7 @@ export default (props: any) => {
       width: '200px',
       sorter: true,
     },
-    
+
     {
       name: 'actualUsageCurrencyGoss',
       title: 'Actual Usage(In Unit Price Currency) Goss',
@@ -583,16 +596,10 @@ export default (props: any) => {
       titleRender: 'input',
     },
     {
-      name: 'reportMonth',
-      title: 'Report Month',
-      width: '200px',
-      sorter: true,
-    },
-    {
       name: 'importTag',
       title: 'Import Tag',
       width: '200px',
-    }
+    },
   ];
   const bviOrignalCols = [
     {
@@ -628,7 +635,7 @@ export default (props: any) => {
     {
       name: 'bvi',
       title: 'BVI',
-      width: '100px'
+      width: '100px',
     },
     {
       name: 'productUnitPrice',
@@ -698,7 +705,6 @@ export default (props: any) => {
       name: 'bviBusinessLine',
       title: 'BVI Business Line',
       width: '150px',
-
     },
     {
       name: 'businessLine',
@@ -794,23 +800,23 @@ export default (props: any) => {
       width: '180px',
       name: 'billingDate',
       render: (text) =>
-      text && moment(text).isValid()
-        ? moment(text).format('YYYY-MM-DD')
-        : text,
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD')
+          : text,
     },
     {
       title: 'SAP Exchange Rate',
       width: '150px',
       name: 'exchangeRate',
-    }
+    },
   ];
   // const onReportMonthChange=(datestring)=>{
   //   setReportMonth(datestring)
   // }
-  const toCheckBVI=()=>{
+  const toCheckBVI = () => {
     let params = {
       searchCondition: {
-        recordIdList: selectedRowKeys
+        recordIdList: selectedRowKeys,
       },
       pageIndex: current,
       pageSize: pageSize,
@@ -823,9 +829,9 @@ export default (props: any) => {
         message.error(res.msg);
       }
     });
-  }
-  
-  // Chart Report 
+  };
+
+  // Chart Report
 
   const getChartData = (recordId?: any) => {
     formSearch
@@ -833,25 +839,25 @@ export default (props: any) => {
       .then((valid) => {
         let params = {
           searchCondition: {
-            userBusinessLineList:business,
+            userBusinessLineList: business,
             pageTop: {
-              fiscalYear: formSearch.getFieldValue("fy"),
-              serviceLine: formSearch.getFieldValue("serverLine"),
-              productName: formSearch.getFieldValue("productName")
-            }
-          }
+              fiscalYear: formSearch.getFieldValue('fy'),
+              serviceLine: formSearch.getFieldValue('serverLine'),
+              productName: formSearch.getFieldValue('productName'),
+            },
+          },
         };
         CustomerReportQueryChartData(params).then((res) => {
           if (res.isSuccess) {
-            const ChartOption1={...EchartsOption1}
-            const ChartOption2={...EchartsOption2}
-            ChartOption1.xAxis.data=res.data.option
-            ChartOption1.series[0].data=res.data.bvi
-            ChartOption2.xAxis.data=res.data.option
-            ChartOption2.series[0].data=res.data.usage
-            ChartOption2.series[1].data=res.data.charge
-            setEchartsOption1({...ChartOption1})
-            setEchartsOption2({...ChartOption2})
+            const ChartOption1 = { ...EchartsOption1 };
+            const ChartOption2 = { ...EchartsOption2 };
+            ChartOption1.xAxis.data = res.data.option;
+            ChartOption1.series[0].data = res.data.bvi;
+            ChartOption2.xAxis.data = res.data.option;
+            ChartOption2.series[0].data = res.data.usage;
+            ChartOption2.series[1].data = res.data.charge;
+            setEchartsOption1({ ...ChartOption1 });
+            setEchartsOption2({ ...ChartOption2 });
           } else {
             message.error(res.msg);
           }
@@ -859,7 +865,6 @@ export default (props: any) => {
       })
       .catch((e) => {});
   };
-
 
   const checkOriginalOptions = {
     validationMsg: '100px',
@@ -891,7 +896,7 @@ export default (props: any) => {
   };
   const getCheckOriginalData = (event) => {
     event.stopPropagation();
-    console.log(selectProductRow)
+    console.log(selectProductRow);
     getAbnormalOriginDataByBVI([selectProductRow[0]]).then((res) => {
       if (res.isSuccess) {
         setIsCheckOriginal(true);
@@ -905,53 +910,52 @@ export default (props: any) => {
   };
   return (
     <TabWrapDiv>
-        {/* 查看bvi */}
-        <Modal
-          maskClosable={false}
-          title={
-            <TableTopDiv style={{ margin: 0 }}>
-              <TableTitleDiv style={{ float: 'left' }}>
-                <TaleTitleIconDiv>
-                  <span></span>
-                </TaleTitleIconDiv>
-                <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-                  Check BVI List
-                </span>
-              </TableTitleDiv>
-            </TableTopDiv>
-          }
-          width="1300px"
-          visible={isCheckBvi}
-          footer={null}
-          onCancel={() => {
-            setIsCheckBvi(false)
-            setSelectProKeys([]);
-            setSelectProductRow([]);
-          }
-          }
-        >
+      {/* 查看bvi */}
+      <Modal
+        maskClosable={false}
+        title={
+          <TableTopDiv style={{ margin: 0 }}>
+            <TableTitleDiv style={{ float: 'left' }}>
+              <TaleTitleIconDiv>
+                <span></span>
+              </TaleTitleIconDiv>
+              <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
+                Check BVI List
+              </span>
+            </TableTitleDiv>
+          </TableTopDiv>
+        }
+        width="1300px"
+        visible={isCheckBvi}
+        footer={null}
+        onCancel={() => {
+          setIsCheckBvi(false);
+          setSelectProKeys([]);
+          setSelectProductRow([]);
+        }}
+      >
         <TableWrapDiv>
-          <Space style={{ marginLeft: '23px',marginBottom:"20px" }}>
-          <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
-            <BtnThemeWrap>
-                <Button 
+          <Space style={{ marginLeft: '23px', marginBottom: '20px' }}>
+            <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
+              <BtnThemeWrap>
+                <Button
                   disabled={!selectProKeys.length}
-                  onClick={(evt)=>{
-                    getCheckOriginalData(evt)
+                  onClick={(evt) => {
+                    getCheckOriginalData(evt);
                   }}
                 >
-                Check Details
+                  Check Details
                 </Button>
-            </BtnThemeWrap>
+              </BtnThemeWrap>
             </AuthWrapper>
           </Space>
           <TableMix
             columns={bviOrignalCols?.map((_item) => {
               return {
                 ..._item,
-                dataIndex:_item.name,
+                dataIndex: _item.name,
                 // key
-                align: 'center'
+                align: 'center',
               };
             })}
             type="radio"
@@ -1022,7 +1026,7 @@ export default (props: any) => {
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
-            rowKey={(record, index)=>index}
+            rowKey={(record, index) => index}
             pagination={false}
             scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
           />
@@ -1030,18 +1034,15 @@ export default (props: any) => {
       </Modal>
       <Tabs defaultActiveKey="1" type="card">
         <TabPane tab="Chart Report" key="1">
-            <AuthWrapper functionName={pageName} authCode={[
-              `${pageName}-View`,
-              `${pageName}-Edit`,
-            ]}>
-              <FilterGroupDivReport>
+          <AuthWrapper
+            functionName={pageName}
+            authCode={[`${pageName}-View`, `${pageName}-Edit`]}
+          >
+            <FilterGroupDivReport>
               <Form form={formSearch} labelCol={{ flex: '120px' }}>
                 <Row className="importData">
                   <Col span={10}>
-                    <Form.Item
-                      label="FY"
-                      name="fy"
-                    >
+                    <Form.Item label="FY" name="fy">
                       <Select>
                         {FYDataOption.map((item, index) => (
                           <Select.Option key={index} value={item}>
@@ -1052,34 +1053,31 @@ export default (props: any) => {
                     </Form.Item>
                   </Col>
                   <Col span={10}>
-                    <Form.Item
-                      label="Business Line"
-                      name="businessLine"
-                    >
+                    <Form.Item label="Business Line" name="businessLine">
                       <Select
-                          placeholder="Please select"
-                          mode="multiple"
-                          value={business}
-                          onChange={(val) => {
-                            setBusiness(val);
-                            if(businesslineOptions.length==val.length){
-                              setProductMark(true)
-                            }else{
-                              setProductMark(false)
-                            }
-                            getServiceLineFun(val)
-                            formSearch.setFieldsValue({
-                              productName:"",
-                              serverLine:""
-                            })
-                          }}
-                        >
-                          {businesslineOptions.map((item, index) => (
-                            <Select.Option key={index} value={item}>
-                              {item}
-                            </Select.Option>
-                          ))}
-                        </Select>
+                        placeholder="Please select"
+                        mode="multiple"
+                        value={business}
+                        onChange={(val) => {
+                          setBusiness(val);
+                          if (businesslineOptions.length == val.length) {
+                            setProductMark(true);
+                          } else {
+                            setProductMark(false);
+                          }
+                          getServiceLineFun(val);
+                          formSearch.setFieldsValue({
+                            productName: '',
+                            serverLine: '',
+                          });
+                        }}
+                      >
+                        {businesslineOptions.map((item, index) => (
+                          <Select.Option key={index} value={item}>
+                            {item}
+                          </Select.Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </Col>
                   <Col span={4}>
@@ -1090,9 +1088,9 @@ export default (props: any) => {
                             icon={<ClearOutlined />}
                             onClick={() => {
                               formSearch.setFieldsValue({
-                                productName:"",
-                                serverLine:""
-                              })
+                                productName: '',
+                                serverLine: '',
+                              });
                             }}
                           ></Button>
                         </Tooltip>
@@ -1105,16 +1103,13 @@ export default (props: any) => {
                     </Form.Item>
                   </Col>
                   <Col span={10}>
-                    <Form.Item
-                      label="Service Line"
-                      name="serverLine"
-                    >
+                    <Form.Item label="Service Line" name="serverLine">
                       <Select
                         onChange={(val) => {
-                          getProductDataFun(business,val)
+                          getProductDataFun(business, val);
                           formSearch.setFieldsValue({
-                            productName:"",
-                          })
+                            productName: '',
+                          });
                         }}
                       >
                         {serverLineDataOption.map((item, index) => (
@@ -1126,10 +1121,7 @@ export default (props: any) => {
                     </Form.Item>
                   </Col>
                   <Col span={10}>
-                    <Form.Item
-                      label="Product Name"
-                      name="productName"
-                    >
+                    <Form.Item label="Product Name" name="productName">
                       <Select disabled={productMark}>
                         {productNameDataOption.map((item, index) => (
                           <Select.Option key={index} value={item}>
@@ -1139,219 +1131,214 @@ export default (props: any) => {
                       </Select>
                     </Form.Item>
                   </Col>
-                  
                 </Row>
               </Form>
-              </FilterGroupDivReport>
-            </AuthWrapper>
-            <ReactEChartsDiv>
-              <div className='ReactChart'>
-                <ReactEChartsDivWrap>
-                  <label>BVI Volume</label>
-                  <ReactECharts
-                    echarts={echarts}
-                    option={EchartsOption1}
-                    notMerge={true}
-                    lazyUpdate={true}
-                    style={{ height: 400 }}
-                    opts={{ locale: 'FR' }}
-                    key={Date.now()}
-                  />
-                </ReactEChartsDivWrap>
-                <ReactEChartsDivWrap>
-                  <label>Usage&Charge</label>
-                  <ReactECharts
-                    echarts={echarts}
-                    option={EchartsOption2}
-                    notMerge={true}
-                    lazyUpdate={true}
-                    style={{ height: 400 }}
-                    opts={{ locale: 'FR' }}
-                    key={Date.now()+1}
-                  />
-                </ReactEChartsDivWrap>
-              </div>
-            </ReactEChartsDiv>
-          
+            </FilterGroupDivReport>
+          </AuthWrapper>
+          <ReactEChartsDiv>
+            <div className="ReactChart">
+              <ReactEChartsDivWrap>
+                <label>BVI Volume</label>
+                <ReactECharts
+                  echarts={echarts}
+                  option={EchartsOption1}
+                  notMerge={true}
+                  lazyUpdate={true}
+                  style={{ height: 400 }}
+                  opts={{ locale: 'FR' }}
+                  key={Date.now()}
+                />
+              </ReactEChartsDivWrap>
+              <ReactEChartsDivWrap>
+                <label>Usage&Charge</label>
+                <ReactECharts
+                  echarts={echarts}
+                  option={EchartsOption2}
+                  notMerge={true}
+                  lazyUpdate={true}
+                  style={{ height: 400 }}
+                  opts={{ locale: 'FR' }}
+                  key={Date.now() + 1}
+                />
+              </ReactEChartsDivWrap>
+            </div>
+          </ReactEChartsDiv>
         </TabPane>
         <TabPane tab="Report List" key="2">
-        <TableList
-        data={tableData}
-        headerSearch={getData}
-        form={form}
-        columns={orignalCols}
-        total={total}
-        // rowClick={(record) => rowClick(record)}
-        scrollY={'calc(100vh - 510px)'}
-        onPageChange={onPageChange}
-        selectedRowKeys={selectedRowKeys}
-        onChange={(_selectedRowKeys, _selectedRows) => {
-          setSelectedRowKeys(_selectedRowKeys);
-          setSelectedRows(_selectedRows);
-        }}
-        changePageSize={changePageSize}
-        current={current}
-        search={isSearch}
-        rowKey="id"
-        listName="Customer Report"
-        renderFilterGroup={
-          <FilterGroup
-            businessLineRender={
-              <>
-                <label>Business Line:</label>
-                <Select
-                  placeholder="Please select"
-                  mode="multiple"
-                  value={businessDiff}
-                  onChange={(val) => {
-                    setBusinessDiff(val);
-                  }}
-                >
-                  {businesslineOptions?.map((item, index) => (
-                    <Select.Option key={index} value={item}>
-                      {item}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </>
-            }
-            moudleName="Customer Report"
-            authPagename={pageName}
-            onSearch={(val) => {
-              latestGroupIdRef.current = val;
-              // getData(val);
-              if (current != 1) {
-                setCurrent(1);
-              } else {
-                getData(val);
-              }
+          <TableList
+            data={tableData}
+            headerSearch={getData}
+            form={form}
+            columns={orignalCols}
+            total={total}
+            // rowClick={(record) => rowClick(record)}
+            scrollY={'calc(100vh - 510px)'}
+            onPageChange={onPageChange}
+            selectedRowKeys={selectedRowKeys}
+            onChange={(_selectedRowKeys, _selectedRows) => {
+              setSelectedRowKeys(_selectedRowKeys);
+              setSelectedRows(_selectedRows);
             }}
-            onClear={() => {
-              latestGroupIdRef.current = '';
-              form.resetFields();
-              if (current != 1) {
-                setCurrent(1);
-              } else {
-                getData();
-              }
-            }}
-            exportAction={exportExcelAction}
-          />
-        }
-        renderBtns={
-          <>
-            
-              <Space>
-                <BtnThemeWrap>
-                  <SelectAnt>
-                  <label>Report Month : </label>
-                   <Select 
-                        mode="multiple"
-                        onChange={(val) => {
-                          setReportMonth(val)
-                        }
-                        } 
-                        value={ReportMonth}
-                        style={{ width: 200 }}>
-                     {
-                       ReportMonthApiData.map((item,index)=>{
-                        return (
-                          <Option value={item} key={index}>{item}</Option>
-                        )
-                       })
-                     }
-                    </Select>
-                    </SelectAnt>
-                </BtnThemeWrap>
-                <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
-                  <Space>
-                <Divider
-                  type="vertical"
-                  style={{ height: '20px', borderColor: '#999' }}
-                />
-                <BtnOrangeWrap>
-                  <Button
-                    disabled={selectedRowKeys.length!=1}
-                    onClick={toCheckBVI}
-                  >
-                    Check BVI
-                  </Button>
-                </BtnOrangeWrap>
-                <BtnGreenWrap>
-                  <Button
-                    disabled={!selectedRowKeys.length}
-                    onClick={() => {
-                      Modal.confirm({
-                        title: 'Tips',
-                        icon: <ExclamationCircleOutlined />,
-                        content: 'Confirm delete selected data?',
-                        okText: 'Confirm',
-                        cancelText: 'Cancel',
-                        onOk: () => {
-
-                            deleteInfos(selectedRowKeys, event);
-
-                        },
-                        centered: true,
-                      });
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </BtnGreenWrap>
-                <Divider
-                  type="vertical"
-                  style={{ height: '20px', borderColor: '#999' }}
-                />
-                <BtnThemeWrap>
-                    <Upload
-                      style={{ margin: '0 10px' }}
-                      maxCount={1}
-                      showUploadList={false}
-                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                      beforeUpload={(file) => {
-                        importExcel(file);
-                        return false;
+            changePageSize={changePageSize}
+            current={current}
+            search={isSearch}
+            rowKey="id"
+            listName="Customer Report"
+            renderFilterGroup={
+              <FilterGroup
+                businessLineRender={
+                  <>
+                    <label>Business Line:</label>
+                    <Select
+                      placeholder="Please select"
+                      mode="multiple"
+                      value={businessDiff}
+                      onChange={(val) => {
+                        setBusinessDiff(val);
                       }}
                     >
-                      <Button key="import" type="text">
-                        <span>Import</span>
-                      </Button>
-                    </Upload>
-                </BtnThemeWrap>
-                <Button
-                >
-                  <a href="./template/Customer Report Template.xlsx">Download Template</a>
-                </Button>
-                </Space>
-                </AuthWrapper>
-              </Space>
-
-            <Space>
-              <Divider
-                type="vertical"
-                style={{ height: '20px', borderColor: '#999' }}
-              />
-              <Button
-                style={{ width: '40px' }}
-                onClick={() => setIsSearch(!isSearch)}
-                icon={
-                  <img
-                    style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                    src={search}
-                  />
+                      {businesslineOptions?.map((item, index) => (
+                        <Select.Option key={index} value={item}>
+                          {item}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </>
                 }
-              ></Button>
-            </Space>
-          </>
-        }
-      />
+                moudleName="Customer Report"
+                authPagename={pageName}
+                onSearch={(val) => {
+                  latestGroupIdRef.current = val;
+                  // getData(val);
+                  if (current != 1) {
+                    setCurrent(1);
+                  } else {
+                    getData(val);
+                  }
+                }}
+                onClear={() => {
+                  latestGroupIdRef.current = '';
+                  form.resetFields();
+                  if (current != 1) {
+                    setCurrent(1);
+                  } else {
+                    getData();
+                  }
+                }}
+                exportAction={exportExcelAction}
+              />
+            }
+            renderBtns={
+              <>
+                <Space>
+                  <BtnThemeWrap>
+                    <SelectAnt>
+                      <label>Report Month : </label>
+                      <Select
+                        mode="multiple"
+                        onChange={(val) => {
+                          setReportMonth(val);
+                        }}
+                        value={ReportMonth}
+                        style={{ width: 200 }}
+                      >
+                        {ReportMonthApiData.map((item, index) => {
+                          return (
+                            <Option value={item} key={index}>
+                              {item}
+                            </Option>
+                          );
+                        })}
+                      </Select>
+                    </SelectAnt>
+                  </BtnThemeWrap>
+                  <AuthWrapper
+                    functionName={pageName}
+                    authCode={`${pageName}-Edit`}
+                  >
+                    <Space>
+                      <Divider
+                        type="vertical"
+                        style={{ height: '20px', borderColor: '#999' }}
+                      />
+                      <BtnOrangeWrap>
+                        <Button
+                          disabled={selectedRowKeys.length != 1}
+                          onClick={toCheckBVI}
+                        >
+                          Check BVI
+                        </Button>
+                      </BtnOrangeWrap>
+                      <BtnGreenWrap>
+                        <Button
+                          disabled={!selectedRowKeys.length}
+                          onClick={() => {
+                            Modal.confirm({
+                              title: 'Tips',
+                              icon: <ExclamationCircleOutlined />,
+                              content: 'Confirm delete selected data?',
+                              okText: 'Confirm',
+                              cancelText: 'Cancel',
+                              onOk: () => {
+                                deleteInfos(selectedRowKeys, event);
+                              },
+                              centered: true,
+                            });
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </BtnGreenWrap>
+                      <Divider
+                        type="vertical"
+                        style={{ height: '20px', borderColor: '#999' }}
+                      />
+                      <BtnThemeWrap>
+                        <Upload
+                          style={{ margin: '0 10px' }}
+                          maxCount={1}
+                          showUploadList={false}
+                          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                          beforeUpload={(file) => {
+                            importExcel(file);
+                            return false;
+                          }}
+                        >
+                          <Button key="import" type="text">
+                            <span>Import</span>
+                          </Button>
+                        </Upload>
+                      </BtnThemeWrap>
+                      <Button>
+                        <a href="./template/Customer Report Template.xlsx">
+                          Download Template
+                        </a>
+                      </Button>
+                    </Space>
+                  </AuthWrapper>
+                </Space>
+
+                <Space>
+                  <Divider
+                    type="vertical"
+                    style={{ height: '20px', borderColor: '#999' }}
+                  />
+                  <Button
+                    style={{ width: '40px' }}
+                    onClick={() => setIsSearch(!isSearch)}
+                    icon={
+                      <img
+                        style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                        src={search}
+                      />
+                    }
+                  ></Button>
+                </Space>
+              </>
+            }
+          />
         </TabPane>
       </Tabs>
     </TabWrapDiv>
   );
 };
-
-
-
-

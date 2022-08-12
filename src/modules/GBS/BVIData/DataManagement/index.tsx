@@ -57,7 +57,8 @@ import { getUserOperateTemplate } from '@/app/request/apiBVI';
 export default (props: any) => {
   const {
     pageName,
-    AuthWrapper, checkAuth,
+    AuthWrapper,
+    checkAuth,
     form,
     formData,
     formImport,
@@ -158,14 +159,17 @@ export default (props: any) => {
     businesslineOptions,
     business,
     setBusiness,
-    bviComponentDisabled, setBviComponentDisabled,
-    isSelectAll, setIsSelectAll
+    bviComponentDisabled,
+    setBviComponentDisabled,
+    isSelectAll,
+    setIsSelectAll,
   } = useService(props);
   const orignalCols = [
     {
       name: 'bviMonth',
       title: 'BVI Month',
       width: '200px',
+      titleRender: 'input',
       sorter: true,
     },
     {
@@ -475,9 +479,9 @@ export default (props: any) => {
       name: 'billingDate',
       sorter: true,
       render: (text) =>
-      text && moment(text).isValid()
-        ? moment(text).format('YYYY-MM-DD')
-        : text,
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD')
+          : text,
     },
     {
       title: 'SAP Exchange Rate',
@@ -507,9 +511,10 @@ export default (props: any) => {
                   ) {
                     formData.setFieldsValue({
                       ...record,
-                      bviMonth: record.bviMonth
-                        ? moment(record.bviMonth)
-                        : null,
+                      bviMonth:
+                        record.bviMonth && moment(record.bviMonth).isValid()
+                          ? moment(record.bviMonth)
+                          : null,
                       productName: record.product,
                       startMonth: record.startMonth
                         ? moment(record.startMonth)
@@ -591,21 +596,19 @@ export default (props: any) => {
                         icon={<i className="gbs gbs-confirm"></i>}
                       ></Button>
                     </Tooltip>
-                  ) : 
-                      record.bviStatus.toLowerCase() == 'confirm' &&
-                      record.templateType != 'Flat Charge' ? (
-                        <Tooltip title="Unconfirm">
-                          <Button
-                            onClick={(event) => event.stopPropagation()}
-                            type="text"
-                            key="3"
-                            icon={<i className="gbs gbs-confirm"></i>}
-                          ></Button>
-                        </Tooltip>
-                      ) : (
-                        ''
-                      )
-                  }
+                  ) : record.bviStatus.toLowerCase() == 'confirm' &&
+                    record.templateType != 'Flat Charge' ? (
+                    <Tooltip title="Unconfirm">
+                      <Button
+                        onClick={(event) => event.stopPropagation()}
+                        type="text"
+                        key="3"
+                        icon={<i className="gbs gbs-confirm"></i>}
+                      ></Button>
+                    </Tooltip>
+                  ) : (
+                    ''
+                  )}
                 </Popconfirm>
               </span>
             ) : (
@@ -818,7 +821,6 @@ export default (props: any) => {
     });
   };
   const toUnconfirm = (selectIds) => {
-    
     Modal.confirm({
       title: 'Tips',
       icon: <ExclamationCircleOutlined />,
@@ -832,7 +834,7 @@ export default (props: any) => {
     });
   };
   const toRecheck = () => {
-    if(isSelectAll){
+    if (isSelectAll) {
       Modal.confirm({
         title: 'Tips',
         icon: <ExclamationCircleOutlined />,
@@ -844,7 +846,7 @@ export default (props: any) => {
         },
         centered: true,
       });
-    }else{
+    } else {
       const recheckMark = selectedRows.some((item) => {
         return item.error == null;
       });
@@ -1387,18 +1389,18 @@ export default (props: any) => {
                   unCheckedChildren="No"
                   disabled={componentDisabled}
                   onChange={(val) => {
-                    console.log(val)
+                    console.log(val);
                     formData.setFieldsValue({
                       adjustTag: val,
                     });
                     if (val) {
-                      setBviComponentDisabled(true)
+                      setBviComponentDisabled(true);
                       formData.setFieldsValue({
                         bvi: '',
                         unitPrice: '',
                       });
                     } else {
-                      setBviComponentDisabled(false)
+                      setBviComponentDisabled(false);
                       formData.setFieldsValue({
                         unitPrice: formData.getFieldValue('initialunitPrice'),
                       });
@@ -1450,44 +1452,44 @@ export default (props: any) => {
             </Col>
             <Col span={8}>
               {/* {formData.getFieldValue('are') != '5547' ? ( */}
-                <Form.Item
-                  labelCol={{ flex: '50px' }}
-                  label="PO"
-                  name="po"
-                  rules={[{ required: formData.getFieldValue('are') != '5547' }]}
-                >
-                  <DebounceSelect
-                    initFlag
-                    disabled={componentDisabled}
-                    getoptions={(options) => {
-                      return options?.map((x, index) => {
-                        return (
-                          <Select.Option
-                            style={{ width: '100%' }}
-                            key={index}
-                            data={x}
-                            value={x.poNumber}
-                          >
-                            {x.poNumber}
-                          </Select.Option>
-                        );
+              <Form.Item
+                labelCol={{ flex: '50px' }}
+                label="PO"
+                name="po"
+                rules={[{ required: formData.getFieldValue('are') != '5547' }]}
+              >
+                <DebounceSelect
+                  initFlag
+                  disabled={componentDisabled}
+                  getoptions={(options) => {
+                    return options?.map((x, index) => {
+                      return (
+                        <Select.Option
+                          style={{ width: '100%' }}
+                          key={index}
+                          data={x}
+                          value={x.poNumber}
+                        >
+                          {x.poNumber}
+                        </Select.Option>
+                      );
+                    });
+                  }}
+                  delegate={(e) => {
+                    if (!formData.getFieldValue('productId')) {
+                      return Promise.resolve({
+                        code: 200,
+                        isSuccess: true,
+                        data: [],
                       });
-                    }}
-                    delegate={(e) => {
-                      if (!formData.getFieldValue('productId')) {
-                        return Promise.resolve({
-                          code: 200,
-                          isSuccess: true,
-                          data: [],
-                        });
-                      }
-                      return ProductPoDrop({
-                        productId: formData.getFieldValue('productId'),
-                        poNumber: e,
-                      });
-                    }}
-                  />
-                </Form.Item>
+                    }
+                    return ProductPoDrop({
+                      productId: formData.getFieldValue('productId'),
+                      poNumber: e,
+                    });
+                  }}
+                />
+              </Form.Item>
               {/* // ) 
               // : (
               //   <Form.Item labelCol={{ flex: '50px' }} label="PO" name="po">
@@ -1813,8 +1815,7 @@ export default (props: any) => {
                     return (
                       <p style={{ color: 'red', textAlign: 'left' }}>{text}</p>
                     );
-                  } else 
-                  if (
+                  } else if (
                     _item.dataIndex == 'postingDate' ||
                     _item.dataIndex == 'entryDate' ||
                     _item.dataIndex == 'documentDate' ||
@@ -1830,7 +1831,7 @@ export default (props: any) => {
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
             dataSource={checkData}
-            rowKey={(record, index)=>index}
+            rowKey={(record, index) => index}
             pagination={false}
             scroll={{ x: 3000, y: 'calc(100vh - 390px)' }}
           />
@@ -1929,7 +1930,7 @@ export default (props: any) => {
 
                 <Checkbox
                   onChange={(e) => {
-                    setIsSelectAll(e.target.checked)
+                    setIsSelectAll(e.target.checked);
                   }}
                 >
                   Select All
@@ -1955,7 +1956,13 @@ export default (props: any) => {
                 /> */}
                 <BtnOrangeWrap>
                   <Button
-                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
                     onClick={toRecheck}
                   >
                     Recheck
@@ -1963,21 +1970,26 @@ export default (props: any) => {
                 </BtnOrangeWrap>
                 <BtnGreenWrap>
                   <Button
-                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
                     onClick={() => {
-                      if(isSelectAll){
+                      if (isSelectAll) {
                         toConfirm(selectedRowKeys);
-                      }else{
-
+                      } else {
                         let recordList = selectedRows.filter(
                           (item) => item.bviStatus.toLowerCase() == 'unconfirm',
                         );
                         let errorMark = selectedRows.filter(
                           // (item) => item.error == null||item.error == "",
-                          (item) => !item.error == false
+                          (item) => !item.error == false,
                         );
                         if (!errorMark || errorMark.length != 0) {
-                        // if (errorMark && errorMark.length) {
+                          // if (errorMark && errorMark.length) {
                           message.error('Contains incorrect data');
                         } else {
                           if (!recordList || !recordList.length) {
@@ -1995,20 +2007,25 @@ export default (props: any) => {
                 </BtnGreenWrap>
                 <BtnBlueWrap>
                   <Button
-                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
                     onClick={() => {
-                      if(isSelectAll){
+                      if (isSelectAll) {
                         toUnconfirm(selectedRowKeys);
-                      }else{
-
+                      } else {
                         let recordList = selectedRows.filter(
                           (item) => item.bviStatus.toLowerCase() == 'confirm',
                         );
                         let errorMark = selectedRows.filter(
-                          (item) => !item.error == false
+                          (item) => !item.error == false,
                         );
                         // if (errorMark && errorMark.length) {
-                          if (!errorMark || errorMark.length != 0) {
+                        if (!errorMark || errorMark.length != 0) {
                           message.error('Contains incorrect data');
                         } else {
                           if (!recordList || !recordList.length) {
@@ -2205,7 +2222,13 @@ export default (props: any) => {
                   </Button>
                 </BtnThemeWrap>
                 <Button
-                  disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                  disabled={
+                    selectedRowKeys.length == 0
+                      ? isSelectAll
+                        ? false
+                        : true
+                      : false
+                  }
                   onClick={() => {
                     Modal.confirm({
                       title: 'Tips',
@@ -2214,11 +2237,12 @@ export default (props: any) => {
                       okText: 'Confirm',
                       cancelText: 'Cancel',
                       onOk: () => {
-                        if(isSelectAll){
+                        if (isSelectAll) {
                           deleteInfos(selectedRowKeys, event);
-                        }else{
+                        } else {
                           let recordList = selectedRows.filter(
-                            (item) => item.bviStatus.toLowerCase() == 'unconfirm',
+                            (item) =>
+                              item.bviStatus.toLowerCase() == 'unconfirm',
                           );
                           if (!recordList || !recordList.length) {
                             message.error('No data to delete is selected');

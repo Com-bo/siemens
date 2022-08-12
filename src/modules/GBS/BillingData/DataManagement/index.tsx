@@ -42,9 +42,7 @@ import {
   TableWrapDiv,
   ContentWrap,
 } from '@/assets/style';
-import {
-  CustomerReportBuildReport
-} from '@/app/request/apiCustomerReport';
+import { CustomerReportBuildReport } from '@/app/request/apiCustomerReport';
 import search from '@/assets/images/search.png';
 import FilterGroup from '@/modules/components/FilterGroup';
 import useService from './useServise';
@@ -52,7 +50,8 @@ import moment from 'moment';
 export default (props: any) => {
   const {
     pageName,
-    AuthWrapper, checkAuth,
+    AuthWrapper,
+    checkAuth,
     form,
     formData,
     formImport,
@@ -120,10 +119,14 @@ export default (props: any) => {
     setBusiness,
     business,
     businesslineOptions,
-    initialState, setInitialState,
-    ReportMonthMark, setReportMonthMark,
-    ReportMonth, setReportMonth,
-    isSelectAll, setIsSelectAll
+    initialState,
+    setInitialState,
+    ReportMonthMark,
+    setReportMonthMark,
+    ReportMonth,
+    setReportMonth,
+    isSelectAll,
+    setIsSelectAll,
   } = useService(props);
   const orignalCols = [
     {
@@ -236,7 +239,10 @@ export default (props: any) => {
                     evt.stopPropagation();
                     if (temptype) {
                     } else {
-                      getCheckOriginalData(evt, record.materialSalesTextCustomerTextZ003)
+                      getCheckOriginalData(
+                        evt,
+                        record.materialSalesTextCustomerTextZ003,
+                      );
                     }
                   }}
                   icon={<ExclamationCircleOutlined />}
@@ -256,7 +262,10 @@ export default (props: any) => {
                   if (temptype) {
                     message.error('Check source data is not supported');
                   } else {
-                    getCheckOriginalData(evt, record.materialSalesTextCustomerTextZ003)
+                    getCheckOriginalData(
+                      evt,
+                      record.materialSalesTextCustomerTextZ003,
+                    );
                   }
                 }}
               >
@@ -405,12 +414,14 @@ export default (props: any) => {
       title: 'BVI Month',
       width: '200px',
       sorter: true,
+      titleRender: 'input',
     },
     {
       name: 'billingMonth',
       title: 'Billing Month',
       width: '200px',
       sorter: true,
+      titleRender: 'input',
       // render: (text) =>
       //   text && moment(text).isValid()
       //     ? moment(text).format('YYYY-MM-DD HH:mm:ss')
@@ -471,7 +482,7 @@ export default (props: any) => {
               onClick={(event) => {
                 event.stopPropagation();
                 console.log(record);
-                setInitialState(record.billingStatus)
+                setInitialState(record.billingStatus);
                 setEditListMark(true);
                 setIsSingelEdits(true);
                 formDataEdit.setFieldsValue({
@@ -480,14 +491,16 @@ export default (props: any) => {
                     ? moment(record.billingDate)
                     : null,
                 });
-                billingStatusGroup.map((item,index)=>{
-                  if(formDataEdit.getFieldValue('billingStatus')==item.dbvalue){
+                billingStatusGroup.map((item, index) => {
+                  if (
+                    formDataEdit.getFieldValue('billingStatus') == item.dbvalue
+                  ) {
                     formDataEdit.setFieldsValue({
-                      billingStatus:item.value
-                    })
+                      billingStatus: item.value,
+                    });
                   }
-                })
-                console.log(formDataEdit.getFieldValue('billingStatus'))
+                });
+                console.log(formDataEdit.getFieldValue('billingStatus'));
                 if (formDataEdit.getFieldValue('billingStatus') == 2) {
                   setSuccessMark(false);
                 } else {
@@ -535,7 +548,7 @@ export default (props: any) => {
     {
       name: 'bvi',
       title: 'BVI',
-      width: '100px'
+      width: '100px',
     },
     {
       name: 'productUnitPrice',
@@ -605,7 +618,6 @@ export default (props: any) => {
       name: 'bviBusinessLine',
       title: 'BVI Business Line',
       width: '150px',
-
     },
     {
       name: 'businessLine',
@@ -701,15 +713,15 @@ export default (props: any) => {
       width: '180px',
       name: 'billingDate',
       render: (text) =>
-      text && moment(text).isValid()
-        ? moment(text).format('YYYY-MM-DD')
-        : text,
+        text && moment(text).isValid()
+          ? moment(text).format('YYYY-MM-DD')
+          : text,
     },
     {
       title: 'SAP Exchange Rate',
       width: '150px',
       name: 'exchangeRate',
-    }
+    },
   ];
 
   const uploadProps = {
@@ -734,10 +746,20 @@ export default (props: any) => {
   };
   const renderOption = (fieldList) => {
     const options = [];
-    console.log(initialState)
+    console.log(initialState);
     fieldList.map((item, index) => {
       options.push(
-        <Option key={index} value={item.value} disabled={(initialState=="Successfully"||initialState=="Cancel")?(item.label=="Unfreeze"?true:false):false}>
+        <Option
+          key={index}
+          value={item.value}
+          disabled={
+            initialState == 'Successfully' || initialState == 'Cancel'
+              ? item.label == 'Unfreeze'
+                ? true
+                : false
+              : false
+          }
+        >
           {item.label}
         </Option>,
       );
@@ -771,13 +793,13 @@ export default (props: any) => {
     }
   };
   //
-  const onReportMonthChange=(datestring)=>{
-    setReportMonth(datestring)
-  }
-  const ExportCustomer=()=>{
-    console.log(ReportMonth)
+  const onReportMonthChange = (datestring) => {
+    setReportMonth(datestring);
+  };
+  const ExportCustomer = () => {
+    console.log(ReportMonth);
     if (!ReportMonth) {
-      message.warning('Please select [Report Month]!'); 
+      message.warning('Please select [Report Month]!');
       return;
     }
     if (!business) {
@@ -785,8 +807,8 @@ export default (props: any) => {
       return;
     }
     let params = {
-        busiLine: business[0],
-        reportMonth: ReportMonth
+      busiLine: business[0],
+      reportMonth: ReportMonth,
     };
     CustomerReportBuildReport(params).then((res: any) => {
       if (res.response.status == 200) {
@@ -796,8 +818,8 @@ export default (props: any) => {
         message.error(res.response.statusText);
       }
     });
-  }
-  // 
+  };
+  //
   return (
     <ContentWrap>
       {/* 选择生成报告日期 */}
@@ -825,8 +847,8 @@ export default (props: any) => {
         <Row gutter={20}>
           <Col span={16}>
             <DatePicker
-              onChange={(dates,datestring)=>{
-                onReportMonthChange(datestring)
+              onChange={(dates, datestring) => {
+                onReportMonthChange(datestring);
               }}
               defaultValue={moment(ReportMonth)}
               disabled={false}
@@ -843,7 +865,6 @@ export default (props: any) => {
             </Space>
           </Col>
         </Row>
-       
       </Modal>
       {/* 导入 */}
       <Modal
@@ -976,27 +997,47 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Sales Order" name="salesOrder">
+              <Form.Item
+                label="Sales Order"
+                name="salesOrder"
+                rules={[{ required: !successMark }]}
+              >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Billing Doc" name="billingDoc">
+              <Form.Item
+                label="Billing Doc"
+                name="billingDoc"
+                rules={[{ required: !successMark }]}
+              >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Item No" name="itemNo">
+              <Form.Item
+                label="Item No"
+                name="itemNo"
+                rules={[{ required: !successMark }]}
+              >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Amount In Currecy" name="amountInCurrecy">
+              <Form.Item
+                label="Amount In Currecy"
+                name="amountInCurrecy"
+                rules={[{ required: !successMark }]}
+              >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Currency In SAP" name="currencyInSAP">
+              <Form.Item
+                label="Currency In SAP"
+                name="currencyInSAP"
+                rules={[{ required: !successMark }]}
+              >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
@@ -1004,12 +1045,17 @@ export default (props: any) => {
               <Form.Item
                 label="Amount in Local Currency(CNY)"
                 name="amountInLocalCurrencyCNY"
+                rules={[{ required: !successMark }]}
               >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Billing Date" name="billingDate">
+              <Form.Item
+                label="Billing Date"
+                name="billingDate"
+                rules={[{ required: !successMark }]}
+              >
                 <DatePicker
                   disabled={successMark}
                   picker="month"
@@ -1019,7 +1065,20 @@ export default (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="SAP Exchange Rate" name="sapExchangeRate">
+              <Form.Item
+                label="SAP Exchange Rate"
+                name="sapExchangeRate"
+                rules={[{ required: !successMark }]}
+              >
+                <Input disabled={successMark} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Batch File Exchange Rate"
+                name="batchFileExchangeRate"
+                rules={[{ required: !successMark }]}
+              >
                 <Input disabled={successMark} />
               </Form.Item>
             </Col>
@@ -1071,9 +1130,9 @@ export default (props: any) => {
             columns={bviOrignalCols?.map((_item) => {
               return {
                 ..._item,
-                dataIndex:_item.name,
+                dataIndex: _item.name,
                 // key
-                align: 'center'
+                align: 'center',
               };
             })}
             rowClassName={(record, index) => (index % 2 == 0 ? '' : 'stripe')}
@@ -1168,7 +1227,7 @@ export default (props: any) => {
 
                 <Checkbox
                   onChange={(e) => {
-                    setIsSelectAll(e.target.checked)
+                    setIsSelectAll(e.target.checked);
                   }}
                 >
                   Select All
@@ -1186,7 +1245,13 @@ export default (props: any) => {
                 </BtnOrangeWrap>
                 <BtnThemeWrap color="grass">
                   <Button
-                    disabled={selectedRowKeys.length == 0?(isSelectAll?false:true):false}
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
                     onClick={() => {
                       setEditListMark(true);
                       setSuccessMark(true);
@@ -1265,7 +1330,13 @@ export default (props: any) => {
                   <Button onClick={() => setShowImport(true)}>Import</Button>
                 </BtnThemeWrap>
                 <BtnThemeWrap>
-                  <Button onClick={()=>{setReportMonthMark(true);}}>Generate Customer Report</Button>
+                  <Button
+                    onClick={() => {
+                      setReportMonthMark(true);
+                    }}
+                  >
+                    Generate Customer Report
+                  </Button>
                 </BtnThemeWrap>
               </Space>
             </AuthWrapper>

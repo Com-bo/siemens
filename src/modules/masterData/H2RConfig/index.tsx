@@ -25,7 +25,7 @@ import {
   Space,
   Tooltip,
   Upload,
-  Checkbox
+  Checkbox,
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -40,16 +40,16 @@ import {
 import {
   // exportCostCenterExcel,
   // logCostCenterDataQuery,
-  // 
+  //
   // SpecialDivisionExportData,
   // SpecialDivisionImportData,
-  // SpecialDivisionQueryListData, 
-  // SpecialDivisionEditDataSave, 
-  // SpecialDivisionDeleteData, 
+  // SpecialDivisionQueryListData,
+  // SpecialDivisionEditDataSave,
+  // SpecialDivisionDeleteData,
   QueryLogicH2R,
   DeleteLogicH2R,
   EditLogicH2R,
-  AddLogicH2R
+  AddLogicH2R,
 } from '@/app/request/apiH2RConfig';
 const pageName = 'H2RConfig';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
@@ -111,7 +111,7 @@ export const Index = (props: any) => {
       width: '200px',
       fixed: 'right',
       render: (text, record, index) => (
-        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]}>
           <Space>
             <Tooltip title="Edit">
               <Button
@@ -183,7 +183,6 @@ export const Index = (props: any) => {
       key: 'newValue',
       align: 'center',
     },
-
   ];
   // 删除接口
   const deleteInfos = (record, event) => {
@@ -210,7 +209,8 @@ export const Index = (props: any) => {
     });
   };
   const getData = () => {
-    const param=formFilter.getFieldValue("productName")
+    const productNameparam = formFilter.getFieldValue('productName');
+    const param = productNameparam ? `?ProductName=${productNameparam}` : ``;
     QueryLogicH2R(param).then((res) => {
       if (res.isSuccess) {
         setTableData(res.data);
@@ -282,7 +282,7 @@ export const Index = (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-              H2RConfig Data
+                H2RConfig Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>
@@ -297,17 +297,10 @@ export const Index = (props: any) => {
         <Form form={formData} labelCol={{ flex: '120px' }}>
           <Row gutter={20}>
             <Col span={12}>
-              <Form.Item
-                label="On_ARE"
-                name="onARE"
-              >
+              <Form.Item label="On_ARE" name="onARE">
                 <Select allowClear>
-                  <Select.Option value="IN">
-                    IN
-                  </Select.Option>
-                  <Select.Option value="NOT IN">
-                    NOT IN
-                  </Select.Option>
+                  <Select.Option value="IN">IN</Select.Option>
+                  <Select.Option value="NOT IN">NOT IN</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -317,36 +310,40 @@ export const Index = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Product Name" name="productName" rules={[{ required: true }]}>
+              <Form.Item
+                label="Product Name"
+                name="productName"
+                rules={[{ required: true }]}
+              >
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Type" name="type" rules={[{ required: true }]}>
                 <Select allowClear>
-                  <Select.Option value="ET">
-                  ET
-                  </Select.Option>
-                  <Select.Option value="AT">
-                  AT
-                  </Select.Option>
+                  <Select.Option value="ET">ET</Select.Option>
+                  <Select.Option value="AT">AT</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Contain" name="contain" rules={[{ required: true }]}>
+              <Form.Item
+                label="Contain"
+                name="contain"
+                rules={[{ required: true }]}
+              >
                 <Input disabled={componentDisabled} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Logic" name="logic" rules={[{ required: true }]}>
+              <Form.Item
+                label="Logic"
+                name="logic"
+                rules={[{ required: true }]}
+              >
                 <Select allowClear>
-                  <Select.Option value="+">
-                    +
-                  </Select.Option>
-                  <Select.Option value="-">
-                    -
-                  </Select.Option>
+                  <Select.Option value="+">+</Select.Option>
+                  <Select.Option value="-">-</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -407,9 +404,23 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={()=>{
+                          onClick={() => {
                             setCurrent(1);
-                            getData()
+                            getData();
+                          }}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title="Clear">
+                        <Button
+                          icon={<ClearOutlined />}
+                          onClick={() => {
+                            form.resetFields();
+                            formFilter.resetFields();
+                            if (current == 1) {
+                              getData();
+                            } else {
+                              setCurrent(1);
+                            }
                           }}
                         ></Button>
                       </Tooltip>
@@ -422,7 +433,10 @@ export const Index = (props: any) => {
         }
         renderBtns={
           <>
-            <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+            <AuthWrapper
+              functionName={pageName}
+              authCode={[`${pageName}-Edit`]}
+            >
               <Space>
                 <BtnThemeWrap>
                   <Button

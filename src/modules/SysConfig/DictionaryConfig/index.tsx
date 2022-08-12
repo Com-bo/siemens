@@ -25,7 +25,7 @@ import {
   Space,
   Tooltip,
   Upload,
-  Checkbox
+  Checkbox,
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -39,7 +39,7 @@ import {
 } from '@ant-design/icons';
 import {
   PageQueryDictionary,
-  EditDictionary
+  EditDictionary,
 } from '@/app/request/apiDictionaryConfig';
 const pageName = 'DictionaryConfig';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
@@ -106,7 +106,7 @@ export const Index = (props: any) => {
       width: '100px',
       fixed: 'right',
       render: (text, record, index) => (
-        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
+        <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]}>
           <Space>
             <Tooltip title="Edit">
               <Button
@@ -163,21 +163,22 @@ export const Index = (props: any) => {
       key: 'newValue',
       align: 'center',
     },
-
   ];
   const getData = () => {
-      const param={
-        groupName:formFilter.getFieldValue("groupName")?formFilter.getFieldValue("groupName"):"",
-        isOnlyEnable: true
+    const param = {
+      groupName: formFilter.getFieldValue('groupName')
+        ? formFilter.getFieldValue('groupName')
+        : '',
+      isOnlyEnable: true,
+    };
+    PageQueryDictionary(param).then((res) => {
+      if (res.isSuccess) {
+        setTableData(res.data);
+        setTotal(res.totalCount);
+      } else {
+        message.error(res.msg);
       }
-      PageQueryDictionary(param).then((res) => {
-        if (res.isSuccess) {
-          setTableData(res.data);
-          setTotal(res.totalCount);
-        } else {
-          message.error(res.msg);
-        }
-      });
+    });
   };
   useEffect(() => {
     getData();
@@ -227,7 +228,7 @@ export const Index = (props: any) => {
                 <span></span>
               </TaleTitleIconDiv>
               <span style={{ verticalAlign: 'middle', fontSize: '20px' }}>
-              Dictionary Config Data
+                Dictionary Config Data
               </span>
             </TableTitleDiv>
           </TableTopDiv>
@@ -328,9 +329,23 @@ export const Index = (props: any) => {
                         <Button
                           type="primary"
                           icon={<i className="gbs gbs-search"></i>}
-                          onClick={()=>{
+                          onClick={() => {
                             setCurrent(1);
-                            getData()
+                            getData();
+                          }}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title="Clear">
+                        <Button
+                          icon={<ClearOutlined />}
+                          onClick={() => {
+                            form.resetFields();
+                            formFilter.resetFields();
+                            if (current == 1) {
+                              getData();
+                            } else {
+                              setCurrent(1);
+                            }
                           }}
                         ></Button>
                       </Tooltip>
@@ -344,7 +359,7 @@ export const Index = (props: any) => {
         changePageSize={changePageSize}
         current={current}
         search={isSearch}
-        rowKey={(record, index)=>index}
+        rowKey={(record, index) => index}
         listName="Dictionary Config"
       />
     </ContentWrap>

@@ -1,7 +1,7 @@
 import { useGet, usePost } from '.';
 import Config from '../config';
 export const QueryLogicH2R = (data) => {
-  return useGet(`${Config.Api.Base}${Config.Api.QueryLogicH2R}?ProductName=${data}`);
+  return useGet(`${Config.Api.Base}${Config.Api.QueryLogicH2R}${data}`);
 };
 // export const QueryLogicH2R = (data: Object) => {
 //   return usePost(`${Config.Api.Base}${Config.Api.QueryLogicH2R}`, data, {
@@ -38,20 +38,12 @@ export const DeleteLogicH2R = (data: Object) => {
 // };
 
 export const EditLogicH2R = (data: Object) => {
-  return usePost(
-    `${Config.Api.Base}${Config.Api.EditLogicH2R}`,
-    data,
-    {
-      autoLoading: true,
-    },
-  );
+  return usePost(`${Config.Api.Base}${Config.Api.EditLogicH2R}`, data, {
+    autoLoading: true,
+  });
 };
 export const AddLogicH2R = (data: Object) => {
-  return usePost(
-    `${Config.Api.Base}${Config.Api.AddLogicH2R}`,
-    data,
-    {
-      autoLoading: true,
-    },
-  );
+  return usePost(`${Config.Api.Base}${Config.Api.AddLogicH2R}`, data, {
+    autoLoading: true,
+  });
 };

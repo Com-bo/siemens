@@ -710,40 +710,40 @@ export default (props: FilterGroupType) => {
                 `${props?.authPagename}-Edit`,
                 `${props?.authPagename}-View`,
               ]) ? (
-                <Tooltip title="Setting">
-                  <Button
-                    icon={<i className="gbs gbs-setting"></i>}
-                    onClick={() => {
-                      form.resetFields();
-                      form.setFieldsValue({
-                        conditionRelationship: 'and',
-                        groupFieldList: [
-                          { fieldName: '', operator: '', fieldValue: '' },
-                        ],
-                      });
-                      setSetting(true);
-                    }}
-                  ></Button>
-                </Tooltip>
+                // <Tooltip title="Setting">
+                <Button
+                  icon={<i className="gbs gbs-setting"></i>}
+                  onClick={() => {
+                    form.resetFields();
+                    form.setFieldsValue({
+                      conditionRelationship: 'and',
+                      groupFieldList: [
+                        { fieldName: '', operator: '', fieldValue: '' },
+                      ],
+                    });
+                    setSetting(true);
+                  }}
+                ></Button>
               ) : (
+                /* </Tooltip> */
                 ''
               )}
               {/* 导出 */}
-              <Tooltip title="Export">
-                <Button
-                  icon={<i className="gbs gbs-export"></i>}
-                  onClick={props.exportAction}
-                ></Button>
-              </Tooltip>
-              <Tooltip title="Clear">
-                <Button
-                  icon={<ClearOutlined />}
-                  onClick={() => {
-                    setFilterGroup('');
-                    props.onClear();
-                  }}
-                ></Button>
-              </Tooltip>
+              {/* <Tooltip title="Export"> */}
+              <Button
+                icon={<i className="gbs gbs-export"></i>}
+                onClick={props.exportAction}
+              ></Button>
+              {/* </Tooltip> */}
+              {/* <Tooltip title="Clear"> */}
+              <Button
+                icon={<ClearOutlined />}
+                onClick={() => {
+                  setFilterGroup('');
+                  props.onClear();
+                }}
+              ></Button>
+              {/* </Tooltip> */}
               {props?.customComponet}
             </Space>
           </AuthWrapper>

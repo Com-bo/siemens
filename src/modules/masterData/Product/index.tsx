@@ -29,7 +29,7 @@ import {
   Table,
   Tooltip,
   Upload,
-  Checkbox
+  Checkbox,
 } from 'antd';
 import moment from 'moment';
 import './style.less';
@@ -59,7 +59,7 @@ import {
   queryProductListData,
   queryProductLogData,
   BatchEditProductDataSave,
-  ProductCopyDataSave
+  ProductCopyDataSave,
 } from '@/app/request/apiProduct';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
 import FormTable from '@/components/FormTable/formTable';
@@ -91,7 +91,7 @@ export const Index = (props: any) => {
   const [isPOByPercentage, setIsPOByPercentage] = useState(false);
 
   const [isSelectAll, setIsSelectAll] = useState(false);
-  const [editListMark,setEditListMark]= useState(false)
+  const [editListMark, setEditListMark] = useState(false);
   const [formDataEdit] = Form.useForm();
 
   const [isViewMark, setIsViewMark] = useState(false);
@@ -285,71 +285,71 @@ export const Index = (props: any) => {
       fixed: 'right',
       render: (text, record, index) => (
         <Space>
-          <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              key="1"
-              icon={<EditOutlined />}
-              onClick={(event) => {
-                event.stopPropagation();
-                setShowProData(true);
-                setIsPOByPercentage(record.isPOByPercentage)
-                formData.setFieldsValue({
-                  ...record,
-                  startDate:
-                    record.startDate && moment(record.startDate).isValid()
-                      ? moment(record.startDate)
-                      : null,
-                  endDate:
-                    record.endDate && moment(record.endDate).isValid()
-                      ? moment(record.endDate)
-                      : null,
-                  signedDate:
-                    record.signedDate && moment(record.signedDate).isValid()
-                      ? moment(record.signedDate)
-                      : null,
-                });
-                // 获取po
-                ProductPoDrop({
-                  productId: record.id,
-                  poNumber: '',
-                }).then((res) => {
-                  if (res.isSuccess) {
-                    setPoData(res.data || []);
-                  } else {
-                    message.error(res.msg);
-                  }
-                });
-              }}
-            ></Button>
-          </Tooltip>
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => deleteInfos([record.id], event)}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
+          <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]}>
+            <Tooltip title="Edit">
               <Button
                 type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
+                key="1"
+                icon={<EditOutlined />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowProData(true);
+                  setIsPOByPercentage(record.isPOByPercentage);
+                  formData.setFieldsValue({
+                    ...record,
+                    startDate:
+                      record.startDate && moment(record.startDate).isValid()
+                        ? moment(record.startDate)
+                        : null,
+                    endDate:
+                      record.endDate && moment(record.endDate).isValid()
+                        ? moment(record.endDate)
+                        : null,
+                    signedDate:
+                      record.signedDate && moment(record.signedDate).isValid()
+                        ? moment(record.signedDate)
+                        : null,
+                  });
+                  // 获取po
+                  ProductPoDrop({
+                    productId: record.id,
+                    poNumber: '',
+                  }).then((res) => {
+                    if (res.isSuccess) {
+                      setPoData(res.data || []);
+                    } else {
+                      message.error(res.msg);
+                    }
+                  });
+                }}
               ></Button>
             </Tooltip>
-          </Popconfirm>
-          <Tooltip title="Log">
-            <Button
-              type="text"
-              key="4"
-              icon={<i className="gbs gbs-logs"></i>}
-              onClick={(event) => {
-                event.stopPropagation();
-                toLog(record.id);
-              }}
-            ></Button>
-          </Tooltip>
+            <Popconfirm
+              title="Confirm to delete?"
+              onConfirm={(event) => deleteInfos([record.id], event)}
+              okText="Confirm"
+              cancelText="Cancel"
+            >
+              <Tooltip title="Delete">
+                <Button
+                  type="text"
+                  key="2"
+                  icon={<i className="gbs gbs-delete"></i>}
+                  onClick={(event) => event.stopPropagation()}
+                ></Button>
+              </Tooltip>
+            </Popconfirm>
+            <Tooltip title="Log">
+              <Button
+                type="text"
+                key="4"
+                icon={<i className="gbs gbs-logs"></i>}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toLog(record.id);
+                }}
+              ></Button>
+            </Tooltip>
           </AuthWrapper>
         </Space>
       ),
@@ -364,8 +364,8 @@ export const Index = (props: any) => {
       okText: 'Confirm',
       cancelText: 'Cancel',
       onOk: () => {
-        let params = {}
-        if(isSelectAll){
+        let params = {};
+        if (isSelectAll) {
           params = {
             searchCondition: {
               filterGroup: {
@@ -375,12 +375,12 @@ export const Index = (props: any) => {
             },
             operationRecords: null,
           };
-        }else{
+        } else {
           params = {
             searchCondition: null,
             operationRecords: {
-              recordIdList: recordIdList
-            }
+              recordIdList: recordIdList,
+            },
           };
         }
         deleteProductData(params).then((res) => {
@@ -689,11 +689,11 @@ export const Index = (props: any) => {
       align: 'center',
       render: (text, record, index) => (
         <>
-        {isViewMark?(
-          ''
-        ):(
-        <Space>
-          {index == 0 ? (
+          {isViewMark ? (
+            ''
+          ) : (
+            <Space>
+              {/* {index == 0 ? (
             <Tooltip title="Add">
               <Button
                 type="text"
@@ -709,50 +709,52 @@ export const Index = (props: any) => {
             </Tooltip>
           ) : (
             ''
+          )} */}
+              <Popconfirm
+                title="Confirm to delete?"
+                onConfirm={(event) => {
+                  var list = JSON.parse(JSON.stringify(poData));
+                  if (record.id) {
+                    //  调用删除接口
+                    deletePOData({ recordIdList: [record.id] }).then((res) => {
+                      if (res.isSuccess) {
+                        // if (poData.length == 1) {
+                        //   setPoData([{}]);
+                        // } else {
+                        //   setPoData(list.filter((x, rIndex) => rIndex != index));
+                        // }
+                        setPoData(list.filter((x, rIndex) => rIndex != index));
+                      } else {
+                        message.error(res.msg);
+                      }
+                    });
+                  } else {
+                    // if (poData.length == 1) {
+                    //   if (formData.getFieldValue('isPOByPercentage') === false) {
+                    //     setPoData([{ poPercentage: 1 }]);
+                    //   } else {
+                    //     setPoData([{}]);
+                    //   }
+                    // } else {
+                    //   setPoData(list.filter((x, rIndex) => rIndex != index));
+                    // }
+                    setPoData(list.filter((x, rIndex) => rIndex != index));
+                  }
+                }}
+                okText="Confirm"
+                cancelText="Cancel"
+              >
+                <Tooltip title="Delete">
+                  <Button
+                    type="text"
+                    key="2"
+                    icon={<i className="gbs gbs-delete"></i>}
+                    onClick={(event) => event.stopPropagation()}
+                  ></Button>
+                </Tooltip>
+              </Popconfirm>
+            </Space>
           )}
-          <Popconfirm
-            title="Confirm to delete?"
-            onConfirm={(event) => {
-              var list = JSON.parse(JSON.stringify(poData));
-              if (record.id) {
-                //  调用删除接口
-                deletePOData({ recordIdList: [record.id] }).then((res) => {
-                  if (res.isSuccess) {
-                    if (poData.length == 1) {
-                      setPoData([{}]);
-                    } else {
-                      setPoData(list.filter((x, rIndex) => rIndex != index));
-                    }
-                  } else {
-                    message.error(res.msg);
-                  }
-                });
-              } else {
-                if (poData.length == 1) {
-                  if (formData.getFieldValue('isPOByPercentage') === false) {
-                    setPoData([{ poPercentage: 1 }]);
-                  } else {
-                    setPoData([{}]);
-                  }
-                } else {
-                  setPoData(list.filter((x, rIndex) => rIndex != index));
-                }
-              }
-            }}
-            okText="Confirm"
-            cancelText="Cancel"
-          >
-            <Tooltip title="Delete">
-              <Button
-                type="text"
-                key="2"
-                icon={<i className="gbs gbs-delete"></i>}
-                onClick={(event) => event.stopPropagation()}
-              ></Button>
-            </Tooltip>
-          </Popconfirm>
-        </Space>
-        )}
         </>
       ),
     },
@@ -869,7 +871,7 @@ export const Index = (props: any) => {
     }
     if (formData.getFieldValue('isPOByPercentage')) {
       // 和为1
-      console.log(sum)
+      console.log(sum);
       if (sum !== 1) {
         message.warning(`The sum of percentage should be 1  `);
         return;
@@ -883,9 +885,11 @@ export const Index = (props: any) => {
           'YYYY-MM-DD',
         ),
         endDate: moment(formData.getFieldValue('endDate')).format('YYYY-MM-DD'),
-        signedDate: formData.getFieldValue('signedDate') && moment(formData.getFieldValue('signedDate')).isValid() ? moment(formData.getFieldValue('signedDate')).format(
-          'YYYY-MM-DD',
-        ):"",
+        signedDate:
+          formData.getFieldValue('signedDate') &&
+          moment(formData.getFieldValue('signedDate')).isValid()
+            ? moment(formData.getFieldValue('signedDate')).format('YYYY-MM-DD')
+            : '',
       },
       productPoList: poData,
     }).then((res) => {
@@ -904,39 +908,46 @@ export const Index = (props: any) => {
     formDataEdit
       .validateFields()
       .then((values) => {
-        let params = {}
-        if(isSelectAll){
+        let params = {};
+        const editInfo = {
+          endDate: formDataEdit.getFieldValue('endDate'),
+          productNameForReport: formDataEdit.getFieldValue(
+            'productNameForReport',
+          ),
+          signed: formDataEdit.getFieldValue('signed'),
+          gscId: formDataEdit.getFieldValue('gscId'),
+          gscDescription: formDataEdit.getFieldValue('gscDescription'),
+          materialNumber: formDataEdit.getFieldValue('materialNumber'),
+        };
+        if (
+          !editInfo?.endDate &&
+          !editInfo?.productNameForReport &&
+          !editInfo?.signed &&
+          !editInfo?.gscId &&
+          !editInfo?.gscDescription &&
+          !editInfo?.materialNumber
+        ) {
+          message.info('Please enter the modified content');
+          return;
+        }
+        if (isSelectAll) {
           params = {
-           editInfo:{
-             endDate:formDataEdit.getFieldValue('endDate'),
-             productNameForReport:formDataEdit.getFieldValue('productNameForReport'),
-             signed:formDataEdit.getFieldValue('signed'),
-             gscId:formDataEdit.getFieldValue('gscId'),
-             gscDescription:formDataEdit.getFieldValue('gscDescription'),
-             materialNumber:formDataEdit.getFieldValue('materialNumber')
-           },
-           searchCondition: {
-             filterGroup: {
-               recordId: latestGroupIdRef.current,
-             },
-             listHeader: form.getFieldsValue(),
-           },
-           operationRecords: null,
-         };
-        }else{
-          params = {
-            editInfo:{
-              endDate:formDataEdit.getFieldValue('endDate'),
-              productNameForReport:formDataEdit.getFieldValue('productNameForReport'),
-              signed:formDataEdit.getFieldValue('signed'),
-              gscId:formDataEdit.getFieldValue('gscId'),
-              gscDescription:formDataEdit.getFieldValue('gscDescription'),
-              materialNumber:formDataEdit.getFieldValue('materialNumber')
+            editInfo,
+            searchCondition: {
+              filterGroup: {
+                recordId: latestGroupIdRef.current,
+              },
+              listHeader: form.getFieldsValue(),
             },
+            operationRecords: null,
+          };
+        } else {
+          params = {
+            editInfo,
             searchCondition: null,
-            operationRecords:{
-              recordIdList: selectedRowKeys
-            }
+            operationRecords: {
+              recordIdList: selectedRowKeys,
+            },
           };
         }
         console.log(params);
@@ -951,64 +962,65 @@ export const Index = (props: any) => {
             message.error(res.msg);
           }
         });
-      }).catch((e) => {});
-    }
+      })
+      .catch((e) => {});
+  };
 
-    const copyData = () => {
-      Modal.confirm({
-        title: 'Tips',
-        icon: <ExclamationCircleOutlined />,
-        content: 'Confirm copying selected data?',
-        okText: 'Confirm',
-        cancelText: 'Cancel',
-        onOk: () => {
-          copyDataMethod();
-        },
-        centered: true,
-      });
-    };
-    const copyDataMethod = () => {
-      ProductCopyDataSave({ recordId: selectedRowKeys[0] }).then((res) => {
-        if (res.isSuccess) {
-          getData();
-          setSelectedRowKeys([]);
-          message.success(res.msg);
-        } else {
-          message.error(res.msg);
-        }
-      });
-    };
-    const rowClick = (record) => {
-      setShowProData(true);
-      setIsViewMark(true)
-      setIsPOByPercentage(record.isPOByPercentage)
-      formData.setFieldsValue({
-        ...record,
-        startDate:
-          record.startDate && moment(record.startDate).isValid()
-            ? moment(record.startDate)
-            : null,
-        endDate:
-          record.endDate && moment(record.endDate).isValid()
-            ? moment(record.endDate)
-            : null,
-        signedDate:
-          record.signedDate && moment(record.signedDate).isValid()
-            ? moment(record.signedDate)
-            : null,
-      });
-      // 获取po
-      ProductPoDrop({
-        productId: record.id,
-        poNumber: '',
-      }).then((res) => {
-        if (res.isSuccess) {
-          setPoData(res.data || []);
-        } else {
-          message.error(res.msg);
-        }
-      });
-    };
+  const copyData = () => {
+    Modal.confirm({
+      title: 'Tips',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Confirm copying selected data?',
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      onOk: () => {
+        copyDataMethod();
+      },
+      centered: true,
+    });
+  };
+  const copyDataMethod = () => {
+    ProductCopyDataSave({ recordId: selectedRowKeys[0] }).then((res) => {
+      if (res.isSuccess) {
+        getData();
+        setSelectedRowKeys([]);
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const rowClick = (record) => {
+    setShowProData(true);
+    setIsViewMark(true);
+    setIsPOByPercentage(record.isPOByPercentage);
+    formData.setFieldsValue({
+      ...record,
+      startDate:
+        record.startDate && moment(record.startDate).isValid()
+          ? moment(record.startDate)
+          : null,
+      endDate:
+        record.endDate && moment(record.endDate).isValid()
+          ? moment(record.endDate)
+          : null,
+      signedDate:
+        record.signedDate && moment(record.signedDate).isValid()
+          ? moment(record.signedDate)
+          : null,
+    });
+    // 获取po
+    ProductPoDrop({
+      productId: record.id,
+      poNumber: '',
+    }).then((res) => {
+      if (res.isSuccess) {
+        setPoData(res.data || []);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
   return (
     <ContentWrap>
       {/* 日志查询 */}
@@ -1074,7 +1086,7 @@ export const Index = (props: any) => {
         footer={null}
         onCancel={() => {
           setShowProData(false);
-          setIsViewMark(false)
+          setIsViewMark(false);
           formData.resetFields();
         }}
       >
@@ -1442,7 +1454,7 @@ export const Index = (props: any) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={24} style={{ marginBottom: '20px' }}>
+            <Col span={23} style={{ marginBottom: '20px' }}>
               <FormTableDiv>
                 <FormTable
                   dataSource={poData.map((x, index) => {
@@ -1457,39 +1469,54 @@ export const Index = (props: any) => {
                 />
               </FormTableDiv>
             </Col>
+            <Col span={1}>
+              <Tooltip title="Add">
+                <Button
+                  type="text"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    if (formData.getFieldValue('isPOByPercentage') === false) {
+                      setPoData([...poData, { poPercentage: 1 }]);
+                    } else {
+                      setPoData([...poData, {}]);
+                    }
+                  }}
+                ></Button>{' '}
+              </Tooltip>
+            </Col>
             <Col span={24}>
               <Form.Item label="Comments" name="comments">
                 <Input.TextArea />
               </Form.Item>
             </Col>
-            {isViewMark?(
+            {isViewMark ? (
               ''
-            ):(
-            <Col span={24} style={{ textAlign: 'center' }}>
-              <Space size={40}>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    formData
-                      .validateFields()
-                      .then((valid) => {
-                        onSave();
-                      })
-                      .catch((e) => {});
-                  }}
-                >
-                  Save
-                </Button>
-                <Button
-                  onClick={() => {
-                    setShowProData(false);
-                    formData.resetFields();
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Space>
-            </Col>
+            ) : (
+              <Col span={24} style={{ textAlign: 'center' }}>
+                <Space size={40}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      formData
+                        .validateFields()
+                        .then((valid) => {
+                          onSave();
+                        })
+                        .catch((e) => {});
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowProData(false);
+                      formData.resetFields();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Space>
+              </Col>
             )}
           </Row>
         </Form>
@@ -1528,7 +1555,7 @@ export const Index = (props: any) => {
                 labelCol={{ flex: '180px' }}
                 label="Product Name for Report"
                 name="productNameForReport"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input disabled={componentDisabled} />
               </Form.Item>
@@ -1537,7 +1564,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="End Date"
                 name="endDate"
-                rules={[{ required: true }, { validator: validEndDate }]}
+                // rules={[{ required: true }, { validator: validEndDate }]}
               >
                 <DatePicker
                   disabled={componentDisabled}
@@ -1550,7 +1577,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="Signed"
                 name="signed"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Select allowClear>
                   <Select.Option value={true as unknown as Key}>
@@ -1566,7 +1593,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="GSC_ID"
                 name="gscId"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>
@@ -1584,7 +1611,7 @@ export const Index = (props: any) => {
               <Form.Item
                 label="Material Number"
                 name="materialNumber"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input />
               </Form.Item>
@@ -1646,7 +1673,7 @@ export const Index = (props: any) => {
               <>
                 <Checkbox
                   onChange={(e) => {
-                    setIsSelectAll(e.target.checked)
+                    setIsSelectAll(e.target.checked);
                   }}
                 >
                   Select All
@@ -1657,106 +1684,126 @@ export const Index = (props: any) => {
         }
         renderBtns={
           <>
-          <AuthWrapper functionName={pageName} authCode={[`${pageName}-Edit`]} >
-          <Space>
-          <BtnThemeWrap>
-            <Button
-              disabled={selectedRowKeys.length !== 1}
-              onClick={copyData}
+            <AuthWrapper
+              functionName={pageName}
+              authCode={[`${pageName}-Edit`]}
             >
-              Copy
-            </Button>
-          </BtnThemeWrap>
-          <BtnThemeWrap>
-            <Button
-              disabled={selectedRowKeys.length == 0 ? ( isSelectAll ? false : true ) : false }
-              onClick={() => {
-                setEditListMark(true);
-              }}
-            >
-              Edit
-            </Button>
-          </BtnThemeWrap>
-            <BtnThemeWrap>
-              <Dropdown
-                overlay={() => (
-                  <Menu>
-                    <Menu.Item
-                      key="1"
-                      icon={<i className="gbs gbs-import"></i>}
-                    >
-                      <Upload
-                        style={{ margin: '0 10px' }}
-                        maxCount={1}
-                        showUploadList={false}
-                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                        beforeUpload={(file) => {
-                          importExcel(file);
-                          return false;
-                        }}
-                      >
-                        <Button key="import" type="text">
-                          <span>Import</span>
-                        </Button>
-                      </Upload>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<i className="gbs gbs-add"></i>}>
-                      <Button
-                        style={{ margin: '0 10px' }}
-                        type="text"
-                        onClick={() => {
-                          setShowProData(true);
-                          setPoData([{}]);
-                          // 获取po列表接口
-                          getinitForm();
-                        }}
-                      >
+              <Space>
+                <BtnThemeWrap>
+                  <Button
+                    disabled={selectedRowKeys.length !== 1}
+                    onClick={copyData}
+                  >
+                    Copy
+                  </Button>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Button
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
+                    onClick={() => {
+                      setEditListMark(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </BtnThemeWrap>
+                <BtnThemeWrap>
+                  <Dropdown
+                    overlay={() => (
+                      <Menu>
+                        <Menu.Item
+                          key="1"
+                          icon={<i className="gbs gbs-import"></i>}
+                        >
+                          <Upload
+                            style={{ margin: '0 10px' }}
+                            maxCount={1}
+                            showUploadList={false}
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                            beforeUpload={(file) => {
+                              importExcel(file);
+                              return false;
+                            }}
+                          >
+                            <Button key="import" type="text">
+                              <span>Import</span>
+                            </Button>
+                          </Upload>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="2"
+                          icon={<i className="gbs gbs-add"></i>}
+                        >
+                          <Button
+                            style={{ margin: '0 10px' }}
+                            type="text"
+                            onClick={() => {
+                              setShowProData(true);
+                              setPoData([{}]);
+                              // 获取po列表接口
+                              getinitForm();
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </Menu.Item>
+                        <Menu.Item
+                          key="3"
+                          icon={<i className="gbs gbs-download"></i>}
+                        >
+                          <span style={{ margin: '0 10px' }}>
+                            <a href="./template/Product.xlsx">
+                              Download Template
+                            </a>
+                          </span>
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  >
+                    <Button>
+                      <Space>
                         Add
-                      </Button>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="3"
-                      icon={<i className="gbs gbs-download"></i>}
-                    >
-                      <span style={{ margin: '0 10px' }}>
-                        <a href="./template/Product.xlsx">Download Template</a>
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                )}
-              >
-                <Button>
-                  <Space>
-                    Add
-                    <DownOutlined />
-                  </Space>
+                        <DownOutlined />
+                      </Space>
+                    </Button>
+                  </Dropdown>
+                </BtnThemeWrap>
+                <Button
+                  onClick={(event) => deleteInfos(selectedRowKeys, event)}
+                  disabled={
+                    selectedRowKeys.length == 0
+                      ? isSelectAll
+                        ? false
+                        : true
+                      : false
+                  }
+                >
+                  Delete
                 </Button>
-              </Dropdown>
-            </BtnThemeWrap>
-            <Button
-              onClick={(event) => deleteInfos(selectedRowKeys, event)}
-              disabled={selectedRowKeys.length == 0 ? ( isSelectAll ? false : true ) : false }
-            >
-              Delete
-            </Button>
-          </Space>
-          </AuthWrapper>
-          <Space>
-            <Divider
-              type="vertical"
-              style={{ height: '20px', borderColor: '#999' }}
-            />
-            <Button
-              style={{ width: '40px' }}
-              onClick={() => setIsSearch(!isSearch)}
-              icon={
-                <img
-                  style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-                  src={search}
-                />
-              }
-            ></Button>
-          </Space>
+              </Space>
+            </AuthWrapper>
+            <Space>
+              <Divider
+                type="vertical"
+                style={{ height: '20px', borderColor: '#999' }}
+              />
+              <Button
+                style={{ width: '40px' }}
+                onClick={() => setIsSearch(!isSearch)}
+                icon={
+                  <img
+                    style={{ verticalAlign: 'middle', marginTop: '-2px' }}
+                    src={search}
+                  />
+                }
+              ></Button>
+            </Space>
           </>
         }
         changePageSize={changePageSize}

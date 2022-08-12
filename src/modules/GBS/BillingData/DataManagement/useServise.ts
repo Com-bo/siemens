@@ -28,12 +28,12 @@ import {
 } from '@/app/request/apiBilling';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal, notification } from 'antd';
-import {lastMonth} from "@/tools/validator/lastMonth"
+import { lastMonth } from '@/tools/validator/lastMonth';
 const businesslineOptions = JSON.parse(sessionStorage.getItem('businessLines'));
 // 权限
 const pageName = 'BillingDataManagement';
 import { AuthWrapper, checkAuth } from '@/tools/authCheck';
-// 
+//
 export default (props: any) => {
   const [tableData, setTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(true);
@@ -85,42 +85,42 @@ export default (props: any) => {
     {
       label: 'Freeze',
       value: 1,
-      dbvalue:"Freeze"
+      dbvalue: 'Freeze',
     },
     {
       label: 'Successfully',
       value: 2,
-      dbvalue:"Successfully"
+      dbvalue: 'Successfully',
     },
     {
       label: 'Manual To SAP',
       value: 3,
-      dbvalue:"ManualToSAP"
+      dbvalue: 'ManualToSAP',
     },
     {
       label: 'Auto To SAP',
       value: 4,
-      dbvalue:"AutoToSAP"
+      dbvalue: 'AutoToSAP',
     },
     {
       label: 'Waiting For SAP',
       value: 5,
-      dbvalue:"WaitingForSAP"
+      dbvalue: 'WaitingForSAP',
     },
     {
       label: 'PostPone',
       value: 6,
-      dbvalue:"PostPone"
+      dbvalue: 'PostPone',
     },
     {
       label: 'Unfreeze',
       value: 7,
-      dbvalue:"Unfreeze"
+      dbvalue: 'Unfreeze',
     },
     {
       label: 'Obsolete',
       value: 8,
-      dbvalue:"Obsolete"
+      dbvalue: 'Obsolete',
     },
 
     // {
@@ -137,9 +137,9 @@ export default (props: any) => {
   const getCheckOriginalData = (event, _data) => {
     event.stopPropagation();
     // setCheckOriginalParam(_data);
-    const params={
-      z003IdList:[_data]
-    }
+    const params = {
+      z003IdList: [_data],
+    };
     GetOriginBVI(params).then((res) => {
       if (res.isSuccess) {
         setIsCheckOriginal(true);
@@ -450,6 +450,9 @@ export default (props: any) => {
               ),
               billingDate: formDataEdit.getFieldValue('billingDate'),
               sapExchangeRate: formDataEdit.getFieldValue('sapExchangeRate'),
+              batchFileExchangeRate: formDataEdit.getFieldValue(
+                'batchFileExchangeRate',
+              ),
               id: formDataEdit.getFieldValue('id'),
             };
             EditDataSpecialSave(params).then((res) => {
@@ -483,11 +486,12 @@ export default (props: any) => {
             });
           }
         } else {
-          let params = {}
-          if(isSelectAll){
+          let params = {};
+          if (isSelectAll) {
             params = {
               billingARE: formDataEdit.getFieldValue('billingARE'),
-              billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
+              billingCostCenter:
+                formDataEdit.getFieldValue('billingCostCenter'),
               billingPO: formDataEdit.getFieldValue('billingPO'),
               searchCondition: {
                 filterGroup: {
@@ -498,17 +502,21 @@ export default (props: any) => {
                 isOnlyQueryUncompleteData: UnconfirmDataRef.current,
                 userBusinessLineList: business,
               },
-              operationRecords: null
+              operationRecords: null,
             };
-          }else{
+          } else {
             params = {
               billingARE: formDataEdit.getFieldValue('billingARE'),
-              billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
+              billingCostCenter:
+                formDataEdit.getFieldValue('billingCostCenter'),
               billingPO: formDataEdit.getFieldValue('billingPO'),
               searchCondition: null,
               operationRecords: {
-                recordIdList: idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')]
-              } 
+                recordIdList:
+                  idList.length != 0
+                    ? idList
+                    : [formDataEdit.getFieldValue('id')],
+              },
             };
           }
           QuickEditDataSave(params).then((res) => {
@@ -548,7 +556,7 @@ export default (props: any) => {
 
   // freeze
   const freezeDataMethod = () => {
-    FreezeData({businessLine:business[0]}).then((res) => {
+    FreezeData({ businessLine: business[0] }).then((res) => {
       if (res.isSuccess) {
         getData();
         setSelectedRowKeys([]);
@@ -578,7 +586,7 @@ export default (props: any) => {
         break;
       case 3:
         if (statusMark) {
-          message.error('Please repeat the selection');
+          message.error("ICC and negative number can't set this status");
           return;
         }
         break;
@@ -607,8 +615,8 @@ export default (props: any) => {
         // params.billingStatus = -1;
         break;
     }
-    let params={}
-    if(isSelectAll){
+    let params = {};
+    if (isSelectAll) {
       params = {
         billingStatus: statusIndex,
         searchCondition: {
@@ -620,16 +628,16 @@ export default (props: any) => {
           isOnlyQueryUncompleteData: UnconfirmDataRef.current,
           userBusinessLineList: business,
         },
-        operationRecords: null
-      }
-    }else{
+        operationRecords: null,
+      };
+    } else {
       params = {
         billingStatus: statusIndex,
         searchCondition: null,
         operationRecords: {
-          recordIdList: selectedRowKeys
-        }
-      }
+          recordIdList: selectedRowKeys,
+        },
+      };
     }
     SetStatusSave(params).then((res) => {
       if (res.isSuccess) {
@@ -685,7 +693,8 @@ export default (props: any) => {
 
   return {
     pageName,
-    AuthWrapper, checkAuth,
+    AuthWrapper,
+    checkAuth,
     form,
     formData,
     formImport,
@@ -769,9 +778,13 @@ export default (props: any) => {
     business,
     setBusiness,
     businesslineOptions,
-    initialState, setInitialState,
-    ReportMonthMark, setReportMonthMark,
-    ReportMonth, setReportMonth,
-    isSelectAll, setIsSelectAll
+    initialState,
+    setInitialState,
+    ReportMonthMark,
+    setReportMonthMark,
+    ReportMonth,
+    setReportMonth,
+    isSelectAll,
+    setIsSelectAll,
   };
 };
