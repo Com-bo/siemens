@@ -189,6 +189,65 @@ export default (props: any) => {
       title: 'Total Amount(Unit Price Currency)',
       width: '200px',
       sorter: true,
+      render: (text, record, index) => {
+        let temptype = true;
+        if (
+          record.templateType == 'Flat Charge' ||
+          record.templateType == 'H2R BVI Template' ||
+          record.templateType == 'BVI Manual Template' ||
+          (record.templateType == 'P2P BCS Template' &&
+            record.userno != 'ROBOT_MICHAEL')
+        ) {
+          temptype = true;
+        } else {
+          temptype = false;
+        }
+        if (record?.error) {
+          return (
+            <Tooltip title={record.error}>
+              <BtnTextRedWrap color="red">
+                <Button
+                  type="text"
+                  onClick={(evt) => {
+                    evt.stopPropagation();
+                    if (temptype) {
+                    } else {
+                      getCheckOriginalData(
+                        evt,
+                        record.materialSalesTextCustomerTextZ003,
+                      );
+                    }
+                  }}
+                  icon={<ExclamationCircleOutlined />}
+                >
+                  {text}
+                </Button>
+              </BtnTextRedWrap>
+            </Tooltip>
+          );
+        } else {
+          return (
+            <BtnTextRedWrap>
+              <Button
+                type="text"
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  if (temptype) {
+                    message.error('Check source data is not supported');
+                  } else {
+                    getCheckOriginalData(
+                      evt,
+                      record.materialSalesTextCustomerTextZ003,
+                    );
+                  }
+                }}
+              >
+                {text}
+              </Button>
+            </BtnTextRedWrap>
+          );
+        }
+      },
     },
     {
       name: 'soldToParty',

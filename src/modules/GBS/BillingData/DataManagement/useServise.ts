@@ -592,7 +592,7 @@ export default (props: any) => {
         break;
       case 4:
         if (statusMark) {
-          message.error('Please repeat the selection');
+          message.error("ICC and negative number can't set this status");
           return;
         }
         break;

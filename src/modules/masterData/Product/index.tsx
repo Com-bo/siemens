@@ -316,7 +316,8 @@ export const Index = (props: any) => {
                     poNumber: '',
                   }).then((res) => {
                     if (res.isSuccess) {
-                      setPoData(res.data || []);
+                      res.data.length!=0 ? setPoData(res.data) : setPoData([{}]);
+                      // setPoData(res.data || []);
                     } else {
                       message.error(res.msg);
                     }

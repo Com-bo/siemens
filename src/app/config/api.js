@@ -49,6 +49,7 @@ export const Api = {
   EditBVIData: '/api/BVIDataManage/EditData', //编辑数据
   EditDataListSave: '/api/BVIDataManage/EditDataListSave', //批量编辑数据
   ReCheckDataBVIData: '/api/BVIDataManage/ReCheckData',
+  ObsoleteDataBVIData: '/api/BVIDataManage/ObsoleteData',
 
   QueryImportLog: '/api/BVIDataManage/QueryImportLog', //查询日志
   // Flat Charge

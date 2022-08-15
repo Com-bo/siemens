@@ -116,6 +116,11 @@ export const ReCheckDataBVIData = (data: Object) => {
     autoLoading: true,
   });
 };
+export const ObsoleteDataBVIData = (data: Object) => {
+  return usePost(`${Config.Api.Base}${Config.Api.ObsoleteDataBVIData}`, data, {
+    autoLoading: true,
+  });
+};
 export const getUserOperateTemplate = (data: Object) => {
   return usePost(
     `${Config.Api.Base}${Config.Api.GetUserOperateTemplate}`,

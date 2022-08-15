@@ -15,6 +15,7 @@ import {
   exportOriginalData,
   SyncDataSave,
   ReCheckDataBVIData,
+  ObsoleteDataBVIData
 } from '@/app/request/apiBVI';
 import { formatDate, objectToFormData } from '@/tools/utils';
 import { Form, message, Modal } from 'antd';
@@ -288,6 +289,39 @@ export default (props: any) => {
       };
     }
     ReCheckDataBVIData(params).then((res) => {
+      if (res.isSuccess) {
+        getData();
+        setSelectedRowKeys([]);
+        message.success(res.msg);
+      } else {
+        message.error(res.msg);
+      }
+    });
+  };
+  const toObsoleteAction = () => {
+    let params = {}
+    if(isSelectAll){
+      params = {
+        searchCondition: {
+          filterGroup: {
+            recordId: latestGroupIdRef.current,
+          },
+          listHeader: form.getFieldsValue(),
+          isOnlyQueryErrorData: errorCheckedRef.current,
+          isOnlyQueryUnconfirmData: UnconfirmDataRef.current,
+          userBusinessLineList: [business],
+        },
+        operationRecords: null,
+      };
+    }else{
+      params = {
+        searchCondition: null,
+        operationRecords: {
+          recordIdList: selectedRowKeys
+        }
+      };
+    }
+    ObsoleteDataBVIData(params).then((res) => {
       if (res.isSuccess) {
         getData();
         setSelectedRowKeys([]);
@@ -696,6 +730,7 @@ export default (props: any) => {
     business,
     setBusiness,
     bviComponentDisabled, setBviComponentDisabled,
-    isSelectAll, setIsSelectAll
+    isSelectAll, setIsSelectAll,
+    toObsoleteAction
   };
 };

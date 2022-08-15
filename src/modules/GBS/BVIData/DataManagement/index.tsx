@@ -163,6 +163,7 @@ export default (props: any) => {
     setBviComponentDisabled,
     isSelectAll,
     setIsSelectAll,
+    toObsoleteAction
   } = useService(props);
   const orignalCols = [
     {
@@ -284,6 +285,59 @@ export default (props: any) => {
       title: 'Total Amount(Unit Price Currency)',
       width: '200px',
       sorter: true,
+      render: (text, record, index) => {
+        let temptype = true;
+        if (
+          record.templateType == 'Flat Charge' ||
+          record.templateType == 'H2R BVI Template' ||
+          record.templateType == 'BVI Manual Template' ||
+          (record.templateType == 'P2P BCS Template' &&
+            record.userno != 'ROBOT_MICHAEL')
+        ) {
+          temptype = true;
+        } else {
+          temptype = false;
+        }
+        if (record?.error) {
+          return (
+            <Tooltip title={record.error}>
+              <BtnTextRedWrap color="red">
+                <Button
+                  type="text"
+                  onClick={(evt) => {
+                    evt.stopPropagation();
+                    if (temptype) {
+                    } else {
+                      getCheckOriginalData(evt, record);
+                    }
+                  }}
+                  icon={<ExclamationCircleOutlined />}
+                >
+                  {text}
+                </Button>
+              </BtnTextRedWrap>
+            </Tooltip>
+          );
+        } else {
+          return (
+            <BtnTextRedWrap>
+              <Button
+                type="text"
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  if (temptype) {
+                    message.error('Check source data is not supported');
+                  } else {
+                    getCheckOriginalData(evt, record);
+                  }
+                }}
+              >
+                {text}
+              </Button>
+            </BtnTextRedWrap>
+          );
+        }
+      },
     },
     {
       name: 'billingCurrency',
@@ -866,6 +920,19 @@ export default (props: any) => {
         });
       }
     }
+  };
+  const toObsolete = () => {
+      Modal.confirm({
+        title: 'Tips',
+        icon: <ExclamationCircleOutlined />,
+        content: 'Are you sure to Obsolete the selected data?',
+        okText: 'Confirm',
+        cancelText: 'Cancel',
+        onOk: () => {
+          toObsoleteAction();
+        },
+        centered: true,
+      });
   };
 
   //
@@ -1943,17 +2010,20 @@ export default (props: any) => {
           <>
             <AuthWrapper functionName={pageName} authCode={`${pageName}-Edit`}>
               <Space>
-                {/* <Checkbox
-                  onChange={(e) => {
-                    setIsSelectAll(e.target.checked)
-                  }}
-                >
-                  Select All
-                </Checkbox>
-                <Divider
-                  type="vertical"
-                  style={{ height: '20px', borderColor: '#999' }}
-                /> */}
+              <BtnOrangeWrap>
+                  <Button
+                    disabled={
+                      selectedRowKeys.length == 0
+                        ? isSelectAll
+                          ? false
+                          : true
+                        : false
+                    }
+                    onClick={toObsolete}
+                  >
+                    Obsolete
+                  </Button>
+                </BtnOrangeWrap>
                 <BtnOrangeWrap>
                   <Button
                     disabled={

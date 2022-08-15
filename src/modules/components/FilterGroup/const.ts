@@ -21,6 +21,10 @@ export const ops = {
       { value: 'ICC', label: 'ICC' },
     ],
     BVIStatus: [
+      {
+        label: 'Successfully',
+        value: 'Successfully',
+      },
       { value: 'Unconfirm', label: 'Unconfirm' },
       { value: 'Confirm', label: 'Confirm' },
       { value: 'Obsolete', label: 'Obsolete' },
