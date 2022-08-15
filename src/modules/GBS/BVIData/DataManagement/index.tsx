@@ -2335,6 +2335,7 @@ export default (props: any) => {
                 type="vertical"
                 style={{ height: '20px', borderColor: '#999' }}
               />
+              <Tooltip title="Filter">
               <Button
                 style={{ width: '40px' }}
                 onClick={() => setIsSearch(!isSearch)}
@@ -2345,6 +2346,7 @@ export default (props: any) => {
                   />
                 }
               ></Button>
+              </Tooltip>
             </Space>
           </>
         }

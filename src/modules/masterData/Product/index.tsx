@@ -1794,6 +1794,7 @@ export const Index = (props: any) => {
                 type="vertical"
                 style={{ height: '20px', borderColor: '#999' }}
               />
+              <Tooltip title="Filter">
               <Button
                 style={{ width: '40px' }}
                 onClick={() => setIsSearch(!isSearch)}
@@ -1804,6 +1805,7 @@ export const Index = (props: any) => {
                   />
                 }
               ></Button>
+              </Tooltip>
             </Space>
           </>
         }

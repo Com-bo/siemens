@@ -2225,6 +2225,7 @@ export default (props: any) => {
                   marginLeft: '15px',
                 }}
               />
+              <Tooltip title="Filter">
               <Button
                 style={{ width: '40px' }}
                 onClick={() => setIsSearch(!isSearch)}
@@ -2235,6 +2236,7 @@ export default (props: any) => {
                   />
                 }
               ></Button>
+              </Tooltip>
             </Space>
           </>
           // </Space>

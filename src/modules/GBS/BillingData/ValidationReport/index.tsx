@@ -8,6 +8,7 @@ import {
   Table,
   Tabs,
   Typography,
+  Tooltip
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 const { TabPane } = Tabs;
@@ -389,6 +390,7 @@ export default (props: any) => {
             }
             renderBtns={
               <>
+              <Tooltip title="Filter">
                 <Button
                   style={{ width: '40px' }}
                   onClick={() => setIsSearch(!isSearch)}
@@ -399,6 +401,7 @@ export default (props: any) => {
                     />
                   }
                 ></Button>
+              </Tooltip>
               </>
             }
           />
