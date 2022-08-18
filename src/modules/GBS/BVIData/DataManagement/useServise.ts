@@ -582,15 +582,11 @@ export default (props: any) => {
     formDataEdit
       .validateFields()
       .then((values) => {
-        const idList = [];
-        selectedRows.forEach((item, index) => {
-          idList.push(item.id);
-        });
         const params = {
           billingARE: formDataEdit.getFieldValue('billingARE'),
           billingCostCenter: formDataEdit.getFieldValue('billingCostCenter'),
           recordIdList:
-            idList.length != 0 ? idList : [formDataEdit.getFieldValue('id')],
+          formDataEdit.getFieldValue("id") ?  [formDataEdit.getFieldValue('id')]:selectedRowKeys,
         };
         console.log(params);
         EditDataListSave(params).then((res) => {
