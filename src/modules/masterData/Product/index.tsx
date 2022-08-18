@@ -428,6 +428,7 @@ export const Index = (props: any) => {
 
   useEffect(() => {
     getData();
+    getinitForm()
   }, [current, pageSize]);
   const onPageChange = (pagination, filters, sorter, extra) => {
     setCurrent(pagination.current);

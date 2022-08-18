@@ -140,11 +140,11 @@ export const Index = (props: any) => {
       render: (text) => (text && Array.isArray(text) ? text.join(',') : text),
       // titleRender: 'input',
     },
-    {
-      title: 'Enable',
-      name: 'enable',
-      render: (text) => (text ? 'Yes' : 'No'),
-    },
+    // {
+    //   title: 'Enable',
+    //   name: 'enable',
+    //   render: (text) => (text ? 'Yes' : 'No'),
+    // },
     {
       name: 'Operate',
       title: 'Operate',
