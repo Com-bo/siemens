@@ -888,7 +888,7 @@ export default (props: any) => {
     });
   };
   const toRecheck = () => {
-    if (isSelectAll) {
+    // if (isSelectAll) {
       Modal.confirm({
         title: 'Tips',
         icon: <ExclamationCircleOutlined />,
@@ -900,26 +900,26 @@ export default (props: any) => {
         },
         centered: true,
       });
-    } else {
-      const recheckMark = selectedRows.some((item) => {
-        return item.error == null;
-      });
-      if (recheckMark) {
-        message.error('Please select "Error" data to recheck!');
-      } else {
-        Modal.confirm({
-          title: 'Tips',
-          icon: <ExclamationCircleOutlined />,
-          content: 'Are you sure to recheck the selected data?',
-          okText: 'Confirm',
-          cancelText: 'Cancel',
-          onOk: () => {
-            recheckDataAction();
-          },
-          centered: true,
-        });
-      }
-    }
+    // } else {
+    //   const recheckMark = selectedRows.some((item) => {
+    //     return item.error == null;
+    //   });
+    //   if (recheckMark) {
+    //     message.error('Please select "Error" data to recheck!');
+    //   } else {
+    //     Modal.confirm({
+    //       title: 'Tips',
+    //       icon: <ExclamationCircleOutlined />,
+    //       content: 'Are you sure to recheck the selected data?',
+    //       okText: 'Confirm',
+    //       cancelText: 'Cancel',
+    //       onOk: () => {
+    //         recheckDataAction();
+    //       },
+    //       centered: true,
+    //     });
+    //   }
+    // }
   };
   const toObsolete = () => {
       Modal.confirm({
@@ -1335,7 +1335,7 @@ export default (props: any) => {
               <Form.Item
                 label="Cost Center"
                 name="costCenter"
-                rules={[{ validator: validCostCenterRequired }]}
+                rules={[{ validator: validCostCenterRequired,required: formData.getFieldValue('are') == '5547' }]}
               >
                 {formData.getFieldValue('are') == '5547' &&
                 formData.getFieldValue('productName') ? (

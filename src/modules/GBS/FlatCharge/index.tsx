@@ -1737,7 +1737,7 @@ export default (props: any) => {
               <Form.Item
                 label="Cost Center"
                 name="costCenter"
-                rules={[{ validator: validCostCenterRequired }]}
+                rules={[{ validator: validCostCenterRequired,required: formData.getFieldValue('are') == '5547' }]}
               >
                 {formData.getFieldValue('are') == '5547' &&
                 formData.getFieldValue('productName') ? (

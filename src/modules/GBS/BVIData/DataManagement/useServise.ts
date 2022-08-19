@@ -272,11 +272,11 @@ export default (props: any) => {
         operationRecords: null,
       };
     }else{
-      let recordList = selectedRows.filter((item) => !!item.error);
-      if (!recordList || !recordList.length) {
-        message.error('No data to recheck is selected');
-        return;
-      }
+      // let recordList = selectedRows.filter((item) => !!item.error);
+      // if (!recordList || !recordList.length) {
+      //   message.error('No data to recheck is selected');
+      //   return;
+      // }
       if (!selectedRowKeys.length) {
         message.warning('No information selected!');
         return;
