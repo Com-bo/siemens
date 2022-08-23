@@ -97,7 +97,12 @@ const requestWrapper = async <T = any>(
     response = await request();
     return { ...response.data, response };
   } catch (e) {
-    console.log(e?.toString?.(), e);
+    console.log(e?.response);
+    //console.log(e?.toString?.(), e);
+    if (e?.response?.status == '403') {
+      window.location.href = sessionStorage.getItem('myUrl');
+      return;
+    }
     msg = e?.response?.data?.msg ?? 'System error';
     response = e?.response;
   } finally {

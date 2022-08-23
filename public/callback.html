@@ -38,7 +38,14 @@
     // ---用于DE的callback-----
     var mgr = new Oidc.UserManager({ userStore: new Oidc.WebStorageStateStore({ store: window.sessionStorage }), loadUserInfo: true, filterProtocolClaims: true });
     mgr.signinRedirectCallback().then(function (user) {
+      if(window.location.href.indexOf("BVI-Billing-test")!=-1){
+        var splitVal=window.location.href.split('?')[0];
+        var newhref=splitVal.replace('/callback.html','')
+        window.location.href=newhref;
+      }else{
       window.location.href = redirect || "/";
+      }
+
     }).catch(function (err) {
       window.location.href = redirect || "/";
     });

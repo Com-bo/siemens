@@ -140,6 +140,7 @@ export async function render(oldRender) {
         const result = await getMyIdLoginInfo(process.env.REDIRECT_URL);
         if (result.isSuccess) {
           sessionStorage.setItem('umiToken', result.data?.umiToken);
+          sessionStorage.setItem('myUrl', result.data?.data);
           window.location.href = result.data?.data;
         } else {
           Modal.error({
@@ -153,35 +154,38 @@ export async function render(oldRender) {
           return;
         }
       } else {
-        await getMyIdUserInfo();
-        // -----------获取用户信息-------------
-        const resloginInfo = await getLoginUser();
-        if (resloginInfo.isSuccess) {
-          sessionStorage.setItem('user', resloginInfo.data?.realName);
-          sessionStorage.setItem(
-            'businessLines',
-            JSON.stringify(resloginInfo.data?.businessLines),
-          );
-          parseTree(resloginInfo.data.auhtList, _routes);
-          console.log(authBtnCodes);
-          console.log(_routes);
-          // _routes[1].routes[0].path="/CertificateList/list"
-          sessionStorage.setItem('authCodes', JSON.stringify(authBtnCodes));
-          sessionStorage.setItem('routes', JSON.stringify(_routes));
-          oldRender();
+        const res = await getMyIdUserInfo();
+        if (!res.isSuccess) {
+          window.location.href = sessionStorage.getItem('myUrl');
         } else {
-          Modal.error({
-            title: 'Tips',
-            content: resloginInfo?.msg,
-            okText: () => {},
-            cancelText: '',
-            centered: true,
-            keyboard: false,
-          });
+          // -----------获取用户信息-------------
+          const resloginInfo = await getLoginUser();
+          if (resloginInfo.isSuccess) {
+            sessionStorage.setItem('user', resloginInfo.data?.realName);
+            sessionStorage.setItem(
+              'businessLines',
+              JSON.stringify(resloginInfo.data?.businessLines),
+            );
+            parseTree(resloginInfo.data.auhtList, _routes);
+            console.log(authBtnCodes);
+            console.log(_routes);
+            // _routes[1].routes[0].path="/CertificateList/list"
+            sessionStorage.setItem('authCodes', JSON.stringify(authBtnCodes));
+            sessionStorage.setItem('routes', JSON.stringify(_routes));
+            oldRender();
+          } else {
+            Modal.error({
+              title: 'Tips',
+              content: resloginInfo?.msg,
+              okText: () => {},
+              cancelText: '',
+              centered: true,
+              keyboard: false,
+            });
+          }
         }
       }
     } else {
-    
       const Mgrs = new Mgr();
       const result = await Mgrs.getSignedIn();
       if (!result) {
@@ -220,15 +224,12 @@ export async function render(oldRender) {
         });
       }
     }
-
   } catch (error) {}
 }
 
 // 路由变化
 export function onRouteChange({ location, routes, action }) {
-
   if (location.pathname == '/logout') {
- 
     // // 退出登录的处理
     if (process.env.LOGIN_IDENTITY == 'PE') {
       // 暂未开发
@@ -244,14 +245,10 @@ export function onRouteChange({ location, routes, action }) {
   if (location.pathname == '/') {
     // debugger
 
-    if(_routes[0].path != "/home"){
-
-      history.replace(_routes[0]["routes"][0].path);
-
-    }else{
-
+    if (_routes[0].path != '/home') {
+      history.replace(_routes[0]['routes'][0].path);
+    } else {
       history.replace(_routes[0].path);
-      
     }
     // } else {
     // 如果页面没有权限
