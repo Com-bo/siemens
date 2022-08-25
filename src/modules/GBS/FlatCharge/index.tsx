@@ -1100,7 +1100,7 @@ export default (props: any) => {
         message.success(res.msg);
         _getData();
       } else {
-        message.error(res.msg);
+        message.error(res.msg,5);
       }
     });
   };

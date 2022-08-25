@@ -159,8 +159,9 @@ export const Index = (props: any) => {
                 key="1"
                 icon={<EditOutlined />}
                 onClick={() => {
+                  console.log(record)
                   setAre(record.are || []);
-                  setCustomerDivision(record.custemerDivision || []);
+                  setCustomerDivision(record.customerDivision || []);
                   setBusinessLine(record.businessLine || []);
                   setRole(record.role || []);
                   formData.setFieldsValue({

@@ -252,7 +252,7 @@ export default (props: any) => {
             message.success('Submit success!');
             getData();
           } else {
-            message.error(res.msg);
+            message.error(res.msg,5);
           }
         });
       })

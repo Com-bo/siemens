@@ -203,6 +203,11 @@ export const MedalsoftLayout = (props: any) => {
                 {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               </div>
               <img src={HeaderTitle} />
+              {
+                process.env.MEDALENV == "uat" ? (
+                  <span style={{color:"red"}}>（Test）</span>
+                ) : ("")
+              }
             </div>
           );
         }}

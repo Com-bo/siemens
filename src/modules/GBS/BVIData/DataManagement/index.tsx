@@ -828,6 +828,7 @@ export default (props: any) => {
 
   // BVI-View
   const rowClick = (record) => {
+    console.log(record)
     formData.setFieldsValue({
       ...record,
       bviMonth: record.bviMonth ? moment(record.bviMonth) : null,
@@ -836,6 +837,7 @@ export default (props: any) => {
       endMonth: record.endMonth ? moment(record.endMonth) : null,
       modifiedDate: record.modifiedDate ? moment(record.modifiedDate) : null,
       createdDate: record.createdDate ? moment(record.createdDate) : null,
+      unitPrice:record.productUnitPrice
     });
     setShowBviData(true);
     setComponentDisabled(true);
