@@ -256,6 +256,7 @@ export default (props: any) => {
 
     CustomerReportQueryListData(params).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {

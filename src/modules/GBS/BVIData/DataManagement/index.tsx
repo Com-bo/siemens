@@ -1458,7 +1458,6 @@ export default (props: any) => {
                   unCheckedChildren="No"
                   disabled={componentDisabled}
                   onChange={(val) => {
-                    console.log(val);
                     formData.setFieldsValue({
                       adjustTag: val,
                     });
@@ -1485,7 +1484,6 @@ export default (props: any) => {
                   // min={0}
                   style={{ width: '100%' }}
                   onChange={(val) => {
-                    console.log(val);
                     val = val == '' ? 0 : Number(val);
                     formData.setFieldsValue({
                       totalAmount: Number(
@@ -1515,6 +1513,18 @@ export default (props: any) => {
               >
                 <InputNumber
                   disabled={componentDisabled}
+                  onChange={()=>{
+                    formData.setFieldsValue({
+                      adjustTag: true,
+                    });
+                    // if (val) {
+                      setBviComponentDisabled(true);
+                      formData.setFieldsValue({
+                        bvi: '',
+                        unitPrice: '',
+                      });
+                    // }
+                  }}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -1964,6 +1974,7 @@ export default (props: any) => {
             onClear={() => {
               setErrorChecked(false);
               setUnconfirmData(false);
+              setIsSelectAll(false)
               errorCheckedRef.current = false;
               UnconfirmDataRef.current = false;
               latestGroupIdRef.current = '';
@@ -1998,6 +2009,7 @@ export default (props: any) => {
                 </Checkbox>
 
                 <Checkbox
+                  checked={isSelectAll}
                   onChange={(e) => {
                     setIsSelectAll(e.target.checked);
                   }}

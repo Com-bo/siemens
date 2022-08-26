@@ -230,6 +230,7 @@ export const Index = (props: any) => {
     };
     CurrencyQueryListData(params).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {

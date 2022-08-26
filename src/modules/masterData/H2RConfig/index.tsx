@@ -213,6 +213,7 @@ export const Index = (props: any) => {
     const param = productNameparam ? `?ProductName=${productNameparam}` : ``;
     QueryLogicH2R(param).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {

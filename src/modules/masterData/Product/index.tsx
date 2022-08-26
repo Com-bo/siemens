@@ -1662,6 +1662,7 @@ export const Index = (props: any) => {
               getData();
             }}
             onClear={() => {
+              setIsSelectAll(false)
               latestGroupIdRef.current = '';
               form.resetFields();
               if (current != 1) {
@@ -1674,6 +1675,7 @@ export const Index = (props: any) => {
             customComponet={
               <>
                 <Checkbox
+                  checked={isSelectAll}
                   onChange={(e) => {
                     setIsSelectAll(e.target.checked);
                   }}

@@ -234,6 +234,7 @@ export const Index = (props: any) => {
     };
     SpecialDivisionQueryListData(params).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
@@ -512,6 +513,7 @@ export const Index = (props: any) => {
                         <Button
                           icon={<ClearOutlined />}
                           onClick={() => {
+                            setIsSelectAll(false)
                             form.resetFields();
                             formFilter.resetFields();
                             if (current == 1) {
@@ -527,6 +529,7 @@ export const Index = (props: any) => {
                 </Col>
                 <Col span={3}>
                         <Checkbox
+                        checked={isSelectAll}
                         onChange={(e) => {
                           setIsSelectAll(e.target.checked)
                         }}

@@ -1250,6 +1250,7 @@ export default (props: any) => {
             onClear={() => {
               setErrorChecked(false);
               setUnconfirmData(false);
+              setIsSelectAll(false)
               errorCheckedRef.current = false;
               UnconfirmDataRef.current = false;
               latestGroupIdRef.current = '';
@@ -1285,6 +1286,7 @@ export default (props: any) => {
                 </Checkbox>
 
                 <Checkbox
+                  checked={isSelectAll}
                   onChange={(e) => {
                     setIsSelectAll(e.target.checked);
                   }}

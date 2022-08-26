@@ -218,6 +218,7 @@ export const Index = (props: any) => {
     };
     DivisionMappingICBQueryListData(params).then((res) => {
       if (res.isSuccess) {
+        setSelectedRowKeys([]);
         setTableData(res.data);
         setTotal(res.totalCount);
       } else {
