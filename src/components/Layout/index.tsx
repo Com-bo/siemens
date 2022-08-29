@@ -205,7 +205,12 @@ export const MedalsoftLayout = (props: any) => {
               <img src={HeaderTitle} />
               {
                 process.env.MEDALENV == "uat" ? (
-                  <span style={{color:"red"}}>（Test）</span>
+                  <span style={{color:"red",fontSize:"20px",fontWeight:"bold"}}>（Test）</span>
+                ) : ("")
+              }
+              {
+                process.env.MEDALENV == "dev" ? (
+                  <span style={{color:"red",fontSize:"20px",fontWeight:"bold"}}>（Test）</span>
                 ) : ("")
               }
             </div>
